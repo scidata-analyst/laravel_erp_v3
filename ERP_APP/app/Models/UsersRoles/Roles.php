@@ -11,11 +11,9 @@ class Roles extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'role_name',
         'name',
         'description',
         'permissions',
-        'is_system_role',
         'is_active',
         'created_by'
     ];

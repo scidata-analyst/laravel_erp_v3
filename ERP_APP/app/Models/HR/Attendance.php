@@ -18,30 +18,5 @@ class Attendance extends Model
         'status',
         'leave_type',
         'hours_worked',
-        'overtime_hours',
-        'notes'
     ];
-
-    protected $casts = [
-        'date' => 'date',
-        'check_in' => 'datetime',
-        'check_out' => 'datetime',
-        'hours_worked' => 'decimal:2',
-        'overtime_hours' => 'decimal:2',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime'
-    ];
-
-    public function employee(): BelongsTo
-    {
-        return $this->belongsTo(Employees::class);
-    }
-
-    public function getCalculatedHoursWorkedAttribute(): float
-    {
-        if ($this->check_in && $this->check_out) {
-            return $this->check_out->diffInHours($this->check_in);
-        }
-        return 0;
-    }
 }

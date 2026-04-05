@@ -21,32 +21,5 @@ class ProductCatalog extends Model
         'valuation_method',
         'description',
         'status',
-        'barcode',
-        'weight',
-        'dimensions'
     ];
-
-    protected $casts = [
-        'unit_price' => 'decimal:2',
-        'cost_price' => 'decimal:2',
-        'reorder_level' => 'integer',
-        'weight' => 'decimal:2',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime'
-    ];
-
-    public function stockMovements(): HasMany
-    {
-        return $this->hasMany(StockMovements::class);
-    }
-
-    public function batchTracking(): HasMany
-    {
-        return $this->hasMany(BatchTracking::class);
-    }
-
-    public function warehouseLocation(): BelongsTo
-    {
-        return $this->belongsTo(\App\Models\Logistics\Warehouses::class, 'warehouse', 'code');
-    }
 }

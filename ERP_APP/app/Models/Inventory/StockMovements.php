@@ -10,52 +10,16 @@ class StockMovements extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'ref_number',
+        'reference_number',
         'date',
-        'product_id',
-        'movement_type',
+        'product',
+        'type',
         'quantity',
+        'warehouse',
+        'reason',
+        'user',
+        'movement_type',
         'from_warehouse',
-        'to_warehouse',
-        'reason_notes',
-        'user_id',
-        'reason'
+        'to_warehouse'
     ];
-
-    protected $casts = [
-        'date' => 'date',
-        'quantity' => 'integer',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime'
-    ];
-
-    public function product(): BelongsTo
-    {
-        return $this->belongsTo(ProductCatalog::class);
-    }
-
-    public function fromWarehouse(): BelongsTo
-    {
-        return $this->belongsTo(\App\Models\Logistics\Warehouses::class, 'from_warehouse', 'code');
-    }
-
-    public function toWarehouse(): BelongsTo
-    {
-        return $this->belongsTo(\App\Models\Logistics\Warehouses::class, 'to_warehouse', 'code');
-    }
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(\App\Models\User::class);
-    }
-
-    public function getReasonAttribute(): ?string
-    {
-        return $this->reason_notes;
-    }
-
-    public function setReasonAttribute(?string $value): void
-    {
-        $this->attributes['reason_notes'] = $value;
-    }
 }
