@@ -1,0 +1,16 @@
+<?php
+
+namespace App\Events\Inventory;
+
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
+
+class ProductCatalogEvent
+{
+    use Dispatchable, SerializesModels;
+
+    public function __construct()
+    {
+        //
+    }
+}
