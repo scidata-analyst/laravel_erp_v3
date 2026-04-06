@@ -1,0 +1,37 @@
+{
+
+  "ERP_APP/app/Models": {
+
+    "Accounting": ["ApAr", "Tax", "Gl", "FinReports"],
+
+    "Core": ["Dashboard", "Settings"],
+
+    "CRM": ["Support", "Leads", "Interactions"],
+
+    "Documents": ["DocVersions", "DocLibrary"],
+
+    "Ecommerce": ["Pos", "OnlineChannels", "InvSync"],
+
+    "HR": ["Employees", "Performance", "Payroll", "Attendance"],
+
+    "Inventory": ["StockValuation", "StockMovements", "ProductCatalog", "BatchTracking"],
+
+    "Logistics": ["Warehouses", "Shipments", "Routes"],
+
+    "Projects": ["Tasks", "Resources", "ProjectCost"],
+
+    "Production": ["WorkOrders", "MachineLabor", "Bom"],
+
+    "Purchase": ["SupplierPayments", "Grn", "PurchaseOrders", "Suppliers"],
+
+    "QualityControl": ["QcChecklists", "Defects", "Compliance"],
+
+    "Reports": ["Forecasting", "CustomReports", "BiDashboards"],
+
+    "Sales": ["Promotions", "Invoices", "SalesOrders", "Customers"],
+
+    "UsersRoles": ["User", "Roles"]
+
+  }
+
+} based on this file folder structure give me powershell command for create notification, mail and listener with proper namespace and filename for laravel app
