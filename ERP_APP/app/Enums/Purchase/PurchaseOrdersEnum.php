@@ -2,7 +2,7 @@
 
 namespace App\Enums\Purchase;
 
-enum PurchaseOrdersEnum
+enum PurchaseOrdersEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

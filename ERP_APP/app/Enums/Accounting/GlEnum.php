@@ -2,7 +2,7 @@
 
 namespace App\Enums\Accounting;
 
-enum GlEnum
+enum GlEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

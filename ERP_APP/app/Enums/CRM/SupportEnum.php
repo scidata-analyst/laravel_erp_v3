@@ -2,7 +2,7 @@
 
 namespace App\Enums\CRM;
 
-enum SupportEnum
+enum SupportEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

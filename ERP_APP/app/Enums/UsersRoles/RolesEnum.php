@@ -2,7 +2,7 @@
 
 namespace App\Enums\UsersRoles;
 
-enum RolesEnum
+enum RolesEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

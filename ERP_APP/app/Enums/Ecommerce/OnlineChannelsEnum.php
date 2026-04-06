@@ -2,7 +2,7 @@
 
 namespace App\Enums\Ecommerce;
 
-enum OnlineChannelsEnum
+enum OnlineChannelsEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

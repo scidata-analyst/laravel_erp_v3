@@ -2,7 +2,7 @@
 
 namespace App\Enums\Logistics;
 
-enum WarehousesEnum
+enum WarehousesEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

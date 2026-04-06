@@ -6,5 +6,5 @@ use Exception;
 
 class SupplierPaymentsException extends Exception
 {
-    //
+    // TODO: Add custom exception logic
 }

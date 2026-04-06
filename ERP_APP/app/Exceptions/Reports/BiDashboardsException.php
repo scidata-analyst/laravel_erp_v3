@@ -6,5 +6,5 @@ use Exception;
 
 class BiDashboardsException extends Exception
 {
-    //
+    // TODO: Add custom exception logic
 }

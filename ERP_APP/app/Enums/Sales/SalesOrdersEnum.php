@@ -2,7 +2,7 @@
 
 namespace App\Enums\Sales;
 
-enum SalesOrdersEnum
+enum SalesOrdersEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

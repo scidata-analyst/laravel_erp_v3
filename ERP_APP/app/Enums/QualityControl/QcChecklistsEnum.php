@@ -2,7 +2,7 @@
 
 namespace App\Enums\QualityControl;
 
-enum QcChecklistsEnum
+enum QcChecklistsEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

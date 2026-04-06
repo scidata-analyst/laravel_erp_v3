@@ -6,5 +6,5 @@ use Exception;
 
 class FinReportsException extends Exception
 {
-    //
+    // TODO: Add custom exception logic
 }

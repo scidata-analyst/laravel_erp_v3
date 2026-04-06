@@ -2,7 +2,7 @@
 
 namespace App\Enums\Ecommerce;
 
-enum PosEnum
+enum PosEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

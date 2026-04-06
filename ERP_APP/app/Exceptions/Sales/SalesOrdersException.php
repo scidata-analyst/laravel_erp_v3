@@ -6,5 +6,5 @@ use Exception;
 
 class SalesOrdersException extends Exception
 {
-    //
+    // TODO: Add custom exception logic
 }

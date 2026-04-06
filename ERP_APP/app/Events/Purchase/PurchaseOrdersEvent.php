@@ -11,6 +11,6 @@ class PurchaseOrdersEvent
 
     public function __construct()
     {
-        //
+        // TODO: Add event properties
     }
 }

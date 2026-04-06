@@ -4,39 +4,22 @@ namespace App\DTOs\HR;
 
 class PerformanceDTO
 {
-    public function __construct(
-        public readonly int $employee_id,
-        public readonly string $review_date,
-        public readonly ?string $reviewer = null,
-        public readonly ?int $reviewer_id = null,
-        public readonly string $overall_rating = '',
-        public readonly ?string $reviewer_comments = null,
-        public readonly ?string $status = 'completed',
-    ) {}
+    public readonly int $employee_id;
+    public readonly string $review_date;
+    public readonly ?string $reviewer;
+    public readonly ?int $reviewer_id;
+    public readonly string $overall_rating;
+    public readonly ?string $reviewer_comments;
+    public readonly ?string $status;
 
-    public static function fromRequest(array $data): self
+    public function __construct(array $data)
     {
-        return new self(
-            employee_id: (int) $data['employee_id'],
-            review_date: $data['review_date'],
-            reviewer: $data['reviewer'] ?? null,
-            reviewer_id: isset($data['reviewer_id']) ? (int) $data['reviewer_id'] : null,
-            overall_rating: (string) ($data['overall_rating'] ?? $data['rating']),
-            reviewer_comments: $data['reviewer_comments'] ?? $data['comments'] ?? null,
-            status: $data['status'] ?? 'completed',
-        );
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'employee_id' => $this->employee_id,
-            'review_date' => $this->review_date,
-            'reviewer' => $this->reviewer,
-            'reviewer_id' => $this->reviewer_id,
-            'overall_rating' => $this->overall_rating,
-            'reviewer_comments' => $this->reviewer_comments,
-            'status' => $this->status,
-        ];
+        $this->employee_id = (int)($data['employee_id'] ?? 0);
+        $this->review_date = $data['review_date'] ?? '';
+        $this->reviewer = $data['reviewer'] ?? null;
+        $this->reviewer_id = isset($data['reviewer_id']) ? (int)$data['reviewer_id'] : null;
+        $this->overall_rating = (string)($data['overall_rating'] ?? $data['rating'] ?? '');
+        $this->reviewer_comments = $data['reviewer_comments'] ?? $data['comments'] ?? null;
+        $this->status = strtolower((string)($data['status'] ?? 'completed'));
     }
 }

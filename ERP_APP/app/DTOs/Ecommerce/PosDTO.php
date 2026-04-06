@@ -2,53 +2,32 @@
 
 namespace App\DTOs\Ecommerce;
 
-class PosDTO
+class InvSyncDTO
 {
-    public function __construct(
-        public readonly string $terminal_name,
-        public readonly ?string $location = null,
-        public readonly ?string $store_code = null,
-        public readonly ?string $device_id = null,
-        public readonly ?float $cash_drawer_balance = null,
-        public readonly ?string $session_status = null,
-        public readonly ?int $current_user_id = null,
-        public readonly ?string $last_sync_date = null,
-        public readonly ?bool $offline_mode = null,
-        public readonly ?array $configuration = null,
-        public readonly ?string $status = null,
-    ) {}
+    public readonly ?int $terminal_id;
+    public readonly int $channel_id;
+    public readonly string $sync_type;
+    public readonly ?int $records_synced;
+    public readonly ?string $started_at;
+    public readonly ?string $completed_at;
+    public readonly ?string $product_sku;
+    public readonly ?float $online_quantity;
+    public readonly ?float $local_quantity;
+    public readonly ?string $sync_date;
+    public readonly ?string $status;
 
-    public static function fromRequest(array $data): self
+    public function __construct(array $data)
     {
-        return new self(
-            terminal_name: $data['terminal_name'],
-            location: $data['location'] ?? null,
-            store_code: $data['store_code'] ?? null,
-            device_id: $data['device_id'] ?? null,
-            cash_drawer_balance: isset($data['cash_drawer_balance']) ? (float) $data['cash_drawer_balance'] : null,
-            session_status: $data['session_status'] ?? null,
-            current_user_id: isset($data['current_user_id']) ? (int) $data['current_user_id'] : null,
-            last_sync_date: $data['last_sync_date'] ?? $data['last_sync'] ?? null,
-            offline_mode: isset($data['offline_mode']) ? (bool) $data['offline_mode'] : null,
-            configuration: $data['configuration'] ?? null,
-            status: $data['status'] ?? null,
-        );
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'terminal_name' => $this->terminal_name,
-            'location' => $this->location,
-            'store_code' => $this->store_code,
-            'device_id' => $this->device_id,
-            'cash_drawer_balance' => $this->cash_drawer_balance,
-            'session_status' => $this->session_status,
-            'current_user_id' => $this->current_user_id,
-            'last_sync_date' => $this->last_sync_date,
-            'offline_mode' => $this->offline_mode,
-            'configuration' => $this->configuration,
-            'status' => $this->status,
-        ];
+        $this->terminal_id = isset($data['terminal_id']) ? (int) $data['terminal_id'] : null;
+        $this->channel_id = (int) $data['channel_id'];
+        $this->sync_type = $data['sync_type'] ?? 'Full';
+        $this->records_synced = isset($data['records_synced']) ? (int) $data['records_synced'] : null;
+        $this->started_at = $data['started_at'] ?? $data['sync_date'] ?? null;
+        $this->completed_at = $data['completed_at'] ?? null;
+        $this->product_sku = $data['product_sku'] ?? (isset($data['product_id']) ? (string) $data['product_id'] : null);
+        $this->online_quantity = isset($data['online_quantity']) ? (float) $data['online_quantity'] : (isset($data['quantity']) ? (float) $data['quantity'] : null);
+        $this->local_quantity = isset($data['local_quantity']) ? (float) $data['local_quantity'] : null;
+        $this->sync_date = $data['sync_date'] ?? $data['started_at'] ?? null;
+        $this->status = $data['status'] ?? 'Pending';
     }
 }

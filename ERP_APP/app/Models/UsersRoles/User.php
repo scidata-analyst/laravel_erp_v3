@@ -51,14 +51,4 @@ class User extends Authenticatable
             'last_login_at' => 'datetime',
         ];
     }
-
-    public function role()
-    {
-        return $this->belongsTo(\App\Models\UsersRoles\Roles::class, 'role_id');
-    }
-
-    public function department()
-    {
-        return $this->belongsTo(\App\Models\HR\Departments::class, 'department_id');
-    }
 }

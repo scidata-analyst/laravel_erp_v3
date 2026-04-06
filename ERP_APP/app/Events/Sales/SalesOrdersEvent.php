@@ -11,6 +11,6 @@ class SalesOrdersEvent
 
     public function __construct()
     {
-        //
+        // TODO: Add event properties
     }
 }

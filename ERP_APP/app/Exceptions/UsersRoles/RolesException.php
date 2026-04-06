@@ -6,5 +6,5 @@ use Exception;
 
 class RolesException extends Exception
 {
-    //
+    // TODO: Add custom exception logic
 }

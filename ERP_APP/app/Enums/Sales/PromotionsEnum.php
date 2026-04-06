@@ -2,7 +2,7 @@
 
 namespace App\Enums\Sales;
 
-enum PromotionsEnum
+enum PromotionsEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

@@ -4,51 +4,30 @@ namespace App\DTOs\Sales;
 
 class CustomersDTO
 {
-    public function __construct(
-        public readonly string $company_name,
-        public readonly ?string $contact_person = null,
-        public readonly ?string $email = null,
-        public readonly ?string $phone = null,
-        public readonly ?float $credit_limit = 0,
-        public readonly ?string $sales_rep = null,
-        public readonly ?string $billing_address = null,
-        public readonly ?string $shipping_address = null,
-        public readonly ?string $status = 'active',
-        public readonly ?string $tax_id = null,
-        public readonly ?string $payment_terms = null,
-    ) {}
+    public readonly ?string $company_name;
+    public readonly ?string $contact_person;
+    public readonly ?string $email;
+    public readonly ?string $phone;
+    public readonly ?float $credit_limit;
+    public readonly ?string $sales_rep;
+    public readonly ?string $billing_address;
+    public readonly ?string $shipping_address;
+    public readonly ?string $status;
+    public readonly ?string $tax_id;
+    public readonly ?string $payment_terms;
 
-    public static function fromRequest(array $data): self
+    public function __construct(array $data)
     {
-        return new self(
-            company_name: $data['company_name'] ?? $data['name'],
-            contact_person: $data['contact_person'] ?? null,
-            email: $data['email'] ?? null,
-            phone: $data['phone'] ?? null,
-            credit_limit: isset($data['credit_limit']) ? (float) $data['credit_limit'] : 0,
-            sales_rep: $data['sales_rep'] ?? null,
-            billing_address: $data['billing_address'] ?? null,
-            shipping_address: $data['shipping_address'] ?? null,
-            status: $data['status'] ?? 'active',
-            tax_id: $data['tax_id'] ?? null,
-            payment_terms: $data['payment_terms'] ?? null,
-        );
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'company_name' => $this->company_name,
-            'contact_person' => $this->contact_person,
-            'email' => $this->email,
-            'phone' => $this->phone,
-            'credit_limit' => $this->credit_limit,
-            'sales_rep' => $this->sales_rep,
-            'billing_address' => $this->billing_address,
-            'shipping_address' => $this->shipping_address,
-            'status' => $this->status,
-            'tax_id' => $this->tax_id,
-            'payment_terms' => $this->payment_terms,
-        ];
+        $this->company_name      = $data['company_name'] ?? $data['name'] ?? null;
+        $this->contact_person    = $data['contact_person'] ?? null;
+        $this->email             = $data['email'] ?? null;
+        $this->phone             = $data['phone'] ?? null;
+        $this->credit_limit      = isset($data['credit_limit']) ? (float) $data['credit_limit'] : 0;
+        $this->sales_rep         = $data['sales_rep'] ?? null;
+        $this->billing_address   = $data['billing_address'] ?? null;
+        $this->shipping_address  = $data['shipping_address'] ?? null;
+        $this->status            = $data['status'] ?? 'active';
+        $this->tax_id            = $data['tax_id'] ?? null;
+        $this->payment_terms     = $data['payment_terms'] ?? null;
     }
 }

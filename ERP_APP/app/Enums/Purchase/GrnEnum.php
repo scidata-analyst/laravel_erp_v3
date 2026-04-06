@@ -2,7 +2,7 @@
 
 namespace App\Enums\Purchase;
 
-enum GrnEnum
+enum GrnEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

@@ -2,7 +2,7 @@
 
 namespace App\Enums\Production;
 
-enum WorkOrdersEnum
+enum WorkOrdersEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

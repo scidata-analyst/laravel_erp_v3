@@ -2,7 +2,7 @@
 
 namespace App\Enums\Purchase;
 
-enum SupplierPaymentsEnum
+enum SupplierPaymentsEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

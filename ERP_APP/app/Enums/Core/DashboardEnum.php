@@ -2,7 +2,7 @@
 
 namespace App\Enums\Core;
 
-enum DashboardEnum
+enum DashboardEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

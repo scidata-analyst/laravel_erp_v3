@@ -6,5 +6,5 @@ use Exception;
 
 class DashboardException extends Exception
 {
-    //
+    // TODO: Add custom exception logic
 }

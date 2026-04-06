@@ -2,7 +2,7 @@
 
 namespace App\Enums\Reports;
 
-enum BiDashboardsEnum
+enum BiDashboardsEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

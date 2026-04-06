@@ -2,7 +2,7 @@
 
 namespace App\Enums\Reports;
 
-enum CustomReportsEnum
+enum CustomReportsEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

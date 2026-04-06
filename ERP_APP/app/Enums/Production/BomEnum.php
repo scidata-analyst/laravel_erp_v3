@@ -2,7 +2,7 @@
 
 namespace App\Enums\Production;
 
-enum BomEnum
+enum BomEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

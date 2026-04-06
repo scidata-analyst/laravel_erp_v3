@@ -4,45 +4,30 @@ namespace App\DTOs\Purchase;
 
 class PurchaseOrdersDTO
 {
-    public function __construct(
-        public readonly int $supplier_id,
-        public readonly string $order_date,
-        public readonly ?string $expected_delivery = null,
-        public readonly ?string $warehouse = null,
-        public readonly ?string $payment_terms = null,
-        public readonly float $total_amount = 0,
-        public readonly ?string $status = 'pending',
-        public readonly ?array $order_items = [],
-        public readonly ?string $notes = null,
-    ) {}
+    public readonly ?string $po_number;
+    public readonly ?int $supplier_id;
+    public readonly ?string $order_date;
+    public readonly ?string $expected_delivery;
+    public readonly ?string $warehouse;
+    public readonly ?string $payment_terms;
+    public readonly ?float $total_amount;
+    public readonly ?string $status;
+    public readonly ?string $approved_by;
+    public readonly ?string $order_items;
+    public readonly ?string $notes;
 
-    public static function fromRequest(array $data): self
+    public function __construct(array $data)
     {
-        return new self(
-            supplier_id: (int) $data['supplier_id'],
-            order_date: $data['order_date'],
-            expected_delivery: $data['expected_delivery'] ?? $data['expected_delivery_date'] ?? null,
-            warehouse: $data['warehouse'] ?? null,
-            payment_terms: $data['payment_terms'] ?? null,
-            total_amount: (float) ($data['total_amount'] ?? 0),
-            status: $data['status'] ?? 'pending',
-            order_items: $data['order_items'] ?? $data['items'] ?? [],
-            notes: $data['notes'] ?? null,
-        );
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'supplier_id' => $this->supplier_id,
-            'order_date' => $this->order_date,
-            'expected_delivery' => $this->expected_delivery,
-            'warehouse' => $this->warehouse,
-            'payment_terms' => $this->payment_terms,
-            'total_amount' => $this->total_amount,
-            'status' => $this->status,
-            'order_items' => $this->order_items,
-            'notes' => $this->notes,
-        ];
+        $this->po_number        = $data['po_number'] ?? null;
+        $this->supplier_id      = isset($data['supplier_id']) ? (int)$data['supplier_id'] : null;
+        $this->order_date       = $data['order_date'] ?? null;
+        $this->expected_delivery= $data['expected_delivery'] ?? null;
+        $this->warehouse        = $data['warehouse'] ?? null;
+        $this->payment_terms    = $data['payment_terms'] ?? null;
+        $this->total_amount     = isset($data['total_amount']) ? (float)$data['total_amount'] : null;
+        $this->status           = $data['status'] ?? null;
+        $this->approved_by      = $data['approved_by'] ?? null;
+        $this->order_items      = $data['order_items'] ?? null;
+        $this->notes            = $data['notes'] ?? null;
     }
 }

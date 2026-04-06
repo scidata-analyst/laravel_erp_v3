@@ -2,7 +2,7 @@
 
 namespace App\Enums\Projects;
 
-enum ProjectCostEnum
+enum ProjectCostEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

@@ -6,5 +6,5 @@ use Exception;
 
 class ForecastingException extends Exception
 {
-    //
+    // TODO: Add custom exception logic
 }

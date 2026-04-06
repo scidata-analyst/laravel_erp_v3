@@ -2,7 +2,7 @@
 
 namespace App\Enums\Inventory;
 
-enum BatchTrackingEnum
+enum BatchTrackingEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

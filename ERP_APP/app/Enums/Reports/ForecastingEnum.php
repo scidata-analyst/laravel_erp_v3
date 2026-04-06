@@ -2,7 +2,7 @@
 
 namespace App\Enums\Reports;
 
-enum ForecastingEnum
+enum ForecastingEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

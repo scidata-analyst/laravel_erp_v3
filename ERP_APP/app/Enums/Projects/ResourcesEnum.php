@@ -2,7 +2,7 @@
 
 namespace App\Enums\Projects;
 
-enum ResourcesEnum
+enum ResourcesEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

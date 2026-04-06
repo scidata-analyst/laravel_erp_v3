@@ -11,6 +11,6 @@ class StockMovementsEvent
 
     public function __construct()
     {
-        //
+        // TODO: Add event properties
     }
 }

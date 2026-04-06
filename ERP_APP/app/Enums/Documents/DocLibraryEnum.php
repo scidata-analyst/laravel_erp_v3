@@ -2,7 +2,7 @@
 
 namespace App\Enums\Documents;
 
-enum DocLibraryEnum
+enum DocLibraryEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

@@ -2,47 +2,28 @@
 
 namespace App\DTOs\Documents;
 
-class DocLibraryDTO
+final class DocLibraryDTO
 {
-    public function __construct(
-        public readonly string $title,
-        public readonly string $file_type,
-        public readonly string $file_path,
-        public readonly int $file_size,
-        public readonly ?string $category = null,
-        public readonly ?string $version = null,
-        public readonly ?int $uploaded_by = null,
-        public readonly ?string $status = 'Active',
-        public readonly ?string $description = null,
-    ) {}
+    public readonly string $title;
+    public readonly string $fileType;
+    public readonly string $filePath;
+    public readonly int $fileSize;
+    public readonly ?string $category;
+    public readonly ?string $version;
+    public readonly ?int $uploadedBy;
+    public readonly ?string $status;
+    public readonly ?string $description;
 
-    public static function fromRequest(array $data): self
+    public function __construct(array $data)
     {
-        return new self(
-            title: $data['title'] ?? $data['name'] ?? $data['file_name'],
-            file_type: $data['file_type'],
-            file_path: $data['file_path'],
-            file_size: (int) $data['file_size'],
-            category: $data['category'] ?? null,
-            version: $data['version'] ?? null,
-            uploaded_by: isset($data['uploaded_by']) ? (int) $data['uploaded_by'] : null,
-            status: $data['status'] ?? 'Active',
-            description: $data['description'] ?? $data['notes'] ?? null,
-        );
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'title' => $this->title,
-            'file_type' => $this->file_type,
-            'file_path' => $this->file_path,
-            'file_size' => $this->file_size,
-            'category' => $this->category,
-            'version' => $this->version,
-            'uploaded_by' => $this->uploaded_by,
-            'status' => $this->status,
-            'description' => $this->description,
-        ];
+        $this->title = (string)($data['title'] ?? $data['name'] ?? $data['file_name'] ?? '');
+        $this->fileType = (string)($data['file_type'] ?? '');
+        $this->filePath = (string)($data['file_path'] ?? '');
+        $this->fileSize = isset($data['file_size']) ? (int)$data['file_size'] : 0;
+        $this->category = $data['category'] ?? null;
+        $this->version = $data['version'] ?? null;
+        $this->uploadedBy = isset($data['uploaded_by']) ? (int)$data['uploaded_by'] : null;
+        $this->status = $data['status'] ?? 'Active';
+        $this->description = $data['description'] ?? $data['notes'] ?? null;
     }
 }

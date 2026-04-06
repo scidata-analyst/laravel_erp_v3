@@ -2,7 +2,7 @@
 
 namespace App\Enums\Ecommerce;
 
-enum InvSyncEnum
+enum InvSyncEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

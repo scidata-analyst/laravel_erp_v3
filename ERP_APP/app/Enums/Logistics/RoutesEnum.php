@@ -2,7 +2,7 @@
 
 namespace App\Enums\Logistics;
 
-enum RoutesEnum
+enum RoutesEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

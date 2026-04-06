@@ -6,5 +6,5 @@ use Exception;
 
 class ShipmentsException extends Exception
 {
-    //
+    // TODO: Add custom exception logic
 }

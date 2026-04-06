@@ -6,5 +6,5 @@ use Exception;
 
 class EmployeesException extends Exception
 {
-    //
+    // TODO: Add custom exception logic
 }

@@ -2,7 +2,7 @@
 
 namespace App\Enums\Production;
 
-enum MachineLaborEnum
+enum MachineLaborEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

@@ -2,7 +2,7 @@
 
 namespace App\Enums\Inventory;
 
-enum ProductCatalogEnum
+enum ProductCatalogEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

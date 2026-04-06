@@ -2,7 +2,7 @@
 
 namespace App\Enums\HR;
 
-enum PerformanceEnum
+enum PerformanceEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

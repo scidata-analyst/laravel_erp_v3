@@ -14,11 +14,11 @@ class SuppliersJob implements ShouldQueue
 
     public function __construct()
     {
-        //
+        // TODO: Add job properties
     }
 
     public function handle(): void
     {
-        //
+        // TODO: Implement job logic
     }
 }

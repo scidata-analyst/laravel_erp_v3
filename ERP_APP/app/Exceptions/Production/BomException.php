@@ -6,5 +6,5 @@ use Exception;
 
 class BomException extends Exception
 {
-    //
+    // TODO: Add custom exception logic
 }

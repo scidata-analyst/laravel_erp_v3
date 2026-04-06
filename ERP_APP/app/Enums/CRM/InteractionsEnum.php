@@ -2,7 +2,7 @@
 
 namespace App\Enums\CRM;
 
-enum InteractionsEnum
+enum InteractionsEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

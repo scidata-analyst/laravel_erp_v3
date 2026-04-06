@@ -2,7 +2,7 @@
 
 namespace App\Enums\Purchase;
 
-enum SuppliersEnum
+enum SuppliersEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

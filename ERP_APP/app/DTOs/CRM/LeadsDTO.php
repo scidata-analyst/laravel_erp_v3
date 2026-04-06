@@ -2,53 +2,32 @@
 
 namespace App\DTOs\CRM;
 
-class LeadsDTO
+final class LeadsDTO
 {
-    public function __construct(
-        public readonly string $lead_name,
-        public readonly string $email,
-        public readonly ?string $company = null,
-        public readonly ?string $phone = null,
-        public readonly ?float $deal_value = null,
-        public readonly ?string $stage = 'New',
-        public readonly ?int $assigned_to = null,
-        public readonly ?string $source = null,
-        public readonly ?int $probability = 0,
-        public readonly ?string $notes = null,
-        public readonly ?string $status = null,
-    ) {}
+    public readonly string $leadName;
+    public readonly string $email;
+    public readonly ?string $company;
+    public readonly ?string $phone;
+    public readonly ?float $dealValue;
+    public readonly ?string $stage;
+    public readonly ?int $assignedTo;
+    public readonly ?string $source;
+    public readonly ?int $probability;
+    public readonly ?string $notes;
+    public readonly ?string $status;
 
-    public static function fromRequest(array $data): self
+    public function __construct(array $data)
     {
-        return new self(
-            lead_name: $data['lead_name'] ?? $data['name'],
-            email: $data['email'],
-            company: $data['company'] ?? null,
-            phone: $data['phone'] ?? null,
-            deal_value: isset($data['deal_value']) ? (float) $data['deal_value'] : (isset($data['estimated_value']) ? (float) $data['estimated_value'] : null),
-            stage: $data['stage'] ?? 'New',
-            assigned_to: isset($data['assigned_to']) ? (int) $data['assigned_to'] : null,
-            source: $data['source'] ?? null,
-            probability: isset($data['probability']) ? (int) $data['probability'] : 0,
-            notes: $data['notes'] ?? null,
-            status: $data['status'] ?? null,
-        );
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'lead_name' => $this->lead_name,
-            'email' => $this->email,
-            'company' => $this->company,
-            'phone' => $this->phone,
-            'deal_value' => $this->deal_value,
-            'stage' => $this->stage,
-            'assigned_to' => $this->assigned_to,
-            'source' => $this->source,
-            'probability' => $this->probability,
-            'notes' => $this->notes,
-            'status' => $this->status,
-        ];
+        $this->leadName = (string)($data['lead_name'] ?? $data['name'] ?? '');
+        $this->email = (string)($data['email'] ?? '');
+        $this->company = $data['company'] ?? null;
+        $this->phone = $data['phone'] ?? null;
+        $this->dealValue = isset($data['deal_value']) ? (float)$data['deal_value'] : (isset($data['estimated_value']) ? (float)$data['estimated_value'] : null);
+        $this->stage = (string)($data['stage'] ?? 'New');
+        $this->assignedTo = isset($data['assigned_to']) ? (int)$data['assigned_to'] : null;
+        $this->source = $data['source'] ?? null;
+        $this->probability = isset($data['probability']) ? (int)$data['probability'] : 0;
+        $this->notes = $data['notes'] ?? null;
+        $this->status = $data['status'] ?? null;
     }
 }

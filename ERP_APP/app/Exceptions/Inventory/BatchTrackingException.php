@@ -6,5 +6,5 @@ use Exception;
 
 class BatchTrackingException extends Exception
 {
-    //
+    // TODO: Add custom exception logic
 }

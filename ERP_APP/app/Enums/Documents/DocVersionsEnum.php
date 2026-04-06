@@ -2,7 +2,7 @@
 
 namespace App\Enums\Documents;
 
-enum DocVersionsEnum
+enum DocVersionsEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

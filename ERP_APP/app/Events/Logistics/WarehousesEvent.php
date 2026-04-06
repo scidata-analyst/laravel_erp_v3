@@ -11,6 +11,6 @@ class WarehousesEvent
 
     public function __construct()
     {
-        //
+        // TODO: Add event properties
     }
 }

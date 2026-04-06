@@ -11,6 +11,6 @@ class BiDashboardsEvent
 
     public function __construct()
     {
-        //
+        // TODO: Add event properties
     }
 }

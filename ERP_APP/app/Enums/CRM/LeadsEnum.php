@@ -2,7 +2,7 @@
 
 namespace App\Enums\CRM;
 
-enum LeadsEnum
+enum LeadsEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

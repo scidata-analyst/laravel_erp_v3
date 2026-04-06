@@ -11,6 +11,6 @@ class GrnEvent
 
     public function __construct()
     {
-        //
+        // TODO: Add event properties
     }
 }

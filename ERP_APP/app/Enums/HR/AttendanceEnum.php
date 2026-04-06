@@ -2,7 +2,7 @@
 
 namespace App\Enums\HR;
 
-enum AttendanceEnum
+enum AttendanceEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

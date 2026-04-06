@@ -6,5 +6,5 @@ use Exception;
 
 class StockMovementsException extends Exception
 {
-    //
+    // TODO: Add custom exception logic
 }

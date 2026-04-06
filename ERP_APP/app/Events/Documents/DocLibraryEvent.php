@@ -11,6 +11,6 @@ class DocLibraryEvent
 
     public function __construct()
     {
-        //
+        // TODO: Add event properties
     }
 }

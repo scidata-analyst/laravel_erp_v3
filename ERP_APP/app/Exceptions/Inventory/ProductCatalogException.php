@@ -6,5 +6,5 @@ use Exception;
 
 class ProductCatalogException extends Exception
 {
-    //
+    // TODO: Add custom exception logic
 }

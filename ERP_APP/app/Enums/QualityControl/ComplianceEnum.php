@@ -2,7 +2,7 @@
 
 namespace App\Enums\QualityControl;
 
-enum ComplianceEnum
+enum ComplianceEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

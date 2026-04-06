@@ -2,7 +2,7 @@
 
 namespace App\Enums\Accounting;
 
-enum ApArEnum
+enum ApArEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

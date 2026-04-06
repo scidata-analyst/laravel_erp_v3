@@ -11,6 +11,6 @@ class ProductCatalogEvent
 
     public function __construct()
     {
-        //
+        // TODO: Add event properties
     }
 }

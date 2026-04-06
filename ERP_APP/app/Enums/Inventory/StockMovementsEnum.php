@@ -2,7 +2,7 @@
 
 namespace App\Enums\Inventory;
 
-enum StockMovementsEnum
+enum StockMovementsEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

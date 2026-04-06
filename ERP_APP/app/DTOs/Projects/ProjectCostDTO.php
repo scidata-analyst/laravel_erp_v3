@@ -4,44 +4,30 @@ namespace App\DTOs\Projects;
 
 class ProjectCostDTO
 {
-    public function __construct(
-        public readonly int $project_id,
-        public readonly string $cost_category,
-        public readonly float $budgeted_amount,
-        public readonly ?float $actual_amount = 0,
-        public readonly ?string $description = null,
-        public readonly ?string $cost_date = null,
-        public readonly ?int $approved_by = null,
-        public readonly ?string $status = 'Pending',
-    ) {}
+    public readonly ?int $project;
+    public readonly ?float $budget;
+    public readonly ?float $spent;
+    public readonly ?float $remaining;
+    public readonly ?float $used;
+    public readonly ?float $variance;
+    public readonly ?string $status;
+    public readonly ?string $cost_category;
+    public readonly ?string $date_incurred;
+    public readonly ?int $approved_by;
+    public readonly ?string $notes;
 
-    public static function fromRequest(array $data): self
+    public function __construct(array $data)
     {
-        $amount = (float) ($data['amount'] ?? 0);
-
-        return new self(
-            project_id: (int) $data['project_id'],
-            cost_category: $data['cost_category'] ?? $data['category'],
-            budgeted_amount: isset($data['budgeted_amount']) ? (float) $data['budgeted_amount'] : $amount,
-            actual_amount: isset($data['actual_amount']) ? (float) $data['actual_amount'] : $amount,
-            description: $data['description'] ?? null,
-            cost_date: $data['cost_date'] ?? $data['date'] ?? null,
-            approved_by: isset($data['approved_by']) ? (int) $data['approved_by'] : null,
-            status: $data['status'] ?? 'Pending',
-        );
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'project_id' => $this->project_id,
-            'cost_category' => $this->cost_category,
-            'budgeted_amount' => $this->budgeted_amount,
-            'actual_amount' => $this->actual_amount,
-            'description' => $this->description,
-            'cost_date' => $this->cost_date,
-            'approved_by' => $this->approved_by,
-            'status' => $this->status,
-        ];
+        $this->project       = isset($data['project']) ? (int)$data['project'] : null;
+        $this->budget        = isset($data['budget']) ? (float)$data['budget'] : null;
+        $this->spent         = isset($data['spent']) ? (float)$data['spent'] : null;
+        $this->remaining     = isset($data['remaining']) ? (float)$data['remaining'] : null;
+        $this->used          = isset($data['used']) ? (float)$data['used'] : null;
+        $this->variance      = isset($data['variance']) ? (float)$data['variance'] : null;
+        $this->status        = $data['status'] ?? null;
+        $this->cost_category = $data['cost_category'] ?? null;
+        $this->date_incurred = $data['date_incurred'] ?? null;
+        $this->approved_by   = isset($data['approved_by']) ? (int)$data['approved_by'] : null;
+        $this->notes         = $data['notes'] ?? null;
     }
 }

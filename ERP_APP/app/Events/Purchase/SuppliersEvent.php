@@ -11,6 +11,6 @@ class SuppliersEvent
 
     public function __construct()
     {
-        //
+        // TODO: Add event properties
     }
 }

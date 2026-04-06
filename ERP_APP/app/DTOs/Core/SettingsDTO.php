@@ -2,46 +2,26 @@
 
 namespace App\DTOs\Core;
 
-class SettingsDTO
+final class SettingsDTO
 {
-    public function __construct(
-        public readonly string $setting_key,
-        public readonly mixed $setting_value,
-        public readonly ?string $setting_type = 'string',
-        public readonly ?string $category = 'General',
-        public readonly ?string $description = null,
-        public readonly bool $is_system = false,
-        public readonly ?int $updated_by = null,
-        public readonly ?array $validation_rules = null,
-    ) {}
+    public readonly string $settingKey;
+    public readonly mixed $settingValue;
+    public readonly ?string $settingType;
+    public readonly ?string $category;
+    public readonly ?string $description;
+    public readonly bool $isSystem;
+    public readonly ?int $updatedBy;
+    public readonly ?array $validationRules;
 
-    public static function fromRequest(array $data): self
+    public function __construct(array $data)
     {
-        return new self(
-            setting_key: $data['setting_key'] ?? $data['key'],
-            setting_value: $data['setting_value'] ?? $data['value'],
-            setting_type: $data['setting_type'] ?? 'string',
-            category: $data['category'] ?? 'General',
-            description: $data['description'] ?? null,
-            is_system: (bool) ($data['is_system'] ?? false),
-            updated_by: isset($data['updated_by']) ? (int) $data['updated_by'] : null,
-            validation_rules: $data['validation_rules'] ?? null,
-        );
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'setting_key' => $this->setting_key,
-            'key' => $this->setting_key,
-            'setting_value' => $this->setting_value,
-            'value' => $this->setting_value,
-            'setting_type' => $this->setting_type,
-            'category' => $this->category,
-            'description' => $this->description,
-            'is_system' => $this->is_system,
-            'updated_by' => $this->updated_by,
-            'validation_rules' => $this->validation_rules,
-        ];
+        $this->settingKey = (string)($data['setting_key'] ?? $data['key'] ?? '');
+        $this->settingValue = $data['setting_value'] ?? $data['value'] ?? null;
+        $this->settingType = (string)($data['setting_type'] ?? 'string');
+        $this->category = (string)($data['category'] ?? 'General');
+        $this->description = $data['description'] ?? null;
+        $this->isSystem = isset($data['is_system']) ? (bool)$data['is_system'] : false;
+        $this->updatedBy = isset($data['updated_by']) ? (int)$data['updated_by'] : null;
+        $this->validationRules = $data['validation_rules'] ?? null;
     }
 }

@@ -13,21 +13,8 @@ class DashboardRequest extends FormRequest
 
     public function rules(): array
     {
-        if ($this->isMethod('get')) {
-            return [
-                'per_page' => 'nullable|integer|min:1|max:100',
-                'category' => 'nullable|string',
-                'period' => 'nullable|string',
-                'search' => 'nullable|string'
-            ];
-        }
-
         return [
-            'metric_name' => 'required|string|max:255',
-            'metric_value' => 'required',
-            'category' => 'nullable|string',
-            'period' => 'nullable|string',
-            'extra_data' => 'nullable|array',
+            // TODO: Add validation rules
         ];
     }
 }

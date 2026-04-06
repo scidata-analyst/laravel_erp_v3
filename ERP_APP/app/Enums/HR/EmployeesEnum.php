@@ -2,7 +2,7 @@
 
 namespace App\Enums\HR;
 
-enum EmployeesEnum
+enum EmployeesEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

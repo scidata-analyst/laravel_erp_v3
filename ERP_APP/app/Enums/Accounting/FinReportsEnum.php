@@ -2,7 +2,7 @@
 
 namespace App\Enums\Accounting;
 
-enum FinReportsEnum
+enum FinReportsEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

@@ -2,7 +2,7 @@
 
 namespace App\Enums\QualityControl;
 
-enum DefectsEnum
+enum DefectsEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }

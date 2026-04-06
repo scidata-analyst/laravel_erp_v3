@@ -2,44 +2,28 @@
 
 namespace App\DTOs\Documents;
 
-class DocVersionsDTO
+final class DocLibraryDTO
 {
-    public function __construct(
-        public readonly int $doc_library_id,
-        public readonly string $version_number,
-        public readonly ?string $change_type = null,
-        public readonly string $file_path,
-        public readonly int $file_size,
-        public readonly ?string $changes_description = null,
-        public readonly ?int $created_by = null,
-        public readonly ?int $approved_by = null,
-    ) {}
+    public readonly string $title;
+    public readonly string $fileType;
+    public readonly string $filePath;
+    public readonly int $fileSize;
+    public readonly ?string $category;
+    public readonly ?string $version;
+    public readonly ?int $uploadedBy;
+    public readonly ?string $status;
+    public readonly ?string $description;
 
-    public static function fromRequest(array $data): self
+    public function __construct(array $data)
     {
-        return new self(
-            doc_library_id: (int) ($data['doc_library_id'] ?? $data['document_id']),
-            version_number: $data['version_number'],
-            change_type: $data['change_type'] ?? null,
-            file_path: $data['file_path'],
-            file_size: (int) ($data['file_size'] ?? 0),
-            changes_description: $data['changes_description'] ?? $data['changes'] ?? $data['change_log'] ?? null,
-            created_by: isset($data['created_by']) ? (int) $data['created_by'] : (isset($data['uploaded_by']) ? (int) $data['uploaded_by'] : null),
-            approved_by: isset($data['approved_by']) ? (int) $data['approved_by'] : null,
-        );
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'doc_library_id' => $this->doc_library_id,
-            'version_number' => $this->version_number,
-            'change_type' => $this->change_type,
-            'file_path' => $this->file_path,
-            'file_size' => $this->file_size,
-            'changes_description' => $this->changes_description,
-            'created_by' => $this->created_by,
-            'approved_by' => $this->approved_by,
-        ];
+        $this->title = (string)($data['title'] ?? $data['name'] ?? $data['file_name'] ?? '');
+        $this->fileType = (string)($data['file_type'] ?? '');
+        $this->filePath = (string)($data['file_path'] ?? '');
+        $this->fileSize = isset($data['file_size']) ? (int)$data['file_size'] : 0;
+        $this->category = $data['category'] ?? null;
+        $this->version = $data['version'] ?? null;
+        $this->uploadedBy = isset($data['uploaded_by']) ? (int)$data['uploaded_by'] : null;
+        $this->status = $data['status'] ?? 'Active';
+        $this->description = $data['description'] ?? $data['notes'] ?? null;
     }
 }

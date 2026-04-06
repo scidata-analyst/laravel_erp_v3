@@ -2,7 +2,7 @@
 
 namespace App\Enums\Accounting;
 
-enum TaxEnum
+enum TaxEnum: string
 {
-    // Enum definitions
+    // TODO: Add enum values
 }
