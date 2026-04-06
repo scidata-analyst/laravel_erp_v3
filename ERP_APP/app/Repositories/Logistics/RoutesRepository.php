@@ -1,48 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\Logistics;
 
-use App\Interfaces\Logistics\RoutesInterface;
 use App\Models\Logistics\Routes;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class RoutesRepository implements RoutesInterface
+class RoutesRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return Routes::all();
+        return Routes::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return Routes::paginate($perPage);
+        return Routes::query()->findOrFail($id);
     }
 
-    public function create(array $data): Routes
+    public function create(array $data)
     {
-        return Routes::create($data);
+        return Routes::query()->create($data);
     }
 
-    public function read(int $id): ?Routes
+    public function update(int $id, array $data)
     {
-        return Routes::find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $route = $this->read($id);
-        return $route ? $route->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $route = $this->read($id);
-        return $route ? $route->delete() : false;
-    }
-
-    public function getActiveRoutes(): Collection
-    {
-        return Routes::where('status', 'Active')->get();
+        return (bool) $this->find($id)->delete();
     }
 }

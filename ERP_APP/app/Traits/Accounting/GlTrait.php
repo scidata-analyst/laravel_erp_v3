@@ -4,5 +4,8 @@ namespace App\Traits\Accounting;
 
 trait GlTrait
 {
-    // Shared trait logic
+    public function exampleFunction()
+    {
+        //
+    }
 }

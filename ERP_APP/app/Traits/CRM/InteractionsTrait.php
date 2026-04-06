@@ -4,5 +4,8 @@ namespace App\Traits\CRM;
 
 trait InteractionsTrait
 {
-    // Shared trait logic
+    public function exampleFunction()
+    {
+        //
+    }
 }

@@ -1,72 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\Sales;
 
-use App\Interfaces\Sales\CustomersInterface;
 use App\Models\Sales\Customers;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class CustomersRepository implements CustomersInterface
+class CustomersRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return Customers::all();
+        return Customers::query()->get();
     }
 
-    public function index(int $perPage = 15, string $search = '', array $filters = []): LengthAwarePaginator
+    public function find(int $id)
     {
-        $query = Customers::query();
-
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', '%' . $search . '%')
-                  ->orWhere('contact_person', 'like', '%' . $search . '%')
-                  ->orWhere('email', 'like', '%' . $search . '%')
-                  ->orWhere('phone', 'like', '%' . $search . '%');
-            });
-        }
-
-        if (!empty($filters)) {
-            foreach ($filters as $filter) {
-                if (isset($filter['field']) && isset($filter['value'])) {
-                    $query->where($filter['field'], $filter['value']);
-                }
-            }
-        }
-
-        return $query->paginate($perPage);
+        return Customers::query()->findOrFail($id);
     }
 
-    public function create(array $data): Customers
+    public function create(array $data)
     {
-        return Customers::create($data);
+        return Customers::query()->create($data);
     }
 
-    public function read(int $id): ?Customers
+    public function update(int $id, array $data)
     {
-        return Customers::find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $customer = $this->read($id);
-        return $customer ? $customer->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $customer = $this->read($id);
-        return $customer ? $customer->delete() : false;
-    }
-
-    public function getByStatus(string $status): Collection
-    {
-        return Customers::where('status', $status)->get();
-    }
-
-    public function findByEmail(string $email): ?Customers
-    {
-        return Customers::where('email', $email)->first();
+        return (bool) $this->find($id)->delete();
     }
 }

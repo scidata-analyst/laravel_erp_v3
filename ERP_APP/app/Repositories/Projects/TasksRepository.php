@@ -1,59 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\Projects;
 
-use App\Interfaces\Projects\TasksInterface;
 use App\Models\Projects\Tasks;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class TasksRepository implements TasksInterface
+class TasksRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return Tasks::all();
+        return Tasks::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return Tasks::with(['assignedUser'])->paginate($perPage);
+        return Tasks::query()->findOrFail($id);
     }
 
-    public function create(array $data): Tasks
+    public function create(array $data)
     {
-        return Tasks::create($data);
+        return Tasks::query()->create($data);
     }
 
-    public function read(int $id): ?Tasks
+    public function update(int $id, array $data)
     {
-        return Tasks::with(['assignedUser', 'projectCosts'])->find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $task = $this->read($id);
-        return $task ? $task->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $task = $this->read($id);
-        return $task ? $task->delete() : false;
-    }
-
-    public function getByProject(string $projectName): Collection
-    {
-        return Tasks::where('project_name', $projectName)->get();
-    }
-
-    public function updateProgress(int $id, int $percentage): bool
-    {
-        $task = $this->read($id);
-        if (!$task) return false;
-
-        return $task->update([
-            'progress_percentage' => $percentage,
-            'status' => $percentage >= 100 ? 'Completed' : 'In Progress'
-        ]);
+        return (bool) $this->find($id)->delete();
     }
 }

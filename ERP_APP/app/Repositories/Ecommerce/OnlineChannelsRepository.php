@@ -1,48 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\Ecommerce;
 
-use App\Interfaces\Ecommerce\OnlineChannelsInterface;
 use App\Models\Ecommerce\OnlineChannels;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class OnlineChannelsRepository implements OnlineChannelsInterface
+class OnlineChannelsRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return OnlineChannels::all();
+        return OnlineChannels::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return OnlineChannels::paginate($perPage);
+        return OnlineChannels::query()->findOrFail($id);
     }
 
-    public function create(array $data): OnlineChannels
+    public function create(array $data)
     {
-        return OnlineChannels::create($data);
+        return OnlineChannels::query()->create($data);
     }
 
-    public function read(int $id): ?OnlineChannels
+    public function update(int $id, array $data)
     {
-        return OnlineChannels::find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $channel = $this->read($id);
-        return $channel ? $channel->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $channel = $this->read($id);
-        return $channel ? $channel->delete() : false;
-    }
-
-    public function getActiveChannels(): Collection
-    {
-        return OnlineChannels::where('status', 'Active')->get();
+        return (bool) $this->find($id)->delete();
     }
 }

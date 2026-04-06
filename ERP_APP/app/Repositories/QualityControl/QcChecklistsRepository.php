@@ -1,48 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\QualityControl;
 
-use App\Interfaces\QualityControl\QcChecklistsInterface;
 use App\Models\QualityControl\QcChecklists;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class QcChecklistsRepository implements QcChecklistsInterface
+class QcChecklistsRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return QcChecklists::all();
+        return QcChecklists::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return QcChecklists::paginate($perPage);
+        return QcChecklists::query()->findOrFail($id);
     }
 
-    public function create(array $data): QcChecklists
+    public function create(array $data)
     {
-        return QcChecklists::create($data);
+        return QcChecklists::query()->create($data);
     }
 
-    public function read(int $id): ?QcChecklists
+    public function update(int $id, array $data)
     {
-        return QcChecklists::find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $checklist = $this->read($id);
-        return $checklist ? $checklist->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $checklist = $this->read($id);
-        return $checklist ? $checklist->delete() : false;
-    }
-
-    public function getByCategory(string $category): Collection
-    {
-        return QcChecklists::where('category', $category)->get();
+        return (bool) $this->find($id)->delete();
     }
 }

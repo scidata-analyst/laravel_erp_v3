@@ -4,5 +4,8 @@ namespace App\Traits\CRM;
 
 trait SupportTrait
 {
-    // Shared trait logic
+    public function exampleFunction()
+    {
+        //
+    }
 }

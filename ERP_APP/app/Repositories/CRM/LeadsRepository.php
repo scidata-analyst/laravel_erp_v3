@@ -1,69 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\CRM;
 
-use App\Interfaces\CRM\LeadsInterface;
 use App\Models\CRM\Leads;
-use App\Models\Sales\Customers;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\DB;
 
-class LeadsRepository implements LeadsInterface
+class LeadsRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return Leads::all();
+        return Leads::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return Leads::with(['assignedUser'])->paginate($perPage);
+        return Leads::query()->findOrFail($id);
     }
 
-    public function create(array $data): Leads
+    public function create(array $data)
     {
-        return Leads::create($data);
+        return Leads::query()->create($data);
     }
 
-    public function read(int $id): ?Leads
+    public function update(int $id, array $data)
     {
-        return Leads::with(['assignedUser'])->find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $lead = $this->read($id);
-        return $lead ? $lead->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $lead = $this->read($id);
-        return $lead ? $lead->delete() : false;
-    }
-
-    public function getByStage(string $stage): Collection
-    {
-        return Leads::where('stage', $stage)->get();
-    }
-
-    public function convertToCustomer(int $leadId): ?Customers
-    {
-        return DB::transaction(function () use ($leadId) {
-            $lead = $this->read($leadId);
-            if (!$lead) return null;
-
-            $customer = Customers::create([
-                'company_name' => $lead->company ?? $lead->lead_name,
-                'email' => $lead->email,
-                'phone' => $lead->phone,
-                'status' => 'active'
-            ]);
-
-            $lead->update(['stage' => 'Closed', 'status' => 'Converted']);
-            
-            return $customer;
-        });
+        return (bool) $this->find($id)->delete();
     }
 }

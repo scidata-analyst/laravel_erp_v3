@@ -4,5 +4,8 @@ namespace App\Traits\Production;
 
 trait WorkOrdersTrait
 {
-    // Shared trait logic
+    public function exampleFunction()
+    {
+        //
+    }
 }

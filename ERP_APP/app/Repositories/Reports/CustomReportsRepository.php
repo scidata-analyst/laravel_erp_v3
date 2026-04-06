@@ -1,48 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\Reports;
 
-use App\Interfaces\Reports\CustomReportsInterface;
 use App\Models\Reports\CustomReports;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class CustomReportsRepository implements CustomReportsInterface
+class CustomReportsRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return CustomReports::all();
+        return CustomReports::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return CustomReports::paginate($perPage);
+        return CustomReports::query()->findOrFail($id);
     }
 
-    public function create(array $data): CustomReports
+    public function create(array $data)
     {
-        return CustomReports::create($data);
+        return CustomReports::query()->create($data);
     }
 
-    public function read(int $id): ?CustomReports
+    public function update(int $id, array $data)
     {
-        return CustomReports::find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $report = $this->read($id);
-        return $report ? $report->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $report = $this->read($id);
-        return $report ? $report->delete() : false;
-    }
-
-    public function getByModule(string $module): Collection
-    {
-        return CustomReports::where('module', $module)->get();
+        return (bool) $this->find($id)->delete();
     }
 }

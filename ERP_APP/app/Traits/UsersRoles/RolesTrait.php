@@ -4,5 +4,8 @@ namespace App\Traits\UsersRoles;
 
 trait RolesTrait
 {
-    // Shared trait logic
+    public function exampleFunction()
+    {
+        //
+    }
 }

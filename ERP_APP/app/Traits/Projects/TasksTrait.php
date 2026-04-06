@@ -4,5 +4,8 @@ namespace App\Traits\Projects;
 
 trait TasksTrait
 {
-    // Shared trait logic
+    public function exampleFunction()
+    {
+        //
+    }
 }

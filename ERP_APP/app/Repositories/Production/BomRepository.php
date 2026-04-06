@@ -1,50 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\Production;
 
-use App\Interfaces\Production\BomInterface;
 use App\Models\Production\Bom;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class BomRepository implements BomInterface
+class BomRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return Bom::all();
+        return Bom::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return Bom::paginate($perPage);
+        return Bom::query()->findOrFail($id);
     }
 
-    public function create(array $data): Bom
+    public function create(array $data)
     {
-        return Bom::create($data);
+        return Bom::query()->create($data);
     }
 
-    public function read(int $id): ?Bom
+    public function update(int $id, array $data)
     {
-        return Bom::find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $bom = $this->read($id);
-        return $bom ? $bom->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $bom = $this->read($id);
-        return $bom ? $bom->delete() : false;
-    }
-
-    public function getActiveByProduct(int $productId): ?Bom
-    {
-        return Bom::where('product_id', $productId)
-            ->where('status', 'active')
-            ->first();
+        return (bool) $this->find($id)->delete();
     }
 }

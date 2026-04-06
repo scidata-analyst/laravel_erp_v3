@@ -1,48 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\Production;
 
-use App\Interfaces\Production\MachineLaborInterface;
 use App\Models\Production\MachineLabor;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class MachineLaborRepository implements MachineLaborInterface
+class MachineLaborRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return MachineLabor::all();
+        return MachineLabor::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return MachineLabor::with(['workOrder'])->paginate($perPage);
+        return MachineLabor::query()->findOrFail($id);
     }
 
-    public function create(array $data): MachineLabor
+    public function create(array $data)
     {
-        return MachineLabor::create($data);
+        return MachineLabor::query()->create($data);
     }
 
-    public function read(int $id): ?MachineLabor
+    public function update(int $id, array $data)
     {
-        return MachineLabor::with(['workOrder'])->find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $ml = $this->read($id);
-        return $ml ? $ml->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $ml = $this->read($id);
-        return $ml ? $ml->delete() : false;
-    }
-
-    public function getByWorkOrder(int $workOrderId): Collection
-    {
-        return MachineLabor::where('work_order_id', $workOrderId)->get();
+        return (bool) $this->find($id)->delete();
     }
 }

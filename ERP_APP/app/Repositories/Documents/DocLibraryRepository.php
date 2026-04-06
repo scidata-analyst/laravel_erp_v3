@@ -1,48 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\Documents;
 
-use App\Interfaces\Documents\DocLibraryInterface;
 use App\Models\Documents\DocLibrary;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class DocLibraryRepository implements DocLibraryInterface
+class DocLibraryRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return DocLibrary::all();
+        return DocLibrary::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return DocLibrary::with(['uploadedBy', 'versions'])->paginate($perPage);
+        return DocLibrary::query()->findOrFail($id);
     }
 
-    public function create(array $data): DocLibrary
+    public function create(array $data)
     {
-        return DocLibrary::create($data);
+        return DocLibrary::query()->create($data);
     }
 
-    public function read(int $id): ?DocLibrary
+    public function update(int $id, array $data)
     {
-        return DocLibrary::with(['uploadedBy', 'versions'])->find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $doc = $this->read($id);
-        return $doc ? $doc->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $doc = $this->read($id);
-        return $doc ? $doc->delete() : false;
-    }
-
-    public function getByCategory(string $category): Collection
-    {
-        return DocLibrary::where('category', $category)->get();
+        return (bool) $this->find($id)->delete();
     }
 }

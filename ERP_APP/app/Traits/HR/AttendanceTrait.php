@@ -4,5 +4,8 @@ namespace App\Traits\HR;
 
 trait AttendanceTrait
 {
-    // Shared trait logic
+    public function exampleFunction()
+    {
+        //
+    }
 }

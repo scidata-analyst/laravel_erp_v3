@@ -4,5 +4,8 @@ namespace App\Traits\Ecommerce;
 
 trait OnlineChannelsTrait
 {
-    // Shared trait logic
+    public function exampleFunction()
+    {
+        //
+    }
 }

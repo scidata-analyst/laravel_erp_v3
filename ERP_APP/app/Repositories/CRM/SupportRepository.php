@@ -1,60 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\CRM;
 
-use App\Interfaces\CRM\SupportInterface;
 use App\Models\CRM\Support;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class SupportRepository implements SupportInterface
+class SupportRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return Support::all();
+        return Support::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return Support::with(['customer', 'lead', 'assignedTo'])->paginate($perPage);
+        return Support::query()->findOrFail($id);
     }
 
-    public function create(array $data): Support
+    public function create(array $data)
     {
-        return Support::create($data);
+        return Support::query()->create($data);
     }
 
-    public function read(int $id): ?Support
+    public function update(int $id, array $data)
     {
-        return Support::with(['customer', 'lead', 'assignedTo', 'interactions'])->find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $ticket = $this->read($id);
-        return $ticket ? $ticket->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $ticket = $this->read($id);
-        return $ticket ? $ticket->delete() : false;
-    }
-
-    public function getByCustomer(int $customerId): Collection
-    {
-        return Support::where('customer_id', $customerId)->get();
-    }
-
-    public function resolveTicket(int $id, string $resolution): bool
-    {
-        $ticket = $this->read($id);
-        if (!$ticket) return false;
-
-        return $ticket->update([
-            'status' => 'resolved',
-            'resolution' => $resolution,
-            'resolution_date' => now()
-        ]);
+        return (bool) $this->find($id)->delete();
     }
 }

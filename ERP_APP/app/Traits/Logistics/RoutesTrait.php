@@ -4,5 +4,8 @@ namespace App\Traits\Logistics;
 
 trait RoutesTrait
 {
-    // Shared trait logic
+    public function exampleFunction()
+    {
+        //
+    }
 }

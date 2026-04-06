@@ -4,5 +4,8 @@ namespace App\Traits\QualityControl;
 
 trait QcChecklistsTrait
 {
-    // Shared trait logic
+    public function exampleFunction()
+    {
+        //
+    }
 }

@@ -1,56 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\Projects;
 
-use App\Interfaces\Projects\ResourcesInterface;
 use App\Models\Projects\Resources;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class ResourcesRepository implements ResourcesInterface
+class ResourcesRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return Resources::all();
+        return Resources::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return Resources::with(['project'])->paginate($perPage);
+        return Resources::query()->findOrFail($id);
     }
 
-    public function create(array $data): Resources
+    public function create(array $data)
     {
-        return Resources::create($data);
+        return Resources::query()->create($data);
     }
 
-    public function read(int $id): ?Resources
+    public function update(int $id, array $data)
     {
-        return Resources::with(['project'])->find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $resource = $this->read($id);
-        return $resource ? $resource->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $resource = $this->read($id);
-        return $resource ? $resource->delete() : false;
-    }
-
-    public function getByProject(int $projectId): Collection
-    {
-        return Resources::where('project_id', $projectId)->get();
-    }
-
-    public function updateAllocation(int $id, int $percentage): bool
-    {
-        $resource = $this->read($id);
-        if (!$resource) return false;
-
-        return $resource->update(['allocation_percentage' => $percentage]);
+        return (bool) $this->find($id)->delete();
     }
 }

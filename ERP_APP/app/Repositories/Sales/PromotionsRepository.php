@@ -1,51 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\Sales;
 
-use App\Interfaces\Sales\PromotionsInterface;
 use App\Models\Sales\Promotions;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class PromotionsRepository implements PromotionsInterface
+class PromotionsRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return Promotions::all();
+        return Promotions::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return Promotions::paginate($perPage);
+        return Promotions::query()->findOrFail($id);
     }
 
-    public function create(array $data): Promotions
+    public function create(array $data)
     {
-        return Promotions::create($data);
+        return Promotions::query()->create($data);
     }
 
-    public function read(int $id): ?Promotions
+    public function update(int $id, array $data)
     {
-        return Promotions::find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $promotion = $this->read($id);
-        return $promotion ? $promotion->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $promotion = $this->read($id);
-        return $promotion ? $promotion->delete() : false;
-    }
-
-    public function getActivePromotions(): Collection
-    {
-        return Promotions::where('status', 'active')
-            ->where('start_date', '<=', now())
-            ->where('end_date', '>=', now())
-            ->get();
+        return (bool) $this->find($id)->delete();
     }
 }

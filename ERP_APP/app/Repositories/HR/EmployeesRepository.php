@@ -1,48 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\HR;
 
-use App\Interfaces\HR\EmployeesInterface;
 use App\Models\HR\Employees;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class EmployeesRepository implements EmployeesInterface
+class EmployeesRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return Employees::all();
+        return Employees::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return Employees::paginate($perPage);
+        return Employees::query()->findOrFail($id);
     }
 
-    public function create(array $data): Employees
+    public function create(array $data)
     {
-        return Employees::create($data);
+        return Employees::query()->create($data);
     }
 
-    public function read(int $id): ?Employees
+    public function update(int $id, array $data)
     {
-        return Employees::find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $employee = $this->read($id);
-        return $employee ? $employee->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $employee = $this->read($id);
-        return $employee ? $employee->delete() : false;
-    }
-
-    public function getByDepartment(string $department): Collection
-    {
-        return Employees::where('department', $department)->get();
+        return (bool) $this->find($id)->delete();
     }
 }

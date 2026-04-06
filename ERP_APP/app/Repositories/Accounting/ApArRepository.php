@@ -1,61 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\Accounting;
 
-use App\Interfaces\Accounting\ApArInterface;
 use App\Models\Accounting\ApAr;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class ApArRepository implements ApArInterface
+class ApArRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return ApAr::all();
+        return ApAr::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return ApAr::paginate($perPage);
+        return ApAr::query()->findOrFail($id);
     }
 
-    public function create(array $data): ApAr
+    public function create(array $data)
     {
-        return ApAr::create($data);
+        return ApAr::query()->create($data);
     }
 
-    public function read(int $id): ?ApAr
+    public function update(int $id, array $data)
     {
-        return ApAr::find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $transaction = $this->read($id);
-        return $transaction ? $transaction->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $transaction = $this->read($id);
-        return $transaction ? $transaction->delete() : false;
-    }
-
-    public function getByParty(string $partyName): Collection
-    {
-        return ApAr::where('party_name', $partyName)->get();
-    }
-
-    public function getOutstandingBalance(string $partyName): float
-    {
-        $invoices = ApAr::where('party_name', $partyName)
-            ->whereIn('transaction_type', ['Invoice', 'Debit Note'])
-            ->sum('amount');
-        
-        $payments = ApAr::where('party_name', $partyName)
-            ->whereIn('transaction_type', ['Payment', 'Credit Note'])
-            ->sum('amount');
-            
-        return $invoices - $payments;
+        return (bool) $this->find($id)->delete();
     }
 }

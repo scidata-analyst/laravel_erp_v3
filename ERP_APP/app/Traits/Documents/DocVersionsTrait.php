@@ -4,5 +4,8 @@ namespace App\Traits\Documents;
 
 trait DocVersionsTrait
 {
-    // Shared trait logic
+    public function exampleFunction()
+    {
+        //
+    }
 }

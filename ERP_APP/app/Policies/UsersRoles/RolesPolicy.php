@@ -1,8 +1,66 @@
-<?php
+﻿<?php
 
 namespace App\Policies\UsersRoles;
 
+use App\Models\UsersRoles\Roles;
+use App\Models\UsersRoles\User;
+use Illuminate\Auth\Access\HandlesAuthorization;
+
 class RolesPolicy
 {
-    // Policy definitions
+    /**
+     * Determine whether the user can view any models.
+     */
+    public function viewAny(User $user): bool
+    {
+        return false;
+    }
+
+    /**
+     * Determine whether the user can view the model.
+     */
+    public function view(User $user, Roles $modelVar): bool
+    {
+        return false;
+    }
+
+    /**
+     * Determine whether the user can create models.
+     */
+    public function create(User $user): bool
+    {
+        return false;
+    }
+
+    /**
+     * Determine whether the user can update the model.
+     */
+    public function update(User $user, Roles $modelVar): bool
+    {
+        return false;
+    }
+
+    /**
+     * Determine whether the user can delete the model.
+     */
+    public function delete(User $user, Roles $modelVar): bool
+    {
+        return false;
+    }
+
+    /**
+     * Determine whether the user can restore the model.
+     */
+    public function restore(User $user, Roles $modelVar): bool
+    {
+        return false;
+    }
+
+    /**
+     * Determine whether the user can permanently delete the model.
+     */
+    public function forceDelete(User $user, Roles $modelVar): bool
+    {
+        return false;
+    }
 }

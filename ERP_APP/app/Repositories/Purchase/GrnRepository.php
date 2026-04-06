@@ -1,48 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\Purchase;
 
-use App\Interfaces\Purchase\GrnInterface;
 use App\Models\Purchase\Grn;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class GrnRepository implements GrnInterface
+class GrnRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return Grn::all();
+        return Grn::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return Grn::with(['purchaseOrder.supplier', 'items', 'receivedBy'])->paginate($perPage);
+        return Grn::query()->findOrFail($id);
     }
 
-    public function create(array $data): Grn
+    public function create(array $data)
     {
-        return Grn::create($data);
+        return Grn::query()->create($data);
     }
 
-    public function read(int $id): ?Grn
+    public function update(int $id, array $data)
     {
-        return Grn::with(['purchaseOrder.supplier', 'supplier', 'items', 'receivedBy'])->find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $grn = $this->read($id);
-        return $grn ? $grn->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $grn = $this->read($id);
-        return $grn ? $grn->delete() : false;
-    }
-
-    public function getByOrder(int $orderId): Collection
-    {
-        return Grn::where('purchase_order_id', $orderId)->get();
+        return (bool) $this->find($id)->delete();
     }
 }

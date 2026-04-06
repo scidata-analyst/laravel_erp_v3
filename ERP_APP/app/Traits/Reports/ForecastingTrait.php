@@ -4,5 +4,8 @@ namespace App\Traits\Reports;
 
 trait ForecastingTrait
 {
-    // Shared trait logic
+    public function exampleFunction()
+    {
+        //
+    }
 }

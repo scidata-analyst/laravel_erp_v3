@@ -4,5 +4,8 @@ namespace App\Traits\Inventory;
 
 trait ProductCatalogTrait
 {
-    // Shared trait logic
+    public function exampleFunction()
+    {
+        //
+    }
 }

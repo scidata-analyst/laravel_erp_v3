@@ -1,48 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\Accounting;
 
-use App\Interfaces\Accounting\TaxInterface;
 use App\Models\Accounting\Tax;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class TaxRepository implements TaxInterface
+class TaxRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return Tax::all();
+        return Tax::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return Tax::paginate($perPage);
+        return Tax::query()->findOrFail($id);
     }
 
-    public function create(array $data): Tax
+    public function create(array $data)
     {
-        return Tax::create($data);
+        return Tax::query()->create($data);
     }
 
-    public function read(int $id): ?Tax
+    public function update(int $id, array $data)
     {
-        return Tax::find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $tax = $this->read($id);
-        return $tax ? $tax->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $tax = $this->read($id);
-        return $tax ? $tax->delete() : false;
-    }
-
-    public function getActiveTaxes(): Collection
-    {
-        return Tax::where('is_active', true)->get();
+        return (bool) $this->find($id)->delete();
     }
 }

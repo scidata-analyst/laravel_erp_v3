@@ -4,5 +4,8 @@ namespace App\Traits\HR;
 
 trait PayrollTrait
 {
-    // Shared trait logic
+    public function exampleFunction()
+    {
+        //
+    }
 }

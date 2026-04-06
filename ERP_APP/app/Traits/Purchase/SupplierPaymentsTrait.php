@@ -4,5 +4,8 @@ namespace App\Traits\Purchase;
 
 trait SupplierPaymentsTrait
 {
-    // Shared trait logic
+    public function exampleFunction()
+    {
+        //
+    }
 }

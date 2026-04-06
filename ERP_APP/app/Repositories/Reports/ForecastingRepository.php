@@ -1,64 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\Reports;
 
-use App\Interfaces\Reports\ForecastingInterface;
 use App\Models\Reports\Forecasting;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class ForecastingRepository implements ForecastingInterface
+class ForecastingRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return Forecasting::all();
+        return Forecasting::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return Forecasting::paginate($perPage);
+        return Forecasting::query()->findOrFail($id);
     }
 
-    public function create(array $data): Forecasting
+    public function create(array $data)
     {
-        return Forecasting::create($data);
+        return Forecasting::query()->create($data);
     }
 
-    public function read(int $id): ?Forecasting
+    public function update(int $id, array $data)
     {
-        return Forecasting::find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $forecast = $this->read($id);
-        return $forecast ? $forecast->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $forecast = $this->read($id);
-        return $forecast ? $forecast->delete() : false;
-    }
-
-    public function getByType(string $type): Collection
-    {
-        return Forecasting::where('forecast_type', $type)->get();
-    }
-
-    public function runForecast(int $id): bool
-    {
-        $forecast = $this->read($id);
-        if (!$forecast) return false;
-
-        // Mocking forecast run (in real world, this would call an AI/ML service)
-        return $forecast->update([
-            'status' => 'Completed',
-            'last_run_at' => now(),
-            'forecast_results' => [
-                'predicted_value' => rand(10000, 50000),
-                'confidence_score' => 0.85
-            ]
-        ]);
+        return (bool) $this->find($id)->delete();
     }
 }

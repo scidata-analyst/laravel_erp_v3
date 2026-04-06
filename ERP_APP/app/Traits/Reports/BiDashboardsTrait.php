@@ -4,5 +4,8 @@ namespace App\Traits\Reports;
 
 trait BiDashboardsTrait
 {
-    // Shared trait logic
+    public function exampleFunction()
+    {
+        //
+    }
 }

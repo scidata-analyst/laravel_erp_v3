@@ -1,50 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\Accounting;
 
-use App\Interfaces\Accounting\GlInterface;
 use App\Models\Accounting\Gl;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class GlRepository implements GlInterface
+class GlRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return Gl::all();
+        return Gl::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return Gl::paginate($perPage);
+        return Gl::query()->findOrFail($id);
     }
 
-    public function create(array $data): Gl
+    public function create(array $data)
     {
-        return Gl::create($data);
+        return Gl::query()->create($data);
     }
 
-    public function read(int $id): ?Gl
+    public function update(int $id, array $data)
     {
-        return Gl::find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $gl = $this->read($id);
-        return $gl ? $gl->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $gl = $this->read($id);
-        return $gl ? $gl->delete() : false;
-    }
-
-    public function getBalance(string $accountName): float
-    {
-        $debits = Gl::where('account_name', $accountName)->sum('debit');
-        $credits = Gl::where('account_name', $accountName)->sum('credit');
-        return $debits - $credits;
+        return (bool) $this->find($id)->delete();
     }
 }

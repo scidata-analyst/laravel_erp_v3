@@ -1,53 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\HR;
 
-use App\Interfaces\HR\AttendanceInterface;
 use App\Models\HR\Attendance;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class AttendanceRepository implements AttendanceInterface
+class AttendanceRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return Attendance::all();
+        return Attendance::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return Attendance::with(['employee'])->paginate($perPage);
+        return Attendance::query()->findOrFail($id);
     }
 
-    public function create(array $data): Attendance
+    public function create(array $data)
     {
-        return Attendance::create($data);
+        return Attendance::query()->create($data);
     }
 
-    public function read(int $id): ?Attendance
+    public function update(int $id, array $data)
     {
-        return Attendance::with(['employee'])->find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $attendance = $this->read($id);
-        return $attendance ? $attendance->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $attendance = $this->read($id);
-        return $attendance ? $attendance->delete() : false;
-    }
-
-    public function getByEmployee(int $employeeId): Collection
-    {
-        return Attendance::where('employee_id', $employeeId)->get();
-    }
-
-    public function getByDate(string $date): Collection
-    {
-        return Attendance::where('date', $date)->get();
+        return (bool) $this->find($id)->delete();
     }
 }

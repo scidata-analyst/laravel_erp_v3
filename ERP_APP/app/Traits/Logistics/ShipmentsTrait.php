@@ -4,5 +4,8 @@ namespace App\Traits\Logistics;
 
 trait ShipmentsTrait
 {
-    // Shared trait logic
+    public function exampleFunction()
+    {
+        //
+    }
 }

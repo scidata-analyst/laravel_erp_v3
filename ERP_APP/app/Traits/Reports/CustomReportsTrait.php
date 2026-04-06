@@ -4,5 +4,8 @@ namespace App\Traits\Reports;
 
 trait CustomReportsTrait
 {
-    // Shared trait logic
+    public function exampleFunction()
+    {
+        //
+    }
 }

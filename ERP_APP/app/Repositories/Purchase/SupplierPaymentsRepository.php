@@ -1,53 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\Purchase;
 
-use App\Interfaces\Purchase\SupplierPaymentsInterface;
 use App\Models\Purchase\SupplierPayments;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class SupplierPaymentsRepository implements SupplierPaymentsInterface
+class SupplierPaymentsRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return SupplierPayments::all();
+        return SupplierPayments::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return SupplierPayments::with(['supplier', 'purchaseOrder', 'approvedBy'])->paginate($perPage);
+        return SupplierPayments::query()->findOrFail($id);
     }
 
-    public function create(array $data): SupplierPayments
+    public function create(array $data)
     {
-        return SupplierPayments::create($data);
+        return SupplierPayments::query()->create($data);
     }
 
-    public function read(int $id): ?SupplierPayments
+    public function update(int $id, array $data)
     {
-        return SupplierPayments::with(['supplier', 'purchaseOrder', 'approvedBy'])->find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $payment = $this->read($id);
-        return $payment ? $payment->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $payment = $this->read($id);
-        return $payment ? $payment->delete() : false;
-    }
-
-    public function getBySupplier(int $supplierId): Collection
-    {
-        return SupplierPayments::where('supplier_id', $supplierId)->get();
-    }
-
-    public function getByOrder(int $orderId): Collection
-    {
-        return SupplierPayments::where('purchase_order_id', $orderId)->get();
+        return (bool) $this->find($id)->delete();
     }
 }

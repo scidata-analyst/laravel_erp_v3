@@ -4,5 +4,8 @@ namespace App\Traits\Documents;
 
 trait DocLibraryTrait
 {
-    // Shared trait logic
+    public function exampleFunction()
+    {
+        //
+    }
 }

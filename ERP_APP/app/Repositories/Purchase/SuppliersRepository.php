@@ -1,48 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\Purchase;
 
-use App\Interfaces\Purchase\SuppliersInterface;
 use App\Models\Purchase\Suppliers;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class SuppliersRepository implements SuppliersInterface
+class SuppliersRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return Suppliers::all();
+        return Suppliers::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return Suppliers::paginate($perPage);
+        return Suppliers::query()->findOrFail($id);
     }
 
-    public function create(array $data): Suppliers
+    public function create(array $data)
     {
-        return Suppliers::create($data);
+        return Suppliers::query()->create($data);
     }
 
-    public function read(int $id): ?Suppliers
+    public function update(int $id, array $data)
     {
-        return Suppliers::find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $supplier = $this->read($id);
-        return $supplier ? $supplier->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $supplier = $this->read($id);
-        return $supplier ? $supplier->delete() : false;
-    }
-
-    public function getByCategory(string $category): Collection
-    {
-        return Suppliers::where('category', $category)->get();
+        return (bool) $this->find($id)->delete();
     }
 }

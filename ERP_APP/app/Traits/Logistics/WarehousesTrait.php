@@ -4,5 +4,8 @@ namespace App\Traits\Logistics;
 
 trait WarehousesTrait
 {
-    // Shared trait logic
+    public function exampleFunction()
+    {
+        //
+    }
 }

@@ -1,48 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\Inventory;
 
-use App\Interfaces\Inventory\StockValuationInterface;
 use App\Models\Inventory\StockValuation;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class StockValuationRepository implements StockValuationInterface
+class StockValuationRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return StockValuation::all();
+        return StockValuation::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return StockValuation::with(['product'])->paginate($perPage);
+        return StockValuation::query()->findOrFail($id);
     }
 
-    public function create(array $data): StockValuation
+    public function create(array $data)
     {
-        return StockValuation::create($data);
+        return StockValuation::query()->create($data);
     }
 
-    public function read(int $id): ?StockValuation
+    public function update(int $id, array $data)
     {
-        return StockValuation::with(['product'])->find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $valuation = $this->read($id);
-        return $valuation ? $valuation->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $valuation = $this->read($id);
-        return $valuation ? $valuation->delete() : false;
-    }
-
-    public function getLatestByProduct(int $productId): ?StockValuation
-    {
-        return StockValuation::where('product_id', $productId)->latest('valuation_date')->first();
+        return (bool) $this->find($id)->delete();
     }
 }

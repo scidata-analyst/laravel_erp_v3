@@ -1,60 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\CRM;
 
-use App\Interfaces\CRM\InteractionsInterface;
 use App\Models\CRM\Interactions;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class InteractionsRepository implements InteractionsInterface
+class InteractionsRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return Interactions::all();
+        return Interactions::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return Interactions::with(['lead', 'customer', 'salesOrder', 'supportTicket', 'assignedTo', 'createdBy'])->paginate($perPage);
+        return Interactions::query()->findOrFail($id);
     }
 
-    public function create(array $data): Interactions
+    public function create(array $data)
     {
-        return Interactions::create($data);
+        return Interactions::query()->create($data);
     }
 
-    public function read(int $id): ?Interactions
+    public function update(int $id, array $data)
     {
-        return Interactions::with(['lead', 'customer', 'salesOrder', 'supportTicket', 'assignedTo', 'createdBy'])->find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $interaction = $this->read($id);
-        return $interaction ? $interaction->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $interaction = $this->read($id);
-        return $interaction ? $interaction->delete() : false;
-    }
-
-    public function getBySubject(int $id, string $type): Collection
-    {
-        $column = match ($type) {
-            'lead' => 'lead_id',
-            'customer' => 'customer_id',
-            'sales_order' => 'sales_order_id',
-            'support' => 'support_ticket_id',
-            default => null,
-        };
-
-        if ($column === null) {
-            return collect();
-        }
-
-        return Interactions::where($column, $id)->get();
+        return (bool) $this->find($id)->delete();
     }
 }

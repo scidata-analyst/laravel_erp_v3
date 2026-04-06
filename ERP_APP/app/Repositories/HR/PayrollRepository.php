@@ -1,48 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\HR;
 
-use App\Interfaces\HR\PayrollInterface;
 use App\Models\HR\Payroll;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class PayrollRepository implements PayrollInterface
+class PayrollRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return Payroll::all();
+        return Payroll::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return Payroll::with(['employee'])->paginate($perPage);
+        return Payroll::query()->findOrFail($id);
     }
 
-    public function create(array $data): Payroll
+    public function create(array $data)
     {
-        return Payroll::create($data);
+        return Payroll::query()->create($data);
     }
 
-    public function read(int $id): ?Payroll
+    public function update(int $id, array $data)
     {
-        return Payroll::with(['employee'])->find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $payroll = $this->read($id);
-        return $payroll ? $payroll->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $payroll = $this->read($id);
-        return $payroll ? $payroll->delete() : false;
-    }
-
-    public function getByEmployee(int $employeeId): Collection
-    {
-        return Payroll::where('employee_id', $employeeId)->get();
+        return (bool) $this->find($id)->delete();
     }
 }

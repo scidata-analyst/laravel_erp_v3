@@ -1,38 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\UsersRoles;
 
-use App\Interfaces\UsersRoles\RolesInterface;
+use App\Models\UsersRoles\Roles;
 
-class RolesRepository implements RolesInterface
+class RolesRepository
 {
     public function all()
     {
-        // Implement the repository logic to retrieve all records.
+        return Roles::query()->get();
     }
 
-    public function index()
+    public function find(int $id)
     {
-        // Implement the repository logic to retrieve paginated or filtered records.
+        return Roles::query()->findOrFail($id);
     }
 
-    public function create($data)
+    public function create(array $data)
     {
-        // Implement the repository logic to create a record.
+        return Roles::query()->create($data);
     }
 
-    public function read($id)
+    public function update(int $id, array $data)
     {
-        // Implement the repository logic to retrieve a single record.
+        $record = $this->find($id);
+        $record->update($data);
+
+        return $record->refresh();
     }
 
-    public function update($id, $data)
+    public function delete(int $id): bool
     {
-        // Implement the repository logic to update a record.
-    }
-
-    public function delete($id)
-    {
-        // Implement the repository logic to delete a record.
+        return (bool) $this->find($id)->delete();
     }
 }

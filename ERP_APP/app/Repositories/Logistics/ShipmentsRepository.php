@@ -1,56 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\Logistics;
 
-use App\Interfaces\Logistics\ShipmentsInterface;
 use App\Models\Logistics\Shipments;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class ShipmentsRepository implements ShipmentsInterface
+class ShipmentsRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return Shipments::all();
+        return Shipments::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return Shipments::with('salesOrder')->paginate($perPage);
+        return Shipments::query()->findOrFail($id);
     }
 
-    public function create(array $data): Shipments
+    public function create(array $data)
     {
-        return Shipments::create($data);
+        return Shipments::query()->create($data);
     }
 
-    public function read(int $id): ?Shipments
+    public function update(int $id, array $data)
     {
-        return Shipments::with('salesOrder')->find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $shipment = $this->read($id);
-        return $shipment ? $shipment->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $shipment = $this->read($id);
-        return $shipment ? $shipment->delete() : false;
-    }
-
-    public function updateStatus(int $id, string $status): bool
-    {
-        $shipment = $this->read($id);
-        if (!$shipment) return false;
-
-        $updateData = ['status' => $status];
-        if ($status === 'Delivered') {
-            $updateData['actual_delivery_date'] = now()->toDateString();
-        }
-
-        return $shipment->update($updateData);
+        return (bool) $this->find($id)->delete();
     }
 }

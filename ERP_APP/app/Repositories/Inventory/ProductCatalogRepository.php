@@ -1,48 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\Inventory;
 
-use App\Interfaces\Inventory\ProductCatalogInterface;
 use App\Models\Inventory\ProductCatalog;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class ProductCatalogRepository implements ProductCatalogInterface
+class ProductCatalogRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return ProductCatalog::all();
+        return ProductCatalog::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return ProductCatalog::paginate($perPage);
+        return ProductCatalog::query()->findOrFail($id);
     }
 
-    public function create(array $data): ProductCatalog
+    public function create(array $data)
     {
-        return ProductCatalog::create($data);
+        return ProductCatalog::query()->create($data);
     }
 
-    public function read(int $id): ?ProductCatalog
+    public function update(int $id, array $data)
     {
-        return ProductCatalog::find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $product = $this->read($id);
-        return $product ? $product->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $product = $this->read($id);
-        return $product ? $product->delete() : false;
-    }
-
-    public function findBySku(string $sku): ?ProductCatalog
-    {
-        return ProductCatalog::where('sku', $sku)->first();
+        return (bool) $this->find($id)->delete();
     }
 }

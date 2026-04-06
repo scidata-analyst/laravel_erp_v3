@@ -1,48 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\HR;
 
-use App\Interfaces\HR\PerformanceInterface;
 use App\Models\HR\Performance;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class PerformanceRepository implements PerformanceInterface
+class PerformanceRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return Performance::all();
+        return Performance::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return Performance::with(['employee'])->paginate($perPage);
+        return Performance::query()->findOrFail($id);
     }
 
-    public function create(array $data): Performance
+    public function create(array $data)
     {
-        return Performance::create($data);
+        return Performance::query()->create($data);
     }
 
-    public function read(int $id): ?Performance
+    public function update(int $id, array $data)
     {
-        return Performance::with(['employee'])->find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $performance = $this->read($id);
-        return $performance ? $performance->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $performance = $this->read($id);
-        return $performance ? $performance->delete() : false;
-    }
-
-    public function getByEmployee(int $employeeId): Collection
-    {
-        return Performance::where('employee_id', $employeeId)->get();
+        return (bool) $this->find($id)->delete();
     }
 }

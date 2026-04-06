@@ -1,53 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\QualityControl;
 
-use App\Interfaces\QualityControl\ComplianceInterface;
 use App\Models\QualityControl\Compliance;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class ComplianceRepository implements ComplianceInterface
+class ComplianceRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return Compliance::all();
+        return Compliance::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return Compliance::with(['auditor', 'relatedDefects'])->paginate($perPage);
+        return Compliance::query()->findOrFail($id);
     }
 
-    public function create(array $data): Compliance
+    public function create(array $data)
     {
-        return Compliance::create($data);
+        return Compliance::query()->create($data);
     }
 
-    public function read(int $id): ?Compliance
+    public function update(int $id, array $data)
     {
-        return Compliance::with(['auditor', 'relatedDefects'])->find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $compliance = $this->read($id);
-        return $compliance ? $compliance->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $compliance = $this->read($id);
-        return $compliance ? $compliance->delete() : false;
-    }
-
-    public function getByCategory(string $category): Collection
-    {
-        return Compliance::where('compliance_type', $category)->get();
-    }
-
-    public function getActiveStandards(): Collection
-    {
-        return Compliance::where('status', 'completed')->get();
+        return (bool) $this->find($id)->delete();
     }
 }

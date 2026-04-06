@@ -1,48 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\Accounting;
 
-use App\Interfaces\Accounting\FinReportsInterface;
 use App\Models\Accounting\FinReports;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class FinReportsRepository implements FinReportsInterface
+class FinReportsRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return FinReports::all();
+        return FinReports::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return FinReports::paginate($perPage);
+        return FinReports::query()->findOrFail($id);
     }
 
-    public function create(array $data): FinReports
+    public function create(array $data)
     {
-        return FinReports::create($data);
+        return FinReports::query()->create($data);
     }
 
-    public function read(int $id): ?FinReports
+    public function update(int $id, array $data)
     {
-        return FinReports::find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $report = $this->read($id);
-        return $report ? $report->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $report = $this->read($id);
-        return $report ? $report->delete() : false;
-    }
-
-    public function getByType(string $type): Collection
-    {
-        return FinReports::where('report_type', $type)->get();
+        return (bool) $this->find($id)->delete();
     }
 }

@@ -1,25 +1,22 @@
-<?php
+﻿<?php
 
 namespace App\Listeners\Accounting;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class GlListener
+class GlListener implements ShouldQueue
 {
-    /**
-     * Create the event listener.
-     */
-    public function __construct()
-    {
-        //
-    }
+    use InteractsWithQueue;
 
     /**
      * Handle the event.
+     *
+     * @param  mixed  \
+     * @return void
      */
-    public function handle(object $event): void
+    public function handle(\)
     {
-        //
+        // Handle your event logic here
     }
 }

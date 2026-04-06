@@ -1,25 +1,22 @@
-<?php
+﻿<?php
 
 namespace App\Listeners\Core;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class SettingsListener
+class SettingsListener implements ShouldQueue
 {
-    /**
-     * Create the event listener.
-     */
-    public function __construct()
-    {
-        //
-    }
+    use InteractsWithQueue;
 
     /**
      * Handle the event.
+     *
+     * @param  mixed  \
+     * @return void
      */
-    public function handle(object $event): void
+    public function handle(\)
     {
-        //
+        // Handle your event logic here
     }
 }

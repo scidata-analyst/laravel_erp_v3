@@ -1,48 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\Logistics;
 
-use App\Interfaces\Logistics\WarehousesInterface;
 use App\Models\Logistics\Warehouses;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class WarehousesRepository implements WarehousesInterface
+class WarehousesRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return Warehouses::all();
+        return Warehouses::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return Warehouses::with(['manager'])->paginate($perPage);
+        return Warehouses::query()->findOrFail($id);
     }
 
-    public function create(array $data): Warehouses
+    public function create(array $data)
     {
-        return Warehouses::create($data);
+        return Warehouses::query()->create($data);
     }
 
-    public function read(int $id): ?Warehouses
+    public function update(int $id, array $data)
     {
-        return Warehouses::with(['manager', 'products', 'stockMovements'])->find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $warehouse = $this->read($id);
-        return $warehouse ? $warehouse->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $warehouse = $this->read($id);
-        return $warehouse ? $warehouse->delete() : false;
-    }
-
-    public function getByManager(int $managerId): Collection
-    {
-        return Warehouses::where('manager_id', $managerId)->get();
+        return (bool) $this->find($id)->delete();
     }
 }

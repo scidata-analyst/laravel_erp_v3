@@ -1,58 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\Purchase;
 
-use App\Interfaces\Purchase\PurchaseOrdersInterface;
 use App\Models\Purchase\PurchaseOrders;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class PurchaseOrdersRepository implements PurchaseOrdersInterface
+class PurchaseOrdersRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return PurchaseOrders::all();
+        return PurchaseOrders::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return PurchaseOrders::with(['supplier'])->paginate($perPage);
+        return PurchaseOrders::query()->findOrFail($id);
     }
 
-    public function create(array $data): PurchaseOrders
+    public function create(array $data)
     {
-        return PurchaseOrders::create($data);
+        return PurchaseOrders::query()->create($data);
     }
 
-    public function read(int $id): ?PurchaseOrders
+    public function update(int $id, array $data)
     {
-        return PurchaseOrders::with(['supplier'])->find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $order = $this->read($id);
-        return $order ? $order->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $order = $this->read($id);
-        return $order ? $order->delete() : false;
-    }
-
-    public function getBySupplier(int $supplierId): Collection
-    {
-        return PurchaseOrders::where('supplier_id', $supplierId)->get();
-    }
-
-    public function updateStatus(int $id, string $status): bool
-    {
-        $order = $this->read($id);
-        if ($order) {
-            $order->status = $status;
-            return $order->save();
-        }
-        return false;
+        return (bool) $this->find($id)->delete();
     }
 }

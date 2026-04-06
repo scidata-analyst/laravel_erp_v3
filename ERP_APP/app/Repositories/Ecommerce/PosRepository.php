@@ -1,48 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\Ecommerce;
 
-use App\Interfaces\Ecommerce\PosInterface;
 use App\Models\Ecommerce\Pos;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
 
-class PosRepository implements PosInterface
+class PosRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return Pos::with(['currentUser', 'transactions'])->get();
+        return Pos::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return Pos::with(['currentUser', 'transactions'])->paginate($perPage);
+        return Pos::query()->findOrFail($id);
     }
 
-    public function create($data): Pos
+    public function create(array $data)
     {
-        return Pos::create($data);
+        return Pos::query()->create($data);
     }
 
-    public function read($id): ?Pos
+    public function update(int $id, array $data)
     {
-        return Pos::with(['currentUser', 'transactions'])->find($id);
+        $record = $this->find($id);
+        $record->update($data);
+
+        return $record->refresh();
     }
 
-    public function update($id, $data): bool
+    public function delete(int $id): bool
     {
-        $terminal = $this->read($id);
-        return $terminal ? $terminal->update($data) : false;
-    }
-
-    public function delete($id): bool
-    {
-        $terminal = $this->read($id);
-        return $terminal ? $terminal->delete() : false;
-    }
-
-    public function activeCount(): int
-    {
-        return Pos::where('status', 'active')->count();
+        return (bool) $this->find($id)->delete();
     }
 }

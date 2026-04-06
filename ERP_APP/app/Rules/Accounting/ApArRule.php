@@ -3,9 +3,8 @@
 namespace App\Rules\Accounting;
 
 use Closure;
-use Illuminate\Contracts\Validation\ValidationRule;
 
-class ApArRule implements ValidationRule
+class ApArRule
 {
     public function commonRules(): array
     {

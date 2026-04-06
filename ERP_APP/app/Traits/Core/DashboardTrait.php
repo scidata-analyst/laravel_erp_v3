@@ -4,5 +4,8 @@ namespace App\Traits\Core;
 
 trait DashboardTrait
 {
-    // Shared trait logic
+    public function exampleFunction()
+    {
+        //
+    }
 }

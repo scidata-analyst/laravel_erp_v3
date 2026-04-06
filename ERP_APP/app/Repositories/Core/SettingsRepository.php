@@ -1,53 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\Core;
 
-use App\Interfaces\Core\SettingsInterface;
 use App\Models\Core\Settings;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class SettingsRepository implements SettingsInterface
+class SettingsRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return Settings::all();
+        return Settings::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return Settings::paginate($perPage);
+        return Settings::query()->findOrFail($id);
     }
 
-    public function create(array $data): Settings
+    public function create(array $data)
     {
-        return Settings::create($data);
+        return Settings::query()->create($data);
     }
 
-    public function read(int $id): ?Settings
+    public function update(int $id, array $data)
     {
-        return Settings::find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $setting = $this->read($id);
-        return $setting ? $setting->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $setting = $this->read($id);
-        return $setting ? $setting->delete() : false;
-    }
-
-    public function getByKey(string $key): ?Settings
-    {
-        return Settings::where('setting_key', $key)->first();
-    }
-
-    public function getByCategory(string $category): Collection
-    {
-        return Settings::where('category', $category)->get();
+        return (bool) $this->find($id)->delete();
     }
 }

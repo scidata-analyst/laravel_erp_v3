@@ -4,5 +4,8 @@ namespace App\Traits\Accounting;
 
 trait FinReportsTrait
 {
-    // Shared trait logic
+    public function exampleFunction()
+    {
+        //
+    }
 }

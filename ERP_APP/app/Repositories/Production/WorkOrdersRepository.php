@@ -1,65 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\Production;
 
-use App\Interfaces\Production\WorkOrdersInterface;
 use App\Models\Production\WorkOrders;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class WorkOrdersRepository implements WorkOrdersInterface
+class WorkOrdersRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return WorkOrders::all();
+        return WorkOrders::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return WorkOrders::with(['bom', 'assignedWorkshop'])->paginate($perPage);
+        return WorkOrders::query()->findOrFail($id);
     }
 
-    public function create(array $data): WorkOrders
+    public function create(array $data)
     {
-        return WorkOrders::create($data);
+        return WorkOrders::query()->create($data);
     }
 
-    public function read(int $id): ?WorkOrders
+    public function update(int $id, array $data)
     {
-        return WorkOrders::with(['bom', 'assignedWorkshop', 'machineLabor'])->find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $wo = $this->read($id);
-        return $wo ? $wo->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $wo = $this->read($id);
-        return $wo ? $wo->delete() : false;
-    }
-
-    public function getByStatus(string $status): Collection
-    {
-        return WorkOrders::where('status', $status)->get();
-    }
-
-    public function updateProgress(int $id, int $producedQty, int $scrapQty): bool
-    {
-        $wo = $this->read($id);
-        if (!$wo) return false;
-
-        $wo->actual_qty_produced += $producedQty;
-        $wo->scrap_quantity += $scrapQty;
-        
-        if ($wo->actual_qty_produced >= $wo->qty_to_produce) {
-            $wo->status = 'Completed';
-        } else {
-            $wo->status = 'In Progress';
-        }
-
-        return $wo->save();
+        return (bool) $this->find($id)->delete();
     }
 }

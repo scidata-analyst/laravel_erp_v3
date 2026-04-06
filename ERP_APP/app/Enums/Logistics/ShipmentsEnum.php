@@ -1,8 +1,11 @@
-<?php
+﻿<?php
 
 namespace App\Enums\Logistics;
 
 enum ShipmentsEnum: string
 {
-    // TODO: Add enum values
+    // Define your enum values here
+    // Example:
+    // case ACTIVE = 'active';
+    // case INACTIVE = 'inactive';
 }

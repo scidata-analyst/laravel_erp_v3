@@ -1,48 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\Reports;
 
-use App\Interfaces\Reports\BiDashboardsInterface;
 use App\Models\Reports\BiDashboards;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class BiDashboardsRepository implements BiDashboardsInterface
+class BiDashboardsRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return BiDashboards::all();
+        return BiDashboards::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return BiDashboards::with(['createdBy', 'widgets'])->paginate($perPage);
+        return BiDashboards::query()->findOrFail($id);
     }
 
-    public function create(array $data): BiDashboards
+    public function create(array $data)
     {
-        return BiDashboards::create($data);
+        return BiDashboards::query()->create($data);
     }
 
-    public function read(int $id): ?BiDashboards
+    public function update(int $id, array $data)
     {
-        return BiDashboards::with(['createdBy', 'widgets'])->find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $dashboard = $this->read($id);
-        return $dashboard ? $dashboard->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $dashboard = $this->read($id);
-        return $dashboard ? $dashboard->delete() : false;
-    }
-
-    public function getUserDashboards(int $userId): Collection
-    {
-        return BiDashboards::where('created_by', $userId)->get();
+        return (bool) $this->find($id)->delete();
     }
 }

@@ -1,58 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\Sales;
 
-use App\Interfaces\Sales\InvoicesInterface;
 use App\Models\Sales\Invoices;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class InvoicesRepository implements InvoicesInterface
+class InvoicesRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return Invoices::all();
+        return Invoices::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return Invoices::with(['customer', 'salesOrder.customer', 'generatedBy'])->paginate($perPage);
+        return Invoices::query()->findOrFail($id);
     }
 
-    public function create(array $data): Invoices
+    public function create(array $data)
     {
-        return Invoices::create($data);
+        return Invoices::query()->create($data);
     }
 
-    public function read(int $id): ?Invoices
+    public function update(int $id, array $data)
     {
-        return Invoices::with(['customer', 'salesOrder.customer', 'generatedBy'])->find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $invoice = $this->read($id);
-        return $invoice ? $invoice->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $invoice = $this->read($id);
-        return $invoice ? $invoice->delete() : false;
-    }
-
-    public function getByOrder(int $orderId): Collection
-    {
-        return Invoices::where('sales_order_id', $orderId)->get();
-    }
-
-    public function updatePaymentStatus(int $id, string $status): bool
-    {
-        $invoice = $this->read($id);
-        if ($invoice) {
-            $invoice->status = $status;
-            return $invoice->save();
-        }
-        return false;
+        return (bool) $this->find($id)->delete();
     }
 }

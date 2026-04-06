@@ -1,48 +1,36 @@
-<?php
+﻿<?php
 
 namespace App\Repositories\Inventory;
 
-use App\Interfaces\Inventory\BatchTrackingInterface;
 use App\Models\Inventory\BatchTracking;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
-class BatchTrackingRepository implements BatchTrackingInterface
+class BatchTrackingRepository
 {
-    public function all(): Collection
+    public function all()
     {
-        return BatchTracking::all();
+        return BatchTracking::query()->get();
     }
 
-    public function index(int $perPage = 15): LengthAwarePaginator
+    public function find(int $id)
     {
-        return BatchTracking::with(['product'])->paginate($perPage);
+        return BatchTracking::query()->findOrFail($id);
     }
 
-    public function create(array $data): BatchTracking
+    public function create(array $data)
     {
-        return BatchTracking::create($data);
+        return BatchTracking::query()->create($data);
     }
 
-    public function read(int $id): ?BatchTracking
+    public function update(int $id, array $data)
     {
-        return BatchTracking::with(['product'])->find($id);
-    }
+        $record = $this->find($id);
+        $record->update($data);
 
-    public function update(int $id, array $data): bool
-    {
-        $batch = $this->read($id);
-        return $batch ? $batch->update($data) : false;
+        return $record->refresh();
     }
 
     public function delete(int $id): bool
     {
-        $batch = $this->read($id);
-        return $batch ? $batch->delete() : false;
-    }
-
-    public function findByBatchNumber(string $batchNumber): ?BatchTracking
-    {
-        return BatchTracking::where('batch_number', $batchNumber)->first();
+        return (bool) $this->find($id)->delete();
     }
 }

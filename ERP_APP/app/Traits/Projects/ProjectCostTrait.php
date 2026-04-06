@@ -4,5 +4,8 @@ namespace App\Traits\Projects;
 
 trait ProjectCostTrait
 {
-    // Shared trait logic
+    public function exampleFunction()
+    {
+        //
+    }
 }
