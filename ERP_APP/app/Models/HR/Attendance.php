@@ -18,5 +18,12 @@ class Attendance extends Model
         'status',
         'leave_type',
         'hours_worked',
+        'overtime_hours',
+        'notes',
     ];
+
+    public function employee(): BelongsTo
+    {
+        return $this->belongsTo(Employees::class);
+    }
 }

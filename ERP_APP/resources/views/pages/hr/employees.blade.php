@@ -30,15 +30,18 @@
         <form id="formEmployee">
           <input type="hidden" name="id" id="emp-id"/>
           <div class="row g-3">
-            <div class="col-md-6"><label class="erp-form-label">Full Name</label><input class="erp-form-control" name="name" type="text" placeholder=""/></div>
-            <div class="col-md-6"><label class="erp-form-label">Employee ID</label><input class="erp-form-control" name="employee_id" type="text" placeholder="EMP-XXX"/></div>
+            <div class="col-md-6"><label class="erp-form-label">Full Name</label><input class="erp-form-control" name="full_name" type="text" placeholder=""/></div>
+            <div class="col-md-6"><label class="erp-form-label">Employee ID</label><input class="erp-form-control" name="employee_code" type="text" placeholder="EMP-XXX"/></div>
             <div class="col-md-6"><label class="erp-form-label">Position / Designation</label><input class="erp-form-control" name="position" type="text" placeholder=""/></div>
             <div class="col-md-6"><label class="erp-form-label">Department</label><select class="erp-form-control" name="department"><option>IT</option><option>Sales</option><option>HR</option><option>Finance</option><option>Warehouse</option></select></div>
-            <div class="col-md-4"><label class="erp-form-label">Basic Salary ($)</label><input class="erp-form-control" name="salary" type="number" placeholder=""/></div>
+            <div class="col-md-4"><label class="erp-form-label">Basic Salary ($)</label><input class="erp-form-control" name="basic_salary" type="number" placeholder=""/></div>
             <div class="col-md-4"><label class="erp-form-label">Join Date</label><input class="erp-form-control" name="join_date" type="date" placeholder=""/></div>
             <div class="col-md-4"><label class="erp-form-label">Contract Type</label><select class="erp-form-control" name="contract_type"><option>Permanent</option><option>Contract</option><option>Intern</option></select></div>
             <div class="col-md-6"><label class="erp-form-label">Email</label><input class="erp-form-control" name="email" type="email" placeholder=""/></div>
             <div class="col-md-6"><label class="erp-form-label">Phone</label><input class="erp-form-control" name="phone" type="text" placeholder=""/></div>
+            <div class="col-md-4"><label class="erp-form-label">Status</label><select class="erp-form-control" name="status"><option value="active">Active</option><option value="inactive">Inactive</option><option value="resigned">Resigned</option></select></div>
+            <div class="col-md-4"><label class="erp-form-label">Manager</label><select class="erp-form-control" name="manager_id" placeholder="Select manager"></select></div>
+            <div class="col-md-4"><label class="erp-form-label">&nbsp;</label><input class="erp-form-control" name="address" type="text" placeholder="Address"/></div>
           </div>
         </form>
       </div>

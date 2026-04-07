@@ -11,7 +11,7 @@ class Customers extends Model
     use HasFactory;
 
     protected $fillable = [
-        'company_name',
+        'name',
         'contact_person',
         'email',
         'phone',
@@ -21,4 +21,14 @@ class Customers extends Model
         'outstanding',
         'status',
     ];
+
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoices::class);
+    }
+
+    public function salesOrders(): HasMany
+    {
+        return $this->hasMany(SalesOrders::class);
+    }
 }

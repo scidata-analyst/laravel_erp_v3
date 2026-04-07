@@ -51,4 +51,20 @@ class User extends Authenticatable
             'last_login_at' => 'datetime',
         ];
     }
+
+    /**
+     * Get the role associated with the user.
+     */
+    public function role()
+    {
+        return $this->belongsTo(Roles::class);
+    }
+
+    /**
+     * Get the employee record for this user.
+     */
+    public function employee()
+    {
+        return $this->hasOne(\App\Models\HR\Employees::class);
+    }
 }

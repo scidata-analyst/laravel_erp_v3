@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Roles extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'name',
         'description',
@@ -17,4 +18,20 @@ class Roles extends Model
         'is_active',
         'created_by'
     ];
+
+    /**
+     * Get all users for the role.
+     */
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
+
+    /**
+     * Get the user that created the role.
+     */
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 }

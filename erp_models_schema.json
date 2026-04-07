@@ -1,0 +1,988 @@
+{
+  "UsersRoles": {
+    "Roles": {
+      "columns": {
+        "id": "id",
+        "role_name": "string",
+        "description": "text nullable",
+        "permissions": "json nullable",
+        "is_system_role": "boolean default false",
+        "is_active": "boolean default true",
+        "created_by": "foreignId nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": [
+        {
+          "type": "hasMany",
+          "related_model": "User",
+          "foreign_key": "role_id",
+          "local_key": "id"
+        },
+        {
+          "type": "belongsTo",
+          "related_model": "User",
+          "foreign_key": "created_by",
+          "local_key": "id"
+        }
+      ]
+    },
+    "User": {
+      "columns": {
+        "id": "id",
+        "name": "string",
+        "email": "string unique",
+        "email_verified_at": "timestamp nullable",
+        "password": "string",
+        "role_id": "foreignId nullable",
+        "department_id": "foreignId nullable",
+        "status": "string nullable",
+        "last_login_at": "datetime nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": [
+        {
+          "type": "belongsTo",
+          "related_model": "Roles",
+          "foreign_key": "role_id",
+          "local_key": "id"
+        },
+        {
+          "type": "hasOne",
+          "related_model": "Employees",
+          "foreign_key": "user_id",
+          "local_key": "id"
+        }
+      ]
+    }
+  },
+  "HR": {
+    "Attendance": {
+      "columns": {
+        "id": "id",
+        "employee_id": "foreignId",
+        "date": "date",
+        "check_in": "datetime nullable",
+        "check_out": "datetime nullable",
+        "status": "string default present",
+        "leave_type": "string nullable",
+        "hours_worked": "decimal(5,2) nullable",
+        "overtime_hours": "decimal(5,2) default 0",
+        "notes": "text nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": [
+        {
+          "type": "belongsTo",
+          "related_model": "Employees",
+          "foreign_key": "employee_id",
+          "local_key": "id"
+        }
+      ]
+    },
+    "Employees": {
+      "columns": {
+        "id": "id",
+        "full_name": "string",
+        "employee_code": "string unique",
+        "position": "string nullable",
+        "department": "string nullable",
+        "basic_salary": "decimal(10,2) nullable",
+        "join_date": "date nullable",
+        "contract_type": "string nullable",
+        "email": "string nullable",
+        "phone": "string nullable",
+        "address": "text nullable",
+        "status": "string default active",
+        "manager_id": "foreignId nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": [
+        {
+          "type": "belongsTo",
+          "related_model": "Employees",
+          "foreign_key": "manager_id",
+          "local_key": "id"
+        },
+        {
+          "type": "hasMany",
+          "related_model": "Employees",
+          "foreign_key": "manager_id",
+          "local_key": "id"
+        },
+        {
+          "type": "hasMany",
+          "related_model": "Attendance",
+          "foreign_key": "employee_id",
+          "local_key": "id"
+        },
+        {
+          "type": "hasMany",
+          "related_model": "Payroll",
+          "foreign_key": "employee_id",
+          "local_key": "id"
+        }
+      ]
+    },
+    "Performance": {
+      "columns": {
+        "id": "id",
+        "employee_id": "foreignId",
+        "review_period": "string nullable",
+        "kpi_score": "decimal(5,2) nullable",
+        "goal_achievement": "decimal(5,2) nullable",
+        "overall_rating": "string nullable",
+        "reviewer_id": "foreignId nullable",
+        "reviewer_comments": "longText nullable",
+        "review_date": "date nullable",
+        "status": "string default pending",
+        "improvement_plan": "json nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    },
+    "Payroll": {
+      "columns": {
+        "id": "id",
+        "employee_id": "foreignId",
+        "pay_period": "string nullable",
+        "basic_salary": "decimal(10,2) nullable",
+        "overtime_hours": "decimal(6,2) default 0",
+        "overtime_rate": "decimal(8,2) default 0",
+        "bonus": "decimal(10,2) default 0",
+        "deductions": "json nullable",
+        "net_pay": "decimal(10,2) nullable",
+        "pay_date": "date nullable",
+        "payment_method": "string nullable",
+        "status": "string default pending",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    }
+  },
+  "Sales": {
+    "Customers": {
+      "columns": {
+        "id": "id",
+        "company_name": "string",
+        "contact_person": "string nullable",
+        "email": "string nullable",
+        "phone": "string nullable",
+        "credit_limit": "decimal(12,2) nullable",
+        "sales_rep": "string nullable",
+        "billing_address": "text nullable",
+        "shipping_address": "text nullable",
+        "status": "string default active",
+        "tax_id": "string nullable",
+        "payment_terms": "string nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": [
+        {
+          "type": "hasMany",
+          "related_model": "Invoices",
+          "foreign_key": "customer_id",
+          "local_key": "id"
+        },
+        {
+          "type": "hasMany",
+          "related_model": "SalesOrders",
+          "foreign_key": "customer_id",
+          "local_key": "id"
+        }
+      ]
+    },
+    "SalesOrders": {
+      "columns": {
+        "id": "id",
+        "so_number": "string unique",
+        "customer_id": "foreignId",
+        "order_date": "date nullable",
+        "delivery_date": "date nullable",
+        "payment_terms": "string nullable",
+        "discount": "decimal(10,2) default 0",
+        "total_amount": "decimal(12,2) nullable",
+        "status": "string default draft",
+        "order_items": "json nullable",
+        "notes": "text nullable",
+        "discount_id": "foreignId nullable",
+        "promotion_id": "foreignId nullable",
+        "channel_id": "foreignId nullable",
+        "tax_id": "foreignId nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    },
+    "Promotions": {
+      "columns": {
+        "id": "id",
+        "promotion_name": "string",
+        "discount_id": "foreignId nullable",
+        "start_date": "date nullable",
+        "end_date": "date nullable",
+        "applicable_products": "json nullable",
+        "minimum_purchase": "decimal(10,2) default 0",
+        "usage_limit": "integer nullable",
+        "used_count": "integer default 0",
+        "status": "string default active",
+        "description": "text nullable",
+        "created_by": "foreignId nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    },
+    "Invoices": {
+      "columns": {
+        "id": "id",
+        "invoice_number": "string unique",
+        "customer_id": "foreignId",
+        "sales_order_id": "foreignId nullable",
+        "invoice_date": "date nullable",
+        "due_date": "date nullable",
+        "amount": "decimal(12,2) nullable",
+        "tax": "decimal(10,2) default 0",
+        "paid_amount": "decimal(12,2) default 0",
+        "balance": "decimal(12,2) nullable",
+        "status": "string default unpaid",
+        "notes": "text nullable",
+        "generated_by": "foreignId nullable",
+        "tax_id": "foreignId nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    }
+  },
+  "Reports": {
+    "Forecasting": {
+      "columns": {
+        "id": "id",
+        "forecast_name": "string",
+        "forecast_type": "string nullable",
+        "period_type": "string nullable",
+        "start_date": "date nullable",
+        "end_date": "date nullable",
+        "base_data_source": "string nullable",
+        "growth_rate": "decimal(5,2) nullable",
+        "seasonal_factor": "decimal(5,2) nullable",
+        "confidence_level": "decimal(5,2) nullable",
+        "forecast_data": "json nullable",
+        "created_by": "foreignId nullable",
+        "status": "string default draft",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    },
+    "CustomReports": {
+      "columns": {
+        "id": "id",
+        "report_name": "string",
+        "report_type": "string nullable",
+        "description": "text nullable",
+        "query_sql": "text nullable",
+        "parameters": "json nullable",
+        "schedule": "string nullable",
+        "recipients": "json nullable",
+        "format_type": "string nullable",
+        "created_by": "foreignId nullable",
+        "last_run_date": "datetime nullable",
+        "status": "string default active",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    },
+    "BiDashboards": {
+      "columns": {
+        "id": "id",
+        "dashboard_name": "string",
+        "description": "text nullable",
+        "widgets": "json nullable",
+        "layout_config": "json nullable",
+        "data_sources": "json nullable",
+        "refresh_interval": "integer default 300",
+        "access_level": "string default private",
+        "created_by": "foreignId nullable",
+        "is_public": "boolean default false",
+        "category": "string nullable",
+        "status": "string default active",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    }
+  },
+  "QualityControl": {
+    "QcChecklists": {
+      "columns": {
+        "id": "id",
+        "checklist_number": "string unique",
+        "work_order_id": "foreignId nullable",
+        "inspector_id": "foreignId nullable",
+        "inspection_type": "string nullable",
+        "inspection_date": "date nullable",
+        "sample_size": "integer default 0",
+        "items_checked": "integer default 0",
+        "items_passed": "integer default 0",
+        "pass_rate": "decimal(5,2) nullable",
+        "status": "string default pending",
+        "checklist_items": "json nullable",
+        "notes": "text nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    },
+    "Defects": {
+      "columns": {
+        "id": "id",
+        "defect_number": "string unique",
+        "product_id": "foreignId nullable",
+        "batch_number": "string nullable",
+        "defect_type": "string nullable",
+        "severity": "string default medium",
+        "description": "text nullable",
+        "detected_by": "foreignId nullable",
+        "detection_date": "date nullable",
+        "status": "string default open",
+        "resolution": "text nullable",
+        "resolution_date": "date nullable",
+        "cost_impact": "decimal(10,2) default 0",
+        "affected_quantity": "integer default 0",
+        "compliance_id": "foreignId nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    },
+    "Compliance": {
+      "columns": {
+        "id": "id",
+        "report_number": "string unique",
+        "compliance_type": "string nullable",
+        "standard_reference": "string nullable",
+        "audit_date": "date nullable",
+        "auditor_id": "foreignId nullable",
+        "findings": "json nullable",
+        "risk_level": "string default low",
+        "corrective_actions": "json nullable",
+        "due_date": "date nullable",
+        "completion_date": "date nullable",
+        "status": "string default pending",
+        "notes": "text nullable",
+        "attachments": "json nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    }
+  },
+  "Purchase": {
+    "Suppliers": {
+      "columns": {
+        "id": "id",
+        "company_name": "string",
+        "contact_person": "string nullable",
+        "email": "string nullable",
+        "phone": "string nullable",
+        "country": "string nullable",
+        "payment_terms": "string nullable",
+        "currency": "string default USD",
+        "address": "text nullable",
+        "status": "string default active",
+        "rating": "integer nullable",
+        "tax_id": "string nullable",
+        "website": "string nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    },
+    "SupplierPayments": {
+      "columns": {
+        "id": "id",
+        "payment_number": "string unique",
+        "supplier_id": "foreignId",
+        "purchase_order_id": "foreignId nullable",
+        "payment_date": "date nullable",
+        "amount": "decimal(12,2) nullable",
+        "payment_method": "string nullable",
+        "reference_number": "string nullable",
+        "status": "string default pending",
+        "notes": "text nullable",
+        "approved_by": "foreignId nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    },
+    "PurchaseOrders": {
+      "columns": {
+        "id": "id",
+        "po_number": "string unique",
+        "supplier_id": "foreignId",
+        "order_date": "date nullable",
+        "expected_delivery": "date nullable",
+        "warehouse": "string nullable",
+        "payment_terms": "string nullable",
+        "total_amount": "decimal(12,2) nullable",
+        "status": "string default pending",
+        "approved_by": "foreignId nullable",
+        "order_items": "json nullable",
+        "notes": "text nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    },
+    "Grn": {
+      "columns": {
+        "id": "id",
+        "grn_number": "string unique",
+        "purchase_order_id": "foreignId nullable",
+        "supplier_id": "foreignId nullable",
+        "received_date": "date nullable",
+        "total_items": "integer default 0",
+        "total_quantity": "integer default 0",
+        "status": "string default pending",
+        "notes": "text nullable",
+        "received_by": "foreignId nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    }
+  },
+  "Projects": {
+    "Tasks": {
+      "columns": {
+        "id": "id",
+        "project_name": "string nullable",
+        "task_title": "string",
+        "description": "text nullable",
+        "assigned_to": "foreignId nullable",
+        "start_date": "date nullable",
+        "end_date": "date nullable",
+        "priority": "string default medium",
+        "status": "string default pending",
+        "progress_percentage": "integer default 0",
+        "estimated_hours": "decimal(8,2) nullable",
+        "actual_hours": "decimal(8,2) nullable",
+        "dependencies": "json nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    },
+    "Resources": {
+      "columns": {
+        "id": "id",
+        "project_id": "foreignId nullable",
+        "resource_name": "string nullable",
+        "resource_type": "string nullable",
+        "allocation_percentage": "integer default 100",
+        "start_date": "date nullable",
+        "end_date": "date nullable",
+        "cost_per_hour": "decimal(8,2) nullable",
+        "total_cost": "decimal(12,2) default 0",
+        "utilization_rate": "decimal(5,2) nullable",
+        "status": "string default active",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    },
+    "ProjectCost": {
+      "columns": {
+        "id": "id",
+        "project_id": "foreignId nullable",
+        "cost_category": "string nullable",
+        "description": "text nullable",
+        "budgeted_amount": "decimal(12,2) default 0",
+        "actual_amount": "decimal(12,2) default 0",
+        "variance": "decimal(12,2) default 0",
+        "currency": "string default USD",
+        "cost_date": "date nullable",
+        "approved_by": "foreignId nullable",
+        "status": "string default pending",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    }
+  },
+  "Production": {
+    "WorkOrders": {
+      "columns": {
+        "id": "id",
+        "wo_number": "string unique",
+        "product_bom_id": "foreignId nullable",
+        "qty_to_produce": "integer default 0",
+        "priority": "string default normal",
+        "start_date": "date nullable",
+        "end_date": "date nullable",
+        "assigned_to": "foreignId nullable",
+        "status": "string default pending",
+        "actual_qty_produced": "integer default 0",
+        "scrap_quantity": "integer default 0",
+        "notes": "text nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    },
+    "MachineLabor": {
+      "columns": {
+        "id": "id",
+        "work_order_id": "foreignId",
+        "machine_id": "foreignId nullable",
+        "operator_id": "foreignId nullable",
+        "start_time": "datetime nullable",
+        "end_time": "datetime nullable",
+        "output_quantity": "integer default 0",
+        "scrap_quantity": "integer default 0",
+        "status": "string default pending",
+        "notes": "text nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    },
+    "Bom": {
+      "columns": {
+        "id": "id",
+        "bom_number": "string unique",
+        "finished_product": "string nullable",
+        "version": "string nullable",
+        "lead_time_days": "integer nullable",
+        "estimated_cost": "decimal(12,2) nullable",
+        "status": "string default draft",
+        "components": "json nullable",
+        "notes": "text nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    }
+  },
+  "Logistics": {
+    "Warehouses": {
+      "columns": {
+        "id": "id",
+        "warehouse_name": "string",
+        "code": "string unique",
+        "type": "string nullable",
+        "location_address": "text nullable",
+        "manager_id": "foreignId nullable",
+        "capacity_units": "integer nullable",
+        "used_units": "integer default 0",
+        "status": "string default active",
+        "contact_phone": "string nullable",
+        "email": "string nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    },
+    "Shipments": {
+      "columns": {
+        "id": "id",
+        "shipment_number": "string unique",
+        "sales_order_id": "foreignId nullable",
+        "customer": "string nullable",
+        "carrier": "string nullable",
+        "tracking_number": "string nullable",
+        "est_delivery_date": "date nullable",
+        "actual_delivery_date": "date nullable",
+        "status": "string default pending",
+        "shipping_address": "text nullable",
+        "cost": "decimal(10,2) default 0",
+        "notes": "text nullable",
+        "route_id": "foreignId nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    },
+    "Routes": {
+      "columns": {
+        "id": "id",
+        "route_name": "string",
+        "driver_id": "foreignId nullable",
+        "vehicle_number": "string nullable",
+        "start_location": "string nullable",
+        "end_location": "string nullable",
+        "route_distance": "decimal(10,2) nullable",
+        "estimated_duration": "decimal(6,2) nullable",
+        "actual_duration": "decimal(6,2) nullable",
+        "fuel_consumed": "decimal(8,2) nullable",
+        "delivery_count": "integer default 0",
+        "status": "string default pending",
+        "route_date": "date nullable",
+        "notes": "text nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    }
+  },
+  "Inventory": {
+    "StockValuation": {
+      "columns": {
+        "id": "id",
+        "valuation_date": "date nullable",
+        "product_id": "foreignId nullable",
+        "warehouse_id": "foreignId nullable",
+        "quantity_on_hand": "decimal(12,2) nullable",
+        "unit_cost": "decimal(10,2) nullable",
+        "total_value": "decimal(12,2) nullable",
+        "valuation_method": "string nullable",
+        "notes": "text nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    },
+    "StockMovements": {
+      "columns": {
+        "id": "id",
+        "ref_number": "string unique",
+        "date": "date nullable",
+        "product_id": "foreignId nullable",
+        "movement_type": "string nullable",
+        "quantity": "integer default 0",
+        "from_warehouse": "string nullable",
+        "to_warehouse": "string nullable",
+        "reason_notes": "text nullable",
+        "user_id": "foreignId nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    },
+    "ProductCatalog": {
+      "columns": {
+        "id": "id",
+        "product_name": "string",
+        "sku": "string unique",
+        "category": "string nullable",
+        "unit_price": "decimal(12,2) nullable",
+        "cost_price": "decimal(12,2) nullable",
+        "warehouse": "string nullable",
+        "reorder_level": "integer nullable",
+        "valuation_method": "string nullable",
+        "description": "text nullable",
+        "status": "string default active",
+        "barcode": "string nullable",
+        "weight": "decimal(8,2) nullable",
+        "dimensions": "string nullable",
+        "channel_id": "foreignId nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    },
+    "BatchTracking": {
+      "columns": {
+        "id": "id",
+        "batch_lot_number": "string unique",
+        "serial_number": "string nullable",
+        "product_id": "foreignId nullable",
+        "quantity": "integer default 0",
+        "manufacturing_date": "date nullable",
+        "expiry_date": "date nullable",
+        "status": "string default available",
+        "warehouse_location": "string nullable",
+        "cost_per_unit": "decimal(10,2) nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    }
+  },
+  "Ecommerce": {
+    "Pos": {
+      "columns": {
+        "id": "id",
+        "terminal_name": "string",
+        "location": "string nullable",
+        "store_code": "string nullable",
+        "device_id": "string nullable",
+        "cash_drawer_balance": "decimal(10,2) default 0",
+        "session_status": "string default closed",
+        "current_user_id": "foreignId nullable",
+        "last_sync_date": "datetime nullable",
+        "offline_mode": "boolean default false",
+        "configuration": "json nullable",
+        "status": "string default active",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    },
+    "OnlineChannels": {
+      "columns": {
+        "id": "id",
+        "channel_name": "string",
+        "platform": "string",
+        "api_endpoint": "string nullable",
+        "api_key": "string nullable",
+        "webhook_url": "string nullable",
+        "sync_frequency": "string nullable",
+        "last_sync_date": "datetime nullable",
+        "status": "string default active",
+        "default_currency": "string default USD",
+        "tax_inclusive": "boolean default false",
+        "shipping_methods": "json nullable",
+        "payment_methods": "json nullable",
+        "configuration": "json nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    },
+    "InvSync": {
+      "columns": {
+        "id": "id",
+        "sync_reference": "string unique",
+        "terminal_id": "foreignId nullable",
+        "channel_id": "foreignId nullable",
+        "sync_type": "string nullable",
+        "product_sku": "string nullable",
+        "online_quantity": "decimal(10,2) nullable",
+        "local_quantity": "decimal(10,2) nullable",
+        "variance": "decimal(10,2) default 0",
+        "sync_date": "datetime nullable",
+        "status": "string default pending",
+        "error_message": "text nullable",
+        "retry_count": "integer default 0",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    }
+  },
+  "Documents": {
+    "DocVersions": {
+      "columns": {
+        "id": "id",
+        "doc_library_id": "foreignId",
+        "version_number": "string nullable",
+        "file_path": "string nullable",
+        "file_size": "integer nullable",
+        "changes_description": "text nullable",
+        "created_by": "foreignId nullable",
+        "is_current": "boolean default true",
+        "approval_status": "string default pending",
+        "approved_by": "foreignId nullable",
+        "approval_date": "date nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    },
+    "DocLibrary": {
+      "columns": {
+        "id": "id",
+        "title": "string",
+        "description": "text nullable",
+        "category": "string nullable",
+        "file_path": "string nullable",
+        "file_size": "integer nullable",
+        "file_type": "string nullable",
+        "version": "string default 1.0",
+        "uploaded_by": "foreignId nullable",
+        "department": "string nullable",
+        "status": "string default active",
+        "tags": "json nullable",
+        "expiry_date": "date nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    }
+  },
+  "CRM": {
+    "Support": {
+      "columns": {
+        "id": "id",
+        "ticket_number": "string unique",
+        "customer_id": "foreignId nullable",
+        "lead_id": "foreignId nullable",
+        "subject": "string",
+        "description": "text nullable",
+        "priority": "string default medium",
+        "category": "string nullable",
+        "assigned_to": "foreignId nullable",
+        "status": "string default open",
+        "resolution": "text nullable",
+        "resolution_date": "datetime nullable",
+        "customer_satisfaction": "integer nullable",
+        "response_time_hours": "decimal(6,2) nullable",
+        "created_date": "datetime nullable",
+        "last_response_date": "datetime nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    },
+    "Leads": {
+      "columns": {
+        "id": "id",
+        "lead_name": "string",
+        "company": "string nullable",
+        "email": "string nullable",
+        "phone": "string nullable",
+        "deal_value": "decimal(12,2) nullable",
+        "stage": "string default new",
+        "assigned_to": "foreignId nullable",
+        "next_action_date": "date nullable",
+        "source": "string nullable",
+        "probability": "integer nullable",
+        "notes": "text nullable",
+        "status": "string default active",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    },
+    "Interactions": {
+      "columns": {
+        "id": "id",
+        "interaction_type": "string nullable",
+        "lead_id": "foreignId nullable",
+        "customer_id": "foreignId nullable",
+        "sales_order_id": "foreignId nullable",
+        "support_ticket_id": "foreignId nullable",
+        "interaction_date": "datetime nullable",
+        "subject": "string nullable",
+        "description": "text nullable",
+        "next_action": "string nullable",
+        "next_action_date": "datetime nullable",
+        "assigned_to": "foreignId nullable",
+        "status": "string default pending",
+        "created_by": "foreignId nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    }
+  },
+  "Core": {
+    "Dashboard": {
+      "columns": {
+        "id": "id",
+        "user_id": "foreignId",
+        "widget_config": "json nullable",
+        "layout_preferences": "json nullable",
+        "theme": "string default light",
+        "language": "string default en",
+        "timezone": "string default UTC",
+        "default_date_range": "string nullable",
+        "refresh_interval": "integer default 300",
+        "is_default": "boolean default false",
+        "dashboard_type": "string nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    },
+    "Settings": {
+      "columns": {
+        "id": "id",
+        "setting_key": "string unique",
+        "setting_value": "json nullable",
+        "setting_type": "string default string",
+        "category": "string nullable",
+        "description": "text nullable",
+        "is_system": "boolean default false",
+        "updated_by": "foreignId nullable",
+        "validation_rules": "json nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    }
+  },
+  "Accounting": {
+    "Tax": {
+      "columns": {
+        "id": "id",
+        "tax_name": "string",
+        "tax_rate": "decimal(5,2)",
+        "tax_type": "string",
+        "applicable_to": "string nullable",
+        "description": "text nullable",
+        "effective_date": "date nullable",
+        "status": "string default active",
+        "tax_code": "string nullable",
+        "jurisdiction": "string nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    },
+    "Gl": {
+      "columns": {
+        "id": "id",
+        "account_code": "string unique",
+        "account_name": "string",
+        "account_type": "string nullable",
+        "debit": "decimal(15,2) default 0",
+        "credit": "decimal(15,2) default 0",
+        "balance": "decimal(15,2) default 0",
+        "description": "text nullable",
+        "transaction_date": "date nullable",
+        "reference_number": "string nullable",
+        "status": "string default active",
+        "parent_account_id": "foreignId nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    },
+    "FinReports": {
+      "columns": {
+        "id": "id",
+        "report_name": "string",
+        "report_type": "string nullable",
+        "description": "text nullable",
+        "report_data": "json nullable",
+        "start_date": "date nullable",
+        "end_date": "date nullable",
+        "status": "string default draft",
+        "created_by": "foreignId nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    },
+    "ApAr": {
+      "columns": {
+        "id": "id",
+        "ref_number": "string unique",
+        "party_name": "string nullable",
+        "type": "string nullable",
+        "due_date": "date nullable",
+        "amount": "decimal(12,2) nullable",
+        "paid": "decimal(12,2) default 0",
+        "balance": "decimal(12,2) nullable",
+        "status": "string default pending",
+        "reference": "string nullable",
+        "description": "text nullable",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "relationships": []
+    }
+  }
+}

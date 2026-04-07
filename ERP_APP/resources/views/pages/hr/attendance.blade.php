@@ -46,11 +46,14 @@
         <form id="formAttendance">
           <input type="hidden" name="id" id="att-id"/>
           <div class="row g-3">
-            <div class="col-md-6"><label class="erp-form-label">Employee</label><input class="erp-form-control" name="employee_id" type="text" placeholder="Employee ID"/></div>
+            <div class="col-md-6"><label class="erp-form-label">Employee</label><select class="erp-form-control" name="employee_id" placeholder="Select employee"></select></div>
             <div class="col-md-6"><label class="erp-form-label">Date</label><input class="erp-form-control" name="date" type="date" placeholder=""/></div>
-            <div class="col-md-3"><label class="erp-form-label">Check In</label><input class="erp-form-control" name="check_in" type="time" placeholder=""/></div>
-            <div class="col-md-3"><label class="erp-form-label">Check Out</label><input class="erp-form-control" name="check_out" type="time" placeholder=""/></div>
-            <div class="col-md-6"><label class="erp-form-label">Status</label><select class="erp-form-control" name="status"><option>Present</option><option>Absent</option><option>Late</option><option>Early Leave</option></select></div>
+            <div class="col-md-3"><label class="erp-form-label">Check In</label><input class="erp-form-control" name="check_in" type="datetime-local" placeholder=""/></div>
+            <div class="col-md-3"><label class="erp-form-label">Check Out</label><input class="erp-form-control" name="check_out" type="datetime-local" placeholder=""/></div>
+            <div class="col-md-3"><label class="erp-form-label">Hours Worked</label><input class="erp-form-control" name="hours_worked" type="number" step="0.01" placeholder=""/></div>
+            <div class="col-md-3"><label class="erp-form-label">Overtime</label><input class="erp-form-control" name="overtime_hours" type="number" step="0.01" placeholder="0"/></div>
+            <div class="col-md-6"><label class="erp-form-label">Status</label><select class="erp-form-control" name="status"><option value="present">Present</option><option value="absent">Absent</option><option value="late">Late</option><option value="leave">On Leave</option></select></div>
+            <div class="col-md-6"><label class="erp-form-label">Leave Type</label><select class="erp-form-control" name="leave_type"><option value="">None</option><option value="annual">Annual</option><option value="sick">Sick</option><option value="casual">Casual</option></select></div>
             <div class="col-md-12"><label class="erp-form-label">Notes</label><textarea class="erp-form-control" name="notes" rows="2" placeholder=""></textarea></div>
           </div>
         </form>

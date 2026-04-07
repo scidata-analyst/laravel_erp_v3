@@ -12,15 +12,37 @@ class Employees extends Model
     use HasFactory;
 
     protected $fillable = [
-        'emp_id',
-        'name',
+        'employee_code',
+        'full_name',
         'position',
         'department',
         'phone',
-        'joining_date',
-        'salary',
+        'join_date',
+        'basic_salary',
         'status',
         'contract_type',
-        'email'
+        'email',
+        'address',
+        'manager_id'
     ];
+
+    public function manager(): BelongsTo
+    {
+        return $this->belongsTo(Employees::class, 'manager_id');
+    }
+
+    public function subordinates(): HasMany
+    {
+        return $this->hasMany(Employees::class, 'manager_id');
+    }
+
+    public function attendance(): HasMany
+    {
+        return $this->hasMany(Attendance::class);
+    }
+
+    public function payroll(): HasMany
+    {
+        return $this->hasMany(Payroll::class);
+    }
 }
