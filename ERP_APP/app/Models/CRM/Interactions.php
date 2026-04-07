@@ -10,13 +10,23 @@ class Interactions extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'date',
-        'customer',
-        'contact',
-        'type',
-        'summary',
-        'duration',
-        'logged_by',
-        'next_steps',
+        'interaction_type',
+        'lead_id',
+        'customer_id',
+        'sales_order_id',
+        'support_ticket_id',
+        'interaction_date',
+        'subject',
+        'description',
+        'next_action',
+        'next_action_date',
+        'assigned_to',
+        'status',
+        'created_by'
+    ];
+
+    protected $casts = [
+        'interaction_date' => 'datetime',
+        'next_action_date' => 'datetime',
     ];
 }

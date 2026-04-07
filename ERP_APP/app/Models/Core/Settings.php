@@ -19,4 +19,10 @@ class Settings extends Model
         'updated_by',
         'validation_rules'
     ];
+
+    protected $casts = [
+        'setting_value' => 'json',
+        'is_system' => 'boolean',
+        'validation_rules' => 'json',
+    ];
 }

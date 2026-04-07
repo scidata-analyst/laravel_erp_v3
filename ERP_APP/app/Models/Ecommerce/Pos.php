@@ -11,14 +11,23 @@ class Pos extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'terminal_id',
+        'terminal_name',
         'location',
-        'cashier',
-        'session_start',
-        'sales',
-        'transactions',
-        'status',
-        'receipt_printer',
-        'warehouse_id',
+        'store_code',
+        'device_id',
+        'cash_drawer_balance',
+        'session_status',
+        'current_user_id',
+        'last_sync_date',
+        'offline_mode',
+        'configuration',
+        'status'
+    ];
+
+    protected $casts = [
+        'cash_drawer_balance' => 'decimal:2',
+        'last_sync_date' => 'datetime',
+        'offline_mode' => 'boolean',
+        'configuration' => 'json',
     ];
 }

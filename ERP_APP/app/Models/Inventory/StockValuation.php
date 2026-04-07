@@ -10,12 +10,20 @@ class StockValuation extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'product',
-        'sku',
-        'quantity',
-        'cost_method',
+        'valuation_date',
+        'product_id',
+        'warehouse_id',
+        'quantity_on_hand',
         'unit_cost',
         'total_value',
-        'last_updated_at'
+        'valuation_method',
+        'notes'
+    ];
+
+    protected $casts = [
+        'valuation_date' => 'date',
+        'quantity_on_hand' => 'decimal:2',
+        'unit_cost' => 'decimal:2',
+        'total_value' => 'decimal:2',
     ];
 }

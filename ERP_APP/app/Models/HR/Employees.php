@@ -12,18 +12,23 @@ class Employees extends Model
     use HasFactory;
 
     protected $fillable = [
-        'employee_code',
         'full_name',
+        'employee_code',
         'position',
         'department',
-        'phone',
-        'join_date',
         'basic_salary',
-        'status',
+        'join_date',
         'contract_type',
         'email',
+        'phone',
         'address',
+        'status',
         'manager_id'
+    ];
+
+    protected $casts = [
+        'basic_salary' => 'decimal:2',
+        'join_date' => 'date',
     ];
 
     public function manager(): BelongsTo

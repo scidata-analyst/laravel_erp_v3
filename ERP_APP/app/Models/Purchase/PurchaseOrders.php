@@ -23,4 +23,11 @@ class PurchaseOrders extends Model
         'order_items',
         'notes'
     ];
+
+    protected $casts = [
+        'order_date' => 'date',
+        'expected_delivery' => 'date',
+        'total_amount' => 'decimal:2',
+        'order_items' => 'json',
+    ];
 }

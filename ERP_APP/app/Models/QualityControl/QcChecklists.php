@@ -11,7 +11,7 @@ class QcChecklists extends Model
     use HasFactory;
     protected $fillable = [
         'checklist_number',
-        'product_id',
+        'work_order_id',
         'inspector_id',
         'inspection_type',
         'inspection_date',
@@ -21,5 +21,12 @@ class QcChecklists extends Model
         'pass_rate',
         'status',
         'checklist_items',
+        'notes'
+    ];
+
+    protected $casts = [
+        'inspection_date' => 'date',
+        'pass_rate' => 'decimal:2',
+        'checklist_items' => 'json',
     ];
 }

@@ -12,11 +12,18 @@ class Roles extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name',
+        'role_name',
         'description',
         'permissions',
+        'is_system_role',
         'is_active',
         'created_by'
+    ];
+
+    protected $casts = [
+        'permissions' => 'json',
+        'is_system_role' => 'boolean',
+        'is_active' => 'boolean',
     ];
 
     /**

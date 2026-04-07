@@ -11,13 +11,23 @@ class Shipments extends Model
     use HasFactory;
 
     protected $fillable = [
-        'shipment',
-        'sales_order',
+        'shipment_number',
+        'sales_order_id',
         'customer',
-        'currier',
+        'carrier',
         'tracking_number',
-        'estimated_delivery',
+        'est_delivery_date',
+        'actual_delivery_date',
         'status',
         'shipping_address',
+        'cost',
+        'notes',
+        'route_id'
+    ];
+
+    protected $casts = [
+        'est_delivery_date' => 'date',
+        'actual_delivery_date' => 'date',
+        'cost' => 'decimal:2',
     ];
 }

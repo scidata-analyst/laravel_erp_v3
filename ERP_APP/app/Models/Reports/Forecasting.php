@@ -12,15 +12,26 @@ class Forecasting extends Model
     use HasFactory;
     protected $fillable = [
         'forecast_name',
-        'type',
-        'model',
-        'period',
-        'accuracy',
-        'generated_at',
-        'status',
-        'period_start',
-        'period_end',
-        'model'
+        'forecast_type',
+        'period_type',
+        'start_date',
+        'end_date',
+        'base_data_source',
+        'growth_rate',
+        'seasonal_factor',
+        'confidence_level',
+        'forecast_data',
+        'created_by',
+        'status'
+    ];
+
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date',
+        'growth_rate' => 'decimal:2',
+        'seasonal_factor' => 'decimal:2',
+        'confidence_level' => 'decimal:2',
+        'forecast_data' => 'json',
     ];
 
 }

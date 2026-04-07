@@ -12,13 +12,24 @@ class OnlineChannels extends Model
     protected $fillable = [
         'channel_name',
         'platform',
-        'orders',
-        'revenue',
-        'sync_status',
+        'api_endpoint',
+        'api_key',
+        'webhook_url',
+        'sync_frequency',
         'last_sync_date',
         'status',
-        'api_url',
-        'api_key',
-        'sync_frequency',
+        'default_currency',
+        'tax_inclusive',
+        'shipping_methods',
+        'payment_methods',
+        'configuration'
+    ];
+
+    protected $casts = [
+        'last_sync_date' => 'datetime',
+        'tax_inclusive' => 'boolean',
+        'shipping_methods' => 'json',
+        'payment_methods' => 'json',
+        'configuration' => 'json',
     ];
 }

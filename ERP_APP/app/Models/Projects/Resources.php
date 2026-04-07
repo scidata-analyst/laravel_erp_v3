@@ -10,12 +10,23 @@ class Resources extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'employee',
-        'role',
-        'project',
+        'project_id',
+        'resource_name',
+        'resource_type',
         'allocation_percentage',
         'start_date',
         'end_date',
-        'availability',
+        'cost_per_hour',
+        'total_cost',
+        'utilization_rate',
+        'status'
+    ];
+
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date',
+        'cost_per_hour' => 'decimal:2',
+        'total_cost' => 'decimal:2',
+        'utilization_rate' => 'decimal:2',
     ];
 }

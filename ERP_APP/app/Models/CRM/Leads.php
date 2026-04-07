@@ -11,12 +11,21 @@ class Leads extends Model
     use HasFactory;
     protected $fillable = [
         'lead_name',
-        'company_name',
+        'company',
         'email',
         'phone',
         'deal_value',
         'stage',
         'assigned_to',
+        'next_action_date',
+        'source',
+        'probability',
         'notes',
+        'status'
+    ];
+
+    protected $casts = [
+        'deal_value' => 'decimal:2',
+        'next_action_date' => 'date',
     ];
 }

@@ -11,12 +11,21 @@ class CustomReports extends Model
     use HasFactory;
     protected $fillable = [
         'report_name',
-        'module',
-        'fields',
+        'report_type',
+        'description',
+        'query_sql',
+        'parameters',
         'schedule',
-        'last_run',
-        'format',
-        'status',
-        'filters',
+        'recipients',
+        'format_type',
+        'created_by',
+        'last_run_date',
+        'status'
+    ];
+
+    protected $casts = [
+        'parameters' => 'json',
+        'recipients' => 'json',
+        'last_run_date' => 'datetime',
     ];
 }

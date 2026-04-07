@@ -11,11 +11,17 @@ class Bom extends Model
     use HasFactory;
     protected $fillable = [
         'bom_number',
-        'product',
+        'finished_product',
         'version',
-        'component',
+        'lead_time_days',
         'estimated_cost',
-        'lead_time',
         'status',
+        'components',
+        'notes'
+    ];
+
+    protected $casts = [
+        'estimated_cost' => 'decimal:2',
+        'components' => 'json',
     ];
 }

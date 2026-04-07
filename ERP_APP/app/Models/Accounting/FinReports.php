@@ -12,9 +12,17 @@ class FinReports extends Model
     protected $fillable = [
         'report_name',
         'report_type',
-        'period',
-        'generated_at',
-        'generated_by',
-        'format',
+        'description',
+        'report_data',
+        'start_date',
+        'end_date',
+        'status',
+        'created_by'
+    ];
+
+    protected $casts = [
+        'report_data' => 'json',
+        'start_date' => 'date',
+        'end_date' => 'date',
     ];
 }

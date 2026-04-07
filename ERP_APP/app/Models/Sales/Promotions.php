@@ -11,14 +11,23 @@ class Promotions extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'promotion_code',
-        'description',
-        'discount_type',
-        'discount_value',
+        'promotion_name',
+        'discount_id',
         'start_date',
         'end_date',
-        'status',
-        'min_order',
         'applicable_products',
+        'minimum_purchase',
+        'usage_limit',
+        'used_count',
+        'status',
+        'description',
+        'created_by'
+    ];
+
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date',
+        'applicable_products' => 'json',
+        'minimum_purchase' => 'decimal:2',
     ];
 }

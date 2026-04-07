@@ -10,15 +10,21 @@ class Dashboard extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'user_id',
         'widget_config',
-        'layout_preference',
+        'layout_preferences',
         'theme',
         'language',
         'timezone',
         'default_date_range',
         'refresh_interval',
-        'user_id',
         'is_default',
-        'dashboard_type',
+        'dashboard_type'
+    ];
+
+    protected $casts = [
+        'widget_config' => 'json',
+        'layout_preferences' => 'json',
+        'is_default' => 'boolean',
     ];
 }

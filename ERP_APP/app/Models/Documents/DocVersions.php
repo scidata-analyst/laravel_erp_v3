@@ -13,10 +13,18 @@ class DocVersions extends Model
     protected $fillable = [
         'doc_library_id',
         'version_number',
-        'changed_by',
-        'change_summary',
-        'date',
+        'file_path',
+        'file_size',
+        'changes_description',
+        'created_by',
+        'is_current',
+        'approval_status',
         'approved_by',
-        'status',
+        'approval_date'
+    ];
+
+    protected $casts = [
+        'is_current' => 'boolean',
+        'approval_date' => 'date',
     ];
 }

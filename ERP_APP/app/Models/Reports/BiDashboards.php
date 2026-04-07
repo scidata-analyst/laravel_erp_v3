@@ -11,11 +11,23 @@ class BiDashboards extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'widget_name',
-        'widget_type',
-        'data_source',
-        'refresh_rate',
-        'dashboard',
+        'dashboard_name',
+        'description',
+        'widgets',
+        'layout_config',
+        'data_sources',
+        'refresh_interval',
+        'access_level',
         'created_by',
+        'is_public',
+        'category',
+        'status'
+    ];
+
+    protected $casts = [
+        'widgets' => 'json',
+        'layout_config' => 'json',
+        'data_sources' => 'json',
+        'is_public' => 'boolean',
     ];
 }

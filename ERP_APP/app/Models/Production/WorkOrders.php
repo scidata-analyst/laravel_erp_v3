@@ -12,13 +12,20 @@ class WorkOrders extends Model
     use HasFactory;
     protected $fillable = [
         'wo_number',
-        'product',
-        'bom',
-        'quantity',
+        'product_bom_id',
+        'qty_to_produce',
+        'priority',
         'start_date',
         'end_date',
-        'status',
         'assigned_to',
-        'priority',
+        'status',
+        'actual_qty_produced',
+        'scrap_quantity',
+        'notes'
+    ];
+
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date',
     ];
 }

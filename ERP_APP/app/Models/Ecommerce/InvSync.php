@@ -11,14 +11,24 @@ class InvSync extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'product_id',
+        'sync_reference',
+        'terminal_id',
+        'channel_id',
+        'sync_type',
         'product_sku',
-        'erp_sync',
-        'shopify_sync',
-        'dara_sync',
-        'daraz_sync',
-        'pos_sync',
-        'last_synced_at',
-        'sync_status',
+        'online_quantity',
+        'local_quantity',
+        'variance',
+        'sync_date',
+        'status',
+        'error_message',
+        'retry_count'
+    ];
+
+    protected $casts = [
+        'online_quantity' => 'decimal:2',
+        'local_quantity' => 'decimal:2',
+        'variance' => 'decimal:2',
+        'sync_date' => 'datetime',
     ];
 }

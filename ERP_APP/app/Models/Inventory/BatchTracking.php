@@ -10,12 +10,20 @@ class BatchTracking extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'batch_number',
-        'serial',
-        'product',
+        'batch_lot_number',
+        'serial_number',
+        'product_id',
         'quantity',
         'manufacturing_date',
         'expiry_date',
         'status',
+        'warehouse_location',
+        'cost_per_unit'
+    ];
+
+    protected $casts = [
+        'manufacturing_date' => 'date',
+        'expiry_date' => 'date',
+        'cost_per_unit' => 'decimal:2',
     ];
 }

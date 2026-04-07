@@ -11,13 +11,27 @@ class Support extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'customer',
+        'ticket_number',
+        'customer_id',
+        'lead_id',
         'subject',
-        'low',
-        'assigned_to',
-        'category',
         'description',
         'priority',
+        'category',
+        'assigned_to',
         'status',
+        'resolution',
+        'resolution_date',
+        'customer_satisfaction',
+        'response_time_hours',
+        'created_date',
+        'last_response_date'
+    ];
+
+    protected $casts = [
+        'resolution_date' => 'datetime',
+        'response_time_hours' => 'decimal:2',
+        'created_date' => 'datetime',
+        'last_response_date' => 'datetime',
     ];
 }

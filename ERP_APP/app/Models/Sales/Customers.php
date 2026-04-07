@@ -11,15 +11,21 @@ class Customers extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name',
+        'company_name',
         'contact_person',
         'email',
         'phone',
         'credit_limit',
         'sales_rep',
         'billing_address',
-        'outstanding',
+        'shipping_address',
         'status',
+        'tax_id',
+        'payment_terms',
+    ];
+
+    protected $casts = [
+        'credit_limit' => 'decimal:2',
     ];
 
     public function invoices(): HasMany

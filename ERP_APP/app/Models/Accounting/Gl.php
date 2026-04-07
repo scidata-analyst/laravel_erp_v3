@@ -16,7 +16,17 @@ class Gl extends Model
         'debit',
         'credit',
         'balance',
-        'asset_type',
-        'narration',
+        'description',
+        'transaction_date',
+        'reference_number',
+        'status',
+        'parent_account_id'
+    ];
+
+    protected $casts = [
+        'debit' => 'decimal:2',
+        'credit' => 'decimal:2',
+        'balance' => 'decimal:2',
+        'transaction_date' => 'date',
     ];
 }

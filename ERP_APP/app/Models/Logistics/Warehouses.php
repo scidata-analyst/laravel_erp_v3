@@ -14,10 +14,13 @@ class Warehouses extends Model
     protected $fillable = [
         'warehouse_name',
         'code',
+        'type',
         'location_address',
-        'manager',
-        'capacity',
-        'used',
+        'manager_id',
+        'capacity_units',
+        'used_units',
         'status',
+        'contact_phone',
+        'email'
     ];
 }

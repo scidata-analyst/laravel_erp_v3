@@ -1,5 +1,5 @@
 # Base path
-$basePath = "D:\OWN\laravel_erp_v3\ERP_APP\app\Http\Controllers"
+$basePath = "F:\DASHBOARD_APP\GIT_VERSION\ERP\ERP_APP_2\app\Http\Controllers"
 
 # Schema
 $schema = @{
@@ -63,6 +63,22 @@ class ENTITYController extends Controller
     }
 
     /**
+     * Display all ENTITY records without pagination.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function all()
+    {
+        $data = $this->VARNAME->all();
+
+        return response()->json([
+            "success" => true,
+            "message" => "All ENTITY records fetched successfully",
+            "data" => ENTITYResource::collection($data)
+        ]);
+    }
+
+    /**
      * Display a paginated listing of ENTITY resources.
      *
      * @return \Illuminate\Http\JsonResponse
@@ -78,22 +94,6 @@ class ENTITYController extends Controller
         return response()->json([
             "success" => true,
             "message" => "ENTITY records fetched successfully",
-            "data" => ENTITYResource::collection($data)
-        ]);
-    }
-
-    /**
-     * Display all ENTITY records without pagination.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function all()
-    {
-        $data = $this->VARNAME->all();
-
-        return response()->json([
-            "success" => true,
-            "message" => "All ENTITY records fetched successfully",
             "data" => ENTITYResource::collection($data)
         ]);
     }

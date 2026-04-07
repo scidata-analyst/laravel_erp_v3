@@ -22,5 +22,15 @@ class Invoices extends Model
         'status',
         'notes',
         'generated_by',
+        'tax_id'
+    ];
+
+    protected $casts = [
+        'invoice_date' => 'date',
+        'due_date' => 'date',
+        'amount' => 'decimal:2',
+        'tax' => 'decimal:2',
+        'paid_amount' => 'decimal:2',
+        'balance' => 'decimal:2',
     ];
 }

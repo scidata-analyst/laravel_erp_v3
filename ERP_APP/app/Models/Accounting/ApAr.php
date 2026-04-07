@@ -18,6 +18,14 @@ class ApAr extends Model
         'paid',
         'balance',
         'status',
+        'reference',
         'description'
+    ];
+
+    protected $casts = [
+        'due_date' => 'date',
+        'amount' => 'decimal:2',
+        'paid' => 'decimal:2',
+        'balance' => 'decimal:2',
     ];
 }

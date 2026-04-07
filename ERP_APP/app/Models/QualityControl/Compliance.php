@@ -12,13 +12,26 @@ class Compliance extends Model
     use HasFactory;
     protected $fillable = [
         'report_number',
-        'standard_name',
-        'scope',
+        'compliance_type',
+        'standard_reference',
         'audit_date',
-        'next_audit_date',
         'auditor_id',
         'findings',
+        'risk_level',
+        'corrective_actions',
+        'due_date',
+        'completion_date',
         'status',
         'notes',
+        'attachments'
+    ];
+
+    protected $casts = [
+        'audit_date' => 'date',
+        'due_date' => 'date',
+        'completion_date' => 'date',
+        'findings' => 'json',
+        'corrective_actions' => 'json',
+        'attachments' => 'json',
     ];
 }

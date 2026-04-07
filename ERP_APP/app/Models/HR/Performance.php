@@ -12,12 +12,21 @@ class Performance extends Model
 
     protected $fillable = [
         'employee_id',
-        'department',
         'review_period',
         'kpi_score',
         'goal_achievement',
-        'rating',
+        'overall_rating',
+        'reviewer_id',
+        'reviewer_comments',
+        'review_date',
         'status',
-        'comments',
+        'improvement_plan'
+    ];
+
+    protected $casts = [
+        'kpi_score' => 'decimal:2',
+        'goal_achievement' => 'decimal:2',
+        'review_date' => 'date',
+        'improvement_plan' => 'json',
     ];
 }

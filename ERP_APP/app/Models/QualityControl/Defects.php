@@ -16,9 +16,20 @@ class Defects extends Model
         'batch_number',
         'defect_type',
         'severity',
-        'reported_by',
-        'status',
-        'qtuantity_defective',
         'description',
+        'detected_by',
+        'detection_date',
+        'status',
+        'resolution',
+        'resolution_date',
+        'cost_impact',
+        'affected_quantity',
+        'compliance_id'
+    ];
+
+    protected $casts = [
+        'detection_date' => 'date',
+        'resolution_date' => 'date',
+        'cost_impact' => 'decimal:2',
     ];
 }

@@ -20,6 +20,18 @@ class SalesOrders extends Model
         'total_amount',
         'status',
         'order_items',
-        'notes'
+        'notes',
+        'discount_id',
+        'promotion_id',
+        'channel_id',
+        'tax_id'
+    ];
+
+    protected $casts = [
+        'order_date' => 'date',
+        'delivery_date' => 'date',
+        'discount' => 'decimal:2',
+        'total_amount' => 'decimal:2',
+        'order_items' => 'json',
     ];
 }

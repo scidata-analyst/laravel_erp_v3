@@ -14,8 +14,15 @@ class Tax extends Model
         'tax_rate',
         'tax_type',
         'applicable_to',
-        'filling_period',
+        'description',
+        'effective_date',
         'status',
-        'last_filed_date',
+        'tax_code',
+        'jurisdiction'
+    ];
+
+    protected $casts = [
+        'tax_rate' => 'decimal:2',
+        'effective_date' => 'date',
     ];
 }

@@ -10,12 +10,19 @@ class MachineLabor extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'work_order',
-        'resource',
-        'type',
-        'schedule_hour',
-        'actual_hour',
-        'cost',
-        'total_cost',
+        'work_order_id',
+        'machine_id',
+        'operator_id',
+        'start_time',
+        'end_time',
+        'output_quantity',
+        'scrap_quantity',
+        'status',
+        'notes'
+    ];
+
+    protected $casts = [
+        'start_time' => 'datetime',
+        'end_time' => 'datetime',
     ];
 }

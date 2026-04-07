@@ -12,14 +12,22 @@ class DocLibrary extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'doc_name',
-        'doc_type',
-        'related_to',
-        'version',
+        'title',
+        'description',
+        'category',
+        'file_path',
         'file_size',
+        'file_type',
+        'version',
         'uploaded_by',
-        'date',
-        'access_level',
-        'notes',
+        'department',
+        'status',
+        'tags',
+        'expiry_date'
+    ];
+
+    protected $casts = [
+        'tags' => 'json',
+        'expiry_date' => 'date',
     ];
 }

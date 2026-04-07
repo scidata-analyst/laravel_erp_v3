@@ -11,16 +11,22 @@ class ProjectCost extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'project',
-        'budget',
-        'spent',
-        'remaining',
-        'used',
-        'variance',
-        'status',
+        'project_id',
         'cost_category',
-        'date_incurred',
+        'description',
+        'budgeted_amount',
+        'actual_amount',
+        'variance',
+        'currency',
+        'cost_date',
         'approved_by',
-        'notes'
+        'status'
+    ];
+
+    protected $casts = [
+        'budgeted_amount' => 'decimal:2',
+        'actual_amount' => 'decimal:2',
+        'variance' => 'decimal:2',
+        'cost_date' => 'date',
     ];
 }

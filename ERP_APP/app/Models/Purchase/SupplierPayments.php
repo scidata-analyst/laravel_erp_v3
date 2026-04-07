@@ -17,8 +17,14 @@ class SupplierPayments extends Model
         'payment_date',
         'amount',
         'payment_method',
-        'reference',
+        'reference_number',
         'status',
         'notes',
+        'approved_by'
+    ];
+
+    protected $casts = [
+        'payment_date' => 'date',
+        'amount' => 'decimal:2',
     ];
 }

@@ -21,4 +21,8 @@ class Grn extends Model
         'notes',
         'received_by'
     ];
+
+    protected $casts = [
+        'received_date' => 'date',
+    ];
 }

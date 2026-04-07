@@ -21,5 +21,15 @@ class ProductCatalog extends Model
         'valuation_method',
         'description',
         'status',
+        'barcode',
+        'weight',
+        'dimensions',
+        'channel_id'
+    ];
+
+    protected $casts = [
+        'unit_price' => 'decimal:2',
+        'cost_price' => 'decimal:2',
+        'weight' => 'decimal:2',
     ];
 }
