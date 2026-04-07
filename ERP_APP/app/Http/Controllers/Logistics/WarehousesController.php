@@ -2,72 +2,135 @@
 
 namespace App\Http\Controllers\Logistics;
 
+use App\Services\Logistics\WarehousesService;
+use App\Http\Requests\Logistics\WarehousesRequest;
+use App\Http\Resources\Logistics\WarehousesResource;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
+/**
+ * Class WarehousesController
+ *
+ * Controller for managing Warehouses resources.
+ * Provides CRUD operations with JSON responses.
+ */
 class WarehousesController extends Controller
 {
     /**
-     * Display list of the resource.
+     * @var WarehousesService
      */
-    public function all()
+    protected $warehousesService;
+
+    /**
+     * WarehousesController constructor.
+     *
+     * @param WarehousesService $warehousesService
+     */
+    public function __construct(WarehousesService $warehousesService)
     {
-        //
+        $this->warehousesService = $warehousesService;
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a paginated listing of Warehouses resources.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        //
+        $perPage = request()->get("per_page", 15);
+        $search = request()->get("search", "");
+        $filters = request()->get("filters", []);
+
+        $data = $this->warehousesService->index($perPage, $search, $filters);
+
+        return response()->json([
+            "success" => true,
+            "message" => "Warehouses records fetched successfully",
+            "data" => WarehousesResource::collection($data)
+        ]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display all Warehouses records without pagination.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function create()
+    public function all()
     {
-        //
+        $data = $this->warehousesService->all();
+
+        return response()->json([
+            "success" => true,
+            "message" => "All Warehouses records fetched successfully",
+            "data" => WarehousesResource::collection($data)
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created Warehouses resource in storage.
+     *
+     * @param WarehousesRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request \)
+    public function store(WarehousesRequest $request)
     {
-        //
+        $data = $this->warehousesService->store($request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "Warehouses record created successfully",
+            "data" => new WarehousesResource($data)
+        ], 201);
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified Warehouses resource.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show(\)
+    public function show($id)
     {
-        //
+        $data = $this->warehousesService->show($id);
+
+        return response()->json([
+            "success" => true,
+            "message" => "Warehouses record fetched successfully",
+            "data" => new WarehousesResource($data)
+        ]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update the specified Warehouses resource in storage.
+     *
+     * @param WarehousesRequest $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function edit(\)
+    public function update(WarehousesRequest $request, $id)
     {
-        //
+        $data = $this->warehousesService->update($id, $request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "Warehouses record updated successfully",
+            "data" => new WarehousesResource($data)
+        ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Remove the specified Warehouses resource from storage.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request \, \)
+    public function destroy($id)
     {
-        //
-    }
+        $this->warehousesService->destroy($id);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(\)
-    {
-        //
+        return response()->json([
+            "success" => true,
+            "message" => "Warehouses record deleted successfully"
+        ]);
     }
 }

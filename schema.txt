@@ -1,5 +1,5 @@
 {
-  "ERP_APP/app/Models": {
+  "ERP_APP/app/Http/Controllers": {
     "Accounting": ["ApAr", "Tax", "Gl", "FinReports"],
     "Core": ["Dashboard", "Settings"],
     "CRM": ["Support", "Leads", "Interactions"],
@@ -16,4 +16,4 @@
     "Sales": ["Promotions", "Invoices", "SalesOrders", "Customers"],
     "UsersRoles": ["User", "Roles"]
   }
-} based on this file folder structure give me powershell command for create notification, mail and listener with proper namespace and filename
+}

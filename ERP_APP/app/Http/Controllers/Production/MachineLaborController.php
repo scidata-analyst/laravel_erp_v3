@@ -2,72 +2,135 @@
 
 namespace App\Http\Controllers\Production;
 
+use App\Services\Production\MachineLaborService;
+use App\Http\Requests\Production\MachineLaborRequest;
+use App\Http\Resources\Production\MachineLaborResource;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
+/**
+ * Class MachineLaborController
+ *
+ * Controller for managing MachineLabor resources.
+ * Provides CRUD operations with JSON responses.
+ */
 class MachineLaborController extends Controller
 {
     /**
-     * Display list of the resource.
+     * @var MachineLaborService
      */
-    public function all()
+    protected $machineLaborService;
+
+    /**
+     * MachineLaborController constructor.
+     *
+     * @param MachineLaborService $machineLaborService
+     */
+    public function __construct(MachineLaborService $machineLaborService)
     {
-        //
+        $this->machineLaborService = $machineLaborService;
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a paginated listing of MachineLabor resources.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        //
+        $perPage = request()->get("per_page", 15);
+        $search = request()->get("search", "");
+        $filters = request()->get("filters", []);
+
+        $data = $this->machineLaborService->index($perPage, $search, $filters);
+
+        return response()->json([
+            "success" => true,
+            "message" => "MachineLabor records fetched successfully",
+            "data" => MachineLaborResource::collection($data)
+        ]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display all MachineLabor records without pagination.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function create()
+    public function all()
     {
-        //
+        $data = $this->machineLaborService->all();
+
+        return response()->json([
+            "success" => true,
+            "message" => "All MachineLabor records fetched successfully",
+            "data" => MachineLaborResource::collection($data)
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created MachineLabor resource in storage.
+     *
+     * @param MachineLaborRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request \)
+    public function store(MachineLaborRequest $request)
     {
-        //
+        $data = $this->machineLaborService->store($request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "MachineLabor record created successfully",
+            "data" => new MachineLaborResource($data)
+        ], 201);
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified MachineLabor resource.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show(\)
+    public function show($id)
     {
-        //
+        $data = $this->machineLaborService->show($id);
+
+        return response()->json([
+            "success" => true,
+            "message" => "MachineLabor record fetched successfully",
+            "data" => new MachineLaborResource($data)
+        ]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update the specified MachineLabor resource in storage.
+     *
+     * @param MachineLaborRequest $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function edit(\)
+    public function update(MachineLaborRequest $request, $id)
     {
-        //
+        $data = $this->machineLaborService->update($id, $request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "MachineLabor record updated successfully",
+            "data" => new MachineLaborResource($data)
+        ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Remove the specified MachineLabor resource from storage.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request \, \)
+    public function destroy($id)
     {
-        //
-    }
+        $this->machineLaborService->destroy($id);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(\)
-    {
-        //
+        return response()->json([
+            "success" => true,
+            "message" => "MachineLabor record deleted successfully"
+        ]);
     }
 }

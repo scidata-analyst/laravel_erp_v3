@@ -14,6 +14,11 @@ class ApArService
         protected ApArInterface $repository
     ) {}
 
+    public function all(): Collection
+    {
+        return $this->repository->all();
+    }
+
     public function getTransactions(int $perPage = 15, string $search = '', array $filters = []): LengthAwarePaginator
     {
         return $this->repository->index($perPage, $search, $filters);

@@ -2,72 +2,135 @@
 
 namespace App\Http\Controllers\Accounting;
 
+use App\Services\Accounting\FinReportsService;
+use App\Http\Requests\Accounting\FinReportsRequest;
+use App\Http\Resources\Accounting\FinReportsResource;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
+/**
+ * Class FinReportsController
+ *
+ * Controller for managing FinReports resources.
+ * Provides CRUD operations with JSON responses.
+ */
 class FinReportsController extends Controller
 {
     /**
-     * Display list of the resource.
+     * @var FinReportsService
      */
-    public function all()
+    protected $finReportsService;
+
+    /**
+     * FinReportsController constructor.
+     *
+     * @param FinReportsService $finReportsService
+     */
+    public function __construct(FinReportsService $finReportsService)
     {
-        //
+        $this->finReportsService = $finReportsService;
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a paginated listing of FinReports resources.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        //
+        $perPage = request()->get("per_page", 15);
+        $search = request()->get("search", "");
+        $filters = request()->get("filters", []);
+
+        $data = $this->finReportsService->index($perPage, $search, $filters);
+
+        return response()->json([
+            "success" => true,
+            "message" => "FinReports records fetched successfully",
+            "data" => FinReportsResource::collection($data)
+        ]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display all FinReports records without pagination.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function create()
+    public function all()
     {
-        //
+        $data = $this->finReportsService->all();
+
+        return response()->json([
+            "success" => true,
+            "message" => "All FinReports records fetched successfully",
+            "data" => FinReportsResource::collection($data)
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created FinReports resource in storage.
+     *
+     * @param FinReportsRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request \)
+    public function store(FinReportsRequest $request)
     {
-        //
+        $data = $this->finReportsService->store($request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "FinReports record created successfully",
+            "data" => new FinReportsResource($data)
+        ], 201);
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified FinReports resource.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show(\)
+    public function show($id)
     {
-        //
+        $data = $this->finReportsService->show($id);
+
+        return response()->json([
+            "success" => true,
+            "message" => "FinReports record fetched successfully",
+            "data" => new FinReportsResource($data)
+        ]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update the specified FinReports resource in storage.
+     *
+     * @param FinReportsRequest $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function edit(\)
+    public function update(FinReportsRequest $request, $id)
     {
-        //
+        $data = $this->finReportsService->update($id, $request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "FinReports record updated successfully",
+            "data" => new FinReportsResource($data)
+        ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Remove the specified FinReports resource from storage.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request \, \)
+    public function destroy($id)
     {
-        //
-    }
+        $this->finReportsService->destroy($id);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(\)
-    {
-        //
+        return response()->json([
+            "success" => true,
+            "message" => "FinReports record deleted successfully"
+        ]);
     }
 }

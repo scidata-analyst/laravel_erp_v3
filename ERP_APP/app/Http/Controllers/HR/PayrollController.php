@@ -2,72 +2,135 @@
 
 namespace App\Http\Controllers\HR;
 
+use App\Services\HR\PayrollService;
+use App\Http\Requests\HR\PayrollRequest;
+use App\Http\Resources\HR\PayrollResource;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
+/**
+ * Class PayrollController
+ *
+ * Controller for managing Payroll resources.
+ * Provides CRUD operations with JSON responses.
+ */
 class PayrollController extends Controller
 {
     /**
-     * Display list of the resource.
+     * @var PayrollService
      */
-    public function all()
+    protected $payrollService;
+
+    /**
+     * PayrollController constructor.
+     *
+     * @param PayrollService $payrollService
+     */
+    public function __construct(PayrollService $payrollService)
     {
-        //
+        $this->payrollService = $payrollService;
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a paginated listing of Payroll resources.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        //
+        $perPage = request()->get("per_page", 15);
+        $search = request()->get("search", "");
+        $filters = request()->get("filters", []);
+
+        $data = $this->payrollService->index($perPage, $search, $filters);
+
+        return response()->json([
+            "success" => true,
+            "message" => "Payroll records fetched successfully",
+            "data" => PayrollResource::collection($data)
+        ]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display all Payroll records without pagination.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function create()
+    public function all()
     {
-        //
+        $data = $this->payrollService->all();
+
+        return response()->json([
+            "success" => true,
+            "message" => "All Payroll records fetched successfully",
+            "data" => PayrollResource::collection($data)
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created Payroll resource in storage.
+     *
+     * @param PayrollRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request \)
+    public function store(PayrollRequest $request)
     {
-        //
+        $data = $this->payrollService->store($request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "Payroll record created successfully",
+            "data" => new PayrollResource($data)
+        ], 201);
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified Payroll resource.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show(\)
+    public function show($id)
     {
-        //
+        $data = $this->payrollService->show($id);
+
+        return response()->json([
+            "success" => true,
+            "message" => "Payroll record fetched successfully",
+            "data" => new PayrollResource($data)
+        ]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update the specified Payroll resource in storage.
+     *
+     * @param PayrollRequest $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function edit(\)
+    public function update(PayrollRequest $request, $id)
     {
-        //
+        $data = $this->payrollService->update($id, $request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "Payroll record updated successfully",
+            "data" => new PayrollResource($data)
+        ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Remove the specified Payroll resource from storage.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request \, \)
+    public function destroy($id)
     {
-        //
-    }
+        $this->payrollService->destroy($id);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(\)
-    {
-        //
+        return response()->json([
+            "success" => true,
+            "message" => "Payroll record deleted successfully"
+        ]);
     }
 }

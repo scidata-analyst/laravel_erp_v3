@@ -2,72 +2,135 @@
 
 namespace App\Http\Controllers\CRM;
 
+use App\Services\CRM\InteractionsService;
+use App\Http\Requests\CRM\InteractionsRequest;
+use App\Http\Resources\CRM\InteractionsResource;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
+/**
+ * Class InteractionsController
+ *
+ * Controller for managing Interactions resources.
+ * Provides CRUD operations with JSON responses.
+ */
 class InteractionsController extends Controller
 {
     /**
-     * Display list of the resource.
+     * @var InteractionsService
      */
-    public function all()
+    protected $interactionsService;
+
+    /**
+     * InteractionsController constructor.
+     *
+     * @param InteractionsService $interactionsService
+     */
+    public function __construct(InteractionsService $interactionsService)
     {
-        //
+        $this->interactionsService = $interactionsService;
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a paginated listing of Interactions resources.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        //
+        $perPage = request()->get("per_page", 15);
+        $search = request()->get("search", "");
+        $filters = request()->get("filters", []);
+
+        $data = $this->interactionsService->index($perPage, $search, $filters);
+
+        return response()->json([
+            "success" => true,
+            "message" => "Interactions records fetched successfully",
+            "data" => InteractionsResource::collection($data)
+        ]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display all Interactions records without pagination.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function create()
+    public function all()
     {
-        //
+        $data = $this->interactionsService->all();
+
+        return response()->json([
+            "success" => true,
+            "message" => "All Interactions records fetched successfully",
+            "data" => InteractionsResource::collection($data)
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created Interactions resource in storage.
+     *
+     * @param InteractionsRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request \)
+    public function store(InteractionsRequest $request)
     {
-        //
+        $data = $this->interactionsService->store($request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "Interactions record created successfully",
+            "data" => new InteractionsResource($data)
+        ], 201);
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified Interactions resource.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show(\)
+    public function show($id)
     {
-        //
+        $data = $this->interactionsService->show($id);
+
+        return response()->json([
+            "success" => true,
+            "message" => "Interactions record fetched successfully",
+            "data" => new InteractionsResource($data)
+        ]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update the specified Interactions resource in storage.
+     *
+     * @param InteractionsRequest $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function edit(\)
+    public function update(InteractionsRequest $request, $id)
     {
-        //
+        $data = $this->interactionsService->update($id, $request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "Interactions record updated successfully",
+            "data" => new InteractionsResource($data)
+        ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Remove the specified Interactions resource from storage.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request \, \)
+    public function destroy($id)
     {
-        //
-    }
+        $this->interactionsService->destroy($id);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(\)
-    {
-        //
+        return response()->json([
+            "success" => true,
+            "message" => "Interactions record deleted successfully"
+        ]);
     }
 }

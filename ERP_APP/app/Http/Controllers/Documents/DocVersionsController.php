@@ -2,72 +2,135 @@
 
 namespace App\Http\Controllers\Documents;
 
+use App\Services\Documents\DocVersionsService;
+use App\Http\Requests\Documents\DocVersionsRequest;
+use App\Http\Resources\Documents\DocVersionsResource;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
+/**
+ * Class DocVersionsController
+ *
+ * Controller for managing DocVersions resources.
+ * Provides CRUD operations with JSON responses.
+ */
 class DocVersionsController extends Controller
 {
     /**
-     * Display list of the resource.
+     * @var DocVersionsService
      */
-    public function all()
+    protected $docVersionsService;
+
+    /**
+     * DocVersionsController constructor.
+     *
+     * @param DocVersionsService $docVersionsService
+     */
+    public function __construct(DocVersionsService $docVersionsService)
     {
-        //
+        $this->docVersionsService = $docVersionsService;
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a paginated listing of DocVersions resources.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        //
+        $perPage = request()->get("per_page", 15);
+        $search = request()->get("search", "");
+        $filters = request()->get("filters", []);
+
+        $data = $this->docVersionsService->index($perPage, $search, $filters);
+
+        return response()->json([
+            "success" => true,
+            "message" => "DocVersions records fetched successfully",
+            "data" => DocVersionsResource::collection($data)
+        ]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display all DocVersions records without pagination.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function create()
+    public function all()
     {
-        //
+        $data = $this->docVersionsService->all();
+
+        return response()->json([
+            "success" => true,
+            "message" => "All DocVersions records fetched successfully",
+            "data" => DocVersionsResource::collection($data)
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created DocVersions resource in storage.
+     *
+     * @param DocVersionsRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request \)
+    public function store(DocVersionsRequest $request)
     {
-        //
+        $data = $this->docVersionsService->store($request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "DocVersions record created successfully",
+            "data" => new DocVersionsResource($data)
+        ], 201);
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified DocVersions resource.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show(\)
+    public function show($id)
     {
-        //
+        $data = $this->docVersionsService->show($id);
+
+        return response()->json([
+            "success" => true,
+            "message" => "DocVersions record fetched successfully",
+            "data" => new DocVersionsResource($data)
+        ]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update the specified DocVersions resource in storage.
+     *
+     * @param DocVersionsRequest $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function edit(\)
+    public function update(DocVersionsRequest $request, $id)
     {
-        //
+        $data = $this->docVersionsService->update($id, $request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "DocVersions record updated successfully",
+            "data" => new DocVersionsResource($data)
+        ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Remove the specified DocVersions resource from storage.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request \, \)
+    public function destroy($id)
     {
-        //
-    }
+        $this->docVersionsService->destroy($id);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(\)
-    {
-        //
+        return response()->json([
+            "success" => true,
+            "message" => "DocVersions record deleted successfully"
+        ]);
     }
 }

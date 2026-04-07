@@ -2,72 +2,135 @@
 
 namespace App\Http\Controllers\Ecommerce;
 
+use App\Services\Ecommerce\InvSyncService;
+use App\Http\Requests\Ecommerce\InvSyncRequest;
+use App\Http\Resources\Ecommerce\InvSyncResource;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
+/**
+ * Class InvSyncController
+ *
+ * Controller for managing InvSync resources.
+ * Provides CRUD operations with JSON responses.
+ */
 class InvSyncController extends Controller
 {
     /**
-     * Display list of the resource.
+     * @var InvSyncService
      */
-    public function all()
+    protected $invSyncService;
+
+    /**
+     * InvSyncController constructor.
+     *
+     * @param InvSyncService $invSyncService
+     */
+    public function __construct(InvSyncService $invSyncService)
     {
-        //
+        $this->invSyncService = $invSyncService;
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a paginated listing of InvSync resources.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        //
+        $perPage = request()->get("per_page", 15);
+        $search = request()->get("search", "");
+        $filters = request()->get("filters", []);
+
+        $data = $this->invSyncService->index($perPage, $search, $filters);
+
+        return response()->json([
+            "success" => true,
+            "message" => "InvSync records fetched successfully",
+            "data" => InvSyncResource::collection($data)
+        ]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display all InvSync records without pagination.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function create()
+    public function all()
     {
-        //
+        $data = $this->invSyncService->all();
+
+        return response()->json([
+            "success" => true,
+            "message" => "All InvSync records fetched successfully",
+            "data" => InvSyncResource::collection($data)
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created InvSync resource in storage.
+     *
+     * @param InvSyncRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request \)
+    public function store(InvSyncRequest $request)
     {
-        //
+        $data = $this->invSyncService->store($request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "InvSync record created successfully",
+            "data" => new InvSyncResource($data)
+        ], 201);
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified InvSync resource.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show(\)
+    public function show($id)
     {
-        //
+        $data = $this->invSyncService->show($id);
+
+        return response()->json([
+            "success" => true,
+            "message" => "InvSync record fetched successfully",
+            "data" => new InvSyncResource($data)
+        ]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update the specified InvSync resource in storage.
+     *
+     * @param InvSyncRequest $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function edit(\)
+    public function update(InvSyncRequest $request, $id)
     {
-        //
+        $data = $this->invSyncService->update($id, $request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "InvSync record updated successfully",
+            "data" => new InvSyncResource($data)
+        ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Remove the specified InvSync resource from storage.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request \, \)
+    public function destroy($id)
     {
-        //
-    }
+        $this->invSyncService->destroy($id);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(\)
-    {
-        //
+        return response()->json([
+            "success" => true,
+            "message" => "InvSync record deleted successfully"
+        ]);
     }
 }

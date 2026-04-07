@@ -2,72 +2,135 @@
 
 namespace App\Http\Controllers\Purchase;
 
+use App\Services\Purchase\GrnService;
+use App\Http\Requests\Purchase\GrnRequest;
+use App\Http\Resources\Purchase\GrnResource;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
+/**
+ * Class GrnController
+ *
+ * Controller for managing Grn resources.
+ * Provides CRUD operations with JSON responses.
+ */
 class GrnController extends Controller
 {
     /**
-     * Display list of the resource.
+     * @var GrnService
      */
-    public function all()
+    protected $grnService;
+
+    /**
+     * GrnController constructor.
+     *
+     * @param GrnService $grnService
+     */
+    public function __construct(GrnService $grnService)
     {
-        //
+        $this->grnService = $grnService;
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a paginated listing of Grn resources.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        //
+        $perPage = request()->get("per_page", 15);
+        $search = request()->get("search", "");
+        $filters = request()->get("filters", []);
+
+        $data = $this->grnService->index($perPage, $search, $filters);
+
+        return response()->json([
+            "success" => true,
+            "message" => "Grn records fetched successfully",
+            "data" => GrnResource::collection($data)
+        ]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display all Grn records without pagination.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function create()
+    public function all()
     {
-        //
+        $data = $this->grnService->all();
+
+        return response()->json([
+            "success" => true,
+            "message" => "All Grn records fetched successfully",
+            "data" => GrnResource::collection($data)
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created Grn resource in storage.
+     *
+     * @param GrnRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request \)
+    public function store(GrnRequest $request)
     {
-        //
+        $data = $this->grnService->store($request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "Grn record created successfully",
+            "data" => new GrnResource($data)
+        ], 201);
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified Grn resource.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show(\)
+    public function show($id)
     {
-        //
+        $data = $this->grnService->show($id);
+
+        return response()->json([
+            "success" => true,
+            "message" => "Grn record fetched successfully",
+            "data" => new GrnResource($data)
+        ]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update the specified Grn resource in storage.
+     *
+     * @param GrnRequest $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function edit(\)
+    public function update(GrnRequest $request, $id)
     {
-        //
+        $data = $this->grnService->update($id, $request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "Grn record updated successfully",
+            "data" => new GrnResource($data)
+        ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Remove the specified Grn resource from storage.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request \, \)
+    public function destroy($id)
     {
-        //
-    }
+        $this->grnService->destroy($id);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(\)
-    {
-        //
+        return response()->json([
+            "success" => true,
+            "message" => "Grn record deleted successfully"
+        ]);
     }
 }

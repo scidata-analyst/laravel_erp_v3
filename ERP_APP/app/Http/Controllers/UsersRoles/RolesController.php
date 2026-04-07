@@ -2,72 +2,135 @@
 
 namespace App\Http\Controllers\UsersRoles;
 
+use App\Services\UsersRoles\RolesService;
+use App\Http\Requests\UsersRoles\RolesRequest;
+use App\Http\Resources\UsersRoles\RolesResource;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
+/**
+ * Class RolesController
+ *
+ * Controller for managing Roles resources.
+ * Provides CRUD operations with JSON responses.
+ */
 class RolesController extends Controller
 {
     /**
-     * Display list of the resource.
+     * @var RolesService
      */
-    public function all()
-    {
-        //
-    }
-    
+    protected $rolesService;
+
     /**
-     * Display a listing of the resource.
+     * RolesController constructor.
+     *
+     * @param RolesService $rolesService
+     */
+    public function __construct(RolesService $rolesService)
+    {
+        $this->rolesService = $rolesService;
+    }
+
+    /**
+     * Display a paginated listing of Roles resources.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        //
+        $perPage = request()->get("per_page", 15);
+        $search = request()->get("search", "");
+        $filters = request()->get("filters", []);
+
+        $data = $this->rolesService->index($perPage, $search, $filters);
+
+        return response()->json([
+            "success" => true,
+            "message" => "Roles records fetched successfully",
+            "data" => RolesResource::collection($data)
+        ]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display all Roles records without pagination.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function create()
+    public function all()
     {
-        //
+        $data = $this->rolesService->all();
+
+        return response()->json([
+            "success" => true,
+            "message" => "All Roles records fetched successfully",
+            "data" => RolesResource::collection($data)
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created Roles resource in storage.
+     *
+     * @param RolesRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request \)
+    public function store(RolesRequest $request)
     {
-        //
+        $data = $this->rolesService->store($request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "Roles record created successfully",
+            "data" => new RolesResource($data)
+        ], 201);
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified Roles resource.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show(\)
+    public function show($id)
     {
-        //
+        $data = $this->rolesService->show($id);
+
+        return response()->json([
+            "success" => true,
+            "message" => "Roles record fetched successfully",
+            "data" => new RolesResource($data)
+        ]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update the specified Roles resource in storage.
+     *
+     * @param RolesRequest $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function edit(\)
+    public function update(RolesRequest $request, $id)
     {
-        //
+        $data = $this->rolesService->update($id, $request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "Roles record updated successfully",
+            "data" => new RolesResource($data)
+        ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Remove the specified Roles resource from storage.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request \, \)
+    public function destroy($id)
     {
-        //
-    }
+        $this->rolesService->destroy($id);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(\)
-    {
-        //
+        return response()->json([
+            "success" => true,
+            "message" => "Roles record deleted successfully"
+        ]);
     }
 }

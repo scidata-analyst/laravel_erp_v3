@@ -2,72 +2,135 @@
 
 namespace App\Http\Controllers\Inventory;
 
+use App\Services\Inventory\StockMovementsService;
+use App\Http\Requests\Inventory\StockMovementsRequest;
+use App\Http\Resources\Inventory\StockMovementsResource;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
+/**
+ * Class StockMovementsController
+ *
+ * Controller for managing StockMovements resources.
+ * Provides CRUD operations with JSON responses.
+ */
 class StockMovementsController extends Controller
 {
     /**
-     * Display list of the resource.
+     * @var StockMovementsService
      */
-    public function all()
+    protected $stockMovementsService;
+
+    /**
+     * StockMovementsController constructor.
+     *
+     * @param StockMovementsService $stockMovementsService
+     */
+    public function __construct(StockMovementsService $stockMovementsService)
     {
-        //
+        $this->stockMovementsService = $stockMovementsService;
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a paginated listing of StockMovements resources.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        //
+        $perPage = request()->get("per_page", 15);
+        $search = request()->get("search", "");
+        $filters = request()->get("filters", []);
+
+        $data = $this->stockMovementsService->index($perPage, $search, $filters);
+
+        return response()->json([
+            "success" => true,
+            "message" => "StockMovements records fetched successfully",
+            "data" => StockMovementsResource::collection($data)
+        ]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display all StockMovements records without pagination.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function create()
+    public function all()
     {
-        //
+        $data = $this->stockMovementsService->all();
+
+        return response()->json([
+            "success" => true,
+            "message" => "All StockMovements records fetched successfully",
+            "data" => StockMovementsResource::collection($data)
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created StockMovements resource in storage.
+     *
+     * @param StockMovementsRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request \)
+    public function store(StockMovementsRequest $request)
     {
-        //
+        $data = $this->stockMovementsService->store($request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "StockMovements record created successfully",
+            "data" => new StockMovementsResource($data)
+        ], 201);
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified StockMovements resource.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show(\)
+    public function show($id)
     {
-        //
+        $data = $this->stockMovementsService->show($id);
+
+        return response()->json([
+            "success" => true,
+            "message" => "StockMovements record fetched successfully",
+            "data" => new StockMovementsResource($data)
+        ]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update the specified StockMovements resource in storage.
+     *
+     * @param StockMovementsRequest $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function edit(\)
+    public function update(StockMovementsRequest $request, $id)
     {
-        //
+        $data = $this->stockMovementsService->update($id, $request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "StockMovements record updated successfully",
+            "data" => new StockMovementsResource($data)
+        ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Remove the specified StockMovements resource from storage.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request \, \)
+    public function destroy($id)
     {
-        //
-    }
+        $this->stockMovementsService->destroy($id);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(\)
-    {
-        //
+        return response()->json([
+            "success" => true,
+            "message" => "StockMovements record deleted successfully"
+        ]);
     }
 }

@@ -2,72 +2,135 @@
 
 namespace App\Http\Controllers\Reports;
 
+use App\Services\Reports\ForecastingService;
+use App\Http\Requests\Reports\ForecastingRequest;
+use App\Http\Resources\Reports\ForecastingResource;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
+/**
+ * Class ForecastingController
+ *
+ * Controller for managing Forecasting resources.
+ * Provides CRUD operations with JSON responses.
+ */
 class ForecastingController extends Controller
 {
     /**
-     * Display list of the resource.
+     * @var ForecastingService
      */
-    public function all()
-    {
-        //
-    }
-    
+    protected $forecastingService;
+
     /**
-     * Display a listing of the resource.
+     * ForecastingController constructor.
+     *
+     * @param ForecastingService $forecastingService
+     */
+    public function __construct(ForecastingService $forecastingService)
+    {
+        $this->forecastingService = $forecastingService;
+    }
+
+    /**
+     * Display a paginated listing of Forecasting resources.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        //
+        $perPage = request()->get("per_page", 15);
+        $search = request()->get("search", "");
+        $filters = request()->get("filters", []);
+
+        $data = $this->forecastingService->index($perPage, $search, $filters);
+
+        return response()->json([
+            "success" => true,
+            "message" => "Forecasting records fetched successfully",
+            "data" => ForecastingResource::collection($data)
+        ]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display all Forecasting records without pagination.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function create()
+    public function all()
     {
-        //
+        $data = $this->forecastingService->all();
+
+        return response()->json([
+            "success" => true,
+            "message" => "All Forecasting records fetched successfully",
+            "data" => ForecastingResource::collection($data)
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created Forecasting resource in storage.
+     *
+     * @param ForecastingRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request \)
+    public function store(ForecastingRequest $request)
     {
-        //
+        $data = $this->forecastingService->store($request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "Forecasting record created successfully",
+            "data" => new ForecastingResource($data)
+        ], 201);
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified Forecasting resource.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show(\)
+    public function show($id)
     {
-        //
+        $data = $this->forecastingService->show($id);
+
+        return response()->json([
+            "success" => true,
+            "message" => "Forecasting record fetched successfully",
+            "data" => new ForecastingResource($data)
+        ]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update the specified Forecasting resource in storage.
+     *
+     * @param ForecastingRequest $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function edit(\)
+    public function update(ForecastingRequest $request, $id)
     {
-        //
+        $data = $this->forecastingService->update($id, $request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "Forecasting record updated successfully",
+            "data" => new ForecastingResource($data)
+        ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Remove the specified Forecasting resource from storage.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request \, \)
+    public function destroy($id)
     {
-        //
-    }
+        $this->forecastingService->destroy($id);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(\)
-    {
-        //
+        return response()->json([
+            "success" => true,
+            "message" => "Forecasting record deleted successfully"
+        ]);
     }
 }

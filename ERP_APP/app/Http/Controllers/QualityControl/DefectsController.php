@@ -2,72 +2,135 @@
 
 namespace App\Http\Controllers\QualityControl;
 
+use App\Services\QualityControl\DefectsService;
+use App\Http\Requests\QualityControl\DefectsRequest;
+use App\Http\Resources\QualityControl\DefectsResource;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
+/**
+ * Class DefectsController
+ *
+ * Controller for managing Defects resources.
+ * Provides CRUD operations with JSON responses.
+ */
 class DefectsController extends Controller
 {
     /**
-     * Display list of the resource.
+     * @var DefectsService
      */
-    public function all()
-    {
-        //
-    }
-    
+    protected $defectsService;
+
     /**
-     * Display a listing of the resource.
+     * DefectsController constructor.
+     *
+     * @param DefectsService $defectsService
+     */
+    public function __construct(DefectsService $defectsService)
+    {
+        $this->defectsService = $defectsService;
+    }
+
+    /**
+     * Display a paginated listing of Defects resources.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        //
+        $perPage = request()->get("per_page", 15);
+        $search = request()->get("search", "");
+        $filters = request()->get("filters", []);
+
+        $data = $this->defectsService->index($perPage, $search, $filters);
+
+        return response()->json([
+            "success" => true,
+            "message" => "Defects records fetched successfully",
+            "data" => DefectsResource::collection($data)
+        ]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display all Defects records without pagination.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function create()
+    public function all()
     {
-        //
+        $data = $this->defectsService->all();
+
+        return response()->json([
+            "success" => true,
+            "message" => "All Defects records fetched successfully",
+            "data" => DefectsResource::collection($data)
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created Defects resource in storage.
+     *
+     * @param DefectsRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request \)
+    public function store(DefectsRequest $request)
     {
-        //
+        $data = $this->defectsService->store($request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "Defects record created successfully",
+            "data" => new DefectsResource($data)
+        ], 201);
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified Defects resource.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show(\)
+    public function show($id)
     {
-        //
+        $data = $this->defectsService->show($id);
+
+        return response()->json([
+            "success" => true,
+            "message" => "Defects record fetched successfully",
+            "data" => new DefectsResource($data)
+        ]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update the specified Defects resource in storage.
+     *
+     * @param DefectsRequest $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function edit(\)
+    public function update(DefectsRequest $request, $id)
     {
-        //
+        $data = $this->defectsService->update($id, $request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "Defects record updated successfully",
+            "data" => new DefectsResource($data)
+        ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Remove the specified Defects resource from storage.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request \, \)
+    public function destroy($id)
     {
-        //
-    }
+        $this->defectsService->destroy($id);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(\)
-    {
-        //
+        return response()->json([
+            "success" => true,
+            "message" => "Defects record deleted successfully"
+        ]);
     }
 }

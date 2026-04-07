@@ -2,72 +2,135 @@
 
 namespace App\Http\Controllers\Inventory;
 
+use App\Services\Inventory\BatchTrackingService;
+use App\Http\Requests\Inventory\BatchTrackingRequest;
+use App\Http\Resources\Inventory\BatchTrackingResource;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
+/**
+ * Class BatchTrackingController
+ *
+ * Controller for managing BatchTracking resources.
+ * Provides CRUD operations with JSON responses.
+ */
 class BatchTrackingController extends Controller
 {
     /**
-     * Display list of the resource.
+     * @var BatchTrackingService
      */
-    public function all()
+    protected $batchTrackingService;
+
+    /**
+     * BatchTrackingController constructor.
+     *
+     * @param BatchTrackingService $batchTrackingService
+     */
+    public function __construct(BatchTrackingService $batchTrackingService)
     {
-        //
+        $this->batchTrackingService = $batchTrackingService;
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a paginated listing of BatchTracking resources.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        //
+        $perPage = request()->get("per_page", 15);
+        $search = request()->get("search", "");
+        $filters = request()->get("filters", []);
+
+        $data = $this->batchTrackingService->index($perPage, $search, $filters);
+
+        return response()->json([
+            "success" => true,
+            "message" => "BatchTracking records fetched successfully",
+            "data" => BatchTrackingResource::collection($data)
+        ]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display all BatchTracking records without pagination.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function create()
+    public function all()
     {
-        //
+        $data = $this->batchTrackingService->all();
+
+        return response()->json([
+            "success" => true,
+            "message" => "All BatchTracking records fetched successfully",
+            "data" => BatchTrackingResource::collection($data)
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created BatchTracking resource in storage.
+     *
+     * @param BatchTrackingRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request \)
+    public function store(BatchTrackingRequest $request)
     {
-        //
+        $data = $this->batchTrackingService->store($request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "BatchTracking record created successfully",
+            "data" => new BatchTrackingResource($data)
+        ], 201);
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified BatchTracking resource.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show(\)
+    public function show($id)
     {
-        //
+        $data = $this->batchTrackingService->show($id);
+
+        return response()->json([
+            "success" => true,
+            "message" => "BatchTracking record fetched successfully",
+            "data" => new BatchTrackingResource($data)
+        ]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update the specified BatchTracking resource in storage.
+     *
+     * @param BatchTrackingRequest $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function edit(\)
+    public function update(BatchTrackingRequest $request, $id)
     {
-        //
+        $data = $this->batchTrackingService->update($id, $request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "BatchTracking record updated successfully",
+            "data" => new BatchTrackingResource($data)
+        ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Remove the specified BatchTracking resource from storage.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request \, \)
+    public function destroy($id)
     {
-        //
-    }
+        $this->batchTrackingService->destroy($id);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(\)
-    {
-        //
+        return response()->json([
+            "success" => true,
+            "message" => "BatchTracking record deleted successfully"
+        ]);
     }
 }

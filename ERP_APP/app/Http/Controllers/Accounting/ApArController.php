@@ -2,72 +2,135 @@
 
 namespace App\Http\Controllers\Accounting;
 
+use App\Services\Accounting\ApArService;
+use App\Http\Requests\Accounting\ApArRequest;
+use App\Http\Resources\Accounting\ApArResource;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
+/**
+ * Class ApArController
+ *
+ * Controller for managing ApAr resources.
+ * Provides CRUD operations with JSON responses.
+ */
 class ApArController extends Controller
 {
     /**
-     * Display list of the resource.
+     * @var ApArService
      */
-    public function all()
+    protected $apArService;
+
+    /**
+     * ApArController constructor.
+     *
+     * @param ApArService $apArService
+     */
+    public function __construct(ApArService $apArService)
     {
-        //
+        $this->apArService = $apArService;
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a paginated listing of ApAr resources.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        //
+        $perPage = request()->get("per_page", 15);
+        $search = request()->get("search", "");
+        $filters = request()->get("filters", []);
+
+        $data = $this->apArService->index($perPage, $search, $filters);
+
+        return response()->json([
+            "success" => true,
+            "message" => "ApAr records fetched successfully",
+            "data" => ApArResource::collection($data)
+        ]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display all ApAr records without pagination.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function create()
+    public function all()
     {
-        //
+        $data = $this->apArService->all();
+
+        return response()->json([
+            "success" => true,
+            "message" => "All ApAr records fetched successfully",
+            "data" => ApArResource::collection($data)
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created ApAr resource in storage.
+     *
+     * @param ApArRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(ApArRequest $request)
     {
-        //
+        $data = $this->apArService->store($request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "ApAr record created successfully",
+            "data" => new ApArResource($data)
+        ], 201);
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified ApAr resource.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
-        //
+        $data = $this->apArService->show($id);
+
+        return response()->json([
+            "success" => true,
+            "message" => "ApAr record fetched successfully",
+            "data" => new ApArResource($data)
+        ]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update the specified ApAr resource in storage.
+     *
+     * @param ApArRequest $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function edit(Request $request)
+    public function update(ApArRequest $request, $id)
     {
-        //
+        $data = $this->apArService->update($id, $request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "ApAr record updated successfully",
+            "data" => new ApArResource($data)
+        ]);
     }
 
     /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
+     * Remove the specified ApAr resource from storage.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {
-        //
+        $this->apArService->destroy($id);
+
+        return response()->json([
+            "success" => true,
+            "message" => "ApAr record deleted successfully"
+        ]);
     }
 }

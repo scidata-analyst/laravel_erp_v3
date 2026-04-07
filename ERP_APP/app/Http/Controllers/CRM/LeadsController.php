@@ -2,72 +2,135 @@
 
 namespace App\Http\Controllers\CRM;
 
+use App\Services\CRM\LeadsService;
+use App\Http\Requests\CRM\LeadsRequest;
+use App\Http\Resources\CRM\LeadsResource;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
+/**
+ * Class LeadsController
+ *
+ * Controller for managing Leads resources.
+ * Provides CRUD operations with JSON responses.
+ */
 class LeadsController extends Controller
 {
     /**
-     * Display list of the resource.
+     * @var LeadsService
      */
-    public function all()
+    protected $leadsService;
+
+    /**
+     * LeadsController constructor.
+     *
+     * @param LeadsService $leadsService
+     */
+    public function __construct(LeadsService $leadsService)
     {
-        //
+        $this->leadsService = $leadsService;
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a paginated listing of Leads resources.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        //
+        $perPage = request()->get("per_page", 15);
+        $search = request()->get("search", "");
+        $filters = request()->get("filters", []);
+
+        $data = $this->leadsService->index($perPage, $search, $filters);
+
+        return response()->json([
+            "success" => true,
+            "message" => "Leads records fetched successfully",
+            "data" => LeadsResource::collection($data)
+        ]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display all Leads records without pagination.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function create()
+    public function all()
     {
-        //
+        $data = $this->leadsService->all();
+
+        return response()->json([
+            "success" => true,
+            "message" => "All Leads records fetched successfully",
+            "data" => LeadsResource::collection($data)
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created Leads resource in storage.
+     *
+     * @param LeadsRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request \)
+    public function store(LeadsRequest $request)
     {
-        //
+        $data = $this->leadsService->store($request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "Leads record created successfully",
+            "data" => new LeadsResource($data)
+        ], 201);
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified Leads resource.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show(\)
+    public function show($id)
     {
-        //
+        $data = $this->leadsService->show($id);
+
+        return response()->json([
+            "success" => true,
+            "message" => "Leads record fetched successfully",
+            "data" => new LeadsResource($data)
+        ]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update the specified Leads resource in storage.
+     *
+     * @param LeadsRequest $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function edit(\)
+    public function update(LeadsRequest $request, $id)
     {
-        //
+        $data = $this->leadsService->update($id, $request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "Leads record updated successfully",
+            "data" => new LeadsResource($data)
+        ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Remove the specified Leads resource from storage.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request \, \)
+    public function destroy($id)
     {
-        //
-    }
+        $this->leadsService->destroy($id);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(\)
-    {
-        //
+        return response()->json([
+            "success" => true,
+            "message" => "Leads record deleted successfully"
+        ]);
     }
 }

@@ -2,72 +2,135 @@
 
 namespace App\Http\Controllers\Ecommerce;
 
+use App\Services\Ecommerce\PosService;
+use App\Http\Requests\Ecommerce\PosRequest;
+use App\Http\Resources\Ecommerce\PosResource;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
+/**
+ * Class PosController
+ *
+ * Controller for managing Pos resources.
+ * Provides CRUD operations with JSON responses.
+ */
 class PosController extends Controller
 {
     /**
-     * Display list of the resource.
+     * @var PosService
      */
-    public function all()
+    protected $posService;
+
+    /**
+     * PosController constructor.
+     *
+     * @param PosService $posService
+     */
+    public function __construct(PosService $posService)
     {
-        //
+        $this->posService = $posService;
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a paginated listing of Pos resources.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        //
+        $perPage = request()->get("per_page", 15);
+        $search = request()->get("search", "");
+        $filters = request()->get("filters", []);
+
+        $data = $this->posService->index($perPage, $search, $filters);
+
+        return response()->json([
+            "success" => true,
+            "message" => "Pos records fetched successfully",
+            "data" => PosResource::collection($data)
+        ]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display all Pos records without pagination.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function create()
+    public function all()
     {
-        //
+        $data = $this->posService->all();
+
+        return response()->json([
+            "success" => true,
+            "message" => "All Pos records fetched successfully",
+            "data" => PosResource::collection($data)
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created Pos resource in storage.
+     *
+     * @param PosRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request \)
+    public function store(PosRequest $request)
     {
-        //
+        $data = $this->posService->store($request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "Pos record created successfully",
+            "data" => new PosResource($data)
+        ], 201);
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified Pos resource.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show(\)
+    public function show($id)
     {
-        //
+        $data = $this->posService->show($id);
+
+        return response()->json([
+            "success" => true,
+            "message" => "Pos record fetched successfully",
+            "data" => new PosResource($data)
+        ]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update the specified Pos resource in storage.
+     *
+     * @param PosRequest $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function edit(\)
+    public function update(PosRequest $request, $id)
     {
-        //
+        $data = $this->posService->update($id, $request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "Pos record updated successfully",
+            "data" => new PosResource($data)
+        ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Remove the specified Pos resource from storage.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request \, \)
+    public function destroy($id)
     {
-        //
-    }
+        $this->posService->destroy($id);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(\)
-    {
-        //
+        return response()->json([
+            "success" => true,
+            "message" => "Pos record deleted successfully"
+        ]);
     }
 }
