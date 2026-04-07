@@ -8,6 +8,14 @@ use Illuminate\Http\Request;
 class RolesController extends Controller
 {
     /**
+     * Display list of the resource.
+     */
+    public function all()
+    {
+        //
+    }
+    
+    /**
      * Display a listing of the resource.
      */
     public function index()

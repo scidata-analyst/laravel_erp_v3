@@ -8,6 +8,14 @@ use Illuminate\Http\Request;
 class DashboardController extends Controller
 {
     /**
+     * Display list of the resource.
+     */
+    public function all()
+    {
+        //
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index()
