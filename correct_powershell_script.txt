@@ -1,5 +1,5 @@
 # Base path
-$basePath = "F:\DASHBOARD_APP\GIT_VERSION\ERP\ERP_APP_2\app\Http\Controllers"
+$basePath = "F:\DASHBOARD_APP\GIT_VERSION\ERP\ERP_APP\app\Http\Controllers"
 
 # Schema
 $schema = @{
