@@ -1,0 +1,136 @@
+﻿<?php
+
+namespace App\Http\Controllers\Documents;
+
+use App\Services\Documents\DocLibraryService;
+use App\Http\Requests\Documents\DocLibraryRequest;
+use App\Http\Resources\Documents\DocLibraryResource;
+use App\Http\Controllers\Controller;
+
+/**
+ * Class DocLibraryController
+ *
+ * Controller for managing DocLibrary resources.
+ * Provides CRUD operations with JSON responses.
+ */
+class DocLibraryController extends Controller
+{
+    /**
+     * @var DocLibraryService
+     */
+    protected $docLibraryService;
+
+    /**
+     * DocLibraryController constructor.
+     *
+     * @param DocLibraryService $docLibraryService
+     */
+    public function __construct(DocLibraryService $docLibraryService)
+    {
+        $this->docLibraryService = $docLibraryService;
+    }
+
+    /**
+     * Display all DocLibrary records without pagination.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function all()
+    {
+        $data = $this->docLibraryService->all();
+
+        return response()->json([
+            "success" => true,
+            "message" => "All DocLibrary records fetched successfully",
+            "data" => DocLibraryResource::collection($data)
+        ]);
+    }
+
+    /**
+     * Display a paginated listing of DocLibrary resources.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function index()
+    {
+        $perPage = request()->get("per_page", 15);
+        $search = request()->get("search", "");
+        $filters = request()->get("filters", []);
+
+        $data = $this->docLibraryService->index($perPage, $search, $filters);
+
+        return response()->json([
+            "success" => true,
+            "message" => "DocLibrary records fetched successfully",
+            "data" => DocLibraryResource::collection($data)
+        ]);
+    }
+
+    /**
+     * Store a newly created DocLibrary resource in storage.
+     *
+     * @param DocLibraryRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function store(DocLibraryRequest $request)
+    {
+        $data = $this->docLibraryService->store($request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "DocLibrary record created successfully",
+            "data" => new DocLibraryResource($data)
+        ], 201);
+    }
+
+    /**
+     * Display the specified DocLibrary resource.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function show($id)
+    {
+        $data = $this->docLibraryService->show($id);
+
+        return response()->json([
+            "success" => true,
+            "message" => "DocLibrary record fetched successfully",
+            "data" => new DocLibraryResource($data)
+        ]);
+    }
+
+    /**
+     * Update the specified DocLibrary resource in storage.
+     *
+     * @param DocLibraryRequest $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(DocLibraryRequest $request, $id)
+    {
+        $data = $this->docLibraryService->update($id, $request->validated());
+
+        return response()->json([
+            "success" => true,
+            "message" => "DocLibrary record updated successfully",
+            "data" => new DocLibraryResource($data)
+        ]);
+    }
+
+    /**
+     * Remove the specified DocLibrary resource from storage.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function destroy($id)
+    {
+        $this->docLibraryService->destroy($id);
+
+        return response()->json([
+            "success" => true,
+            "message" => "DocLibrary record deleted successfully"
+        ]);
+    }
+}
