@@ -1,0 +1,82 @@
+# ============================================================
+# Stable Laravel Module Generator (Controller excluded)
+# ============================================================
+
+# **IMPORTANT**: Run this script from Laravel project root
+# where the 'artisan' file exists.
+
+# Base paths
+$baseServicePath = "F:\DASHBOARD_APP\GIT_VERSION\ERP\ERP_APP\app\Services"
+$baseModelPath = "F:\DASHBOARD_APP\GIT_VERSION\ERP\ERP_APP\app\Models"
+$baseRequestPath = "F:\DASHBOARD_APP\GIT_VERSION\ERP\ERP_APP\app\Http\Requests"
+$baseResourcePath = "F:\DASHBOARD_APP\GIT_VERSION\ERP\ERP_APP\app\Http\Resources"
+$baseEventPath = "F:\DASHBOARD_APP\GIT_VERSION\ERP\ERP_APP\app\Events"
+$baseListenerPath = "F:\DASHBOARD_APP\GIT_VERSION\ERP\ERP_APP\app\Listeners"
+$baseObserverPath = "F:\DASHBOARD_APP\GIT_VERSION\ERP\ERP_APP\app\Observers"
+$baseFactoryPath = "F:\DASHBOARD_APP\GIT_VERSION\ERP\ERP_APP\database\factories"
+$baseSeederPath = "F:\DASHBOARD_APP\GIT_VERSION\ERP\ERP_APP\database\seeders"
+$basePolicyPath = "F:\DASHBOARD_APP\GIT_VERSION\ERP\ERP_APP\app\Policies"
+
+# Module schema
+$schema = @{
+    "Accounting" = @("ApAr", "Tax", "Gl", "FinReports")
+    "Core" = @("Dashboard", "Settings")
+    "CRM" = @("Support", "Leads", "Interactions")
+    "Documents" = @("DocVersions", "DocLibrary")
+    "Ecommerce" = @("Pos", "OnlineChannels", "InvSync")
+    "HR" = @("Employees", "Performance", "Payroll", "Attendance")
+    "Inventory" = @("StockValuation", "StockMovements", "ProductCatalog", "BatchTracking")
+    "Logistics" = @("Warehouses", "Shipments", "Routes")
+    "Projects" = @("Tasks", "Resources", "ProjectCost")
+    "Production" = @("WorkOrders", "MachineLabor", "Bom")
+    "Purchase" = @("SupplierPayments", "Grn", "PurchaseOrders", "Suppliers")
+    "QualityControl" = @("QcChecklists", "Defects", "Compliance")
+    "Reports" = @("Forecasting", "CustomReports", "BiDashboards")
+    "Sales" = @("Promotions", "Invoices", "SalesOrders", "Customers")
+    "UsersRoles" = @("User", "Roles")
+}
+
+foreach ($module in $schema.Keys) {
+    $entities = $schema[$module]
+
+    # Ensure directories exist
+    $dirs = @()
+    $dirs += Join-Path $baseServicePath $module
+    $dirs += Join-Path $baseModelPath $module
+    $dirs += Join-Path $baseRequestPath $module
+    $dirs += Join-Path $baseResourcePath $module
+    $dirs += Join-Path $baseEventPath $module
+    $dirs += Join-Path $baseListenerPath $module
+    $dirs += Join-Path $baseObserverPath $module
+    $dirs += Join-Path $baseFactoryPath $module
+    $dirs += Join-Path $baseSeederPath $module
+    $dirs += Join-Path $basePolicyPath $module
+
+    foreach ($dir in $dirs) {
+        if (!(Test-Path $dir)) { New-Item -Path $dir -ItemType Directory | Out-Null }
+    }
+
+    foreach ($entity in $entities) {
+
+        $commands = @(
+            "make:model $module\$entity",
+            "make:factory $module\$entity`Factory --model=$module\$entity",
+            "make:seeder $module\$entity`Seeder",
+            "make:request $module\$entity`Request",
+            "make:resource $module\$entity`Resource",
+            "make:job $module\$entity`Job",
+            "make:command $module\$entity`Command",
+            "make:observer $module\$entity`Observer --model=$module\$entity",
+            "make:event $module\$entity`Event",
+            "make:listener $module\$entity`Listener --event=$module\$entity`Event",
+            "make:policy $module\$entity`Policy --model=$module\$entity"
+        )
+
+        foreach ($cmd in $commands) {
+            Write-Host "Running: php artisan $cmd"
+            Start-Process php -ArgumentList "artisan $cmd" -NoNewWindow -Wait
+        }
+    }
+}
+
+Write-Host "All files generated successfully!"

@@ -1,5 +1,5 @@
 # Base path
-$basePath = "F:\DASHBOARD_APP\GIT_VERSION\ERP\ERP_APP\app\Http\Controllers"
+$basePath = "F:\DASHBOARD_APP\GIT_VERSION\ERP\ERP_APP\app\Constants"
 
 # Schema
 $schema = @{
@@ -26,40 +26,36 @@ foreach ($module in $schema.Keys) {
     if (!(Test-Path $moduleDir)) { New-Item -Path $moduleDir -ItemType Directory | Out-Null }
 
     foreach ($entity in $entities) {
-        $controllerFile = Join-Path $moduleDir "$entity`Controller.php"
-        $varName = ($entity.Substring(0,1).ToLower() + $entity.Substring(1)) + "Service"
+        $ConstantFile = Join-Path $moduleDir "$entity`Constant.php"
+        $varName = ($entity.Substring(0,1).ToLower() + $entity.Substring(1)) + "Constant"
 
         $content = @'
 <?php
 
-namespace App\Http\Controllers\MODULE;
+namespace App\Constants\MODULE;
 
-use App\Services\MODULE\ENTITYService;
-use App\Http\Requests\MODULE\ENTITYRequest;
-use App\Http\Resources\MODULE\ENTITYResource;
-use App\Http\Controllers\Controller;
+use App\Models\Module\ENTITY;
 
 /**
- * Class ENTITYController
+ * Class ENTITYConstant
  *
- * Controller for managing ENTITY resources.
+ * Constant for managing ENTITY resources.
  * Provides CRUD operations with JSON responses.
  */
-class ENTITYController extends Controller
+class ENTITYConstant
 {
     /**
-     * @var ENTITYService
+     * @var ENTITYConstant
      */
     protected $VARNAME;
 
     /**
-     * ENTITYController constructor.
+     * ENTITYConstant constructor.
      *
-     * @param ENTITYService $VARNAME
      */
-    public function __construct(ENTITYService $VARNAME)
+    public function __construct()
     {
-        $this->VARNAME = $VARNAME;
+        
     }
 
     /**
@@ -70,12 +66,6 @@ class ENTITYController extends Controller
     public function all()
     {
         $data = $this->VARNAME->all();
-
-        return response()->json([
-            "success" => true,
-            "message" => "All ENTITY records fetched successfully",
-            "data" => ENTITYResource::collection($data)
-        ]);
     }
 
     /**
@@ -85,34 +75,17 @@ class ENTITYController extends Controller
      */
     public function index()
     {
-        $perPage = request()->get("per_page", 15);
-        $search = request()->get("search", "");
-        $filters = request()->get("filters", []);
-
-        $data = $this->VARNAME->index($perPage, $search, $filters);
-
-        return response()->json([
-            "success" => true,
-            "message" => "ENTITY records fetched successfully",
-            "data" => ENTITYResource::collection($data)
-        ]);
+        
     }
 
     /**
      * Store a newly created ENTITY resource in storage.
      *
-     * @param ENTITYRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(ENTITYRequest $request)
+    public function store(array $data)
     {
-        $data = $this->VARNAME->store($request->validated());
-
-        return response()->json([
-            "success" => true,
-            "message" => "ENTITY record created successfully",
-            "data" => new ENTITYResource($data)
-        ], 201);
+        
     }
 
     /**
@@ -123,13 +96,7 @@ class ENTITYController extends Controller
      */
     public function show($id)
     {
-        $data = $this->VARNAME->show($id);
-
-        return response()->json([
-            "success" => true,
-            "message" => "ENTITY record fetched successfully",
-            "data" => new ENTITYResource($data)
-        ]);
+        
     }
 
     /**
@@ -139,15 +106,9 @@ class ENTITYController extends Controller
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(ENTITYRequest $request, $id)
+    public function update($id, array $data)
     {
-        $data = $this->VARNAME->update($id, $request->validated());
-
-        return response()->json([
-            "success" => true,
-            "message" => "ENTITY record updated successfully",
-            "data" => new ENTITYResource($data)
-        ]);
+        
     }
 
     /**
@@ -158,12 +119,7 @@ class ENTITYController extends Controller
      */
     public function destroy($id)
     {
-        $this->VARNAME->destroy($id);
-
-        return response()->json([
-            "success" => true,
-            "message" => "ENTITY record deleted successfully"
-        ]);
+        
     }
 }
 '@
@@ -174,7 +130,7 @@ class ENTITYController extends Controller
         $content = $content -replace "VARNAME", $varName
 
         # Write to file
-        $content | Out-File -FilePath $controllerFile -Encoding UTF8
-        Write-Host "Controller created/refactored with comments: $module\$entity`Controller.php"
+        $content | Out-File -FilePath $ConstantFile -Encoding UTF8
+        Write-Host "Constant created/refactored with comments: $module\$entity`Constant.php"
     }
 }
