@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Listeners\Purchase;
+
+use App\Events\Purchase\PurchaseOrdersEvent;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
+
+class PurchaseOrdersListener
+{
+    /**
+     * Create the event listener.
+     */
+    public function __construct()
+    {
+        //
+    }
+
+    /**
+     * Handle the event.
+     */
+    public function handle(PurchaseOrdersEvent $event): void
+    {
+        //
+    }
+}

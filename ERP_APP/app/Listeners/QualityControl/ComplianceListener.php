@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Listeners\QualityControl;
+
+use App\Events\QualityControl\ComplianceEvent;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
+
+class ComplianceListener
+{
+    /**
+     * Create the event listener.
+     */
+    public function __construct()
+    {
+        //
+    }
+
+    /**
+     * Handle the event.
+     */
+    public function handle(ComplianceEvent $event): void
+    {
+        //
+    }
+}
