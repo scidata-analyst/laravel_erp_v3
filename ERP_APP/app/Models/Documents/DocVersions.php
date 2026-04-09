@@ -19,7 +19,7 @@ class DocVersions extends Model
      *
      * @var string
      */
-    protected $table = "DocVersions_TABLE";
+    protected $table = 'document_versions';
 
     /**
      * The attributes that are mass assignable.
@@ -27,8 +27,26 @@ class DocVersions extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'document_id',
+        'new_version',
+        'change_type',
+        'change_summary',
+        'changed_by_user_id',
+        'approver_id',
+        'file_path',
     ];
+
+    public function document(): \Illuminate\Database\Eloquent\Relations\BelongsTo {
+        return $this->belongsTo(\App\Models\Documents\DocLibrary::class, 'document_id');
+    }
+
+    public function changedByUser(): \Illuminate\Database\Eloquent\Relations\BelongsTo {
+        return $this->belongsTo(\App\Models\UsersRoles\User::class, 'changed_by_user_id');
+    }
+
+    public function approver(): \Illuminate\Database\Eloquent\Relations\BelongsTo {
+        return $this->belongsTo(\App\Models\UsersRoles\User::class, 'approver_id');
+    }
 
     /**
      * Indicates if the model should be timestamped.

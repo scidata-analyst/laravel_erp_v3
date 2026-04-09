@@ -2,8 +2,11 @@
 
 namespace App\Models\Ecommerce;
 
+use App\Models\Logistics\Warehouses;
+use App\Models\UsersRoles\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class Pos
@@ -19,7 +22,7 @@ class Pos extends Model
      *
      * @var string
      */
-    protected $table = "Pos_TABLE";
+    protected $table = 'pos_terminals';
 
     /**
      * The attributes that are mass assignable.
@@ -27,8 +30,23 @@ class Pos extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'terminal_id',
+        'location',
+        'assigned_cashier_id',
+        'warehouse_id',
+        'receipt_printer',
+        'status',
     ];
+
+    public function assigned_cashier(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_cashier_id');
+    }
+
+    public function warehouse(): BelongsTo
+    {
+        return $this->belongsTo(Warehouses::class, 'warehouse_id');
+    }
 
     /**
      * Indicates if the model should be timestamped.

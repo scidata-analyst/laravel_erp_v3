@@ -4,6 +4,8 @@ namespace App\Models\Sales;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class Customers
@@ -19,7 +21,7 @@ class Customers extends Model
      *
      * @var string
      */
-    protected $table = "Customers_TABLE";
+    protected $table = 'customers';
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +29,13 @@ class Customers extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'company_name',
+        'contact_person',
+        'email',
+        'phone',
+        'credit_limit',
+        'sales_rep_id',
+        'billing_address',
     ];
 
     /**
@@ -36,4 +44,28 @@ class Customers extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    /**
+     * Get the sales representative for this customer.
+     */
+    public function salesRep(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\UsersRoles\User::class, 'sales_rep_id');
+    }
+
+    /**
+     * Get the invoices for this customer.
+     */
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoices::class, 'customer_id');
+    }
+
+    /**
+     * Get the sales orders for this customer.
+     */
+    public function salesOrders(): HasMany
+    {
+        return $this->hasMany(SalesOrders::class, 'customer_id');
+    }
 }

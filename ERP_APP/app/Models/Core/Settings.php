@@ -2,6 +2,7 @@
 
 namespace App\Models\Core;
 
+use App\Models\Logistics\Warehouses;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -28,16 +29,21 @@ class Settings extends Model
      */
     protected $fillable = [
         'company_name',
-        'base_currency',
-        'fiscal_year_start',
-        'company_address',
-        'session_timeout',
-        'two_factor_auth',
+        'company_email',
+        'phone_number',
+        'address',
+        'country',
+        'session_timeout_minutes',
+        'two_factor_auth_enabled',
         'password_policy',
         'ip_whitelist',
-        'default_valuation',
-        'auto_reorder',
-        'default_warehouse',
+        'email_notifications_enabled',
+        'low_stock_threshold',
+        'alert_recipients',
+        'default_valuation_method',
+        'auto_reorder_enabled',
+        'default_warehouse_id',
+        'status',
     ];
 
     /**
@@ -46,4 +52,9 @@ class Settings extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    public function default_warehouse()
+    {
+        return $this->belongsTo(Warehouses::class, 'default_warehouse_id');
+    }
 }

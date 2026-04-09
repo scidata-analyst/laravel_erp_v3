@@ -19,7 +19,7 @@ class Roles extends Model
      *
      * @var string
      */
-    protected $table = "Roles_TABLE";
+    protected $table = 'roles';
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +27,9 @@ class Roles extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'role_name',
+        'description',
+        'status',
     ];
 
     /**

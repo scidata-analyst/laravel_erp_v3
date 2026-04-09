@@ -4,6 +4,7 @@ namespace App\Models\Inventory;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class StockValuation
@@ -19,7 +20,7 @@ class StockValuation extends Model
      *
      * @var string
      */
-    protected $table = "StockValuation_TABLE";
+    protected $table = 'stock_valuation';
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +28,11 @@ class StockValuation extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'product_id',
+        'valuation_method',
+        'unit_cost',
+        'quantity_on_hand',
+        'total_value',
     ];
 
     /**
@@ -36,4 +41,12 @@ class StockValuation extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    /**
+     * Get the product for this stock valuation.
+     */
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(ProductCatalog::class, 'product_id');
+    }
 }

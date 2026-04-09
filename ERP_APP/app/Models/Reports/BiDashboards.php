@@ -19,7 +19,7 @@ class BiDashboards extends Model
      *
      * @var string
      */
-    protected $table = "BiDashboards_TABLE";
+    protected $table = 'bi_dashboards';
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +27,13 @@ class BiDashboards extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'widget_name',
+        'chart_type',
+        'data_source_module',
+        'refresh_rate',
+        'dashboard_name',
+        'created_by_user_id',
+        'status',
     ];
 
     /**

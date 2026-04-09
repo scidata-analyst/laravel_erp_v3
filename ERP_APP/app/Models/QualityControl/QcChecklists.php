@@ -4,6 +4,7 @@ namespace App\Models\QualityControl;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class QcChecklists
@@ -19,7 +20,7 @@ class QcChecklists extends Model
      *
      * @var string
      */
-    protected $table = "QcChecklists_TABLE";
+    protected $table = 'qc_checklists';
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +28,13 @@ class QcChecklists extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'product_batch_work_order',
+        'inspector_id',
+        'inspection_type',
+        'inspection_date',
+        'sample_size',
+        'checklist_items_notes',
+        'status',
     ];
 
     /**
@@ -36,4 +43,12 @@ class QcChecklists extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    /**
+     * Get the inspector for this QC checklist.
+     */
+    public function inspector(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\UsersRoles\User::class, 'inspector_id');
+    }
 }

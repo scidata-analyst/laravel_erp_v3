@@ -19,7 +19,7 @@ class DocLibrary extends Model
      *
      * @var string
      */
-    protected $table = "DocLibrary_TABLE";
+    protected $table = 'document_library';
 
     /**
      * The attributes that are mass assignable.
@@ -27,8 +27,19 @@ class DocLibrary extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'document_name',
+        'document_type',
+        'related_to',
+        'version',
+        'access_level',
+        'file_path',
+        'notes',
+        'uploaded_by_user_id',
     ];
+
+    public function uploadedByUser(): \Illuminate\Database\Eloquent\Relations\BelongsTo {
+        return $this->belongsTo(\App\Models\UsersRoles\User::class, 'uploaded_by_user_id');
+    }
 
     /**
      * Indicates if the model should be timestamped.

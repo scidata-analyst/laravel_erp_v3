@@ -4,6 +4,7 @@ namespace App\Models\Purchase;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class Suppliers
@@ -19,7 +20,7 @@ class Suppliers extends Model
      *
      * @var string
      */
-    protected $table = "Suppliers_TABLE";
+    protected $table = 'suppliers';
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +28,15 @@ class Suppliers extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'company_name',
+        'contact_person',
+        'email',
+        'phone',
+        'country',
+        'payment_terms',
+        'currency',
+        'address',
+        'status',
     ];
 
     /**
@@ -36,4 +45,12 @@ class Suppliers extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    /**
+     * Get the purchase orders for this supplier.
+     */
+    public function purchaseOrders(): HasMany
+    {
+        return $this->hasMany(PurchaseOrders::class, 'supplier_id');
+    }
 }

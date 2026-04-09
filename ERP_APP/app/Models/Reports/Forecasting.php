@@ -19,7 +19,7 @@ class Forecasting extends Model
      *
      * @var string
      */
-    protected $table = "Forecasting_TABLE";
+    protected $table = 'forecasting';
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +27,13 @@ class Forecasting extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'forecast_name',
+        'forecast_type',
+        'period_from',
+        'period_to',
+        'model',
+        'accuracy_percentage',
+        'status',
     ];
 
     /**

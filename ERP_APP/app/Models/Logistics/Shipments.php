@@ -4,6 +4,7 @@ namespace App\Models\Logistics;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class Shipments
@@ -19,7 +20,7 @@ class Shipments extends Model
      *
      * @var string
      */
-    protected $table = "Shipments_TABLE";
+    protected $table = 'shipments';
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +28,12 @@ class Shipments extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'sales_order_id',
+        'carrier',
+        'tracking_number',
+        'estimated_delivery_date',
+        'shipping_address',
+        'status',
     ];
 
     /**
@@ -36,4 +42,12 @@ class Shipments extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    /**
+     * Get the sales order for this shipment.
+     */
+    public function salesOrder(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Sales\SalesOrders::class, 'sales_order_id');
+    }
 }

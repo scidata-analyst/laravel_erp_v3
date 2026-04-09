@@ -19,7 +19,7 @@ class ApAr extends Model
      *
      * @var string
      */
-    protected $table = "ap_ar";
+    protected $table = 'accounts_payable_receivable';
 
     /**
      * The attributes that are mass assignable.
@@ -28,10 +28,11 @@ class ApAr extends Model
      */
     protected $fillable = [
         'party_name',
-        'type',
+        'ap_ar_type',
         'amount',
         'due_date',
-        'referrence'
+        'reference',
+        'status',
     ];
 
     /**

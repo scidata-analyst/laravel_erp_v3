@@ -19,7 +19,7 @@ class MachineLabor extends Model
      *
      * @var string
      */
-    protected $table = "MachineLabor_TABLE";
+    protected $table = 'machine_labor';
 
     /**
      * The attributes that are mass assignable.
@@ -27,8 +27,17 @@ class MachineLabor extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'work_order_id',
+        'resource_name',
+        'resource_type',
+        'hours_used',
+        'cost_per_hour',
+        'total_cost',
     ];
+
+    public function workOrder(): \Illuminate\Database\Eloquent\Relations\BelongsTo {
+        return $this->belongsTo(\App\Models\Production\WorkOrders::class, 'work_order_id');
+    }
 
     /**
      * Indicates if the model should be timestamped.

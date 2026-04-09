@@ -19,7 +19,7 @@ class ProjectCost extends Model
      *
      * @var string
      */
-    protected $table = "ProjectCost_TABLE";
+    protected $table = 'project_costs';
 
     /**
      * The attributes that are mass assignable.
@@ -27,8 +27,18 @@ class ProjectCost extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'project_name',
+        'cost_category',
+        'amount',
+        'date_incurred',
+        'approved_by_user_id',
+        'description',
+        'status',
     ];
+
+    public function approvedByUser(): \Illuminate\Database\Eloquent\Relations\BelongsTo {
+        return $this->belongsTo(\App\Models\UsersRoles\User::class, 'approved_by_user_id');
+    }
 
     /**
      * Indicates if the model should be timestamped.

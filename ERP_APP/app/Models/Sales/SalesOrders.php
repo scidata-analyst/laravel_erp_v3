@@ -4,6 +4,7 @@ namespace App\Models\Sales;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class SalesOrders
@@ -19,7 +20,7 @@ class SalesOrders extends Model
      *
      * @var string
      */
-    protected $table = "SalesOrders_TABLE";
+    protected $table = 'sales_orders';
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +28,14 @@ class SalesOrders extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'customer_id',
+        'order_number',
+        'order_date',
+        'delivery_date',
+        'payment_terms',
+        'discount_percentage',
+        'total_amount',
+        'status',
     ];
 
     /**
@@ -36,4 +44,12 @@ class SalesOrders extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    /**
+     * Get the customer for this sales order.
+     */
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customers::class, 'customer_id');
+    }
 }

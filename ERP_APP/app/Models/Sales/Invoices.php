@@ -4,6 +4,7 @@ namespace App\Models\Sales;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class Invoices
@@ -19,7 +20,7 @@ class Invoices extends Model
      *
      * @var string
      */
-    protected $table = "Invoices_TABLE";
+    protected $table = 'invoices';
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +28,15 @@ class Invoices extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'customer_id',
+        'invoice_number',
+        'sales_order_ref',
+        'invoice_date',
+        'due_date',
+        'amount',
+        'tax_percentage',
+        'notes',
+        'status',
     ];
 
     /**
@@ -36,4 +45,12 @@ class Invoices extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    /**
+     * Get the customer for this invoice.
+     */
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customers::class, 'customer_id');
+    }
 }

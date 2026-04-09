@@ -4,6 +4,7 @@ namespace App\Models\CRM;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class Interactions
@@ -19,7 +20,7 @@ class Interactions extends Model
      *
      * @var string
      */
-    protected $table = "Interactions_TABLE";
+    protected $table = 'interactions';
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +28,13 @@ class Interactions extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'customer_id',
+        'contact_person',
+        'interaction_type',
+        'interaction_date',
+        'duration',
+        'summary',
+        'next_action',
     ];
 
     /**
@@ -36,4 +43,12 @@ class Interactions extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    /**
+     * Get the customer associated with this interaction.
+     */
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Sales\Customers::class, 'customer_id');
+    }
 }

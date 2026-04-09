@@ -19,7 +19,7 @@ class CustomReports extends Model
      *
      * @var string
      */
-    protected $table = "CustomReports_TABLE";
+    protected $table = 'custom_reports';
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +27,12 @@ class CustomReports extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'report_name',
+        'module',
+        'selected_fields',
+        'filter_by',
+        'schedule',
+        'output_format',
     ];
 
     /**

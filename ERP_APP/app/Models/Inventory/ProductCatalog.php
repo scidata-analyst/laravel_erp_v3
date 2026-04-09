@@ -4,6 +4,8 @@ namespace App\Models\Inventory;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class ProductCatalog
@@ -19,7 +21,7 @@ class ProductCatalog extends Model
      *
      * @var string
      */
-    protected $table = "ProductCatalog_TABLE";
+    protected $table = 'products';
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +29,16 @@ class ProductCatalog extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'product_name',
+        'sku',
+        'category',
+        'unit_price',
+        'cost_price',
+        'warehouse_id',
+        'reorder_level',
+        'valuation_method',
+        'description',
+        'status',
     ];
 
     /**
@@ -36,4 +47,28 @@ class ProductCatalog extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    /**
+     * Get the warehouse for this product.
+     */
+    public function warehouse(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Logistics\Warehouses::class, 'warehouse_id');
+    }
+
+    /**
+     * Get the batch tracking records for this product.
+     */
+    public function batchTrackings(): HasMany
+    {
+        return $this->hasMany(BatchTracking::class, 'product_id');
+    }
+
+    /**
+     * Get the stock movements for this product.
+     */
+    public function stockMovements(): HasMany
+    {
+        return $this->hasMany(StockMovements::class, 'product_id');
+    }
 }

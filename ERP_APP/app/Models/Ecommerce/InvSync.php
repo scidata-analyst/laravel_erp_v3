@@ -19,7 +19,7 @@ class InvSync extends Model
      *
      * @var string
      */
-    protected $table = "InvSync_TABLE";
+    protected $table = 'inventory_sync';
 
     /**
      * The attributes that are mass assignable.
@@ -27,8 +27,16 @@ class InvSync extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'channel_id',
+        'last_sync_time',
+        'total_synced_items',
+        'sync_errors',
+        'status',
     ];
+
+    public function channel(): \Illuminate\Database\Eloquent\Relations\BelongsTo {
+        return $this->belongsTo(\App\Models\Ecommerce\OnlineChannels::class, 'channel_id');
+    }
 
     /**
      * Indicates if the model should be timestamped.

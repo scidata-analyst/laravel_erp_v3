@@ -19,7 +19,7 @@ class SupplierPayments extends Model
      *
      * @var string
      */
-    protected $table = "SupplierPayments_TABLE";
+    protected $table = 'supplier_payments';
 
     /**
      * The attributes that are mass assignable.
@@ -27,8 +27,18 @@ class SupplierPayments extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'supplier_id',
+        'payment_number',
+        'invoice_reference',
+        'amount',
+        'payment_date',
+        'payment_method',
+        'status',
     ];
+
+    public function supplier(): \Illuminate\Database\Eloquent\Relations\BelongsTo {
+        return $this->belongsTo(\App\Models\Purchase\Suppliers::class, 'supplier_id');
+    }
 
     /**
      * Indicates if the model should be timestamped.

@@ -4,6 +4,7 @@ namespace App\Models\HR;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class Attendance
@@ -19,7 +20,7 @@ class Attendance extends Model
      *
      * @var string
      */
-    protected $table = "Attendance_TABLE";
+    protected $table = 'attendance';
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +28,12 @@ class Attendance extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'employee_id',
+        'attendance_date',
+        'check_in_time',
+        'check_out_time',
+        'status',
+        'leave_type',
     ];
 
     /**
@@ -36,4 +42,12 @@ class Attendance extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    /**
+     * Get the employee for this attendance record.
+     */
+    public function employee(): BelongsTo
+    {
+        return $this->belongsTo(Employees::class, 'employee_id');
+    }
 }

@@ -19,7 +19,7 @@ class Routes extends Model
      *
      * @var string
      */
-    protected $table = "Routes_TABLE";
+    protected $table = 'routes';
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +27,13 @@ class Routes extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'route_name',
+        'zone_area',
+        'driver_name',
+        'vehicle_id',
+        'number_of_stops',
+        'route_description',
+        'status',
     ];
 
     /**

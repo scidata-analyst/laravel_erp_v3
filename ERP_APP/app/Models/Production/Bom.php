@@ -4,11 +4,12 @@ namespace App\Models\Production;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class Bom
  *
- * Laravel Eloquent model for Bom table.
+ * Laravel Eloquent model for Bill of Materials table.
  */
 class Bom extends Model
 {
@@ -19,7 +20,7 @@ class Bom extends Model
      *
      * @var string
      */
-    protected $table = "Bom_TABLE";
+    protected $table = 'bill_of_materials';
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +28,10 @@ class Bom extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'finished_product_name',
+        'version',
+        'lead_time_days',
+        'status',
     ];
 
     /**
@@ -36,4 +40,12 @@ class Bom extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    /**
+     * Get the work orders for this BOM.
+     */
+    public function workOrders(): HasMany
+    {
+        return $this->hasMany(WorkOrders::class, 'bom_id');
+    }
 }

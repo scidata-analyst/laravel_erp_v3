@@ -4,6 +4,7 @@ namespace App\Models\CRM;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class Support
@@ -19,7 +20,7 @@ class Support extends Model
      *
      * @var string
      */
-    protected $table = "Support_TABLE";
+    protected $table = 'support_tickets';
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +28,14 @@ class Support extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'ticket_number',
+        'customer_id',
+        'subject',
+        'description',
+        'priority',
+        'category',
+        'assigned_user_id',
+        'status',
     ];
 
     /**
@@ -36,4 +44,20 @@ class Support extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    /**
+     * Get the customer associated with this support ticket.
+     */
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Sales\Customers::class, 'customer_id');
+    }
+
+    /**
+     * Get the assigned user for this support ticket.
+     */
+    public function assignedUser(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\UsersRoles\User::class, 'assigned_user_id');
+    }
 }

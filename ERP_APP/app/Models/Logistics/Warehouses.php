@@ -4,6 +4,8 @@ namespace App\Models\Logistics;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class Warehouses
@@ -19,7 +21,7 @@ class Warehouses extends Model
      *
      * @var string
      */
-    protected $table = "Warehouses_TABLE";
+    protected $table = 'warehouses';
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +29,13 @@ class Warehouses extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'warehouse_name',
+        'warehouse_code',
+        'warehouse_type',
+        'location_address',
+        'manager_id',
+        'capacity_units',
+        'status',
     ];
 
     /**
@@ -36,4 +44,20 @@ class Warehouses extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    /**
+     * Get the warehouse manager.
+     */
+    public function manager(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\UsersRoles\User::class, 'manager_id');
+    }
+
+    /**
+     * Get the products in this warehouse.
+     */
+    public function products(): HasMany
+    {
+        return $this->hasMany(\App\Models\Inventory\ProductCatalog::class, 'warehouse_id');
+    }
 }

@@ -19,7 +19,7 @@ class Resources extends Model
      *
      * @var string
      */
-    protected $table = "Resources_TABLE";
+    protected $table = 'resource_allocation';
 
     /**
      * The attributes that are mass assignable.
@@ -27,8 +27,17 @@ class Resources extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'employee_id',
+        'project_name',
+        'allocation_percentage',
+        'from_date',
+        'to_date',
+        'role_on_project',
     ];
+
+    public function employee(): \Illuminate\Database\Eloquent\Relations\BelongsTo {
+        return $this->belongsTo(\App\Models\HR\Employees::class, 'employee_id');
+    }
 
     /**
      * Indicates if the model should be timestamped.

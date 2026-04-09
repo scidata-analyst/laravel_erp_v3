@@ -4,6 +4,7 @@ namespace App\Models\HR;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class Employees
@@ -19,7 +20,7 @@ class Employees extends Model
      *
      * @var string
      */
-    protected $table = "Employees_TABLE";
+    protected $table = 'employees';
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +28,16 @@ class Employees extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'full_name',
+        'employee_id',
+        'designation',
+        'department',
+        'basic_salary',
+        'join_date',
+        'contract_type',
+        'email',
+        'phone',
+        'status',
     ];
 
     /**
@@ -36,4 +46,28 @@ class Employees extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    /**
+     * Get the attendance records for this employee.
+     */
+    public function attendanceRecords(): HasMany
+    {
+        return $this->hasMany(Attendance::class, 'employee_id');
+    }
+
+    /**
+     * Get the payroll records for this employee.
+     */
+    public function payrollRecords(): HasMany
+    {
+        return $this->hasMany(Payroll::class, 'employee_id');
+    }
+
+    /**
+     * Get the performance reviews for this employee.
+     */
+    public function performanceReviews(): HasMany
+    {
+        return $this->hasMany(Performance::class, 'employee_id');
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Models\HR;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class Performance
@@ -19,7 +20,7 @@ class Performance extends Model
      *
      * @var string
      */
-    protected $table = "Performance_TABLE";
+    protected $table = 'performance_reviews';
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +28,13 @@ class Performance extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'employee_id',
+        'review_period',
+        'kpi_score',
+        'goal_achievement',
+        'overall_rating',
+        'reviewer_comments',
+        'status',
     ];
 
     /**
@@ -36,4 +43,12 @@ class Performance extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    /**
+     * Get the employee for this performance review.
+     */
+    public function employee(): BelongsTo
+    {
+        return $this->belongsTo(Employees::class, 'employee_id');
+    }
 }

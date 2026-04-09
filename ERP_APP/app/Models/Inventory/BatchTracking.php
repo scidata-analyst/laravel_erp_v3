@@ -4,6 +4,7 @@ namespace App\Models\Inventory;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class BatchTracking
@@ -19,7 +20,7 @@ class BatchTracking extends Model
      *
      * @var string
      */
-    protected $table = "BatchTracking_TABLE";
+    protected $table = 'batch_tracking';
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +28,12 @@ class BatchTracking extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'product_id',
+        'batch_lot_number',
+        'serial_number',
+        'quantity',
+        'manufacture_date',
+        'expiry_date',
     ];
 
     /**
@@ -36,4 +42,12 @@ class BatchTracking extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    /**
+     * Get the product for this batch.
+     */
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(ProductCatalog::class, 'product_id');
+    }
 }

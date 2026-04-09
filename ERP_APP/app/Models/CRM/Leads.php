@@ -4,6 +4,7 @@ namespace App\Models\CRM;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class Leads
@@ -19,7 +20,7 @@ class Leads extends Model
      *
      * @var string
      */
-    protected $table = "Leads_TABLE";
+    protected $table = 'leads';
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +28,14 @@ class Leads extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'lead_name',
+        'company',
+        'email',
+        'phone',
+        'deal_value',
+        'stage',
+        'assigned_user_id',
+        'notes',
     ];
 
     /**
@@ -36,4 +44,12 @@ class Leads extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    /**
+     * Get the assigned user for this lead.
+     */
+    public function assignedUser(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\UsersRoles\User::class, 'assigned_user_id');
+    }
 }

@@ -19,7 +19,7 @@ class OnlineChannels extends Model
      *
      * @var string
      */
-    protected $table = "OnlineChannels_TABLE";
+    protected $table = 'online_channels';
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +27,12 @@ class OnlineChannels extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'channel_name',
+        'platform',
+        'api_store_url',
+        'api_key',
+        'sync_frequency',
+        'status',
     ];
 
     /**

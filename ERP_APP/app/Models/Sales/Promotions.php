@@ -19,7 +19,7 @@ class Promotions extends Model
      *
      * @var string
      */
-    protected $table = "Promotions_TABLE";
+    protected $table = 'promotions';
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +27,15 @@ class Promotions extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'promo_code',
+        'description',
+        'discount_value',
+        'discount_type',
+        'minimum_order_amount',
+        'valid_from',
+        'valid_to',
+        'applicable_products',
+        'status',
     ];
 
     /**

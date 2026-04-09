@@ -4,6 +4,7 @@ namespace App\Models\Inventory;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class StockMovements
@@ -19,7 +20,7 @@ class StockMovements extends Model
      *
      * @var string
      */
-    protected $table = "StockMovements_TABLE";
+    protected $table = 'stock_movements';
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +28,12 @@ class StockMovements extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'product_id',
+        'movement_type',
+        'quantity',
+        'from_warehouse_id',
+        'to_warehouse_id',
+        'reason',
     ];
 
     /**
@@ -36,4 +42,28 @@ class StockMovements extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    /**
+     * Get the product for this stock movement.
+     */
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(ProductCatalog::class, 'product_id');
+    }
+
+    /**
+     * Get the source warehouse for this stock movement.
+     */
+    public function fromWarehouse(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Logistics\Warehouses::class, 'from_warehouse_id');
+    }
+
+    /**
+     * Get the destination warehouse for this stock movement.
+     */
+    public function toWarehouse(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Logistics\Warehouses::class, 'to_warehouse_id');
+    }
 }

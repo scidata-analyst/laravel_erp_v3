@@ -4,6 +4,7 @@ namespace App\Models\Purchase;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class PurchaseOrders
@@ -19,7 +20,7 @@ class PurchaseOrders extends Model
      *
      * @var string
      */
-    protected $table = "PurchaseOrders_TABLE";
+    protected $table = 'purchase_orders';
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +28,14 @@ class PurchaseOrders extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'supplier_id',
+        'po_number',
+        'order_date',
+        'expected_delivery_date',
+        'warehouse_id',
+        'payment_terms',
+        'total_amount',
+        'status',
     ];
 
     /**
@@ -36,4 +44,20 @@ class PurchaseOrders extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    /**
+     * Get the supplier for this purchase order.
+     */
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Suppliers::class, 'supplier_id');
+    }
+
+    /**
+     * Get the warehouse for this purchase order.
+     */
+    public function warehouse(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Logistics\Warehouses::class, 'warehouse_id');
+    }
 }

@@ -19,7 +19,7 @@ class Compliance extends Model
      *
      * @var string
      */
-    protected $table = "Compliance_TABLE";
+    protected $table = 'compliance';
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +27,13 @@ class Compliance extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'standard_regulation',
+        'scope',
+        'audit_date',
+        'next_audit_date',
+        'auditor',
+        'findings_notes',
+        'status',
     ];
 
     /**

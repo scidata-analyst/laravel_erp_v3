@@ -4,6 +4,7 @@ namespace App\Models\QualityControl;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class Defects
@@ -19,7 +20,7 @@ class Defects extends Model
      *
      * @var string
      */
-    protected $table = "Defects_TABLE";
+    protected $table = 'defects';
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +28,13 @@ class Defects extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'product_id',
+        'batch_lot_number',
+        'defect_type',
+        'severity',
+        'quantity_affected',
+        'description_root_cause',
+        'status',
     ];
 
     /**
@@ -36,4 +43,12 @@ class Defects extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    /**
+     * Get the product for this defect.
+     */
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Inventory\ProductCatalog::class, 'product_id');
+    }
 }

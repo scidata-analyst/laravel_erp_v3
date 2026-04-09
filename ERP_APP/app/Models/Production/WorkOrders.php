@@ -4,6 +4,7 @@ namespace App\Models\Production;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class WorkOrders
@@ -19,7 +20,7 @@ class WorkOrders extends Model
      *
      * @var string
      */
-    protected $table = "WorkOrders_TABLE";
+    protected $table = 'work_orders';
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +28,13 @@ class WorkOrders extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'bom_id',
+        'quantity_to_produce',
+        'priority',
+        'start_date',
+        'end_date',
+        'workshop_line',
+        'status',
     ];
 
     /**
@@ -36,4 +43,12 @@ class WorkOrders extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    /**
+     * Get the BOM for this work order.
+     */
+    public function bom(): BelongsTo
+    {
+        return $this->belongsTo(Bom::class, 'bom_id');
+    }
 }
