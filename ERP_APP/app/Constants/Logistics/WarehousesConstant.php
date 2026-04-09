@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Constants\Logistics;
 
@@ -15,14 +15,14 @@ class WarehousesConstant
      *
      * @var string
      */
-    public const MODEL = "App\\Models\\Logistics\\Warehouses";
+    public const MODEL = 'App\\Models\\Logistics\\Warehouses';
 
     /**
      * Example: table name of Warehouses
      *
      * @var string
      */
-    public const TABLE = "Warehouses_TABLE";
+    public const TABLE = 'Warehouses_TABLE';
 
     /**
      * Example: default items per page for Warehouses listings
@@ -34,4 +34,30 @@ class WarehousesConstant
     /**
      * Additional constants for Warehouses Logistics.
      */
+    public const TYPE_STANDARD = 1;
+
+    public const TYPE_COLD_STORAGE = 2;
+
+    public const TYPE_BONDED = 3;
+
+    public const STATUS_ACTIVE = 1;
+
+    public const STATUS_INACTIVE = 2;
+
+    public function getTypes(): array
+    {
+        return [
+            self::TYPE_STANDARD => 'Standard',
+            self::TYPE_COLD_STORAGE => 'Cold Storage',
+            self::TYPE_BONDED => 'Bonded',
+        ];
+    }
+
+    public function getStatuses(): array
+    {
+        return [
+            self::STATUS_ACTIVE => 'Active',
+            self::STATUS_INACTIVE => 'Inactive',
+        ];
+    }
 }

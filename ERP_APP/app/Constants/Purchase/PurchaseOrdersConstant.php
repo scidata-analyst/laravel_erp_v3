@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Constants\Purchase;
 
@@ -15,14 +15,14 @@ class PurchaseOrdersConstant
      *
      * @var string
      */
-    public const MODEL = "App\\Models\\Purchase\\PurchaseOrders";
+    public const MODEL = 'App\\Models\\Purchase\\PurchaseOrders';
 
     /**
      * Example: table name of PurchaseOrders
      *
      * @var string
      */
-    public const TABLE = "PurchaseOrders_TABLE";
+    public const TABLE = 'PurchaseOrders_TABLE';
 
     /**
      * Example: default items per page for PurchaseOrders listings
@@ -31,7 +31,21 @@ class PurchaseOrdersConstant
      */
     public const PER_PAGE = 15;
 
-    /**
-     * Additional constants for PurchaseOrders Purchase.
-     */
+    public const STATUS_DRAFT = 1;
+
+    public const STATUS_PENDING = 2;
+
+    public const STATUS_APPROVED = 3;
+
+    public const STATUS_RECEIVED = 4;
+
+    public function getStatuses(): array
+    {
+        return [
+            self::STATUS_DRAFT => 'Draft',
+            self::STATUS_PENDING => 'Pending',
+            self::STATUS_APPROVED => 'Approved',
+            self::STATUS_RECEIVED => 'Received',
+        ];
+    }
 }

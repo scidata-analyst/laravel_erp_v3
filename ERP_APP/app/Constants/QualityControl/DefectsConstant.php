@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Constants\QualityControl;
 
@@ -15,14 +15,14 @@ class DefectsConstant
      *
      * @var string
      */
-    public const MODEL = "App\\Models\\QualityControl\\Defects";
+    public const MODEL = 'App\\Models\\QualityControl\\Defects';
 
     /**
      * Example: table name of Defects
      *
      * @var string
      */
-    public const TABLE = "Defects_TABLE";
+    public const TABLE = 'Defects_TABLE';
 
     /**
      * Example: default items per page for Defects listings
@@ -34,4 +34,36 @@ class DefectsConstant
     /**
      * Additional constants for Defects QualityControl.
      */
+    public const SEVERITY_LOW = 1;
+
+    public const SEVERITY_MEDIUM = 2;
+
+    public const SEVERITY_HIGH = 3;
+
+    public const SEVERITY_CRITICAL = 4;
+
+    public const STATUS_OPEN = 1;
+
+    public const STATUS_IN_REVIEW = 2;
+
+    public const STATUS_RESOLVED = 3;
+
+    public function getSeverities(): array
+    {
+        return [
+            self::SEVERITY_LOW => 'Low',
+            self::SEVERITY_MEDIUM => 'Medium',
+            self::SEVERITY_HIGH => 'High',
+            self::SEVERITY_CRITICAL => 'Critical',
+        ];
+    }
+
+    public function getStatuses(): array
+    {
+        return [
+            self::STATUS_OPEN => 'Open',
+            self::STATUS_IN_REVIEW => 'In Review',
+            self::STATUS_RESOLVED => 'Resolved',
+        ];
+    }
 }

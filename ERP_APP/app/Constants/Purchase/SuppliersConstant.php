@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Constants\Purchase;
 
@@ -10,28 +10,15 @@ namespace App\Constants\Purchase;
  */
 class SuppliersConstant
 {
-    /**
-     * Example: reference to Suppliers model
-     *
-     * @var string
-     */
-    public const MODEL = "App\\Models\\Purchase\\Suppliers";
+    public const STATUS_ACTIVE = 1;
 
-    /**
-     * Example: table name of Suppliers
-     *
-     * @var string
-     */
-    public const TABLE = "Suppliers_TABLE";
+    public const STATUS_INACTIVE = 2;
 
-    /**
-     * Example: default items per page for Suppliers listings
-     *
-     * @var int
-     */
-    public const PER_PAGE = 15;
-
-    /**
-     * Additional constants for Suppliers Purchase.
-     */
+    public function getStatuses(): array
+    {
+        return [
+            self::STATUS_ACTIVE => 'Active',
+            self::STATUS_INACTIVE => 'Inactive',
+        ];
+    }
 }

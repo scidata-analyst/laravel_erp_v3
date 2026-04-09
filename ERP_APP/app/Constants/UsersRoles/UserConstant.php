@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Constants\UsersRoles;
 
@@ -15,14 +15,14 @@ class UserConstant
      *
      * @var string
      */
-    public const MODEL = "App\\Models\\UsersRoles\\User";
+    public const MODEL = 'App\\Models\\UsersRoles\\User';
 
     /**
      * Example: table name of User
      *
      * @var string
      */
-    public const TABLE = "User_TABLE";
+    public const TABLE = 'User_TABLE';
 
     /**
      * Example: default items per page for User listings
@@ -31,7 +31,15 @@ class UserConstant
      */
     public const PER_PAGE = 15;
 
-    /**
-     * Additional constants for User UsersRoles.
-     */
+    public const STATUS_ACTIVE = 1;
+
+    public const STATUS_INACTIVE = 2;
+
+    public function getStatuses(): array
+    {
+        return [
+            self::STATUS_ACTIVE => 'Active',
+            self::STATUS_INACTIVE => 'Inactive',
+        ];
+    }
 }

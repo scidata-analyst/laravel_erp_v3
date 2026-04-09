@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Constants\Purchase;
 
@@ -15,14 +15,14 @@ class GrnConstant
      *
      * @var string
      */
-    public const MODEL = "App\\Models\\Purchase\\Grn";
+    public const MODEL = 'App\\Models\\Purchase\\Grn';
 
     /**
      * Example: table name of Grn
      *
      * @var string
      */
-    public const TABLE = "Grn_TABLE";
+    public const TABLE = 'Grn_TABLE';
 
     /**
      * Example: default items per page for Grn listings
@@ -31,7 +31,18 @@ class GrnConstant
      */
     public const PER_PAGE = 15;
 
-    /**
-     * Additional constants for Grn Purchase.
-     */
+    public const STATUS_DRAFT = 1;
+
+    public const STATUS_RECEIVED = 2;
+
+    public const STATUS_PARTIAL = 3;
+
+    public function getStatuses(): array
+    {
+        return [
+            self::STATUS_DRAFT => 'Draft',
+            self::STATUS_RECEIVED => 'Received',
+            self::STATUS_PARTIAL => 'Partial',
+        ];
+    }
 }

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Constants\Projects;
 
@@ -15,14 +15,14 @@ class ResourcesConstant
      *
      * @var string
      */
-    public const MODEL = "App\\Models\\Projects\\Resources";
+    public const MODEL = 'App\\Models\\Projects\\Resources';
 
     /**
      * Example: table name of Resources
      *
      * @var string
      */
-    public const TABLE = "Resources_TABLE";
+    public const TABLE = 'Resources_TABLE';
 
     /**
      * Example: default items per page for Resources listings
@@ -34,4 +34,15 @@ class ResourcesConstant
     /**
      * Additional constants for Resources Projects.
      */
+    public const STATUS_ACTIVE = 1;
+
+    public const STATUS_INACTIVE = 2;
+
+    public function getStatuses(): array
+    {
+        return [
+            self::STATUS_ACTIVE => 'Active',
+            self::STATUS_INACTIVE => 'Inactive',
+        ];
+    }
 }

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Constants\Sales;
 
@@ -15,14 +15,14 @@ class CustomersConstant
      *
      * @var string
      */
-    public const MODEL = "App\\Models\\Sales\\Customers";
+    public const MODEL = 'App\\Models\\Sales\\Customers';
 
     /**
      * Example: table name of Customers
      *
      * @var string
      */
-    public const TABLE = "Customers_TABLE";
+    public const TABLE = 'Customers_TABLE';
 
     /**
      * Example: default items per page for Customers listings
@@ -31,7 +31,15 @@ class CustomersConstant
      */
     public const PER_PAGE = 15;
 
-    /**
-     * Additional constants for Customers Sales.
-     */
+    public const STATUS_ACTIVE = 1;
+
+    public const STATUS_BLOCKED = 2;
+
+    public function getStatuses(): array
+    {
+        return [
+            self::STATUS_ACTIVE => 'Active',
+            self::STATUS_BLOCKED => 'Blocked',
+        ];
+    }
 }

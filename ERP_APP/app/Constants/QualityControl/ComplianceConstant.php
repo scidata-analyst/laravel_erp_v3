@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Constants\QualityControl;
 
@@ -15,14 +15,14 @@ class ComplianceConstant
      *
      * @var string
      */
-    public const MODEL = "App\\Models\\QualityControl\\Compliance";
+    public const MODEL = 'App\\Models\\QualityControl\\Compliance';
 
     /**
      * Example: table name of Compliance
      *
      * @var string
      */
-    public const TABLE = "Compliance_TABLE";
+    public const TABLE = 'Compliance_TABLE';
 
     /**
      * Example: default items per page for Compliance listings
@@ -34,4 +34,21 @@ class ComplianceConstant
     /**
      * Additional constants for Compliance QualityControl.
      */
+    public const STATUS_COMPLIANT = 1;
+
+    public const STATUS_NON_COMPLIANT = 2;
+
+    public const STATUS_PENDING = 3;
+
+    public const STATUS_FAILED = 4;
+
+    public function getStatuses(): array
+    {
+        return [
+            self::STATUS_COMPLIANT => 'Compliant',
+            self::STATUS_NON_COMPLIANT => 'Non-Compliant',
+            self::STATUS_PENDING => 'Pending',
+            self::STATUS_FAILED => 'Failed',
+        ];
+    }
 }

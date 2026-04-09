@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Constants\HR;
 
@@ -15,14 +15,14 @@ class PayrollConstant
      *
      * @var string
      */
-    public const MODEL = "App\\Models\\HR\\Payroll";
+    public const MODEL = 'App\\Models\\HR\\Payroll';
 
     /**
      * Example: table name of Payroll
      *
      * @var string
      */
-    public const TABLE = "Payroll_TABLE";
+    public const TABLE = 'Payroll_TABLE';
 
     /**
      * Example: default items per page for Payroll listings
@@ -31,7 +31,18 @@ class PayrollConstant
      */
     public const PER_PAGE = 15;
 
-    /**
-     * Additional constants for Payroll HR.
-     */
+    public const STATUS_PAID = 1;
+
+    public const STATUS_PENDING = 2;
+
+    public const STATUS_FAILED = 3;
+
+    public function getStatuses(): array
+    {
+        return [
+            self::STATUS_PAID => 'Paid',
+            self::STATUS_PENDING => 'Pending',
+            self::STATUS_FAILED => 'Failed',
+        ];
+    }
 }

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Constants\CRM;
 
@@ -15,14 +15,14 @@ class InteractionsConstant
      *
      * @var string
      */
-    public const MODEL = "App\\Models\\CRM\\Interactions";
+    public const MODEL = 'App\\Models\\CRM\\Interactions';
 
     /**
      * Example: table name of Interactions
      *
      * @var string
      */
-    public const TABLE = "Interactions_TABLE";
+    public const TABLE = 'Interactions_TABLE';
 
     /**
      * Example: default items per page for Interactions listings
@@ -31,7 +31,21 @@ class InteractionsConstant
      */
     public const PER_PAGE = 15;
 
-    /**
-     * Additional constants for Interactions CRM.
-     */
+    public const TYPE_CALL = 1;
+
+    public const TYPE_EMAIL = 2;
+
+    public const TYPE_MEETING = 3;
+
+    public const TYPE_NOTE = 4;
+
+    public function getTypes(): array
+    {
+        return [
+            self::TYPE_CALL => 'Call',
+            self::TYPE_EMAIL => 'Email',
+            self::TYPE_MEETING => 'Meeting',
+            self::TYPE_NOTE => 'Note',
+        ];
+    }
 }

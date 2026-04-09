@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Constants\HR;
 
@@ -15,14 +15,14 @@ class EmployeesConstant
      *
      * @var string
      */
-    public const MODEL = "App\\Models\\HR\\Employees";
+    public const MODEL = 'App\\Models\\HR\\Employees';
 
     /**
      * Example: table name of Employees
      *
      * @var string
      */
-    public const TABLE = "Employees_TABLE";
+    public const TABLE = 'Employees_TABLE';
 
     /**
      * Example: default items per page for Employees listings
@@ -31,7 +31,18 @@ class EmployeesConstant
      */
     public const PER_PAGE = 15;
 
-    /**
-     * Additional constants for Employees HR.
-     */
+    public const STATUS_ACTIVE = 1;
+
+    public const STATUS_ON_LEAVE = 2;
+
+    public const STATUS_INACTIVE = 3;
+
+    public function getStatuses(): array
+    {
+        return [
+            self::STATUS_ACTIVE => 'Active',
+            self::STATUS_ON_LEAVE => 'On Leave',
+            self::STATUS_INACTIVE => 'Inactive',
+        ];
+    }
 }

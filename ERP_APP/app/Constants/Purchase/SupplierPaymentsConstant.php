@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Constants\Purchase;
 
@@ -15,14 +15,14 @@ class SupplierPaymentsConstant
      *
      * @var string
      */
-    public const MODEL = "App\\Models\\Purchase\\SupplierPayments";
+    public const MODEL = 'App\\Models\\Purchase\\SupplierPayments';
 
     /**
      * Example: table name of SupplierPayments
      *
      * @var string
      */
-    public const TABLE = "SupplierPayments_TABLE";
+    public const TABLE = 'SupplierPayments_TABLE';
 
     /**
      * Example: default items per page for SupplierPayments listings
@@ -31,7 +31,18 @@ class SupplierPaymentsConstant
      */
     public const PER_PAGE = 15;
 
-    /**
-     * Additional constants for SupplierPayments Purchase.
-     */
+    public const STATUS_PAID = 1;
+
+    public const STATUS_PENDING = 2;
+
+    public const STATUS_OVERDUE = 3;
+
+    public function getStatuses(): array
+    {
+        return [
+            self::STATUS_PAID => 'Paid',
+            self::STATUS_PENDING => 'Pending',
+            self::STATUS_OVERDUE => 'Overdue',
+        ];
+    }
 }

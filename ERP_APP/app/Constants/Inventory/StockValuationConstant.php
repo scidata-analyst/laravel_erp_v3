@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Constants\Inventory;
 
@@ -15,14 +15,14 @@ class StockValuationConstant
      *
      * @var string
      */
-    public const MODEL = "App\\Models\\Inventory\\StockValuation";
+    public const MODEL = 'App\\Models\\Inventory\\StockValuation';
 
     /**
      * Example: table name of StockValuation
      *
      * @var string
      */
-    public const TABLE = "StockValuation_TABLE";
+    public const TABLE = 'StockValuation_TABLE';
 
     /**
      * Example: default items per page for StockValuation listings
@@ -31,7 +31,18 @@ class StockValuationConstant
      */
     public const PER_PAGE = 15;
 
-    /**
-     * Additional constants for StockValuation Inventory.
-     */
+    public const METHOD_FIFO = 1;
+
+    public const METHOD_LIFO = 2;
+
+    public const METHOD_AVERAGE = 3;
+
+    public function getValuationMethods(): array
+    {
+        return [
+            self::METHOD_FIFO => 'FIFO',
+            self::METHOD_LIFO => 'LIFO',
+            self::METHOD_AVERAGE => 'Average Cost',
+        ];
+    }
 }

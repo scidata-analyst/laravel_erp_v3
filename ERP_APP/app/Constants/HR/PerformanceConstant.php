@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Constants\HR;
 
@@ -15,14 +15,14 @@ class PerformanceConstant
      *
      * @var string
      */
-    public const MODEL = "App\\Models\\HR\\Performance";
+    public const MODEL = 'App\\Models\\HR\\Performance';
 
     /**
      * Example: table name of Performance
      *
      * @var string
      */
-    public const TABLE = "Performance_TABLE";
+    public const TABLE = 'Performance_TABLE';
 
     /**
      * Example: default items per page for Performance listings
@@ -31,7 +31,33 @@ class PerformanceConstant
      */
     public const PER_PAGE = 15;
 
-    /**
-     * Additional constants for Performance HR.
-     */
+    public const RATING_EXCELLENT = 1;
+
+    public const RATING_GOOD = 2;
+
+    public const RATING_SATISFACTORY = 3;
+
+    public const RATING_POOR = 4;
+
+    public const STATUS_COMPLETED = 1;
+
+    public const STATUS_IN_REVIEW = 2;
+
+    public function getRatings(): array
+    {
+        return [
+            self::RATING_EXCELLENT => 'Excellent',
+            self::RATING_GOOD => 'Good',
+            self::RATING_SATISFACTORY => 'Satisfactory',
+            self::RATING_POOR => 'Poor',
+        ];
+    }
+
+    public function getStatuses(): array
+    {
+        return [
+            self::STATUS_COMPLETED => 'Completed',
+            self::STATUS_IN_REVIEW => 'In Review',
+        ];
+    }
 }

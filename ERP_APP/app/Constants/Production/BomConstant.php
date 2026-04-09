@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Constants\Production;
 
@@ -15,14 +15,14 @@ class BomConstant
      *
      * @var string
      */
-    public const MODEL = "App\\Models\\Production\\Bom";
+    public const MODEL = 'App\\Models\\Production\\Bom';
 
     /**
      * Example: table name of Bom
      *
      * @var string
      */
-    public const TABLE = "Bom_TABLE";
+    public const TABLE = 'Bom_TABLE';
 
     /**
      * Example: default items per page for Bom listings
@@ -31,7 +31,18 @@ class BomConstant
      */
     public const PER_PAGE = 15;
 
-    /**
-     * Additional constants for Bom Production.
-     */
+    public const STATUS_ACTIVE = 1;
+
+    public const STATUS_DRAFT = 2;
+
+    public const STATUS_ARCHIVED = 3;
+
+    public function getStatuses(): array
+    {
+        return [
+            self::STATUS_ACTIVE => 'Active',
+            self::STATUS_DRAFT => 'Draft',
+            self::STATUS_ARCHIVED => 'Archived',
+        ];
+    }
 }
