@@ -19,7 +19,7 @@ class Dashboard extends Model
      *
      * @var string
      */
-    protected $table = "Dashboard_TABLE";
+    protected $table = "dashboard";
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +27,8 @@ class Dashboard extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'total_revenue',
+        'sales_orders',
     ];
 
     /**

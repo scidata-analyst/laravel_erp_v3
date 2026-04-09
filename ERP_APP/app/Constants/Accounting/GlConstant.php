@@ -22,7 +22,7 @@ class GlConstant
      *
      * @var string
      */
-    public const TABLE = "Gl_TABLE";
+    public const TABLE = "general_ledger";
 
     /**
      * Example: default items per page for Gl listings
@@ -34,4 +34,22 @@ class GlConstant
     /**
      * Additional constants for Gl Accounting.
      */
+
+    public const ASSET_TYPE_ASSET = 1;
+    public const ASSET_TYPE_LIABILITY = 2;
+    public const ASSET_TYPE_EQUITY = 3;
+    public const ASSET_TYPE_REVENUE = 4;
+    public const ASSET_TYPE_EXPENSE = 5;
+
+
+    public function getAssetTypes(): array
+    {
+        return [
+            self::ASSET_TYPE_ASSET => "Asset",
+            self::ASSET_TYPE_LIABILITY => "Liability",
+            self::ASSET_TYPE_EQUITY => "Equity",
+            self::ASSET_TYPE_REVENUE => "Revenue",
+            self::ASSET_TYPE_EXPENSE => "Expense",
+        ];
+    }
 }

@@ -22,7 +22,7 @@ class ApArConstant
      *
      * @var string
      */
-    public const TABLE = "ApAr_TABLE";
+    public const TABLE = "ap_ar";
 
     /**
      * Example: default items per page for ApAr listings
@@ -34,4 +34,15 @@ class ApArConstant
     /**
      * Additional constants for ApAr Accounting.
      */
+
+    public const TYPE_PAYABLE = 1;
+    public const TYPE_RECEIVABLE = 2;
+
+    public function getTypes(): array
+    {
+        return [
+            self::TYPE_PAYABLE => "Payable",
+            self::TYPE_RECEIVABLE => "Receivable",
+        ];
+    }
 }

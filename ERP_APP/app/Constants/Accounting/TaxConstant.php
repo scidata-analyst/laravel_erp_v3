@@ -22,7 +22,7 @@ class TaxConstant
      *
      * @var string
      */
-    public const TABLE = "Tax_TABLE";
+    public const TABLE = "tax";
 
     /**
      * Example: default items per page for Tax listings
@@ -34,4 +34,18 @@ class TaxConstant
     /**
      * Additional constants for Tax Accounting.
      */
+
+    public const APPLICABLE_SALES = 1;
+    public const APPLICABLE_PURCHASES = 2;
+    public const APPLICABLE_BOTH = 3;
+
+    
+    public function getApplicableTypes(): array
+    {
+        return [
+            self::APPLICABLE_SALES => "Sales",
+            self::APPLICABLE_PURCHASES => "Purchases",
+            self::APPLICABLE_BOTH => "Both",
+        ];
+    }
 }

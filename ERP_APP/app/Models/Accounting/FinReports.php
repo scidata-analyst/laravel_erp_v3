@@ -19,7 +19,7 @@ class FinReports extends Model
      *
      * @var string
      */
-    protected $table = "FinReports_TABLE";
+    protected $table = "fin_reports";
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +27,11 @@ class FinReports extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'type',
+        'period',
+        'start_date',
+        'end_date',
+        'format'
     ];
 
     /**

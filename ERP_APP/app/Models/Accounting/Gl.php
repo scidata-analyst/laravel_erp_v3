@@ -19,7 +19,7 @@ class Gl extends Model
      *
      * @var string
      */
-    protected $table = "Gl_TABLE";
+    protected $table = "general_ledger";
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +27,12 @@ class Gl extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'name',
+        'type',
+        'code',
+        'debit',
+        'credit',
+        'narration',
     ];
 
     /**

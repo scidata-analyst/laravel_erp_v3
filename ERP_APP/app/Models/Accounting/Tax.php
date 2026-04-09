@@ -19,7 +19,7 @@ class Tax extends Model
      *
      * @var string
      */
-    protected $table = "Tax_TABLE";
+    protected $table = "tax";
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +27,11 @@ class Tax extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'name',
+        'type',
+        'rate',
+        'filling_period',
+        'applicable_on'
     ];
 
     /**

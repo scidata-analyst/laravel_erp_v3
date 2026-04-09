@@ -19,7 +19,7 @@ class Settings extends Model
      *
      * @var string
      */
-    protected $table = "Settings_TABLE";
+    protected $table = "settings";
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +27,17 @@ class Settings extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'company_name',
+        'base_currency',
+        'fiscal_year_start',
+        'company_address',
+        'session_timeout',
+        'two_factor_auth',
+        'password_policy',
+        'ip_whitelist',
+        'default_valuation',
+        'auto_reorder',
+        'default_warehouse',
     ];
 
     /**
