@@ -1,69 +1,89 @@
-﻿<?php
+<?php
 
 namespace App\DTOs\Ecommerce;
 
-/**
- * Class InvSyncDTO
- *
- * Data Transfer Object for InvSync.
- */
+use App\Models\Ecommerce\InvSync;
+
 class InvSyncDTO
 {
-    /**
-     * InvSyncDTO constructor.
-     *
-     * @param array $data
-     */
-    public function __construct(
-        public readonly array $data = []
-    ) {
+    public ?int $id;
+
+    public ?int $channelId;
+
+    public ?string $lastSyncTime;
+
+    public ?int $totalSyncedItems;
+
+    public ?string $syncErrors;
+
+    public ?int $status;
+
+    public ?string $createdAt;
+
+    public ?string $updatedAt;
+
+    public ?OnlineChannelsDTO $channel;
+
+    public function __construct(array $data = [])
+    {
+        $this->id = isset($data['id']) ? (int) $data['id'] : null;
+        $this->channelId = isset($data['channel_id']) ? (int) $data['channel_id'] : null;
+        $this->lastSyncTime = $data['last_sync_time'] ?? null;
+        $this->totalSyncedItems = isset($data['total_synced_items']) ? (int) $data['total_synced_items'] : null;
+        $this->syncErrors = $data['sync_errors'] ?? null;
+        $this->status = isset($data['status']) ? (int) $data['status'] : null;
+        $this->createdAt = $data['created_at'] ?? null;
+        $this->updatedAt = $data['updated_at'] ?? null;
+        $this->channel = $data['channel'] ?? null;
     }
 
-    /**
-     * Create DTO instance from array.
-     *
-     * @param array $data
-     * @return self
-     */
+    public static function fromModel(InvSync $model): self
+    {
+        $data = [
+            'id' => $model->id,
+            'channel_id' => $model->channel_id,
+            'last_sync_time' => $model->last_sync_time,
+            'total_synced_items' => $model->total_synced_items,
+            'sync_errors' => $model->sync_errors,
+            'status' => $model->status,
+            'created_at' => $model->created_at?->toIso8601String(),
+            'updated_at' => $model->updated_at?->toIso8601String(),
+        ];
+
+        if ($model->relationLoaded('channel')) {
+            $data['channel'] = OnlineChannelsDTO::fromModel($model->channel);
+        }
+
+        return new self($data);
+    }
+
     public static function fromArray(array $data): self
     {
-        return new self(
-            data: $data
-        );
+        return new self($data);
     }
 
-    /**
-     * Convert DTO to array.
-     *
-     * @return array
-     */
     public function toArray(): array
     {
         return [
-            'data' => $this->data,
+            'id' => $this->id,
+            'channel_id' => $this->channelId,
+            'last_sync_time' => $this->lastSyncTime,
+            'total_synced_items' => $this->totalSyncedItems,
+            'sync_errors' => $this->syncErrors,
+            'status' => $this->status,
+            'created_at' => $this->createdAt,
+            'updated_at' => $this->updatedAt,
         ];
     }
 
-    /**
-     * Get a specific value from DTO data.
-     *
-     * @param string $key
-     * @param mixed|null $default
-     * @return mixed
-     */
-    public function get(string $key, mixed $default = null): mixed
+    public function toModel(): array
     {
-        return $this->data[$key] ?? $default;
-    }
-
-    /**
-     * Check if a key exists in DTO data.
-     *
-     * @param string $key
-     * @return bool
-     */
-    public function has(string $key): bool
-    {
-        return array_key_exists($key, $this->data);
+        return [
+            'channel_id' => $this->channelId,
+            'last_sync_time' => $this->lastSyncTime,
+            'total_synced_items' => $this->totalSyncedItems,
+            'sync_errors' => $this->syncErrors,
+            'status' => $this->status,
+        ];
     }
 }

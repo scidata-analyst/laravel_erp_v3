@@ -1,69 +1,108 @@
-﻿<?php
+<?php
 
 namespace App\DTOs\CRM;
 
-/**
- * Class LeadsDTO
- *
- * Data Transfer Object for Leads.
- */
+use App\DTOs\UsersRoles\UserDTO;
+use App\Models\CRM\Leads;
+
 class LeadsDTO
 {
-    /**
-     * LeadsDTO constructor.
-     *
-     * @param array $data
-     */
-    public function __construct(
-        public readonly array $data = []
-    ) {
+    public ?int $id;
+
+    public ?string $leadName;
+
+    public ?string $company;
+
+    public ?string $email;
+
+    public ?string $phone;
+
+    public ?float $dealValue;
+
+    public ?string $stage;
+
+    public ?int $assignedUserId;
+
+    public ?string $notes;
+
+    public ?string $createdAt;
+
+    public ?string $updatedAt;
+
+    public ?UserDTO $assignedUser;
+
+    public function __construct(array $data = [])
+    {
+        $this->id = isset($data['id']) ? (int) $data['id'] : null;
+        $this->leadName = $data['lead_name'] ?? null;
+        $this->company = $data['company'] ?? null;
+        $this->email = $data['email'] ?? null;
+        $this->phone = $data['phone'] ?? null;
+        $this->dealValue = isset($data['deal_value']) ? (float) $data['deal_value'] : null;
+        $this->stage = $data['stage'] ?? null;
+        $this->assignedUserId = isset($data['assigned_user_id']) ? (int) $data['assigned_user_id'] : null;
+        $this->notes = $data['notes'] ?? null;
+        $this->createdAt = $data['created_at'] ?? null;
+        $this->updatedAt = $data['updated_at'] ?? null;
+        $this->assignedUser = $data['assignedUser'] ?? null;
     }
 
-    /**
-     * Create DTO instance from array.
-     *
-     * @param array $data
-     * @return self
-     */
+    public static function fromModel(Leads $model): self
+    {
+        $data = [
+            'id' => $model->id,
+            'lead_name' => $model->lead_name,
+            'company' => $model->company,
+            'email' => $model->email,
+            'phone' => $model->phone,
+            'deal_value' => $model->deal_value,
+            'stage' => $model->stage,
+            'assigned_user_id' => $model->assigned_user_id,
+            'notes' => $model->notes,
+            'created_at' => $model->created_at?->toIso8601String(),
+            'updated_at' => $model->updated_at?->toIso8601String(),
+        ];
+
+        if ($model->relationLoaded('assignedUser')) {
+            $data['assignedUser'] = UserDTO::fromModel($model->assignedUser);
+        }
+
+        return new self($data);
+    }
+
     public static function fromArray(array $data): self
     {
-        return new self(
-            data: $data
-        );
+        return new self($data);
     }
 
-    /**
-     * Convert DTO to array.
-     *
-     * @return array
-     */
     public function toArray(): array
     {
         return [
-            'data' => $this->data,
+            'id' => $this->id,
+            'lead_name' => $this->leadName,
+            'company' => $this->company,
+            'email' => $this->email,
+            'phone' => $this->phone,
+            'deal_value' => $this->dealValue,
+            'stage' => $this->stage,
+            'assigned_user_id' => $this->assignedUserId,
+            'notes' => $this->notes,
+            'created_at' => $this->createdAt,
+            'updated_at' => $this->updatedAt,
         ];
     }
 
-    /**
-     * Get a specific value from DTO data.
-     *
-     * @param string $key
-     * @param mixed|null $default
-     * @return mixed
-     */
-    public function get(string $key, mixed $default = null): mixed
+    public function toModel(): array
     {
-        return $this->data[$key] ?? $default;
-    }
-
-    /**
-     * Check if a key exists in DTO data.
-     *
-     * @param string $key
-     * @return bool
-     */
-    public function has(string $key): bool
-    {
-        return array_key_exists($key, $this->data);
+        return [
+            'lead_name' => $this->leadName,
+            'company' => $this->company,
+            'email' => $this->email,
+            'phone' => $this->phone,
+            'deal_value' => $this->dealValue,
+            'stage' => $this->stage,
+            'assigned_user_id' => $this->assignedUserId,
+            'notes' => $this->notes,
+        ];
     }
 }

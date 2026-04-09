@@ -1,69 +1,95 @@
-﻿<?php
+<?php
 
 namespace App\DTOs\Production;
 
-/**
- * Class MachineLaborDTO
- *
- * Data Transfer Object for MachineLabor.
- */
+use App\Models\Production\MachineLabor;
+
 class MachineLaborDTO
 {
-    /**
-     * MachineLaborDTO constructor.
-     *
-     * @param array $data
-     */
-    public function __construct(
-        public readonly array $data = []
-    ) {
+    public ?int $id;
+
+    public ?int $workOrderId;
+
+    public ?string $resourceName;
+
+    public ?string $resourceType;
+
+    public ?float $hoursUsed;
+
+    public ?float $costPerHour;
+
+    public ?float $totalCost;
+
+    public ?string $createdAt;
+
+    public ?string $updatedAt;
+
+    public ?WorkOrdersDTO $workOrder;
+
+    public function __construct(array $data = [])
+    {
+        $this->id = isset($data['id']) ? (int) $data['id'] : null;
+        $this->workOrderId = isset($data['work_order_id']) ? (int) $data['work_order_id'] : null;
+        $this->resourceName = $data['resource_name'] ?? null;
+        $this->resourceType = $data['resource_type'] ?? null;
+        $this->hoursUsed = isset($data['hours_used']) ? (float) $data['hours_used'] : null;
+        $this->costPerHour = isset($data['cost_per_hour']) ? (float) $data['cost_per_hour'] : null;
+        $this->totalCost = isset($data['total_cost']) ? (float) $data['total_cost'] : null;
+        $this->createdAt = $data['created_at'] ?? null;
+        $this->updatedAt = $data['updated_at'] ?? null;
+        $this->workOrder = $data['workOrder'] ?? null;
     }
 
-    /**
-     * Create DTO instance from array.
-     *
-     * @param array $data
-     * @return self
-     */
+    public static function fromModel(MachineLabor $model): self
+    {
+        $data = [
+            'id' => $model->id,
+            'work_order_id' => $model->work_order_id,
+            'resource_name' => $model->resource_name,
+            'resource_type' => $model->resource_type,
+            'hours_used' => $model->hours_used,
+            'cost_per_hour' => $model->cost_per_hour,
+            'total_cost' => $model->total_cost,
+            'created_at' => $model->created_at?->toIso8601String(),
+            'updated_at' => $model->updated_at?->toIso8601String(),
+        ];
+
+        if ($model->relationLoaded('workOrder')) {
+            $data['workOrder'] = WorkOrdersDTO::fromModel($model->workOrder);
+        }
+
+        return new self($data);
+    }
+
     public static function fromArray(array $data): self
     {
-        return new self(
-            data: $data
-        );
+        return new self($data);
     }
 
-    /**
-     * Convert DTO to array.
-     *
-     * @return array
-     */
     public function toArray(): array
     {
         return [
-            'data' => $this->data,
+            'id' => $this->id,
+            'work_order_id' => $this->workOrderId,
+            'resource_name' => $this->resourceName,
+            'resource_type' => $this->resourceType,
+            'hours_used' => $this->hoursUsed,
+            'cost_per_hour' => $this->costPerHour,
+            'total_cost' => $this->totalCost,
+            'created_at' => $this->createdAt,
+            'updated_at' => $this->updatedAt,
         ];
     }
 
-    /**
-     * Get a specific value from DTO data.
-     *
-     * @param string $key
-     * @param mixed|null $default
-     * @return mixed
-     */
-    public function get(string $key, mixed $default = null): mixed
+    public function toModel(): array
     {
-        return $this->data[$key] ?? $default;
-    }
-
-    /**
-     * Check if a key exists in DTO data.
-     *
-     * @param string $key
-     * @return bool
-     */
-    public function has(string $key): bool
-    {
-        return array_key_exists($key, $this->data);
+        return [
+            'work_order_id' => $this->workOrderId,
+            'resource_name' => $this->resourceName,
+            'resource_type' => $this->resourceType,
+            'hours_used' => $this->hoursUsed,
+            'cost_per_hour' => $this->costPerHour,
+            'total_cost' => $this->totalCost,
+        ];
     }
 }

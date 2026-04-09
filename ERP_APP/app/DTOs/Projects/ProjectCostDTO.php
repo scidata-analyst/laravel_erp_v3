@@ -1,69 +1,102 @@
-﻿<?php
+<?php
 
 namespace App\DTOs\Projects;
 
-/**
- * Class ProjectCostDTO
- *
- * Data Transfer Object for ProjectCost.
- */
+use App\DTOs\UsersRoles\UserDTO;
+use App\Models\Projects\ProjectCost;
+
 class ProjectCostDTO
 {
-    /**
-     * ProjectCostDTO constructor.
-     *
-     * @param array $data
-     */
-    public function __construct(
-        public readonly array $data = []
-    ) {
+    public ?int $id;
+
+    public ?string $projectName;
+
+    public ?string $costCategory;
+
+    public ?float $amount;
+
+    public ?string $dateIncurred;
+
+    public ?int $approvedByUserId;
+
+    public ?string $description;
+
+    public ?int $status;
+
+    public ?string $createdAt;
+
+    public ?string $updatedAt;
+
+    public ?UserDTO $approvedByUser;
+
+    public function __construct(array $data = [])
+    {
+        $this->id = isset($data['id']) ? (int) $data['id'] : null;
+        $this->projectName = $data['project_name'] ?? null;
+        $this->costCategory = $data['cost_category'] ?? null;
+        $this->amount = isset($data['amount']) ? (float) $data['amount'] : null;
+        $this->dateIncurred = $data['date_incurred'] ?? null;
+        $this->approvedByUserId = isset($data['approved_by_user_id']) ? (int) $data['approved_by_user_id'] : null;
+        $this->description = $data['description'] ?? null;
+        $this->status = isset($data['status']) ? (int) $data['status'] : null;
+        $this->createdAt = $data['created_at'] ?? null;
+        $this->updatedAt = $data['updated_at'] ?? null;
+        $this->approvedByUser = $data['approvedByUser'] ?? null;
     }
 
-    /**
-     * Create DTO instance from array.
-     *
-     * @param array $data
-     * @return self
-     */
+    public static function fromModel(ProjectCost $model): self
+    {
+        $data = [
+            'id' => $model->id,
+            'project_name' => $model->project_name,
+            'cost_category' => $model->cost_category,
+            'amount' => $model->amount,
+            'date_incurred' => $model->date_incurred,
+            'approved_by_user_id' => $model->approved_by_user_id,
+            'description' => $model->description,
+            'status' => $model->status,
+            'created_at' => $model->created_at?->toIso8601String(),
+            'updated_at' => $model->updated_at?->toIso8601String(),
+        ];
+
+        if ($model->relationLoaded('approvedByUser')) {
+            $data['approvedByUser'] = UserDTO::fromModel($model->approvedByUser);
+        }
+
+        return new self($data);
+    }
+
     public static function fromArray(array $data): self
     {
-        return new self(
-            data: $data
-        );
+        return new self($data);
     }
 
-    /**
-     * Convert DTO to array.
-     *
-     * @return array
-     */
     public function toArray(): array
     {
         return [
-            'data' => $this->data,
+            'id' => $this->id,
+            'project_name' => $this->projectName,
+            'cost_category' => $this->costCategory,
+            'amount' => $this->amount,
+            'date_incurred' => $this->dateIncurred,
+            'approved_by_user_id' => $this->approvedByUserId,
+            'description' => $this->description,
+            'status' => $this->status,
+            'created_at' => $this->createdAt,
+            'updated_at' => $this->updatedAt,
         ];
     }
 
-    /**
-     * Get a specific value from DTO data.
-     *
-     * @param string $key
-     * @param mixed|null $default
-     * @return mixed
-     */
-    public function get(string $key, mixed $default = null): mixed
+    public function toModel(): array
     {
-        return $this->data[$key] ?? $default;
-    }
-
-    /**
-     * Check if a key exists in DTO data.
-     *
-     * @param string $key
-     * @return bool
-     */
-    public function has(string $key): bool
-    {
-        return array_key_exists($key, $this->data);
+        return [
+            'project_name' => $this->projectName,
+            'cost_category' => $this->costCategory,
+            'amount' => $this->amount,
+            'date_incurred' => $this->dateIncurred,
+            'approved_by_user_id' => $this->approvedByUserId,
+            'description' => $this->description,
+            'status' => $this->status,
+        ];
     }
 }

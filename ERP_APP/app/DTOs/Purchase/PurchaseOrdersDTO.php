@@ -1,69 +1,115 @@
-﻿<?php
+<?php
 
 namespace App\DTOs\Purchase;
 
-/**
- * Class PurchaseOrdersDTO
- *
- * Data Transfer Object for PurchaseOrders.
- */
+use App\DTOs\Logistics\WarehousesDTO;
+use App\Models\Purchase\PurchaseOrders;
+
 class PurchaseOrdersDTO
 {
-    /**
-     * PurchaseOrdersDTO constructor.
-     *
-     * @param array $data
-     */
-    public function __construct(
-        public readonly array $data = []
-    ) {
+    public ?int $id;
+
+    public ?int $supplierId;
+
+    public ?string $poNumber;
+
+    public ?string $orderDate;
+
+    public ?string $expectedDeliveryDate;
+
+    public ?int $warehouseId;
+
+    public ?string $paymentTerms;
+
+    public ?float $totalAmount;
+
+    public ?int $status;
+
+    public ?string $createdAt;
+
+    public ?string $updatedAt;
+
+    public ?SuppliersDTO $supplier;
+
+    public ?WarehousesDTO $warehouse;
+
+    public function __construct(array $data = [])
+    {
+        $this->id = isset($data['id']) ? (int) $data['id'] : null;
+        $this->supplierId = isset($data['supplier_id']) ? (int) $data['supplier_id'] : null;
+        $this->poNumber = $data['po_number'] ?? null;
+        $this->orderDate = $data['order_date'] ?? null;
+        $this->expectedDeliveryDate = $data['expected_delivery_date'] ?? null;
+        $this->warehouseId = isset($data['warehouse_id']) ? (int) $data['warehouse_id'] : null;
+        $this->paymentTerms = $data['payment_terms'] ?? null;
+        $this->totalAmount = isset($data['total_amount']) ? (float) $data['total_amount'] : null;
+        $this->status = isset($data['status']) ? (int) $data['status'] : null;
+        $this->createdAt = $data['created_at'] ?? null;
+        $this->updatedAt = $data['updated_at'] ?? null;
+        $this->supplier = $data['supplier'] ?? null;
+        $this->warehouse = $data['warehouse'] ?? null;
     }
 
-    /**
-     * Create DTO instance from array.
-     *
-     * @param array $data
-     * @return self
-     */
+    public static function fromModel(PurchaseOrders $model): self
+    {
+        $data = [
+            'id' => $model->id,
+            'supplier_id' => $model->supplier_id,
+            'po_number' => $model->po_number,
+            'order_date' => $model->order_date,
+            'expected_delivery_date' => $model->expected_delivery_date,
+            'warehouse_id' => $model->warehouse_id,
+            'payment_terms' => $model->payment_terms,
+            'total_amount' => $model->total_amount,
+            'status' => $model->status,
+            'created_at' => $model->created_at?->toIso8601String(),
+            'updated_at' => $model->updated_at?->toIso8601String(),
+        ];
+
+        if ($model->relationLoaded('supplier')) {
+            $data['supplier'] = SuppliersDTO::fromModel($model->supplier);
+        }
+
+        if ($model->relationLoaded('warehouse')) {
+            $data['warehouse'] = WarehousesDTO::fromModel($model->warehouse);
+        }
+
+        return new self($data);
+    }
+
     public static function fromArray(array $data): self
     {
-        return new self(
-            data: $data
-        );
+        return new self($data);
     }
 
-    /**
-     * Convert DTO to array.
-     *
-     * @return array
-     */
     public function toArray(): array
     {
         return [
-            'data' => $this->data,
+            'id' => $this->id,
+            'supplier_id' => $this->supplierId,
+            'po_number' => $this->poNumber,
+            'order_date' => $this->orderDate,
+            'expected_delivery_date' => $this->expectedDeliveryDate,
+            'warehouse_id' => $this->warehouseId,
+            'payment_terms' => $this->paymentTerms,
+            'total_amount' => $this->totalAmount,
+            'status' => $this->status,
+            'created_at' => $this->createdAt,
+            'updated_at' => $this->updatedAt,
         ];
     }
 
-    /**
-     * Get a specific value from DTO data.
-     *
-     * @param string $key
-     * @param mixed|null $default
-     * @return mixed
-     */
-    public function get(string $key, mixed $default = null): mixed
+    public function toModel(): array
     {
-        return $this->data[$key] ?? $default;
-    }
-
-    /**
-     * Check if a key exists in DTO data.
-     *
-     * @param string $key
-     * @return bool
-     */
-    public function has(string $key): bool
-    {
-        return array_key_exists($key, $this->data);
+        return [
+            'supplier_id' => $this->supplierId,
+            'po_number' => $this->poNumber,
+            'order_date' => $this->orderDate,
+            'expected_delivery_date' => $this->expectedDeliveryDate,
+            'warehouse_id' => $this->warehouseId,
+            'payment_terms' => $this->paymentTerms,
+            'total_amount' => $this->totalAmount,
+            'status' => $this->status,
+        ];
     }
 }

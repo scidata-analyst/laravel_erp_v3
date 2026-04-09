@@ -1,69 +1,96 @@
-﻿<?php
+<?php
 
 namespace App\DTOs\Projects;
 
-/**
- * Class ResourcesDTO
- *
- * Data Transfer Object for Resources.
- */
+use App\DTOs\HR\EmployeesDTO;
+use App\Models\Projects\Resources;
+
 class ResourcesDTO
 {
-    /**
-     * ResourcesDTO constructor.
-     *
-     * @param array $data
-     */
-    public function __construct(
-        public readonly array $data = []
-    ) {
+    public ?int $id;
+
+    public ?int $employeeId;
+
+    public ?string $projectName;
+
+    public ?float $allocationPercentage;
+
+    public ?string $fromDate;
+
+    public ?string $toDate;
+
+    public ?string $roleOnProject;
+
+    public ?string $createdAt;
+
+    public ?string $updatedAt;
+
+    public ?EmployeesDTO $employee;
+
+    public function __construct(array $data = [])
+    {
+        $this->id = isset($data['id']) ? (int) $data['id'] : null;
+        $this->employeeId = isset($data['employee_id']) ? (int) $data['employee_id'] : null;
+        $this->projectName = $data['project_name'] ?? null;
+        $this->allocationPercentage = isset($data['allocation_percentage']) ? (float) $data['allocation_percentage'] : null;
+        $this->fromDate = $data['from_date'] ?? null;
+        $this->toDate = $data['to_date'] ?? null;
+        $this->roleOnProject = $data['role_on_project'] ?? null;
+        $this->createdAt = $data['created_at'] ?? null;
+        $this->updatedAt = $data['updated_at'] ?? null;
+        $this->employee = $data['employee'] ?? null;
     }
 
-    /**
-     * Create DTO instance from array.
-     *
-     * @param array $data
-     * @return self
-     */
+    public static function fromModel(Resources $model): self
+    {
+        $data = [
+            'id' => $model->id,
+            'employee_id' => $model->employee_id,
+            'project_name' => $model->project_name,
+            'allocation_percentage' => $model->allocation_percentage,
+            'from_date' => $model->from_date,
+            'to_date' => $model->to_date,
+            'role_on_project' => $model->role_on_project,
+            'created_at' => $model->created_at?->toIso8601String(),
+            'updated_at' => $model->updated_at?->toIso8601String(),
+        ];
+
+        if ($model->relationLoaded('employee')) {
+            $data['employee'] = EmployeesDTO::fromModel($model->employee);
+        }
+
+        return new self($data);
+    }
+
     public static function fromArray(array $data): self
     {
-        return new self(
-            data: $data
-        );
+        return new self($data);
     }
 
-    /**
-     * Convert DTO to array.
-     *
-     * @return array
-     */
     public function toArray(): array
     {
         return [
-            'data' => $this->data,
+            'id' => $this->id,
+            'employee_id' => $this->employeeId,
+            'project_name' => $this->projectName,
+            'allocation_percentage' => $this->allocationPercentage,
+            'from_date' => $this->fromDate,
+            'to_date' => $this->toDate,
+            'role_on_project' => $this->roleOnProject,
+            'created_at' => $this->createdAt,
+            'updated_at' => $this->updatedAt,
         ];
     }
 
-    /**
-     * Get a specific value from DTO data.
-     *
-     * @param string $key
-     * @param mixed|null $default
-     * @return mixed
-     */
-    public function get(string $key, mixed $default = null): mixed
+    public function toModel(): array
     {
-        return $this->data[$key] ?? $default;
-    }
-
-    /**
-     * Check if a key exists in DTO data.
-     *
-     * @param string $key
-     * @return bool
-     */
-    public function has(string $key): bool
-    {
-        return array_key_exists($key, $this->data);
+        return [
+            'employee_id' => $this->employeeId,
+            'project_name' => $this->projectName,
+            'allocation_percentage' => $this->allocationPercentage,
+            'from_date' => $this->fromDate,
+            'to_date' => $this->toDate,
+            'role_on_project' => $this->roleOnProject,
+        ];
     }
 }

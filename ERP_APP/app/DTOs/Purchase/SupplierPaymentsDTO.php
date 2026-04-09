@@ -1,69 +1,101 @@
-﻿<?php
+<?php
 
 namespace App\DTOs\Purchase;
 
-/**
- * Class SupplierPaymentsDTO
- *
- * Data Transfer Object for SupplierPayments.
- */
+use App\Models\Purchase\SupplierPayments;
+
 class SupplierPaymentsDTO
 {
-    /**
-     * SupplierPaymentsDTO constructor.
-     *
-     * @param array $data
-     */
-    public function __construct(
-        public readonly array $data = []
-    ) {
+    public ?int $id;
+
+    public ?int $supplierId;
+
+    public ?string $paymentNumber;
+
+    public ?string $invoiceReference;
+
+    public ?float $amount;
+
+    public ?string $paymentDate;
+
+    public ?string $paymentMethod;
+
+    public ?int $status;
+
+    public ?string $createdAt;
+
+    public ?string $updatedAt;
+
+    public ?SuppliersDTO $supplier;
+
+    public function __construct(array $data = [])
+    {
+        $this->id = isset($data['id']) ? (int) $data['id'] : null;
+        $this->supplierId = isset($data['supplier_id']) ? (int) $data['supplier_id'] : null;
+        $this->paymentNumber = $data['payment_number'] ?? null;
+        $this->invoiceReference = $data['invoice_reference'] ?? null;
+        $this->amount = isset($data['amount']) ? (float) $data['amount'] : null;
+        $this->paymentDate = $data['payment_date'] ?? null;
+        $this->paymentMethod = $data['payment_method'] ?? null;
+        $this->status = isset($data['status']) ? (int) $data['status'] : null;
+        $this->createdAt = $data['created_at'] ?? null;
+        $this->updatedAt = $data['updated_at'] ?? null;
+        $this->supplier = $data['supplier'] ?? null;
     }
 
-    /**
-     * Create DTO instance from array.
-     *
-     * @param array $data
-     * @return self
-     */
+    public static function fromModel(SupplierPayments $model): self
+    {
+        $data = [
+            'id' => $model->id,
+            'supplier_id' => $model->supplier_id,
+            'payment_number' => $model->payment_number,
+            'invoice_reference' => $model->invoice_reference,
+            'amount' => $model->amount,
+            'payment_date' => $model->payment_date,
+            'payment_method' => $model->payment_method,
+            'status' => $model->status,
+            'created_at' => $model->created_at?->toIso8601String(),
+            'updated_at' => $model->updated_at?->toIso8601String(),
+        ];
+
+        if ($model->relationLoaded('supplier')) {
+            $data['supplier'] = SuppliersDTO::fromModel($model->supplier);
+        }
+
+        return new self($data);
+    }
+
     public static function fromArray(array $data): self
     {
-        return new self(
-            data: $data
-        );
+        return new self($data);
     }
 
-    /**
-     * Convert DTO to array.
-     *
-     * @return array
-     */
     public function toArray(): array
     {
         return [
-            'data' => $this->data,
+            'id' => $this->id,
+            'supplier_id' => $this->supplierId,
+            'payment_number' => $this->paymentNumber,
+            'invoice_reference' => $this->invoiceReference,
+            'amount' => $this->amount,
+            'payment_date' => $this->paymentDate,
+            'payment_method' => $this->paymentMethod,
+            'status' => $this->status,
+            'created_at' => $this->createdAt,
+            'updated_at' => $this->updatedAt,
         ];
     }
 
-    /**
-     * Get a specific value from DTO data.
-     *
-     * @param string $key
-     * @param mixed|null $default
-     * @return mixed
-     */
-    public function get(string $key, mixed $default = null): mixed
+    public function toModel(): array
     {
-        return $this->data[$key] ?? $default;
-    }
-
-    /**
-     * Check if a key exists in DTO data.
-     *
-     * @param string $key
-     * @return bool
-     */
-    public function has(string $key): bool
-    {
-        return array_key_exists($key, $this->data);
+        return [
+            'supplier_id' => $this->supplierId,
+            'payment_number' => $this->paymentNumber,
+            'invoice_reference' => $this->invoiceReference,
+            'amount' => $this->amount,
+            'payment_date' => $this->paymentDate,
+            'payment_method' => $this->paymentMethod,
+            'status' => $this->status,
+        ];
     }
 }

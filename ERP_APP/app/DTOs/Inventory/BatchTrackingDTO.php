@@ -1,69 +1,95 @@
-﻿<?php
+<?php
 
 namespace App\DTOs\Inventory;
 
-/**
- * Class BatchTrackingDTO
- *
- * Data Transfer Object for BatchTracking.
- */
+use App\Models\Inventory\BatchTracking;
+
 class BatchTrackingDTO
 {
-    /**
-     * BatchTrackingDTO constructor.
-     *
-     * @param array $data
-     */
-    public function __construct(
-        public readonly array $data = []
-    ) {
+    public ?int $id;
+
+    public ?int $productId;
+
+    public ?string $batchLotNumber;
+
+    public ?string $serialNumber;
+
+    public ?int $quantity;
+
+    public ?string $manufactureDate;
+
+    public ?string $expiryDate;
+
+    public ?string $createdAt;
+
+    public ?string $updatedAt;
+
+    public ?ProductCatalogDTO $product;
+
+    public function __construct(array $data = [])
+    {
+        $this->id = isset($data['id']) ? (int) $data['id'] : null;
+        $this->productId = isset($data['product_id']) ? (int) $data['product_id'] : null;
+        $this->batchLotNumber = $data['batch_lot_number'] ?? null;
+        $this->serialNumber = $data['serial_number'] ?? null;
+        $this->quantity = isset($data['quantity']) ? (int) $data['quantity'] : null;
+        $this->manufactureDate = $data['manufacture_date'] ?? null;
+        $this->expiryDate = $data['expiry_date'] ?? null;
+        $this->createdAt = $data['created_at'] ?? null;
+        $this->updatedAt = $data['updated_at'] ?? null;
+        $this->product = $data['product'] ?? null;
     }
 
-    /**
-     * Create DTO instance from array.
-     *
-     * @param array $data
-     * @return self
-     */
+    public static function fromModel(BatchTracking $model): self
+    {
+        $data = [
+            'id' => $model->id,
+            'product_id' => $model->product_id,
+            'batch_lot_number' => $model->batch_lot_number,
+            'serial_number' => $model->serial_number,
+            'quantity' => $model->quantity,
+            'manufacture_date' => $model->manufacture_date,
+            'expiry_date' => $model->expiry_date,
+            'created_at' => $model->created_at?->toIso8601String(),
+            'updated_at' => $model->updated_at?->toIso8601String(),
+        ];
+
+        if ($model->relationLoaded('product')) {
+            $data['product'] = ProductCatalogDTO::fromModel($model->product);
+        }
+
+        return new self($data);
+    }
+
     public static function fromArray(array $data): self
     {
-        return new self(
-            data: $data
-        );
+        return new self($data);
     }
 
-    /**
-     * Convert DTO to array.
-     *
-     * @return array
-     */
     public function toArray(): array
     {
         return [
-            'data' => $this->data,
+            'id' => $this->id,
+            'product_id' => $this->productId,
+            'batch_lot_number' => $this->batchLotNumber,
+            'serial_number' => $this->serialNumber,
+            'quantity' => $this->quantity,
+            'manufacture_date' => $this->manufactureDate,
+            'expiry_date' => $this->expiryDate,
+            'created_at' => $this->createdAt,
+            'updated_at' => $this->updatedAt,
         ];
     }
 
-    /**
-     * Get a specific value from DTO data.
-     *
-     * @param string $key
-     * @param mixed|null $default
-     * @return mixed
-     */
-    public function get(string $key, mixed $default = null): mixed
+    public function toModel(): array
     {
-        return $this->data[$key] ?? $default;
-    }
-
-    /**
-     * Check if a key exists in DTO data.
-     *
-     * @param string $key
-     * @return bool
-     */
-    public function has(string $key): bool
-    {
-        return array_key_exists($key, $this->data);
+        return [
+            'product_id' => $this->productId,
+            'batch_lot_number' => $this->batchLotNumber,
+            'serial_number' => $this->serialNumber,
+            'quantity' => $this->quantity,
+            'manufacture_date' => $this->manufactureDate,
+            'expiry_date' => $this->expiryDate,
+        ];
     }
 }

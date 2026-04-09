@@ -1,69 +1,86 @@
-﻿<?php
+<?php
 
 namespace App\DTOs\Accounting;
 
-/**
- * Class ApArDTO
- *
- * Data Transfer Object for ApAr.
- */
+use App\Models\Accounting\ApAr;
+
 class ApArDTO
 {
-    /**
-     * ApArDTO constructor.
-     *
-     * @param array $data
-     */
-    public function __construct(
-        public readonly array $data = []
-    ) {
+    public ?int $id;
+
+    public ?string $partyName;
+
+    public ?string $apArType;
+
+    public ?float $amount;
+
+    public ?string $dueDate;
+
+    public ?string $reference;
+
+    public ?int $status;
+
+    public ?string $createdAt;
+
+    public ?string $updatedAt;
+
+    public function __construct(array $data = [])
+    {
+        $this->id = isset($data['id']) ? (int) $data['id'] : null;
+        $this->partyName = $data['party_name'] ?? null;
+        $this->apArType = $data['ap_ar_type'] ?? null;
+        $this->amount = isset($data['amount']) ? (float) $data['amount'] : null;
+        $this->dueDate = $data['due_date'] ?? null;
+        $this->reference = $data['reference'] ?? null;
+        $this->status = isset($data['status']) ? (int) $data['status'] : null;
+        $this->createdAt = $data['created_at'] ?? null;
+        $this->updatedAt = $data['updated_at'] ?? null;
     }
 
-    /**
-     * Create DTO instance from array.
-     *
-     * @param array $data
-     * @return self
-     */
+    public static function fromModel(ApAr $model): self
+    {
+        return new self([
+            'id' => $model->id,
+            'party_name' => $model->party_name,
+            'ap_ar_type' => $model->ap_ar_type,
+            'amount' => $model->amount,
+            'due_date' => $model->due_date,
+            'reference' => $model->reference,
+            'status' => $model->status,
+            'created_at' => $model->created_at?->toIso8601String(),
+            'updated_at' => $model->updated_at?->toIso8601String(),
+        ]);
+    }
+
     public static function fromArray(array $data): self
     {
-        return new self(
-            data: $data
-        );
+        return new self($data);
     }
 
-    /**
-     * Convert DTO to array.
-     *
-     * @return array
-     */
     public function toArray(): array
     {
         return [
-            'data' => $this->data,
+            'id' => $this->id,
+            'party_name' => $this->partyName,
+            'ap_ar_type' => $this->apArType,
+            'amount' => $this->amount,
+            'due_date' => $this->dueDate,
+            'reference' => $this->reference,
+            'status' => $this->status,
+            'created_at' => $this->createdAt,
+            'updated_at' => $this->updatedAt,
         ];
     }
 
-    /**
-     * Get a specific value from DTO data.
-     *
-     * @param string $key
-     * @param mixed|null $default
-     * @return mixed
-     */
-    public function get(string $key, mixed $default = null): mixed
+    public function toModel(): array
     {
-        return $this->data[$key] ?? $default;
-    }
-
-    /**
-     * Check if a key exists in DTO data.
-     *
-     * @param string $key
-     * @return bool
-     */
-    public function has(string $key): bool
-    {
-        return array_key_exists($key, $this->data);
+        return [
+            'party_name' => $this->partyName,
+            'ap_ar_type' => $this->apArType,
+            'amount' => $this->amount,
+            'due_date' => $this->dueDate,
+            'reference' => $this->reference,
+            'status' => $this->status,
+        ];
     }
 }

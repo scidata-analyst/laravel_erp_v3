@@ -1,69 +1,96 @@
-﻿<?php
+<?php
 
 namespace App\DTOs\Logistics;
 
-/**
- * Class ShipmentsDTO
- *
- * Data Transfer Object for Shipments.
- */
+use App\DTOs\Sales\SalesOrdersDTO;
+use App\Models\Logistics\Shipments;
+
 class ShipmentsDTO
 {
-    /**
-     * ShipmentsDTO constructor.
-     *
-     * @param array $data
-     */
-    public function __construct(
-        public readonly array $data = []
-    ) {
+    public ?int $id;
+
+    public ?int $salesOrderId;
+
+    public ?string $carrier;
+
+    public ?string $trackingNumber;
+
+    public ?string $estimatedDeliveryDate;
+
+    public ?string $shippingAddress;
+
+    public ?int $status;
+
+    public ?string $createdAt;
+
+    public ?string $updatedAt;
+
+    public ?SalesOrdersDTO $salesOrder;
+
+    public function __construct(array $data = [])
+    {
+        $this->id = isset($data['id']) ? (int) $data['id'] : null;
+        $this->salesOrderId = isset($data['sales_order_id']) ? (int) $data['sales_order_id'] : null;
+        $this->carrier = $data['carrier'] ?? null;
+        $this->trackingNumber = $data['tracking_number'] ?? null;
+        $this->estimatedDeliveryDate = $data['estimated_delivery_date'] ?? null;
+        $this->shippingAddress = $data['shipping_address'] ?? null;
+        $this->status = isset($data['status']) ? (int) $data['status'] : null;
+        $this->createdAt = $data['created_at'] ?? null;
+        $this->updatedAt = $data['updated_at'] ?? null;
+        $this->salesOrder = $data['salesOrder'] ?? null;
     }
 
-    /**
-     * Create DTO instance from array.
-     *
-     * @param array $data
-     * @return self
-     */
+    public static function fromModel(Shipments $model): self
+    {
+        $data = [
+            'id' => $model->id,
+            'sales_order_id' => $model->sales_order_id,
+            'carrier' => $model->carrier,
+            'tracking_number' => $model->tracking_number,
+            'estimated_delivery_date' => $model->estimated_delivery_date,
+            'shipping_address' => $model->shipping_address,
+            'status' => $model->status,
+            'created_at' => $model->created_at?->toIso8601String(),
+            'updated_at' => $model->updated_at?->toIso8601String(),
+        ];
+
+        if ($model->relationLoaded('salesOrder')) {
+            $data['salesOrder'] = SalesOrdersDTO::fromModel($model->salesOrder);
+        }
+
+        return new self($data);
+    }
+
     public static function fromArray(array $data): self
     {
-        return new self(
-            data: $data
-        );
+        return new self($data);
     }
 
-    /**
-     * Convert DTO to array.
-     *
-     * @return array
-     */
     public function toArray(): array
     {
         return [
-            'data' => $this->data,
+            'id' => $this->id,
+            'sales_order_id' => $this->salesOrderId,
+            'carrier' => $this->carrier,
+            'tracking_number' => $this->trackingNumber,
+            'estimated_delivery_date' => $this->estimatedDeliveryDate,
+            'shipping_address' => $this->shippingAddress,
+            'status' => $this->status,
+            'created_at' => $this->createdAt,
+            'updated_at' => $this->updatedAt,
         ];
     }
 
-    /**
-     * Get a specific value from DTO data.
-     *
-     * @param string $key
-     * @param mixed|null $default
-     * @return mixed
-     */
-    public function get(string $key, mixed $default = null): mixed
+    public function toModel(): array
     {
-        return $this->data[$key] ?? $default;
-    }
-
-    /**
-     * Check if a key exists in DTO data.
-     *
-     * @param string $key
-     * @return bool
-     */
-    public function has(string $key): bool
-    {
-        return array_key_exists($key, $this->data);
+        return [
+            'sales_order_id' => $this->salesOrderId,
+            'carrier' => $this->carrier,
+            'tracking_number' => $this->trackingNumber,
+            'estimated_delivery_date' => $this->estimatedDeliveryDate,
+            'shipping_address' => $this->shippingAddress,
+            'status' => $this->status,
+        ];
     }
 }

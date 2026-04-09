@@ -1,69 +1,92 @@
-﻿<?php
+<?php
 
 namespace App\DTOs\Reports;
 
-/**
- * Class BiDashboardsDTO
- *
- * Data Transfer Object for BiDashboards.
- */
+use App\Models\Reports\BiDashboards;
+
 class BiDashboardsDTO
 {
-    /**
-     * BiDashboardsDTO constructor.
-     *
-     * @param array $data
-     */
-    public function __construct(
-        public readonly array $data = []
-    ) {
+    public ?int $id;
+
+    public ?string $widgetName;
+
+    public ?string $chartType;
+
+    public ?string $dataSourceModule;
+
+    public ?string $refreshRate;
+
+    public ?string $dashboardName;
+
+    public ?int $createdByUserId;
+
+    public ?int $status;
+
+    public ?string $createdAt;
+
+    public ?string $updatedAt;
+
+    public function __construct(array $data = [])
+    {
+        $this->id = isset($data['id']) ? (int) $data['id'] : null;
+        $this->widgetName = $data['widget_name'] ?? null;
+        $this->chartType = $data['chart_type'] ?? null;
+        $this->dataSourceModule = $data['data_source_module'] ?? null;
+        $this->refreshRate = $data['refresh_rate'] ?? null;
+        $this->dashboardName = $data['dashboard_name'] ?? null;
+        $this->createdByUserId = isset($data['created_by_user_id']) ? (int) $data['created_by_user_id'] : null;
+        $this->status = isset($data['status']) ? (int) $data['status'] : null;
+        $this->createdAt = $data['created_at'] ?? null;
+        $this->updatedAt = $data['updated_at'] ?? null;
     }
 
-    /**
-     * Create DTO instance from array.
-     *
-     * @param array $data
-     * @return self
-     */
+    public static function fromModel(BiDashboards $model): self
+    {
+        return new self([
+            'id' => $model->id,
+            'widget_name' => $model->widget_name,
+            'chart_type' => $model->chart_type,
+            'data_source_module' => $model->data_source_module,
+            'refresh_rate' => $model->refresh_rate,
+            'dashboard_name' => $model->dashboard_name,
+            'created_by_user_id' => $model->created_by_user_id,
+            'status' => $model->status,
+            'created_at' => $model->created_at?->toIso8601String(),
+            'updated_at' => $model->updated_at?->toIso8601String(),
+        ]);
+    }
+
     public static function fromArray(array $data): self
     {
-        return new self(
-            data: $data
-        );
+        return new self($data);
     }
 
-    /**
-     * Convert DTO to array.
-     *
-     * @return array
-     */
     public function toArray(): array
     {
         return [
-            'data' => $this->data,
+            'id' => $this->id,
+            'widget_name' => $this->widgetName,
+            'chart_type' => $this->chartType,
+            'data_source_module' => $this->dataSourceModule,
+            'refresh_rate' => $this->refreshRate,
+            'dashboard_name' => $this->dashboardName,
+            'created_by_user_id' => $this->createdByUserId,
+            'status' => $this->status,
+            'created_at' => $this->createdAt,
+            'updated_at' => $this->updatedAt,
         ];
     }
 
-    /**
-     * Get a specific value from DTO data.
-     *
-     * @param string $key
-     * @param mixed|null $default
-     * @return mixed
-     */
-    public function get(string $key, mixed $default = null): mixed
+    public function toModel(): array
     {
-        return $this->data[$key] ?? $default;
-    }
-
-    /**
-     * Check if a key exists in DTO data.
-     *
-     * @param string $key
-     * @return bool
-     */
-    public function has(string $key): bool
-    {
-        return array_key_exists($key, $this->data);
+        return [
+            'widget_name' => $this->widgetName,
+            'chart_type' => $this->chartType,
+            'data_source_module' => $this->dataSourceModule,
+            'refresh_rate' => $this->refreshRate,
+            'dashboard_name' => $this->dashboardName,
+            'created_by_user_id' => $this->createdByUserId,
+            'status' => $this->status,
+        ];
     }
 }

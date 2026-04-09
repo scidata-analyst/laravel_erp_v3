@@ -1,69 +1,62 @@
-﻿<?php
+<?php
 
 namespace App\DTOs\Core;
 
-/**
- * Class DashboardDTO
- *
- * Data Transfer Object for Dashboard.
- */
+use App\Models\Core\Dashboard;
+
 class DashboardDTO
 {
-    /**
-     * DashboardDTO constructor.
-     *
-     * @param array $data
-     */
-    public function __construct(
-        public readonly array $data = []
-    ) {
+    public ?int $id;
+
+    public ?float $totalRevenue;
+
+    public ?int $salesOrders;
+
+    public ?string $createdAt;
+
+    public ?string $updatedAt;
+
+    public function __construct(array $data = [])
+    {
+        $this->id = isset($data['id']) ? (int) $data['id'] : null;
+        $this->totalRevenue = isset($data['total_revenue']) ? (float) $data['total_revenue'] : null;
+        $this->salesOrders = isset($data['sales_orders']) ? (int) $data['sales_orders'] : null;
+        $this->createdAt = $data['created_at'] ?? null;
+        $this->updatedAt = $data['updated_at'] ?? null;
     }
 
-    /**
-     * Create DTO instance from array.
-     *
-     * @param array $data
-     * @return self
-     */
+    public static function fromModel(Dashboard $model): self
+    {
+        return new self([
+            'id' => $model->id,
+            'total_revenue' => $model->total_revenue,
+            'sales_orders' => $model->sales_orders,
+            'created_at' => $model->created_at?->toIso8601String(),
+            'updated_at' => $model->updated_at?->toIso8601String(),
+        ]);
+    }
+
     public static function fromArray(array $data): self
     {
-        return new self(
-            data: $data
-        );
+        return new self($data);
     }
 
-    /**
-     * Convert DTO to array.
-     *
-     * @return array
-     */
     public function toArray(): array
     {
         return [
-            'data' => $this->data,
+            'id' => $this->id,
+            'total_revenue' => $this->totalRevenue,
+            'sales_orders' => $this->salesOrders,
+            'created_at' => $this->createdAt,
+            'updated_at' => $this->updatedAt,
         ];
     }
 
-    /**
-     * Get a specific value from DTO data.
-     *
-     * @param string $key
-     * @param mixed|null $default
-     * @return mixed
-     */
-    public function get(string $key, mixed $default = null): mixed
+    public function toModel(): array
     {
-        return $this->data[$key] ?? $default;
-    }
-
-    /**
-     * Check if a key exists in DTO data.
-     *
-     * @param string $key
-     * @return bool
-     */
-    public function has(string $key): bool
-    {
-        return array_key_exists($key, $this->data);
+        return [
+            'total_revenue' => $this->totalRevenue,
+            'sales_orders' => $this->salesOrders,
+        ];
     }
 }
