@@ -2,91 +2,36 @@
 
 namespace App\Constants\Inventory;
 
-use App\Models\Inventory\StockMovements;
-
 /**
  * Class StockMovementsConstant
  *
- * Constant for managing StockMovements resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for StockMovements Inventory.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class StockMovementsConstant
 {
     /**
-     * @var StockMovementsConstant
+     * Example: reference to StockMovements model
+     *
+     * @var string
      */
-    protected $stockMovementsConstant;
+    public const MODEL = "App\\Models\\Inventory\\StockMovements";
 
     /**
-     * StockMovementsConstant constructor.
+     * Example: table name of StockMovements
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "StockMovements_TABLE";
 
     /**
-     * Display all StockMovements records without pagination.
+     * Example: default items per page for StockMovements listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->stockMovementsConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of StockMovements resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for StockMovements Inventory.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created StockMovements resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified StockMovements resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified StockMovements resource in storage.
-     *
-     * @param StockMovementsRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified StockMovements resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

@@ -2,91 +2,36 @@
 
 namespace App\Constants\QualityControl;
 
-use App\Models\QualityControl\Defects;
-
 /**
  * Class DefectsConstant
  *
- * Constant for managing Defects resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for Defects QualityControl.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class DefectsConstant
 {
     /**
-     * @var DefectsConstant
+     * Example: reference to Defects model
+     *
+     * @var string
      */
-    protected $defectsConstant;
+    public const MODEL = "App\\Models\\QualityControl\\Defects";
 
     /**
-     * DefectsConstant constructor.
+     * Example: table name of Defects
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "Defects_TABLE";
 
     /**
-     * Display all Defects records without pagination.
+     * Example: default items per page for Defects listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->defectsConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of Defects resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for Defects QualityControl.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created Defects resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified Defects resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified Defects resource in storage.
-     *
-     * @param DefectsRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified Defects resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

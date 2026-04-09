@@ -2,91 +2,36 @@
 
 namespace App\Constants\QualityControl;
 
-use App\Models\QualityControl\QcChecklists;
-
 /**
  * Class QcChecklistsConstant
  *
- * Constant for managing QcChecklists resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for QcChecklists QualityControl.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class QcChecklistsConstant
 {
     /**
-     * @var QcChecklistsConstant
+     * Example: reference to QcChecklists model
+     *
+     * @var string
      */
-    protected $qcChecklistsConstant;
+    public const MODEL = "App\\Models\\QualityControl\\QcChecklists";
 
     /**
-     * QcChecklistsConstant constructor.
+     * Example: table name of QcChecklists
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "QcChecklists_TABLE";
 
     /**
-     * Display all QcChecklists records without pagination.
+     * Example: default items per page for QcChecklists listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->qcChecklistsConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of QcChecklists resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for QcChecklists QualityControl.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created QcChecklists resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified QcChecklists resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified QcChecklists resource in storage.
-     *
-     * @param QcChecklistsRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified QcChecklists resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

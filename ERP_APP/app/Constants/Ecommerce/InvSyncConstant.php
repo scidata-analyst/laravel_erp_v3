@@ -2,91 +2,36 @@
 
 namespace App\Constants\Ecommerce;
 
-use App\Models\Ecommerce\InvSync;
-
 /**
  * Class InvSyncConstant
  *
- * Constant for managing InvSync resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for InvSync Ecommerce.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class InvSyncConstant
 {
     /**
-     * @var InvSyncConstant
+     * Example: reference to InvSync model
+     *
+     * @var string
      */
-    protected $invSyncConstant;
+    public const MODEL = "App\\Models\\Ecommerce\\InvSync";
 
     /**
-     * InvSyncConstant constructor.
+     * Example: table name of InvSync
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "InvSync_TABLE";
 
     /**
-     * Display all InvSync records without pagination.
+     * Example: default items per page for InvSync listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->invSyncConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of InvSync resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for InvSync Ecommerce.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created InvSync resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified InvSync resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified InvSync resource in storage.
-     *
-     * @param InvSyncRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified InvSync resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

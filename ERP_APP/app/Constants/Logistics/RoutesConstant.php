@@ -2,91 +2,36 @@
 
 namespace App\Constants\Logistics;
 
-use App\Models\Logistics\Routes;
-
 /**
  * Class RoutesConstant
  *
- * Constant for managing Routes resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for Routes Logistics.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class RoutesConstant
 {
     /**
-     * @var RoutesConstant
+     * Example: reference to Routes model
+     *
+     * @var string
      */
-    protected $routesConstant;
+    public const MODEL = "App\\Models\\Logistics\\Routes";
 
     /**
-     * RoutesConstant constructor.
+     * Example: table name of Routes
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "Routes_TABLE";
 
     /**
-     * Display all Routes records without pagination.
+     * Example: default items per page for Routes listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->routesConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of Routes resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for Routes Logistics.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created Routes resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified Routes resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified Routes resource in storage.
-     *
-     * @param RoutesRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified Routes resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

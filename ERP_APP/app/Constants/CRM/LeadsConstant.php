@@ -2,91 +2,36 @@
 
 namespace App\Constants\CRM;
 
-use App\Models\CRM\Leads;
-
 /**
  * Class LeadsConstant
  *
- * Constant for managing Leads resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for Leads CRM.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class LeadsConstant
 {
     /**
-     * @var LeadsConstant
+     * Example: reference to Leads model
+     *
+     * @var string
      */
-    protected $leadsConstant;
+    public const MODEL = "App\\Models\\CRM\\Leads";
 
     /**
-     * LeadsConstant constructor.
+     * Example: table name of Leads
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "Leads_TABLE";
 
     /**
-     * Display all Leads records without pagination.
+     * Example: default items per page for Leads listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->leadsConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of Leads resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for Leads CRM.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created Leads resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified Leads resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified Leads resource in storage.
-     *
-     * @param LeadsRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified Leads resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

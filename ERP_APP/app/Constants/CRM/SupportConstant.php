@@ -2,91 +2,36 @@
 
 namespace App\Constants\CRM;
 
-use App\Models\CRM\Support;
-
 /**
  * Class SupportConstant
  *
- * Constant for managing Support resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for Support CRM.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class SupportConstant
 {
     /**
-     * @var SupportConstant
+     * Example: reference to Support model
+     *
+     * @var string
      */
-    protected $supportConstant;
+    public const MODEL = "App\\Models\\CRM\\Support";
 
     /**
-     * SupportConstant constructor.
+     * Example: table name of Support
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "Support_TABLE";
 
     /**
-     * Display all Support records without pagination.
+     * Example: default items per page for Support listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->supportConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of Support resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for Support CRM.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created Support resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified Support resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified Support resource in storage.
-     *
-     * @param SupportRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified Support resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

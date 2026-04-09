@@ -2,91 +2,36 @@
 
 namespace App\Constants\Core;
 
-use App\Models\Core\Settings;
-
 /**
  * Class SettingsConstant
  *
- * Constant for managing Settings resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for Settings Core.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class SettingsConstant
 {
     /**
-     * @var SettingsConstant
+     * Example: reference to Settings model
+     *
+     * @var string
      */
-    protected $settingsConstant;
+    public const MODEL = "App\\Models\\Core\\Settings";
 
     /**
-     * SettingsConstant constructor.
+     * Example: table name of Settings
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "Settings_TABLE";
 
     /**
-     * Display all Settings records without pagination.
+     * Example: default items per page for Settings listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->settingsConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of Settings resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for Settings Core.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created Settings resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified Settings resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified Settings resource in storage.
-     *
-     * @param SettingsRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified Settings resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

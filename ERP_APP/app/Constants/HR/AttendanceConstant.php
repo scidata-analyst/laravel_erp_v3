@@ -2,91 +2,36 @@
 
 namespace App\Constants\HR;
 
-use App\Models\HR\Attendance;
-
 /**
  * Class AttendanceConstant
  *
- * Constant for managing Attendance resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for Attendance HR.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class AttendanceConstant
 {
     /**
-     * @var AttendanceConstant
+     * Example: reference to Attendance model
+     *
+     * @var string
      */
-    protected $attendanceConstant;
+    public const MODEL = "App\\Models\\HR\\Attendance";
 
     /**
-     * AttendanceConstant constructor.
+     * Example: table name of Attendance
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "Attendance_TABLE";
 
     /**
-     * Display all Attendance records without pagination.
+     * Example: default items per page for Attendance listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->attendanceConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of Attendance resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for Attendance HR.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created Attendance resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified Attendance resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified Attendance resource in storage.
-     *
-     * @param AttendanceRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified Attendance resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

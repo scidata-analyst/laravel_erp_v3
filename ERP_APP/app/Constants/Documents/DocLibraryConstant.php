@@ -2,91 +2,36 @@
 
 namespace App\Constants\Documents;
 
-use App\Models\Documents\DocLibrary;
-
 /**
  * Class DocLibraryConstant
  *
- * Constant for managing DocLibrary resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for DocLibrary Documents.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class DocLibraryConstant
 {
     /**
-     * @var DocLibraryConstant
+     * Example: reference to DocLibrary model
+     *
+     * @var string
      */
-    protected $docLibraryConstant;
+    public const MODEL = "App\\Models\\Documents\\DocLibrary";
 
     /**
-     * DocLibraryConstant constructor.
+     * Example: table name of DocLibrary
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "DocLibrary_TABLE";
 
     /**
-     * Display all DocLibrary records without pagination.
+     * Example: default items per page for DocLibrary listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->docLibraryConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of DocLibrary resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for DocLibrary Documents.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created DocLibrary resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified DocLibrary resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified DocLibrary resource in storage.
-     *
-     * @param DocLibraryRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified DocLibrary resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

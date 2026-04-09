@@ -2,91 +2,36 @@
 
 namespace App\Constants\Accounting;
 
-use App\Models\Accounting\Tax;
-
 /**
  * Class TaxConstant
  *
- * Constant for managing Tax resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for Tax Accounting.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class TaxConstant
 {
     /**
-     * @var TaxConstant
+     * Example: reference to Tax model
+     *
+     * @var string
      */
-    protected $taxConstant;
+    public const MODEL = "App\\Models\\Accounting\\Tax";
 
     /**
-     * TaxConstant constructor.
+     * Example: table name of Tax
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "Tax_TABLE";
 
     /**
-     * Display all Tax records without pagination.
+     * Example: default items per page for Tax listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->taxConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of Tax resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for Tax Accounting.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created Tax resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified Tax resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified Tax resource in storage.
-     *
-     * @param TaxRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified Tax resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

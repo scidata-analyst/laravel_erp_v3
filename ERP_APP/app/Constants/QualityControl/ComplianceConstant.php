@@ -2,91 +2,36 @@
 
 namespace App\Constants\QualityControl;
 
-use App\Models\QualityControl\Compliance;
-
 /**
  * Class ComplianceConstant
  *
- * Constant for managing Compliance resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for Compliance QualityControl.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class ComplianceConstant
 {
     /**
-     * @var ComplianceConstant
+     * Example: reference to Compliance model
+     *
+     * @var string
      */
-    protected $complianceConstant;
+    public const MODEL = "App\\Models\\QualityControl\\Compliance";
 
     /**
-     * ComplianceConstant constructor.
+     * Example: table name of Compliance
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "Compliance_TABLE";
 
     /**
-     * Display all Compliance records without pagination.
+     * Example: default items per page for Compliance listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->complianceConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of Compliance resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for Compliance QualityControl.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created Compliance resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified Compliance resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified Compliance resource in storage.
-     *
-     * @param ComplianceRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified Compliance resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

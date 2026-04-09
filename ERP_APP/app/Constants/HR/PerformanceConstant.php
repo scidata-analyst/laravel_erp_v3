@@ -2,91 +2,36 @@
 
 namespace App\Constants\HR;
 
-use App\Models\HR\Performance;
-
 /**
  * Class PerformanceConstant
  *
- * Constant for managing Performance resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for Performance HR.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class PerformanceConstant
 {
     /**
-     * @var PerformanceConstant
+     * Example: reference to Performance model
+     *
+     * @var string
      */
-    protected $performanceConstant;
+    public const MODEL = "App\\Models\\HR\\Performance";
 
     /**
-     * PerformanceConstant constructor.
+     * Example: table name of Performance
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "Performance_TABLE";
 
     /**
-     * Display all Performance records without pagination.
+     * Example: default items per page for Performance listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->performanceConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of Performance resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for Performance HR.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created Performance resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified Performance resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified Performance resource in storage.
-     *
-     * @param PerformanceRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified Performance resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

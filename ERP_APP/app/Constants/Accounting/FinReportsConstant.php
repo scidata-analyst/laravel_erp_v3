@@ -2,91 +2,36 @@
 
 namespace App\Constants\Accounting;
 
-use App\Models\Accounting\FinReports;
-
 /**
  * Class FinReportsConstant
  *
- * Constant for managing FinReports resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for FinReports Accounting.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class FinReportsConstant
 {
     /**
-     * @var FinReportsConstant
+     * Example: reference to FinReports model
+     *
+     * @var string
      */
-    protected $finReportsConstant;
+    public const MODEL = "App\\Models\\Accounting\\FinReports";
 
     /**
-     * FinReportsConstant constructor.
+     * Example: table name of FinReports
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "FinReports_TABLE";
 
     /**
-     * Display all FinReports records without pagination.
+     * Example: default items per page for FinReports listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->finReportsConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of FinReports resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for FinReports Accounting.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created FinReports resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified FinReports resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified FinReports resource in storage.
-     *
-     * @param FinReportsRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified FinReports resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

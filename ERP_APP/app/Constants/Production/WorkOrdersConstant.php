@@ -2,91 +2,36 @@
 
 namespace App\Constants\Production;
 
-use App\Models\Production\WorkOrders;
-
 /**
  * Class WorkOrdersConstant
  *
- * Constant for managing WorkOrders resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for WorkOrders Production.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class WorkOrdersConstant
 {
     /**
-     * @var WorkOrdersConstant
+     * Example: reference to WorkOrders model
+     *
+     * @var string
      */
-    protected $workOrdersConstant;
+    public const MODEL = "App\\Models\\Production\\WorkOrders";
 
     /**
-     * WorkOrdersConstant constructor.
+     * Example: table name of WorkOrders
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "WorkOrders_TABLE";
 
     /**
-     * Display all WorkOrders records without pagination.
+     * Example: default items per page for WorkOrders listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->workOrdersConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of WorkOrders resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for WorkOrders Production.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created WorkOrders resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified WorkOrders resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified WorkOrders resource in storage.
-     *
-     * @param WorkOrdersRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified WorkOrders resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

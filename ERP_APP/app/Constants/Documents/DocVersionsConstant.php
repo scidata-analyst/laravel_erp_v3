@@ -2,91 +2,36 @@
 
 namespace App\Constants\Documents;
 
-use App\Models\Documents\DocVersions;
-
 /**
  * Class DocVersionsConstant
  *
- * Constant for managing DocVersions resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for DocVersions Documents.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class DocVersionsConstant
 {
     /**
-     * @var DocVersionsConstant
+     * Example: reference to DocVersions model
+     *
+     * @var string
      */
-    protected $docVersionsConstant;
+    public const MODEL = "App\\Models\\Documents\\DocVersions";
 
     /**
-     * DocVersionsConstant constructor.
+     * Example: table name of DocVersions
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "DocVersions_TABLE";
 
     /**
-     * Display all DocVersions records without pagination.
+     * Example: default items per page for DocVersions listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->docVersionsConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of DocVersions resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for DocVersions Documents.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created DocVersions resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified DocVersions resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified DocVersions resource in storage.
-     *
-     * @param DocVersionsRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified DocVersions resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

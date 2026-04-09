@@ -2,91 +2,36 @@
 
 namespace App\Constants\Purchase;
 
-use App\Models\Purchase\Suppliers;
-
 /**
  * Class SuppliersConstant
  *
- * Constant for managing Suppliers resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for Suppliers Purchase.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class SuppliersConstant
 {
     /**
-     * @var SuppliersConstant
+     * Example: reference to Suppliers model
+     *
+     * @var string
      */
-    protected $suppliersConstant;
+    public const MODEL = "App\\Models\\Purchase\\Suppliers";
 
     /**
-     * SuppliersConstant constructor.
+     * Example: table name of Suppliers
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "Suppliers_TABLE";
 
     /**
-     * Display all Suppliers records without pagination.
+     * Example: default items per page for Suppliers listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->suppliersConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of Suppliers resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for Suppliers Purchase.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created Suppliers resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified Suppliers resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified Suppliers resource in storage.
-     *
-     * @param SuppliersRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified Suppliers resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

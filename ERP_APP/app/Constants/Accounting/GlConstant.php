@@ -2,91 +2,36 @@
 
 namespace App\Constants\Accounting;
 
-use App\Models\Accounting\Gl;
-
 /**
  * Class GlConstant
  *
- * Constant for managing Gl resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for Gl Accounting.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class GlConstant
 {
     /**
-     * @var GlConstant
+     * Example: reference to Gl model
+     *
+     * @var string
      */
-    protected $glConstant;
+    public const MODEL = "App\\Models\\Accounting\\Gl";
 
     /**
-     * GlConstant constructor.
+     * Example: table name of Gl
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "Gl_TABLE";
 
     /**
-     * Display all Gl records without pagination.
+     * Example: default items per page for Gl listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->glConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of Gl resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for Gl Accounting.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created Gl resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified Gl resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified Gl resource in storage.
-     *
-     * @param GlRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified Gl resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

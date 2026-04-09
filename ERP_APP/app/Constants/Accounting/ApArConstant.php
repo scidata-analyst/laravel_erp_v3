@@ -2,91 +2,36 @@
 
 namespace App\Constants\Accounting;
 
-use App\Models\Accounting\ApAr;
-
 /**
  * Class ApArConstant
  *
- * Constant for managing ApAr resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for ApAr Accounting.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class ApArConstant
 {
     /**
-     * @var ApArConstant
+     * Example: reference to ApAr model
+     *
+     * @var string
      */
-    protected $apArConstant;
+    public const MODEL = "App\\Models\\Accounting\\ApAr";
 
     /**
-     * ApArConstant constructor.
+     * Example: table name of ApAr
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "ApAr_TABLE";
 
     /**
-     * Display all ApAr records without pagination.
+     * Example: default items per page for ApAr listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->apArConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of ApAr resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for ApAr Accounting.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created ApAr resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified ApAr resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified ApAr resource in storage.
-     *
-     * @param ApArRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified ApAr resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

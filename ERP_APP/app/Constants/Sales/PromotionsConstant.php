@@ -2,91 +2,36 @@
 
 namespace App\Constants\Sales;
 
-use App\Models\Sales\Promotions;
-
 /**
  * Class PromotionsConstant
  *
- * Constant for managing Promotions resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for Promotions Sales.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class PromotionsConstant
 {
     /**
-     * @var PromotionsConstant
+     * Example: reference to Promotions model
+     *
+     * @var string
      */
-    protected $promotionsConstant;
+    public const MODEL = "App\\Models\\Sales\\Promotions";
 
     /**
-     * PromotionsConstant constructor.
+     * Example: table name of Promotions
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "Promotions_TABLE";
 
     /**
-     * Display all Promotions records without pagination.
+     * Example: default items per page for Promotions listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->promotionsConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of Promotions resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for Promotions Sales.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created Promotions resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified Promotions resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified Promotions resource in storage.
-     *
-     * @param PromotionsRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified Promotions resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

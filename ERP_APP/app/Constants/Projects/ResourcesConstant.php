@@ -2,91 +2,36 @@
 
 namespace App\Constants\Projects;
 
-use App\Models\Projects\Resources;
-
 /**
  * Class ResourcesConstant
  *
- * Constant for managing Resources resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for Resources Projects.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class ResourcesConstant
 {
     /**
-     * @var ResourcesConstant
+     * Example: reference to Resources model
+     *
+     * @var string
      */
-    protected $resourcesConstant;
+    public const MODEL = "App\\Models\\Projects\\Resources";
 
     /**
-     * ResourcesConstant constructor.
+     * Example: table name of Resources
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "Resources_TABLE";
 
     /**
-     * Display all Resources records without pagination.
+     * Example: default items per page for Resources listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->resourcesConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of Resources resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for Resources Projects.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created Resources resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified Resources resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified Resources resource in storage.
-     *
-     * @param ResourcesRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified Resources resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

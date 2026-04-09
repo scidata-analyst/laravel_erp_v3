@@ -2,91 +2,36 @@
 
 namespace App\Constants\Inventory;
 
-use App\Models\Inventory\BatchTracking;
-
 /**
  * Class BatchTrackingConstant
  *
- * Constant for managing BatchTracking resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for BatchTracking Inventory.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class BatchTrackingConstant
 {
     /**
-     * @var BatchTrackingConstant
+     * Example: reference to BatchTracking model
+     *
+     * @var string
      */
-    protected $batchTrackingConstant;
+    public const MODEL = "App\\Models\\Inventory\\BatchTracking";
 
     /**
-     * BatchTrackingConstant constructor.
+     * Example: table name of BatchTracking
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "BatchTracking_TABLE";
 
     /**
-     * Display all BatchTracking records without pagination.
+     * Example: default items per page for BatchTracking listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->batchTrackingConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of BatchTracking resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for BatchTracking Inventory.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created BatchTracking resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified BatchTracking resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified BatchTracking resource in storage.
-     *
-     * @param BatchTrackingRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified BatchTracking resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

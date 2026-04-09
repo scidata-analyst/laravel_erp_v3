@@ -2,91 +2,36 @@
 
 namespace App\Constants\Production;
 
-use App\Models\Production\MachineLabor;
-
 /**
  * Class MachineLaborConstant
  *
- * Constant for managing MachineLabor resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for MachineLabor Production.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class MachineLaborConstant
 {
     /**
-     * @var MachineLaborConstant
+     * Example: reference to MachineLabor model
+     *
+     * @var string
      */
-    protected $machineLaborConstant;
+    public const MODEL = "App\\Models\\Production\\MachineLabor";
 
     /**
-     * MachineLaborConstant constructor.
+     * Example: table name of MachineLabor
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "MachineLabor_TABLE";
 
     /**
-     * Display all MachineLabor records without pagination.
+     * Example: default items per page for MachineLabor listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->machineLaborConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of MachineLabor resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for MachineLabor Production.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created MachineLabor resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified MachineLabor resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified MachineLabor resource in storage.
-     *
-     * @param MachineLaborRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified MachineLabor resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

@@ -2,91 +2,36 @@
 
 namespace App\Constants\Sales;
 
-use App\Models\Sales\Invoices;
-
 /**
  * Class InvoicesConstant
  *
- * Constant for managing Invoices resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for Invoices Sales.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class InvoicesConstant
 {
     /**
-     * @var InvoicesConstant
+     * Example: reference to Invoices model
+     *
+     * @var string
      */
-    protected $invoicesConstant;
+    public const MODEL = "App\\Models\\Sales\\Invoices";
 
     /**
-     * InvoicesConstant constructor.
+     * Example: table name of Invoices
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "Invoices_TABLE";
 
     /**
-     * Display all Invoices records without pagination.
+     * Example: default items per page for Invoices listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->invoicesConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of Invoices resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for Invoices Sales.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created Invoices resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified Invoices resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified Invoices resource in storage.
-     *
-     * @param InvoicesRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified Invoices resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

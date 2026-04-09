@@ -2,91 +2,36 @@
 
 namespace App\Constants\UsersRoles;
 
-use App\Models\UsersRoles\User;
-
 /**
  * Class UserConstant
  *
- * Constant for managing User resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for User UsersRoles.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class UserConstant
 {
     /**
-     * @var UserConstant
+     * Example: reference to User model
+     *
+     * @var string
      */
-    protected $userConstant;
+    public const MODEL = "App\\Models\\UsersRoles\\User";
 
     /**
-     * UserConstant constructor.
+     * Example: table name of User
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "User_TABLE";
 
     /**
-     * Display all User records without pagination.
+     * Example: default items per page for User listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->userConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of User resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for User UsersRoles.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created User resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified User resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified User resource in storage.
-     *
-     * @param UserRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified User resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

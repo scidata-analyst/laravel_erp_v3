@@ -2,91 +2,36 @@
 
 namespace App\Constants\HR;
 
-use App\Models\HR\Employees;
-
 /**
  * Class EmployeesConstant
  *
- * Constant for managing Employees resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for Employees HR.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class EmployeesConstant
 {
     /**
-     * @var EmployeesConstant
+     * Example: reference to Employees model
+     *
+     * @var string
      */
-    protected $employeesConstant;
+    public const MODEL = "App\\Models\\HR\\Employees";
 
     /**
-     * EmployeesConstant constructor.
+     * Example: table name of Employees
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "Employees_TABLE";
 
     /**
-     * Display all Employees records without pagination.
+     * Example: default items per page for Employees listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->employeesConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of Employees resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for Employees HR.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created Employees resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified Employees resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified Employees resource in storage.
-     *
-     * @param EmployeesRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified Employees resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

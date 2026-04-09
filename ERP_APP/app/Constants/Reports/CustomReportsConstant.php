@@ -2,91 +2,36 @@
 
 namespace App\Constants\Reports;
 
-use App\Models\Reports\CustomReports;
-
 /**
  * Class CustomReportsConstant
  *
- * Constant for managing CustomReports resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for CustomReports Reports.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class CustomReportsConstant
 {
     /**
-     * @var CustomReportsConstant
+     * Example: reference to CustomReports model
+     *
+     * @var string
      */
-    protected $customReportsConstant;
+    public const MODEL = "App\\Models\\Reports\\CustomReports";
 
     /**
-     * CustomReportsConstant constructor.
+     * Example: table name of CustomReports
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "CustomReports_TABLE";
 
     /**
-     * Display all CustomReports records without pagination.
+     * Example: default items per page for CustomReports listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->customReportsConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of CustomReports resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for CustomReports Reports.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created CustomReports resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified CustomReports resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified CustomReports resource in storage.
-     *
-     * @param CustomReportsRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified CustomReports resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

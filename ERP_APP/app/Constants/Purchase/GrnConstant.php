@@ -2,91 +2,36 @@
 
 namespace App\Constants\Purchase;
 
-use App\Models\Purchase\Grn;
-
 /**
  * Class GrnConstant
  *
- * Constant for managing Grn resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for Grn Purchase.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class GrnConstant
 {
     /**
-     * @var GrnConstant
+     * Example: reference to Grn model
+     *
+     * @var string
      */
-    protected $grnConstant;
+    public const MODEL = "App\\Models\\Purchase\\Grn";
 
     /**
-     * GrnConstant constructor.
+     * Example: table name of Grn
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "Grn_TABLE";
 
     /**
-     * Display all Grn records without pagination.
+     * Example: default items per page for Grn listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->grnConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of Grn resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for Grn Purchase.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created Grn resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified Grn resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified Grn resource in storage.
-     *
-     * @param GrnRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified Grn resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

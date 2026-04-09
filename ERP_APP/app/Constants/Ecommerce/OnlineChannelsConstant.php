@@ -2,91 +2,36 @@
 
 namespace App\Constants\Ecommerce;
 
-use App\Models\Ecommerce\OnlineChannels;
-
 /**
  * Class OnlineChannelsConstant
  *
- * Constant for managing OnlineChannels resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for OnlineChannels Ecommerce.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class OnlineChannelsConstant
 {
     /**
-     * @var OnlineChannelsConstant
+     * Example: reference to OnlineChannels model
+     *
+     * @var string
      */
-    protected $onlineChannelsConstant;
+    public const MODEL = "App\\Models\\Ecommerce\\OnlineChannels";
 
     /**
-     * OnlineChannelsConstant constructor.
+     * Example: table name of OnlineChannels
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "OnlineChannels_TABLE";
 
     /**
-     * Display all OnlineChannels records without pagination.
+     * Example: default items per page for OnlineChannels listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->onlineChannelsConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of OnlineChannels resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for OnlineChannels Ecommerce.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created OnlineChannels resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified OnlineChannels resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified OnlineChannels resource in storage.
-     *
-     * @param OnlineChannelsRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified OnlineChannels resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

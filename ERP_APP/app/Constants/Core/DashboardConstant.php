@@ -2,91 +2,36 @@
 
 namespace App\Constants\Core;
 
-use App\Models\Core\Dashboard;
-
 /**
  * Class DashboardConstant
  *
- * Constant for managing Dashboard resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for Dashboard Core.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class DashboardConstant
 {
     /**
-     * @var DashboardConstant
+     * Example: reference to Dashboard model
+     *
+     * @var string
      */
-    protected $dashboardConstant;
+    public const MODEL = "App\\Models\\Core\\Dashboard";
 
     /**
-     * DashboardConstant constructor.
+     * Example: table name of Dashboard
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "Dashboard_TABLE";
 
     /**
-     * Display all Dashboard records without pagination.
+     * Example: default items per page for Dashboard listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->dashboardConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of Dashboard resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for Dashboard Core.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created Dashboard resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified Dashboard resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified Dashboard resource in storage.
-     *
-     * @param DashboardRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified Dashboard resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

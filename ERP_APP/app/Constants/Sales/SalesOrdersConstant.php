@@ -2,91 +2,36 @@
 
 namespace App\Constants\Sales;
 
-use App\Models\Sales\SalesOrders;
-
 /**
  * Class SalesOrdersConstant
  *
- * Constant for managing SalesOrders resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for SalesOrders Sales.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class SalesOrdersConstant
 {
     /**
-     * @var SalesOrdersConstant
+     * Example: reference to SalesOrders model
+     *
+     * @var string
      */
-    protected $salesOrdersConstant;
+    public const MODEL = "App\\Models\\Sales\\SalesOrders";
 
     /**
-     * SalesOrdersConstant constructor.
+     * Example: table name of SalesOrders
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "SalesOrders_TABLE";
 
     /**
-     * Display all SalesOrders records without pagination.
+     * Example: default items per page for SalesOrders listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->salesOrdersConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of SalesOrders resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for SalesOrders Sales.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created SalesOrders resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified SalesOrders resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified SalesOrders resource in storage.
-     *
-     * @param SalesOrdersRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified SalesOrders resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

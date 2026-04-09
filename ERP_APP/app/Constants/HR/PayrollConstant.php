@@ -2,91 +2,36 @@
 
 namespace App\Constants\HR;
 
-use App\Models\HR\Payroll;
-
 /**
  * Class PayrollConstant
  *
- * Constant for managing Payroll resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for Payroll HR.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class PayrollConstant
 {
     /**
-     * @var PayrollConstant
+     * Example: reference to Payroll model
+     *
+     * @var string
      */
-    protected $payrollConstant;
+    public const MODEL = "App\\Models\\HR\\Payroll";
 
     /**
-     * PayrollConstant constructor.
+     * Example: table name of Payroll
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "Payroll_TABLE";
 
     /**
-     * Display all Payroll records without pagination.
+     * Example: default items per page for Payroll listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->payrollConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of Payroll resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for Payroll HR.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created Payroll resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified Payroll resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified Payroll resource in storage.
-     *
-     * @param PayrollRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified Payroll resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

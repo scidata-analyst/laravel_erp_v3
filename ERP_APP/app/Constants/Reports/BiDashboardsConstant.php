@@ -2,91 +2,36 @@
 
 namespace App\Constants\Reports;
 
-use App\Models\Reports\BiDashboards;
-
 /**
  * Class BiDashboardsConstant
  *
- * Constant for managing BiDashboards resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for BiDashboards Reports.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class BiDashboardsConstant
 {
     /**
-     * @var BiDashboardsConstant
+     * Example: reference to BiDashboards model
+     *
+     * @var string
      */
-    protected $biDashboardsConstant;
+    public const MODEL = "App\\Models\\Reports\\BiDashboards";
 
     /**
-     * BiDashboardsConstant constructor.
+     * Example: table name of BiDashboards
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "BiDashboards_TABLE";
 
     /**
-     * Display all BiDashboards records without pagination.
+     * Example: default items per page for BiDashboards listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->biDashboardsConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of BiDashboards resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for BiDashboards Reports.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created BiDashboards resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified BiDashboards resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified BiDashboards resource in storage.
-     *
-     * @param BiDashboardsRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified BiDashboards resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

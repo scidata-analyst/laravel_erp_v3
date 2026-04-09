@@ -2,91 +2,36 @@
 
 namespace App\Constants\Projects;
 
-use App\Models\Projects\ProjectCost;
-
 /**
  * Class ProjectCostConstant
  *
- * Constant for managing ProjectCost resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for ProjectCost Projects.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class ProjectCostConstant
 {
     /**
-     * @var ProjectCostConstant
+     * Example: reference to ProjectCost model
+     *
+     * @var string
      */
-    protected $projectCostConstant;
+    public const MODEL = "App\\Models\\Projects\\ProjectCost";
 
     /**
-     * ProjectCostConstant constructor.
+     * Example: table name of ProjectCost
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "ProjectCost_TABLE";
 
     /**
-     * Display all ProjectCost records without pagination.
+     * Example: default items per page for ProjectCost listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->projectCostConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of ProjectCost resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for ProjectCost Projects.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created ProjectCost resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified ProjectCost resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified ProjectCost resource in storage.
-     *
-     * @param ProjectCostRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified ProjectCost resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

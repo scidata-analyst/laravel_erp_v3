@@ -2,91 +2,36 @@
 
 namespace App\Constants\Inventory;
 
-use App\Models\Inventory\ProductCatalog;
-
 /**
  * Class ProductCatalogConstant
  *
- * Constant for managing ProductCatalog resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for ProductCatalog Inventory.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class ProductCatalogConstant
 {
     /**
-     * @var ProductCatalogConstant
+     * Example: reference to ProductCatalog model
+     *
+     * @var string
      */
-    protected $productCatalogConstant;
+    public const MODEL = "App\\Models\\Inventory\\ProductCatalog";
 
     /**
-     * ProductCatalogConstant constructor.
+     * Example: table name of ProductCatalog
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "ProductCatalog_TABLE";
 
     /**
-     * Display all ProductCatalog records without pagination.
+     * Example: default items per page for ProductCatalog listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->productCatalogConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of ProductCatalog resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for ProductCatalog Inventory.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created ProductCatalog resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified ProductCatalog resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified ProductCatalog resource in storage.
-     *
-     * @param ProductCatalogRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified ProductCatalog resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

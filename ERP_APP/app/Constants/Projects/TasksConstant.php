@@ -2,91 +2,36 @@
 
 namespace App\Constants\Projects;
 
-use App\Models\Projects\Tasks;
-
 /**
  * Class TasksConstant
  *
- * Constant for managing Tasks resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for Tasks Projects.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class TasksConstant
 {
     /**
-     * @var TasksConstant
+     * Example: reference to Tasks model
+     *
+     * @var string
      */
-    protected $tasksConstant;
+    public const MODEL = "App\\Models\\Projects\\Tasks";
 
     /**
-     * TasksConstant constructor.
+     * Example: table name of Tasks
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "Tasks_TABLE";
 
     /**
-     * Display all Tasks records without pagination.
+     * Example: default items per page for Tasks listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->tasksConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of Tasks resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for Tasks Projects.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created Tasks resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified Tasks resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified Tasks resource in storage.
-     *
-     * @param TasksRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified Tasks resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

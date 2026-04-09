@@ -2,91 +2,36 @@
 
 namespace App\Constants\UsersRoles;
 
-use App\Models\UsersRoles\Roles;
-
 /**
  * Class RolesConstant
  *
- * Constant for managing Roles resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for Roles UsersRoles.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class RolesConstant
 {
     /**
-     * @var RolesConstant
+     * Example: reference to Roles model
+     *
+     * @var string
      */
-    protected $rolesConstant;
+    public const MODEL = "App\\Models\\UsersRoles\\Roles";
 
     /**
-     * RolesConstant constructor.
+     * Example: table name of Roles
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "Roles_TABLE";
 
     /**
-     * Display all Roles records without pagination.
+     * Example: default items per page for Roles listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->rolesConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of Roles resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for Roles UsersRoles.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created Roles resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified Roles resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified Roles resource in storage.
-     *
-     * @param RolesRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified Roles resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

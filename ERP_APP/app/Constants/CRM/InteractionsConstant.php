@@ -2,91 +2,36 @@
 
 namespace App\Constants\CRM;
 
-use App\Models\CRM\Interactions;
-
 /**
  * Class InteractionsConstant
  *
- * Constant for managing Interactions resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for Interactions CRM.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class InteractionsConstant
 {
     /**
-     * @var InteractionsConstant
+     * Example: reference to Interactions model
+     *
+     * @var string
      */
-    protected $interactionsConstant;
+    public const MODEL = "App\\Models\\CRM\\Interactions";
 
     /**
-     * InteractionsConstant constructor.
+     * Example: table name of Interactions
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "Interactions_TABLE";
 
     /**
-     * Display all Interactions records without pagination.
+     * Example: default items per page for Interactions listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->interactionsConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of Interactions resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for Interactions CRM.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created Interactions resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified Interactions resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified Interactions resource in storage.
-     *
-     * @param InteractionsRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified Interactions resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

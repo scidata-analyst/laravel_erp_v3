@@ -2,91 +2,36 @@
 
 namespace App\Constants\Sales;
 
-use App\Models\Sales\Customers;
-
 /**
  * Class CustomersConstant
  *
- * Constant for managing Customers resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for Customers Sales.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class CustomersConstant
 {
     /**
-     * @var CustomersConstant
+     * Example: reference to Customers model
+     *
+     * @var string
      */
-    protected $customersConstant;
+    public const MODEL = "App\\Models\\Sales\\Customers";
 
     /**
-     * CustomersConstant constructor.
+     * Example: table name of Customers
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "Customers_TABLE";
 
     /**
-     * Display all Customers records without pagination.
+     * Example: default items per page for Customers listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->customersConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of Customers resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for Customers Sales.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created Customers resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified Customers resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified Customers resource in storage.
-     *
-     * @param CustomersRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified Customers resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

@@ -2,91 +2,36 @@
 
 namespace App\Constants\Reports;
 
-use App\Models\Reports\Forecasting;
-
 /**
  * Class ForecastingConstant
  *
- * Constant for managing Forecasting resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for Forecasting Reports.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class ForecastingConstant
 {
     /**
-     * @var ForecastingConstant
+     * Example: reference to Forecasting model
+     *
+     * @var string
      */
-    protected $forecastingConstant;
+    public const MODEL = "App\\Models\\Reports\\Forecasting";
 
     /**
-     * ForecastingConstant constructor.
+     * Example: table name of Forecasting
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "Forecasting_TABLE";
 
     /**
-     * Display all Forecasting records without pagination.
+     * Example: default items per page for Forecasting listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->forecastingConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of Forecasting resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for Forecasting Reports.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created Forecasting resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified Forecasting resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified Forecasting resource in storage.
-     *
-     * @param ForecastingRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified Forecasting resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

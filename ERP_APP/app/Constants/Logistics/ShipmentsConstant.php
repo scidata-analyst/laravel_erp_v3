@@ -2,91 +2,36 @@
 
 namespace App\Constants\Logistics;
 
-use App\Models\Logistics\Shipments;
-
 /**
  * Class ShipmentsConstant
  *
- * Constant for managing Shipments resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for Shipments Logistics.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class ShipmentsConstant
 {
     /**
-     * @var ShipmentsConstant
+     * Example: reference to Shipments model
+     *
+     * @var string
      */
-    protected $shipmentsConstant;
+    public const MODEL = "App\\Models\\Logistics\\Shipments";
 
     /**
-     * ShipmentsConstant constructor.
+     * Example: table name of Shipments
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "Shipments_TABLE";
 
     /**
-     * Display all Shipments records without pagination.
+     * Example: default items per page for Shipments listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->shipmentsConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of Shipments resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for Shipments Logistics.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created Shipments resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified Shipments resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified Shipments resource in storage.
-     *
-     * @param ShipmentsRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified Shipments resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }

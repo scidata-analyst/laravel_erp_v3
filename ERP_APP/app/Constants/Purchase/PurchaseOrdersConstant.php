@@ -2,91 +2,36 @@
 
 namespace App\Constants\Purchase;
 
-use App\Models\Purchase\PurchaseOrders;
-
 /**
  * Class PurchaseOrdersConstant
  *
- * Constant for managing PurchaseOrders resources.
- * Provides CRUD operations with JSON responses.
+ * Central constants for PurchaseOrders Purchase.
+ * Can be used for configuration, table names, or CRUD references.
  */
 class PurchaseOrdersConstant
 {
     /**
-     * @var PurchaseOrdersConstant
+     * Example: reference to PurchaseOrders model
+     *
+     * @var string
      */
-    protected $purchaseOrdersConstant;
+    public const MODEL = "App\\Models\\Purchase\\PurchaseOrders";
 
     /**
-     * PurchaseOrdersConstant constructor.
+     * Example: table name of PurchaseOrders
      *
+     * @var string
      */
-    public function __construct()
-    {
-        
-    }
+    public const TABLE = "PurchaseOrders_TABLE";
 
     /**
-     * Display all PurchaseOrders records without pagination.
+     * Example: default items per page for PurchaseOrders listings
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @var int
      */
-    public function all()
-    {
-        $data = $this->purchaseOrdersConstant->all();
-    }
+    public const PER_PAGE = 15;
 
     /**
-     * Display a paginated listing of PurchaseOrders resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Additional constants for PurchaseOrders Purchase.
      */
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Store a newly created PurchaseOrders resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(array $data)
-    {
-        
-    }
-
-    /**
-     * Display the specified PurchaseOrders resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Update the specified PurchaseOrders resource in storage.
-     *
-     * @param PurchaseOrdersRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id, array $data)
-    {
-        
-    }
-
-    /**
-     * Remove the specified PurchaseOrders resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        
-    }
 }
