@@ -18,7 +18,13 @@ class QcChecklistsFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'product_batch_work_order' => fake()->bothify('WO-####'),
+            'inspector_id' => \App\Models\UsersRoles\User::factory(),
+            'inspection_type' => fake()->randomElement(['Pre-production', 'In-process', 'Final', 'Random']),
+            'inspection_date' => fake()->dateTimeBetween('-1 month', 'now'),
+            'sample_size' => fake()->numberBetween(5, 100),
+            'checklist_items_notes' => fake()->optional()->sentence(),
+            'status' => fake()->randomElement(['Pending', 'Pass', 'Fail', 'Conditional']),
         ];
     }
 }

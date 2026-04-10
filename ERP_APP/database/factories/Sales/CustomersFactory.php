@@ -18,7 +18,13 @@ class CustomersFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'company_name' => fake()->company(),
+            'contact_person' => fake()->name(),
+            'email' => fake()->unique()->companyEmail(),
+            'phone' => fake()->phoneNumber(),
+            'credit_limit' => fake()->randomFloat(2, 1000, 100000),
+            'sales_rep_id' => \App\Models\UsersRoles\User::factory(),
+            'billing_address' => fake()->address(),
         ];
     }
 }

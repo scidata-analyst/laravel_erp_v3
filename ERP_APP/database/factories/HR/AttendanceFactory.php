@@ -18,7 +18,12 @@ class AttendanceFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'employee_id' => \App\Models\HR\Employees::factory(),
+            'attendance_date' => fake()->dateTimeBetween('-1 month', 'now'),
+            'check_in_time' => fake()->time('H:i:s'),
+            'check_out_time' => fake()->optional()->time('H:i:s'),
+            'status' => fake()->randomElement(['Present', 'Absent', 'Late', 'On Leave']),
+            'leave_type' => fake()->optional()->randomElement(['Sick', 'Casual', 'Annual', 'Unpaid']),
         ];
     }
 }

@@ -18,7 +18,12 @@ class PosFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'terminal_id' => fake()->unique()->numerify('POS-####'),
+            'location' => fake()->randomElement(['Store Front', 'Warehouse', 'Branch Office', 'Pop-up Shop']),
+            'assigned_cashier_id' => \App\Models\UsersRoles\User::factory(),
+            'warehouse_id' => \App\Models\Logistics\Warehouses::factory(),
+            'receipt_printer' => fake()->randomElement(['Printer A', 'Printer B', 'No Printer']),
+            'status' => fake()->randomElement(['Active', 'Inactive', 'Under Maintenance']),
         ];
     }
 }

@@ -18,7 +18,12 @@ class ApArFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'party_name' => fake()->company(),
+            'ap_ar_type' => fake()->randomElement(['Accounts Payable', 'Accounts Receivable']),
+            'amount' => fake()->randomFloat(2, 100, 50000),
+            'due_date' => fake()->dateTimeBetween('now', '+3 months'),
+            'reference' => fake()->optional()->numerify('REF-#####'),
+            'status' => fake()->randomElement(['Pending', 'Paid', 'Overdue', 'Cancelled']),
         ];
     }
 }

@@ -18,7 +18,15 @@ class SuppliersFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'company_name' => fake()->company(),
+            'contact_person' => fake()->name(),
+            'email' => fake()->unique()->companyEmail(),
+            'phone' => fake()->phoneNumber(),
+            'country' => fake()->country(),
+            'payment_terms' => fake()->randomElement(['Net 30', 'Net 60', 'Net 90', 'Prepayment']),
+            'currency' => fake()->randomElement(['USD', 'EUR', 'GBP', 'BDT']),
+            'address' => fake()->address(),
+            'status' => fake()->randomElement(['Active', 'Inactive', 'Suspended']),
         ];
     }
 }

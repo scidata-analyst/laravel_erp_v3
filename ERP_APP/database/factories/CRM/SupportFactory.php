@@ -18,7 +18,14 @@ class SupportFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'ticket_number' => fake()->unique()->numerify('TKT-#####'),
+            'customer_id' => \App\Models\Sales\Customers::factory(),
+            'subject' => fake()->randomElement(['Login issue', 'Payment problem', 'Product defect', 'Delivery delay', 'Account access']),
+            'description' => fake()->paragraph(),
+            'priority' => fake()->randomElement(['Low', 'Medium', 'High', 'Critical']),
+            'category' => fake()->randomElement(['Technical', 'Billing', 'General', 'Feature Request']),
+            'assigned_user_id' => \App\Models\UsersRoles\User::factory(),
+            'status' => fake()->randomElement(['Open', 'In Progress', 'Pending', 'Resolved', 'Closed']),
         ];
     }
 }

@@ -18,7 +18,12 @@ class CustomReportsFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'report_name' => fake()->words(2, true) . ' Report',
+            'module' => fake()->randomElement(['Sales', 'Purchase', 'Inventory', 'HR', 'Finance']),
+            'selected_fields' => json_encode(['field1', 'field2', 'field3']),
+            'filter_by' => fake()->optional()->sentence(),
+            'schedule' => fake()->randomElement(['Daily', 'Weekly', 'Monthly', 'On Demand']),
+            'output_format' => fake()->randomElement(['PDF', 'Excel', 'CSV']),
         ];
     }
 }

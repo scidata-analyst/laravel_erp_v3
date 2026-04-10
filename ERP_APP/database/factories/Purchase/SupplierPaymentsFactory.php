@@ -18,7 +18,13 @@ class SupplierPaymentsFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'supplier_id' => \App\Models\Purchase\Suppliers::factory(),
+            'payment_number' => fake()->unique()->numerify('PAY-#####'),
+            'invoice_reference' => fake()->optional()->numerify('INV-#####'),
+            'amount' => fake()->randomFloat(2, 100, 20000),
+            'payment_date' => fake()->dateTimeBetween('-1 month', 'now'),
+            'payment_method' => fake()->randomElement(['Cash', 'Bank Transfer', 'Cheque', 'Credit']),
+            'status' => fake()->randomElement(['Pending', 'Completed', 'Failed']),
         ];
     }
 }

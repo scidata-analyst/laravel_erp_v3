@@ -18,7 +18,15 @@ class PromotionsFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'promo_code' => fake()->unique()->bothify('PROMO-????####'),
+            'description' => fake()->sentence(),
+            'discount_value' => fake()->randomFloat(2, 5, 50),
+            'discount_type' => fake()->randomElement(['Percentage', 'Fixed']),
+            'minimum_order_amount' => fake()->randomFloat(2, 0, 1000),
+            'valid_from' => fake()->dateTimeBetween('-1 month', 'now'),
+            'valid_to' => fake()->dateTimeBetween('now', '+3 months'),
+            'applicable_products' => fake()->optional()->words(3, true),
+            'status' => fake()->randomElement(['Active', 'Inactive', 'Scheduled', 'Expired']),
         ];
     }
 }

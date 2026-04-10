@@ -18,7 +18,12 @@ class ResourcesFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'employee_id' => \App\Models\HR\Employees::factory(),
+            'project_name' => fake()->company() . ' Project',
+            'allocation_percentage' => fake()->numberBetween(10, 100),
+            'from_date' => fake()->dateTimeBetween('-3 months', 'now'),
+            'to_date' => fake()->dateTimeBetween('now', '+6 months'),
+            'role_on_project' => fake()->randomElement(['Developer', 'Designer', 'Manager', 'Analyst', 'Tester']),
         ];
     }
 }

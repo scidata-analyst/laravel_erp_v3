@@ -18,7 +18,13 @@ class PayrollFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'employee_id' => \App\Models\HR\Employees::factory(),
+            'payroll_period' => fake()->monthName() . ' ' . fake()->year(),
+            'basic_salary' => fake()->randomFloat(2, 15000, 100000),
+            'allowances' => fake()->randomFloat(2, 1000, 10000),
+            'deductions' => fake()->randomFloat(2, 500, 5000),
+            'net_pay' => fake()->randomFloat(2, 10000, 80000),
+            'status' => fake()->randomElement(['Pending', 'Processed', 'Paid']),
         ];
     }
 }

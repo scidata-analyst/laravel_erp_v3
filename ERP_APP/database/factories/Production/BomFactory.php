@@ -18,7 +18,10 @@ class BomFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'finished_product_name' => fake()->words(2, true) . ' Product',
+            'version' => 'v' . fake()->numerify('#.#'),
+            'lead_time_days' => fake()->numberBetween(1, 30),
+            'status' => fake()->randomElement(['Draft', 'Active', 'Obsolete']),
         ];
     }
 }

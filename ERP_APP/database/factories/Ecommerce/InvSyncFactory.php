@@ -18,7 +18,11 @@ class InvSyncFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'channel_id' => \App\Models\Ecommerce\OnlineChannels::factory(),
+            'last_sync_time' => fake()->dateTimeBetween('-1 day', 'now'),
+            'total_synced_items' => fake()->numberBetween(10, 1000),
+            'sync_errors' => fake()->numberBetween(0, 10),
+            'status' => fake()->randomElement(['Success', 'Failed', 'Partial']),
         ];
     }
 }
