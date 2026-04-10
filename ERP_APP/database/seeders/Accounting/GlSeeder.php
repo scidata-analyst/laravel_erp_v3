@@ -12,6 +12,6 @@ class GlSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Accounting\Gl::factory(30)->create();
     }
 }

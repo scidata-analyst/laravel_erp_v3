@@ -12,6 +12,6 @@ class PerformanceSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\HR\Performance::factory(20)->create();
     }
 }

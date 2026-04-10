@@ -12,6 +12,6 @@ class CustomReportsSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Reports\CustomReports::factory(10)->create();
     }
 }

@@ -12,6 +12,6 @@ class WorkOrdersSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Production\WorkOrders::factory(15)->create();
     }
 }

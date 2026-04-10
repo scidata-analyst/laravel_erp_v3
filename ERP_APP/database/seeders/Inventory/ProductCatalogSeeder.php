@@ -12,6 +12,6 @@ class ProductCatalogSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Inventory\ProductCatalog::factory(30)->create();
     }
 }

@@ -4,6 +4,7 @@ namespace App\Models\UsersRoles;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class User
@@ -27,7 +28,11 @@ class User extends Model
      * @var array
      */
     protected $fillable = [
-        // Add your fillable columns here
+        'user_name',
+        'email',
+        'password',
+        'role_id',
+        'is_active',
     ];
 
     /**
@@ -36,4 +41,12 @@ class User extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    /**
+     * Get the role for this user.
+     */
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Roles::class, 'role_id');
+    }
 }

@@ -12,6 +12,6 @@ class ResourcesSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Projects\Resources::factory(20)->create();
     }
 }

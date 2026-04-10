@@ -12,6 +12,6 @@ class WarehousesSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Logistics\Warehouses::factory(10)->create();
     }
 }

@@ -12,6 +12,6 @@ class BiDashboardsSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Reports\BiDashboards::factory(15)->create();
     }
 }

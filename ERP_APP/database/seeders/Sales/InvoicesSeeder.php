@@ -12,6 +12,6 @@ class InvoicesSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Sales\Invoices::factory(25)->create();
     }
 }

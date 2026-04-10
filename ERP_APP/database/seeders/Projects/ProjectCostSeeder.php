@@ -12,6 +12,6 @@ class ProjectCostSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Projects\ProjectCost::factory(20)->create();
     }
 }

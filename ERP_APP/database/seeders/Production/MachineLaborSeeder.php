@@ -12,6 +12,6 @@ class MachineLaborSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Production\MachineLabor::factory(30)->create();
     }
 }

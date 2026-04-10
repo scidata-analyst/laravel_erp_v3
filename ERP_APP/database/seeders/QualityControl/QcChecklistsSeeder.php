@@ -12,6 +12,6 @@ class QcChecklistsSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\QualityControl\QcChecklists::factory(15)->create();
     }
 }

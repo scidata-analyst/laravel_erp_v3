@@ -12,6 +12,6 @@ class SupportSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\CRM\Support::factory(20)->create();
     }
 }

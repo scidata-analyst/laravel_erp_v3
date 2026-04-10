@@ -12,6 +12,6 @@ class ComplianceSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\QualityControl\Compliance::factory(10)->create();
     }
 }

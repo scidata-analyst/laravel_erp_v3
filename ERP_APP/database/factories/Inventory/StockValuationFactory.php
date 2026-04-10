@@ -18,7 +18,11 @@ class StockValuationFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'product_id' => \App\Models\Inventory\ProductCatalog::factory(),
+            'valuation_method' => fake()->randomElement(['FIFO', 'LIFO', 'Weighted Average']),
+            'unit_cost' => fake()->randomFloat(2, 5, 1000),
+            'quantity_on_hand' => fake()->numberBetween(10, 1000),
+            'total_value' => fake()->randomFloat(2, 100, 100000),
         ];
     }
 }

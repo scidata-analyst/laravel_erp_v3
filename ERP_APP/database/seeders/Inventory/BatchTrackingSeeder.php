@@ -12,6 +12,6 @@ class BatchTrackingSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Inventory\BatchTracking::factory(30)->create();
     }
 }

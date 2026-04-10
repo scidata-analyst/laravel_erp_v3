@@ -12,6 +12,6 @@ class DefectsSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\QualityControl\Defects::factory(20)->create();
     }
 }

@@ -12,6 +12,6 @@ class BomSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Production\Bom::factory(10)->create();
     }
 }

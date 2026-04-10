@@ -12,6 +12,6 @@ class FinReportsSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Accounting\FinReports::factory(15)->create();
     }
 }

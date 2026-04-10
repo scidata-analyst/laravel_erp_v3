@@ -12,6 +12,6 @@ class ShipmentsSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Logistics\Shipments::factory(20)->create();
     }
 }

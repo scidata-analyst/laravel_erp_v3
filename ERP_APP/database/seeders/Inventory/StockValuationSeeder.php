@@ -12,6 +12,6 @@ class StockValuationSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Inventory\StockValuation::factory(20)->create();
     }
 }

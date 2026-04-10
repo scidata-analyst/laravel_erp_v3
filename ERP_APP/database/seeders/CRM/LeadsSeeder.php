@@ -12,6 +12,6 @@ class LeadsSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\CRM\Leads::factory(30)->create();
     }
 }

@@ -12,6 +12,6 @@ class EmployeesSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\HR\Employees::factory(15)->create();
     }
 }

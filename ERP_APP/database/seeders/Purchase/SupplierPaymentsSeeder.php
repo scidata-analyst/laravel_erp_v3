@@ -12,6 +12,6 @@ class SupplierPaymentsSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Purchase\SupplierPayments::factory(20)->create();
     }
 }

@@ -12,6 +12,6 @@ class TasksSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Projects\Tasks::factory(25)->create();
     }
 }

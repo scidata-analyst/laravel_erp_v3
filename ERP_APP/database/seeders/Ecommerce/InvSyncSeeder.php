@@ -12,6 +12,6 @@ class InvSyncSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Ecommerce\InvSync::factory(15)->create();
     }
 }

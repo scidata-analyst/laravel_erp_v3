@@ -12,6 +12,6 @@ class GrnSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Purchase\Grn::factory(20)->create();
     }
 }

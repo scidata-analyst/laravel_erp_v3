@@ -12,6 +12,6 @@ class PurchaseOrdersSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Purchase\PurchaseOrders::factory(20)->create();
     }
 }

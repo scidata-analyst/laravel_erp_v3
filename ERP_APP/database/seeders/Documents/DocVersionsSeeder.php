@@ -12,6 +12,6 @@ class DocVersionsSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Documents\DocVersions::factory(15)->create();
     }
 }

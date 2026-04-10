@@ -12,6 +12,6 @@ class TaxSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Accounting\Tax::factory(10)->create();
     }
 }

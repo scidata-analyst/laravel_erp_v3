@@ -12,6 +12,6 @@ class RoutesSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Logistics\Routes::factory(15)->create();
     }
 }

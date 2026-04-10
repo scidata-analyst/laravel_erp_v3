@@ -12,6 +12,6 @@ class ApArSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Accounting\ApAr::factory(25)->create();
     }
 }

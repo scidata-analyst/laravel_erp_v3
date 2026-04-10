@@ -12,6 +12,6 @@ class InteractionsSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\CRM\Interactions::factory(25)->create();
     }
 }

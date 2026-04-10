@@ -12,6 +12,6 @@ class StockMovementsSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Inventory\StockMovements::factory(50)->create();
     }
 }

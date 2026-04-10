@@ -12,6 +12,6 @@ class PosSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Ecommerce\Pos::factory(10)->create();
     }
 }

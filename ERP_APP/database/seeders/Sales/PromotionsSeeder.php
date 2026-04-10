@@ -12,6 +12,6 @@ class PromotionsSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Sales\Promotions::factory(10)->create();
     }
 }

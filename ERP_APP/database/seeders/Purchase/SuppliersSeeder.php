@@ -12,6 +12,6 @@ class SuppliersSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Purchase\Suppliers::factory(15)->create();
     }
 }

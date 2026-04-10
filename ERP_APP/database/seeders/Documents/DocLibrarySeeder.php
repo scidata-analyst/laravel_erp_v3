@@ -12,6 +12,6 @@ class DocLibrarySeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Documents\DocLibrary::factory(20)->create();
     }
 }

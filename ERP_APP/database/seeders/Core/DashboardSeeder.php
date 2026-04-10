@@ -12,6 +12,6 @@ class DashboardSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Core\Dashboard::factory(10)->create();
     }
 }
