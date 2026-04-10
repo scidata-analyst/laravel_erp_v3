@@ -4,28 +4,60 @@ namespace App\DTOs\Reports;
 
 use App\Models\Reports\Forecasting;
 
+/**
+ * Data Transfer Object for Forecasting entity.
+ *
+ * Used for type-safe data transfer between layers
+ * and encapsulates demand forecasting data.
+ *
+ * @property int|null $id
+ * @property string|null $forecastName
+ * @property string|null $forecastType
+ * @property string|null $periodFrom
+ * @property string|null $periodTo
+ * @property string|null $model
+ * @property float|null $accuracyPercentage
+ * @property int|null $status
+ * @property string|null $createdAt
+ * @property string|null $updatedAt
+ */
 class ForecastingDTO
 {
+    /** @var int|null Unique identifier */
     public ?int $id;
 
+    /** @var string|null Name of the forecast */
     public ?string $forecastName;
 
+    /** @var string|null Type of forecast (e.g., 'Sales', 'Inventory', 'Demand') */
     public ?string $forecastType;
 
+    /** @var string|null Forecast period start date (Y-m-d) */
     public ?string $periodFrom;
 
+    /** @var string|null Forecast period end date (Y-m-d) */
     public ?string $periodTo;
 
+    /** @var string|null Forecasting model used (e.g., 'Moving Average', 'Linear Regression') */
     public ?string $model;
 
+    /** @var float|null Model accuracy percentage */
     public ?float $accuracyPercentage;
 
+    /** @var int|null Status: 0=Inactive, 1=Active, 2=Running */
     public ?int $status;
 
+    /** @var string|null Creation timestamp (ISO 8601) */
     public ?string $createdAt;
 
+    /** @var string|null Last update timestamp (ISO 8601) */
     public ?string $updatedAt;
 
+    /**
+     * Create a new ForecastingDTO instance.
+     *
+     * @param array $data Optional data array for initialization
+     */
     public function __construct(array $data = [])
     {
         $this->id = isset($data['id']) ? (int) $data['id'] : null;
@@ -40,6 +72,12 @@ class ForecastingDTO
         $this->updatedAt = $data['updated_at'] ?? null;
     }
 
+    /**
+     * Create DTO from Eloquent model instance.
+     *
+     * @param Forecasting $model Eloquent model to convert
+     * @return self New DTO instance with model data
+     */
     public static function fromModel(Forecasting $model): self
     {
         return new self([
@@ -56,11 +94,22 @@ class ForecastingDTO
         ]);
     }
 
+    /**
+     * Create DTO from plain array data.
+     *
+     * @param array $data Associative array with DTO properties
+     * @return self New DTO instance
+     */
     public static function fromArray(array $data): self
     {
         return new self($data);
     }
 
+    /**
+     * Convert DTO to array representation.
+     *
+     * @return array Array with snake_case keys matching database columns
+     */
     public function toArray(): array
     {
         return [
@@ -77,6 +126,14 @@ class ForecastingDTO
         ];
     }
 
+    /**
+     * Convert DTO to array for Eloquent model creation/update.
+     *
+     * Returns fillable attributes only, excluding timestamps
+     * and foreign keys for related models.
+     *
+     * @return array Associative array for model mass assignment
+     */
     public function toModel(): array
     {
         return [

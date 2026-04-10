@@ -4,26 +4,80 @@ namespace App\DTOs\Accounting;
 
 use App\Models\Accounting\Tax;
 
+/**
+ * Data Transfer Object for Tax configuration.
+ * Used for type-safe transfer of tax data.
+ */
 class TaxDTO
 {
+    /**
+     * Unique identifier of the tax configuration.
+     *
+     * @var int|null
+     */
     public ?int $id;
 
+    /**
+     * Name of the tax.
+     *
+     * @var string|null
+     */
     public ?string $taxName;
 
+    /**
+     * Type of tax (e.g., VAT, GST, Sales Tax, Income Tax).
+     *
+     * @var string|null
+     */
     public ?string $taxType;
 
+    /**
+     * Tax rate (percentage or fixed amount).
+     *
+     * @var float|null
+     */
     public ?float $rate;
 
+    /**
+     * Filing period for the tax (e.g., monthly, quarterly, annually).
+     *
+     * @var string|null
+     */
     public ?string $filingPeriod;
 
+    /**
+     * Module/transaction where tax is applicable (e.g., sales, purchase).
+     *
+     * @var string|null
+     */
     public ?string $applicableOn;
 
+    /**
+     * Status of the tax configuration (0 = inactive, 1 = active).
+     *
+     * @var int|null
+     */
     public ?int $status;
 
+    /**
+     * Timestamp when the tax was created.
+     *
+     * @var string|null
+     */
     public ?string $createdAt;
 
+    /**
+     * Timestamp when the tax was last updated.
+     *
+     * @var string|null
+     */
     public ?string $updatedAt;
 
+    /**
+     * Create a new TaxDTO instance.
+     *
+     * @param array $data Data array with keys matching DTO properties
+     */
     public function __construct(array $data = [])
     {
         $this->id = isset($data['id']) ? (int) $data['id'] : null;
@@ -37,6 +91,12 @@ class TaxDTO
         $this->updatedAt = $data['updated_at'] ?? null;
     }
 
+    /**
+     * Create a DTO instance from a Tax model.
+     *
+     * @param Tax $model The Tax model instance
+     * @return self New DTO instance populated from the model
+     */
     public static function fromModel(Tax $model): self
     {
         return new self([
@@ -52,11 +112,22 @@ class TaxDTO
         ]);
     }
 
+    /**
+     * Create a DTO instance from an array of data.
+     *
+     * @param array $data The data array
+     * @return self New DTO instance populated from the array
+     */
     public static function fromArray(array $data): self
     {
         return new self($data);
     }
 
+    /**
+     * Convert the DTO to an array representation.
+     *
+     * @return array Array representation of the DTO
+     */
     public function toArray(): array
     {
         return [
@@ -72,6 +143,11 @@ class TaxDTO
         ];
     }
 
+    /**
+     * Convert the DTO to a model-compatible array for creating/updating.
+     *
+     * @return array Array suitable for model creation or update
+     */
     public function toModel(): array
     {
         return [

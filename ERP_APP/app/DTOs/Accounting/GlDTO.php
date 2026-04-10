@@ -4,26 +4,80 @@ namespace App\DTOs\Accounting;
 
 use App\Models\Accounting\Gl;
 
+/**
+ * Data Transfer Object for General Ledger entries.
+ * Used for type-safe transfer of GL transaction data.
+ */
 class GlDTO
 {
+    /**
+     * Unique identifier of the GL entry.
+     *
+     * @var int|null
+     */
     public ?int $id;
 
+    /**
+     * Name of the account or transaction.
+     *
+     * @var string|null
+     */
     public ?string $name;
 
+    /**
+     * Type of GL entry (e.g., Asset, Liability, Income, Expense).
+     *
+     * @var string|null
+     */
     public ?string $type;
 
+    /**
+     * Account code for the GL entry.
+     *
+     * @var string|null
+     */
     public ?string $code;
 
+    /**
+     * Debit amount.
+     *
+     * @var float|null
+     */
     public ?float $debit;
 
+    /**
+     * Credit amount.
+     *
+     * @var float|null
+     */
     public ?float $credit;
 
+    /**
+     * Description or explanation of the transaction.
+     *
+     * @var string|null
+     */
     public ?string $narration;
 
+    /**
+     * Timestamp when the GL entry was created.
+     *
+     * @var string|null
+     */
     public ?string $createdAt;
 
+    /**
+     * Timestamp when the GL entry was last updated.
+     *
+     * @var string|null
+     */
     public ?string $updatedAt;
 
+    /**
+     * Create a new GlDTO instance.
+     *
+     * @param array $data Data array with keys matching DTO properties
+     */
     public function __construct(array $data = [])
     {
         $this->id = isset($data['id']) ? (int) $data['id'] : null;
@@ -37,6 +91,12 @@ class GlDTO
         $this->updatedAt = $data['updated_at'] ?? null;
     }
 
+    /**
+     * Create a DTO instance from a Gl model.
+     *
+     * @param Gl $model The Gl model instance
+     * @return self New DTO instance populated from the model
+     */
     public static function fromModel(Gl $model): self
     {
         return new self([
@@ -52,11 +112,22 @@ class GlDTO
         ]);
     }
 
+    /**
+     * Create a DTO instance from an array of data.
+     *
+     * @param array $data The data array
+     * @return self New DTO instance populated from the array
+     */
     public static function fromArray(array $data): self
     {
         return new self($data);
     }
 
+    /**
+     * Convert the DTO to an array representation.
+     *
+     * @return array Array representation of the DTO
+     */
     public function toArray(): array
     {
         return [
@@ -72,6 +143,11 @@ class GlDTO
         ];
     }
 
+    /**
+     * Convert the DTO to a model-compatible array for creating/updating.
+     *
+     * @return array Array suitable for model creation or update
+     */
     public function toModel(): array
     {
         return [

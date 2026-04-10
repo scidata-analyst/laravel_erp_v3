@@ -5,30 +5,64 @@ namespace App\DTOs\QualityControl;
 use App\DTOs\Inventory\ProductCatalogDTO;
 use App\Models\QualityControl\Defects;
 
+/**
+ * Data Transfer Object for Defects entity.
+ *
+ * Used for type-safe data transfer between layers
+ * and encapsulates quality defect tracking data.
+ *
+ * @property int|null $id
+ * @property int|null $productId
+ * @property string|null $batchLotNumber
+ * @property string|null $defectType
+ * @property string|null $severity
+ * @property int|null $quantityAffected
+ * @property string|null $descriptionRootCause
+ * @property int|null $status
+ * @property string|null $createdAt
+ * @property string|null $updatedAt
+ * @property ProductCatalogDTO|null $product
+ */
 class DefectsDTO
 {
+    /** @var int|null Unique identifier */
     public ?int $id;
 
+    /** @var int|null Foreign key to products table */
     public ?int $productId;
 
+    /** @var string|null Batch/Lot number where defect was found */
     public ?string $batchLotNumber;
 
+    /** @var string|null Type of defect (e.g., 'Dimensional', 'Functional', 'Cosmetic') */
     public ?string $defectType;
 
+    /** @var string|null Severity level (e.g., 'Critical', 'Major', 'Minor') */
     public ?string $severity;
 
+    /** @var int|null Number of units affected */
     public ?int $quantityAffected;
 
+    /** @var string|null Description and root cause analysis */
     public ?string $descriptionRootCause;
 
+    /** @var int|null Status: 0=Open, 1=UnderInvestigation, 2=Resolved, 3=Closed */
     public ?int $status;
 
+    /** @var string|null Creation timestamp (ISO 8601) */
     public ?string $createdAt;
 
+    /** @var string|null Last update timestamp (ISO 8601) */
     public ?string $updatedAt;
 
+    /** @var ProductCatalogDTO|null Related product */
     public ?ProductCatalogDTO $product;
 
+    /**
+     * Create a new DefectsDTO instance.
+     *
+     * @param array $data Optional data array for initialization
+     */
     public function __construct(array $data = [])
     {
         $this->id = isset($data['id']) ? (int) $data['id'] : null;
@@ -44,6 +78,12 @@ class DefectsDTO
         $this->product = $data['product'] ?? null;
     }
 
+    /**
+     * Create DTO from Eloquent model instance.
+     *
+     * @param Defects $model Eloquent model to convert
+     * @return self New DTO instance with model data
+     */
     public static function fromModel(Defects $model): self
     {
         $data = [
@@ -66,11 +106,22 @@ class DefectsDTO
         return new self($data);
     }
 
+    /**
+     * Create DTO from plain array data.
+     *
+     * @param array $data Associative array with DTO properties
+     * @return self New DTO instance
+     */
     public static function fromArray(array $data): self
     {
         return new self($data);
     }
 
+    /**
+     * Convert DTO to array representation.
+     *
+     * @return array Array with snake_case keys matching database columns
+     */
     public function toArray(): array
     {
         return [
@@ -87,6 +138,14 @@ class DefectsDTO
         ];
     }
 
+    /**
+     * Convert DTO to array for Eloquent model creation/update.
+     *
+     * Returns fillable attributes only, excluding timestamps
+     * and foreign keys for related models.
+     *
+     * @return array Associative array for model mass assignment
+     */
     public function toModel(): array
     {
         return [

@@ -5,34 +5,72 @@ namespace App\DTOs\Documents;
 use App\DTOs\UsersRoles\UserDTO;
 use App\Models\Documents\DocVersions;
 
+/**
+ * Data Transfer Object for DocVersions entity.
+ *
+ * Used for type-safe data transfer between layers
+ * and encapsulates document version history data.
+ *
+ * @property int|null $id
+ * @property int|null $documentId
+ * @property string|null $newVersion
+ * @property string|null $changeType
+ * @property string|null $changeSummary
+ * @property int|null $changedByUserId
+ * @property int|null $approverId
+ * @property string|null $filePath
+ * @property string|null $createdAt
+ * @property string|null $updatedAt
+ * @property DocLibraryDTO|null $document
+ * @property UserDTO|null $changedByUser
+ * @property UserDTO|null $approver
+ */
 class DocVersionsDTO
 {
+    /** @var int|null Unique identifier */
     public ?int $id;
 
+    /** @var int|null Foreign key to document_library table */
     public ?int $documentId;
 
+    /** @var string|null New version number (e.g., '1.1', '2.0') */
     public ?string $newVersion;
 
+    /** @var string|null Type of change (e.g., 'Major', 'Minor', 'Revision') */
     public ?string $changeType;
 
+    /** @var string|null Summary of changes */
     public ?string $changeSummary;
 
+    /** @var int|null Foreign key to users table (who made changes) */
     public ?int $changedByUserId;
 
+    /** @var int|null Foreign key to users table (approver) */
     public ?int $approverId;
 
+    /** @var string|null File path for this version */
     public ?string $filePath;
 
+    /** @var string|null Creation timestamp (ISO 8601) */
     public ?string $createdAt;
 
+    /** @var string|null Last update timestamp (ISO 8601) */
     public ?string $updatedAt;
 
+    /** @var DocLibraryDTO|null Related document */
     public ?DocLibraryDTO $document;
 
+    /** @var UserDTO|null User who made the changes */
     public ?UserDTO $changedByUser;
 
+    /** @var UserDTO|null User who approved this version */
     public ?UserDTO $approver;
 
+    /**
+     * Create a new DocVersionsDTO instance.
+     *
+     * @param array $data Optional data array for initialization
+     */
     public function __construct(array $data = [])
     {
         $this->id = isset($data['id']) ? (int) $data['id'] : null;
@@ -50,6 +88,12 @@ class DocVersionsDTO
         $this->approver = $data['approver'] ?? null;
     }
 
+    /**
+     * Create DTO from Eloquent model instance.
+     *
+     * @param DocVersions $model Eloquent model to convert
+     * @return self New DTO instance with model data
+     */
     public static function fromModel(DocVersions $model): self
     {
         $data = [
@@ -80,11 +124,22 @@ class DocVersionsDTO
         return new self($data);
     }
 
+    /**
+     * Create DTO from plain array data.
+     *
+     * @param array $data Associative array with DTO properties
+     * @return self New DTO instance
+     */
     public static function fromArray(array $data): self
     {
         return new self($data);
     }
 
+    /**
+     * Convert DTO to array representation.
+     *
+     * @return array Array with snake_case keys matching database columns
+     */
     public function toArray(): array
     {
         return [
@@ -101,6 +156,14 @@ class DocVersionsDTO
         ];
     }
 
+    /**
+     * Convert DTO to array for Eloquent model creation/update.
+     *
+     * Returns fillable attributes only, excluding timestamps
+     * and foreign keys for related models.
+     *
+     * @return array Associative array for model mass assignment
+     */
     public function toModel(): array
     {
         return [

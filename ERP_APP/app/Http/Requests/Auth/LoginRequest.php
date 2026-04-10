@@ -10,6 +10,13 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Form request for authenticating user login.
+ *
+ * Validates user credentials before authentication:
+ * - email: required, string, valid email format
+ * - password: required, string
+ */
 class LoginRequest extends FormRequest
 {
     /**
@@ -28,8 +35,25 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
+            // Email: required, must be a valid email format
             'email' => ['required', 'string', 'email'],
+
+            // Password: required, must be a string
             'password' => ['required', 'string'],
+        ];
+    }
+
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'email.required' => 'The email address is required.',
+            'email.email' => 'Please enter a valid email address.',
+            'password.required' => 'The password is required.',
         ];
     }
 

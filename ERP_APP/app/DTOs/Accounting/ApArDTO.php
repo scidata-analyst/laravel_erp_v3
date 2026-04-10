@@ -4,26 +4,80 @@ namespace App\DTOs\Accounting;
 
 use App\Models\Accounting\ApAr;
 
+/**
+ * Data Transfer Object for Accounts Payable/Receivable.
+ * Used for type-safe transfer of AP/AR transaction data.
+ */
 class ApArDTO
 {
+    /**
+     * Unique identifier of the AP/AR transaction.
+     *
+     * @var int|null
+     */
     public ?int $id;
 
+    /**
+     * Name of the party (customer or vendor).
+     *
+     * @var string|null
+     */
     public ?string $partyName;
 
+    /**
+     * Type of transaction (AP = Accounts Payable, AR = Accounts Receivable).
+     *
+     * @var string|null
+     */
     public ?string $apArType;
 
+    /**
+     * Amount due.
+     *
+     * @var float|null
+     */
     public ?float $amount;
 
+    /**
+     * Due date for payment.
+     *
+     * @var string|null
+     */
     public ?string $dueDate;
 
+    /**
+     * Reference number or invoice number.
+     *
+     * @var string|null
+     */
     public ?string $reference;
 
+    /**
+     * Status of the transaction (0 = unpaid, 1 = paid, 2 = overdue, 3 = partial).
+     *
+     * @var int|null
+     */
     public ?int $status;
 
+    /**
+     * timestamp when the transaction was created.
+     *
+     * @var string|null
+     */
     public ?string $createdAt;
 
+    /**
+     * Timestamp when the transaction was last updated.
+     *
+     * @var string|null
+     */
     public ?string $updatedAt;
 
+    /**
+     * Create a new ApArDTO instance.
+     *
+     * @param array $data Data array with keys matching DTO properties
+     */
     public function __construct(array $data = [])
     {
         $this->id = isset($data['id']) ? (int) $data['id'] : null;
@@ -37,6 +91,12 @@ class ApArDTO
         $this->updatedAt = $data['updated_at'] ?? null;
     }
 
+    /**
+     * Create a DTO instance from an ApAr model.
+     *
+     * @param ApAr $model The ApAr model instance
+     * @return self New DTO instance populated from the model
+     */
     public static function fromModel(ApAr $model): self
     {
         return new self([
@@ -52,11 +112,22 @@ class ApArDTO
         ]);
     }
 
+    /**
+     * Create a DTO instance from an array of data.
+     *
+     * @param array $data The data array
+     * @return self New DTO instance populated from the array
+     */
     public static function fromArray(array $data): self
     {
         return new self($data);
     }
 
+    /**
+     * Convert the DTO to an array representation.
+     *
+     * @return array Array representation of the DTO
+     */
     public function toArray(): array
     {
         return [
@@ -72,6 +143,11 @@ class ApArDTO
         ];
     }
 
+    /**
+     * Convert the DTO to a model-compatible array for creating/updating.
+     *
+     * @return array Array suitable for model creation or update
+     */
     public function toModel(): array
     {
         return [

@@ -5,32 +5,68 @@ namespace App\DTOs\Documents;
 use App\DTOs\UsersRoles\UserDTO;
 use App\Models\Documents\DocLibrary;
 
+/**
+ * Data Transfer Object for DocLibrary entity.
+ *
+ * Used for type-safe data transfer between layers
+ * and encapsulates document/library data.
+ *
+ * @property int|null $id
+ * @property string|null $documentName
+ * @property string|null $documentType
+ * @property string|null $relatedTo
+ * @property string|null $version
+ * @property string|null $accessLevel
+ * @property string|null $filePath
+ * @property string|null $notes
+ * @property int|null $uploadedByUserId
+ * @property string|null $createdAt
+ * @property string|null $updatedAt
+ * @property UserDTO|null $uploadedByUser
+ */
 class DocLibraryDTO
 {
+    /** @var int|null Unique identifier */
     public ?int $id;
 
+    /** @var string|null Document name/title */
     public ?string $documentName;
 
+    /** @var string|null Document type (e.g., 'PDF', 'Word', 'Excel', 'Image') */
     public ?string $documentType;
 
+    /** @var string|null Related entity (e.g., 'Sales', 'Purchase', 'HR') */
     public ?string $relatedTo;
 
+    /** @var string|null Document version (e.g., '1.0', '2.1') */
     public ?string $version;
 
+    /** @var string|null Access level (e.g., 'Public', 'Private', 'Restricted') */
     public ?string $accessLevel;
 
+    /** @var string|null File path on storage */
     public ?string $filePath;
 
+    /** @var string|null Additional notes/description */
     public ?string $notes;
 
+    /** @var int|null Foreign key to users table (uploader) */
     public ?int $uploadedByUserId;
 
+    /** @var string|null Creation timestamp (ISO 8601) */
     public ?string $createdAt;
 
+    /** @var string|null Last update timestamp (ISO 8601) */
     public ?string $updatedAt;
 
+    /** @var UserDTO|null User who uploaded the document */
     public ?UserDTO $uploadedByUser;
 
+    /**
+     * Create a new DocLibraryDTO instance.
+     *
+     * @param array $data Optional data array for initialization
+     */
     public function __construct(array $data = [])
     {
         $this->id = isset($data['id']) ? (int) $data['id'] : null;
@@ -47,6 +83,12 @@ class DocLibraryDTO
         $this->uploadedByUser = $data['uploadedByUser'] ?? null;
     }
 
+    /**
+     * Create DTO from Eloquent model instance.
+     *
+     * @param DocLibrary $model Eloquent model to convert
+     * @return self New DTO instance with model data
+     */
     public static function fromModel(DocLibrary $model): self
     {
         $data = [
@@ -70,11 +112,22 @@ class DocLibraryDTO
         return new self($data);
     }
 
+    /**
+     * Create DTO from plain array data.
+     *
+     * @param array $data Associative array with DTO properties
+     * @return self New DTO instance
+     */
     public static function fromArray(array $data): self
     {
         return new self($data);
     }
 
+    /**
+     * Convert DTO to array representation.
+     *
+     * @return array Array with snake_case keys matching database columns
+     */
     public function toArray(): array
     {
         return [
@@ -92,6 +145,14 @@ class DocLibraryDTO
         ];
     }
 
+    /**
+     * Convert DTO to array for Eloquent model creation/update.
+     *
+     * Returns fillable attributes only, excluding timestamps
+     * and foreign keys for related models.
+     *
+     * @return array Associative array for model mass assignment
+     */
     public function toModel(): array
     {
         return [

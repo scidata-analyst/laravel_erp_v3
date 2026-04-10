@@ -4,32 +4,68 @@ namespace App\DTOs\Sales;
 
 use App\Models\Sales\SalesOrders;
 
+/**
+ * Data Transfer Object for SalesOrders entity.
+ *
+ * Used for type-safe data transfer between layers
+ * and encapsulates sales order data.
+ *
+ * @property int|null $id
+ * @property int|null $customerId
+ * @property string|null $orderNumber
+ * @property string|null $orderDate
+ * @property string|null $deliveryDate
+ * @property string|null $paymentTerms
+ * @property float|null $discountPercentage
+ * @property float|null $totalAmount
+ * @property int|null $status
+ * @property string|null $createdAt
+ * @property string|null $updatedAt
+ * @property CustomersDTO|null $customer
+ */
 class SalesOrdersDTO
 {
+    /** @var int|null Unique identifier */
     public ?int $id;
 
+    /** @var int|null Foreign key to customers table */
     public ?int $customerId;
 
+    /** @var string|null Unique order number (e.g., 'SO-2024-0001') */
     public ?string $orderNumber;
 
+    /** @var string|null Date order was placed (Y-m-d) */
     public ?string $orderDate;
 
+    /** @var string|null Expected delivery date (Y-m-d) */
     public ?string $deliveryDate;
 
+    /** @var string|null Payment terms (e.g., 'Net 30', 'Net 60') */
     public ?string $paymentTerms;
 
+    /** @var float|null Discount percentage (0-100) */
     public ?float $discountPercentage;
 
+    /** @var float|null Total order amount after discount */
     public ?float $totalAmount;
 
+    /** @var int|null Status: 0=Pending, 1=Confirmed, 2=Processing, 3=Shipped, 4=Delivered, 5=Cancelled */
     public ?int $status;
 
+    /** @var string|null Creation timestamp (ISO 8601) */
     public ?string $createdAt;
 
+    /** @var string|null Last update timestamp (ISO 8601) */
     public ?string $updatedAt;
 
+    /** @var CustomersDTO|null Related customer */
     public ?CustomersDTO $customer;
 
+    /**
+     * Create a new SalesOrdersDTO instance.
+     *
+     * @param array $data Optional data array for initialization
+     */
     public function __construct(array $data = [])
     {
         $this->id = isset($data['id']) ? (int) $data['id'] : null;
@@ -46,6 +82,12 @@ class SalesOrdersDTO
         $this->customer = $data['customer'] ?? null;
     }
 
+    /**
+     * Create DTO from Eloquent model instance.
+     *
+     * @param SalesOrders $model Eloquent model to convert
+     * @return self New DTO instance with model data
+     */
     public static function fromModel(SalesOrders $model): self
     {
         $data = [
@@ -69,11 +111,22 @@ class SalesOrdersDTO
         return new self($data);
     }
 
+    /**
+     * Create DTO from plain array data.
+     *
+     * @param array $data Associative array with DTO properties
+     * @return self New DTO instance
+     */
     public static function fromArray(array $data): self
     {
         return new self($data);
     }
 
+    /**
+     * Convert DTO to array representation.
+     *
+     * @return array Array with snake_case keys matching database columns
+     */
     public function toArray(): array
     {
         return [
@@ -91,6 +144,14 @@ class SalesOrdersDTO
         ];
     }
 
+    /**
+     * Convert DTO to array for Eloquent model creation/update.
+     *
+     * Returns fillable attributes only, excluding timestamps
+     * and foreign keys for related models.
+     *
+     * @return array Associative array for model mass assignment
+     */
     public function toModel(): array
     {
         return [

@@ -5,40 +5,84 @@ namespace App\DTOs\Inventory;
 use App\DTOs\Logistics\WarehousesDTO;
 use App\Models\Inventory\ProductCatalog;
 
+/**
+ * Data Transfer Object for ProductCatalog entity.
+ *
+ * Used for type-safe data transfer between layers
+ * and encapsulates product/inventory data with relationships.
+ *
+ * @property int|null $id
+ * @property string|null $productName
+ * @property string|null $sku
+ * @property string|null $category
+ * @property float|null $unitPrice
+ * @property float|null $costPrice
+ * @property int|null $warehouseId
+ * @property int|null $reorderLevel
+ * @property string|null $valuationMethod
+ * @property string|null $description
+ * @property int|null $status
+ * @property string|null $createdAt
+ * @property string|null $updatedAt
+ * @property WarehousesDTO|null $warehouse
+ * @property array|null $batchTrackings
+ * @property array|null $stockMovements
+ */
 class ProductCatalogDTO
 {
+    /** @var int|null Unique identifier */
     public ?int $id;
 
+    /** @var string|null Product name */
     public ?string $productName;
 
+    /** @var string|null Stock Keeping Unit (unique product identifier) */
     public ?string $sku;
 
+    /** @var string|null Product category */
     public ?string $category;
 
+    /** @var float|null Selling price per unit */
     public ?float $unitPrice;
 
+    /** @var float|null Cost price per unit (for profit calculation) */
     public ?float $costPrice;
 
+    /** @var int|null Foreign key to warehouses table */
     public ?int $warehouseId;
 
+    /** @var int|null Minimum stock level to trigger reorder */
     public ?int $reorderLevel;
 
+    /** @var string|null Inventory valuation method (e.g., 'FIFO', 'LIFO', 'Weighted Average') */
     public ?string $valuationMethod;
 
+    /** @var string|null Product description */
     public ?string $description;
 
+    /** @var int|null Status: 0=Inactive, 1=Active, 2=Discontinued */
     public ?int $status;
 
+    /** @var string|null Creation timestamp (ISO 8601) */
     public ?string $createdAt;
 
+    /** @var string|null Last update timestamp (ISO 8601) */
     public ?string $updatedAt;
 
+    /** @var WarehousesDTO|null Related warehouse */
     public ?WarehousesDTO $warehouse;
 
+    /** @var array|null Collection of related batch tracking records */
     public ?array $batchTrackings;
 
+    /** @var array|null Collection of related stock movements */
     public ?array $stockMovements;
 
+    /**
+     * Create a new ProductCatalogDTO instance.
+     *
+     * @param array $data Optional data array for initialization
+     */
     public function __construct(array $data = [])
     {
         $this->id = isset($data['id']) ? (int) $data['id'] : null;
@@ -59,6 +103,12 @@ class ProductCatalogDTO
         $this->stockMovements = $data['stockMovements'] ?? null;
     }
 
+    /**
+     * Create DTO from Eloquent model instance.
+     *
+     * @param ProductCatalog $model Eloquent model to convert
+     * @return self New DTO instance with model data
+     */
     public static function fromModel(ProductCatalog $model): self
     {
         $data = [
@@ -92,11 +142,22 @@ class ProductCatalogDTO
         return new self($data);
     }
 
+    /**
+     * Create DTO from plain array data.
+     *
+     * @param array $data Associative array with DTO properties
+     * @return self New DTO instance
+     */
     public static function fromArray(array $data): self
     {
         return new self($data);
     }
 
+    /**
+     * Convert DTO to array representation.
+     *
+     * @return array Array with snake_case keys matching database columns
+     */
     public function toArray(): array
     {
         return [
@@ -116,6 +177,14 @@ class ProductCatalogDTO
         ];
     }
 
+    /**
+     * Convert DTO to array for Eloquent model creation/update.
+     *
+     * Returns fillable attributes only, excluding timestamps
+     * and foreign keys for related models.
+     *
+     * @return array Associative array for model mass assignment
+     */
     public function toModel(): array
     {
         return [

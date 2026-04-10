@@ -4,30 +4,64 @@ namespace App\DTOs\HR;
 
 use App\Models\HR\Performance;
 
+/**
+ * Data Transfer Object for Performance entity.
+ *
+ * Used for type-safe data transfer between layers
+ * and encapsulates performance review data.
+ *
+ * @property int|null $id
+ * @property int|null $employeeId
+ * @property string|null $reviewPeriod
+ * @property float|null $kpiScore
+ * @property float|null $goalAchievement
+ * @property float|null $overallRating
+ * @property string|null $reviewerComments
+ * @property int|null $status
+ * @property string|null $createdAt
+ * @property string|null $updatedAt
+ * @property EmployeesDTO|null $employee
+ */
 class PerformanceDTO
 {
+    /** @var int|null Unique identifier */
     public ?int $id;
 
+    /** @var int|null Foreign key to employees table */
     public ?int $employeeId;
 
+    /** @var string|null Review period (e.g., '2024-Q1', '2024-01') */
     public ?string $reviewPeriod;
 
+    /** @var float|null Key Performance Indicator score (0-100) */
     public ?float $kpiScore;
 
+    /** @var float|null Goal achievement percentage (0-100) */
     public ?float $goalAchievement;
 
+    /** @var float|null Overall rating (0-5) */
     public ?float $overallRating;
 
+    /** @var string|null Reviewer's comments/feedback */
     public ?string $reviewerComments;
 
+    /** @var int|null Status: 0=Pending, 1=InProgress, 2=Completed, 3=Cancelled */
     public ?int $status;
 
+    /** @var string|null Creation timestamp (ISO 8601) */
     public ?string $createdAt;
 
+    /** @var string|null Last update timestamp (ISO 8601) */
     public ?string $updatedAt;
 
+    /** @var EmployeesDTO|null Related employee */
     public ?EmployeesDTO $employee;
 
+    /**
+     * Create a new PerformanceDTO instance.
+     *
+     * @param array $data Optional data array for initialization
+     */
     public function __construct(array $data = [])
     {
         $this->id = isset($data['id']) ? (int) $data['id'] : null;
@@ -43,6 +77,12 @@ class PerformanceDTO
         $this->employee = $data['employee'] ?? null;
     }
 
+    /**
+     * Create DTO from Eloquent model instance.
+     *
+     * @param Performance $model Eloquent model to convert
+     * @return self New DTO instance with model data
+     */
     public static function fromModel(Performance $model): self
     {
         $data = [
@@ -65,11 +105,22 @@ class PerformanceDTO
         return new self($data);
     }
 
+    /**
+     * Create DTO from plain array data.
+     *
+     * @param array $data Associative array with DTO properties
+     * @return self New DTO instance
+     */
     public static function fromArray(array $data): self
     {
         return new self($data);
     }
 
+    /**
+     * Convert DTO to array representation.
+     *
+     * @return array Array with snake_case keys matching database columns
+     */
     public function toArray(): array
     {
         return [
@@ -86,6 +137,14 @@ class PerformanceDTO
         ];
     }
 
+    /**
+     * Convert DTO to array for Eloquent model creation/update.
+     *
+     * Returns fillable attributes only, excluding timestamps
+     * and foreign keys for related models.
+     *
+     * @return array Associative array for model mass assignment
+     */
     public function toModel(): array
     {
         return [
