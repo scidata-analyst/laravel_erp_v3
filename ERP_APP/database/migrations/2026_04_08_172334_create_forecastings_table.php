@@ -6,22 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('forecastings', function (Blueprint $table) {
+        Schema::create('forecasting', function (Blueprint $table) {
             $table->id();
+            $table->string('forecast_name')->nullable();
+            $table->string('forecast_type')->nullable();
+            $table->date('period_from')->nullable();
+            $table->date('period_to')->nullable();
+            $table->string('model')->nullable();
+            $table->decimal('accuracy_percentage', 5, 2)->nullable();
+            $table->string('status');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('forecastings');
+        Schema::dropIfExists('forecasting');
     }
 };

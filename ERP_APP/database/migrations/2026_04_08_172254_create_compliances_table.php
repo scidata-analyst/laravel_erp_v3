@@ -6,22 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('compliances', function (Blueprint $table) {
+        Schema::create('compliance', function (Blueprint $table) {
             $table->id();
+            $table->string('standard_regulation')->nullable();
+            $table->text('scope')->nullable();
+            $table->date('audit_date')->nullable();
+            $table->date('next_audit_date')->nullable();
+            $table->string('auditor')->nullable();
+            $table->text('findings_notes')->nullable();
+            $table->string('status');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('compliances');
+        Schema::dropIfExists('compliance');
     }
 };

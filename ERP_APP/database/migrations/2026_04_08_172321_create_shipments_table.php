@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('shipments', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('sales_order_id')->constrained('sales_orders')->onDelete('cascade');
+            $table->string('carrier');
+            $table->string('tracking_number')->unique();
+            $table->dateTime('estimated_delivery_date')->nullable();
+            $table->text('shipping_address')->nullable();
+            $table->string('status');
             $table->timestamps();
         });
     }

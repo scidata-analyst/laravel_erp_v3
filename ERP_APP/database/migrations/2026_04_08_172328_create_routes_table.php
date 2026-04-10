@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('routes', function (Blueprint $table) {
             $table->id();
+            $table->string('route_name');
+            $table->string('zone_area')->nullable();
+            $table->string('driver_name')->nullable();
+            $table->string('vehicle_id')->nullable();
+            $table->integer('number_of_stops')->default(0);
+            $table->text('route_description')->nullable();
+            $table->string('status');
             $table->timestamps();
         });
     }

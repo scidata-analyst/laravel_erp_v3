@@ -6,25 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('roles', function (Blueprint $table) {
+        Schema::create('taxes', function (Blueprint $table) {
             $table->id();
-            $table->string('role_name');
-            $table->text('description')->nullable();
+            $table->string('tax_name');
+            $table->string('tax_type');
+            $table->decimal('rate', 5, 2)->default(0);
+            $table->string('filing_period')->nullable();
+            $table->string('applicable_on')->nullable();
             $table->string('status');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('taxes');
     }
 };

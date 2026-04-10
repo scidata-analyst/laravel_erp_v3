@@ -11,8 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('doc_libraries', function (Blueprint $table) {
+        Schema::create('document_library', function (Blueprint $table) {
             $table->id();
+            $table->string('document_name');
+            $table->string('document_type')->nullable();
+            $table->string('related_to')->nullable();
+            $table->string('version')->nullable();
+            $table->string('access_level')->nullable();
+            $table->string('file_path')->nullable();
+            $table->text('notes')->nullable();
+            $table->foreignId('uploaded_by_user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
         });
     }

@@ -6,22 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('doc_versions', function (Blueprint $table) {
+        Schema::create('bill_of_materials', function (Blueprint $table) {
             $table->id();
+            $table->string('finished_product_name');
+            $table->string('version')->nullable();
+            $table->integer('lead_time_days')->nullable();
+            $table->string('status');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('doc_versions');
+        Schema::dropIfExists('bill_of_materials');
     }
 };
