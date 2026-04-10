@@ -34,7 +34,6 @@ class InvoicesController extends Controller
     /**
      * Display all Invoices records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class InvoicesController extends Controller
     /**
      * Display a paginated listing of Invoices resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class InvoicesController extends Controller
      * Store a newly created Invoices resource in storage.
      *
      * @param InvoicesStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(InvoicesStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class InvoicesController extends Controller
      * Display the specified Invoices resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class InvoicesController extends Controller
      *
      * @param InvoicesUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(InvoicesUpdateRequest $request, $id)
     {
-        $data = $this->invoicesService->update($id, $request->validated());
+        $data = $this->invoicesService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class InvoicesController extends Controller
      * Remove the specified Invoices resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

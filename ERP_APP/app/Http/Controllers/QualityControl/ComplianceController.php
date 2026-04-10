@@ -34,7 +34,6 @@ class ComplianceController extends Controller
     /**
      * Display all Compliance records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class ComplianceController extends Controller
     /**
      * Display a paginated listing of Compliance resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class ComplianceController extends Controller
      * Store a newly created Compliance resource in storage.
      *
      * @param ComplianceStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(ComplianceStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class ComplianceController extends Controller
      * Display the specified Compliance resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class ComplianceController extends Controller
      *
      * @param ComplianceUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(ComplianceUpdateRequest $request, $id)
     {
-        $data = $this->complianceService->update($id, $request->validated());
+        $data = $this->complianceService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class ComplianceController extends Controller
      * Remove the specified Compliance resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

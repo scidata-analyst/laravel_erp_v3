@@ -3,6 +3,7 @@
 namespace App\Repositories\Production;
 
 use App\Models\Production\MachineLabor;
+use App\Interfaces\Production\MachineLaborInterface;
 
 /**
  * Class MachineLaborRepository
@@ -10,7 +11,7 @@ use App\Models\Production\MachineLabor;
  * Repository for managing MachineLabor resources.
  * Provides CRUD operations with database queries.
  */
-class MachineLaborRepository
+class MachineLaborRepository implements MachineLaborInterface
 {
     /**
      * @var MachineLabor
@@ -85,7 +86,7 @@ class MachineLaborRepository
      * @param array $data
      * @return \App\Models\Production\MachineLabor
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

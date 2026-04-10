@@ -3,6 +3,7 @@
 namespace App\Repositories\UsersRoles;
 
 use App\Models\UsersRoles\User;
+use App\Interfaces\UsersRoles\UserInterface;
 
 /**
  * Class UserRepository
@@ -10,7 +11,7 @@ use App\Models\UsersRoles\User;
  * Repository for managing User resources.
  * Provides CRUD operations with database queries.
  */
-class UserRepository
+class UserRepository implements UserInterface
 {
     /**
      * @var User
@@ -85,7 +86,7 @@ class UserRepository
      * @param array $data
      * @return \App\Models\UsersRoles\User
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

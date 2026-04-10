@@ -34,7 +34,6 @@ class WorkOrdersController extends Controller
     /**
      * Display all WorkOrders records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class WorkOrdersController extends Controller
     /**
      * Display a paginated listing of WorkOrders resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class WorkOrdersController extends Controller
      * Store a newly created WorkOrders resource in storage.
      *
      * @param WorkOrdersStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(WorkOrdersStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class WorkOrdersController extends Controller
      * Display the specified WorkOrders resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class WorkOrdersController extends Controller
      *
      * @param WorkOrdersUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(WorkOrdersUpdateRequest $request, $id)
     {
-        $data = $this->workOrdersService->update($id, $request->validated());
+        $data = $this->workOrdersService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class WorkOrdersController extends Controller
      * Remove the specified WorkOrders resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

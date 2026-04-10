@@ -29,7 +29,6 @@ trait CustomReportsTrait
     /**
      * Display all CustomReports records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -39,7 +38,6 @@ trait CustomReportsTrait
     /**
      * Display a paginated listing of CustomReports resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -49,7 +47,6 @@ trait CustomReportsTrait
     /**
      * Store a newly created CustomReports resource in storage.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(array $data)
     {
@@ -60,7 +57,6 @@ trait CustomReportsTrait
      * Display the specified CustomReports resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -72,9 +68,8 @@ trait CustomReportsTrait
      *
      * @param CustomReportsRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         
     }
@@ -83,7 +78,6 @@ trait CustomReportsTrait
      * Remove the specified CustomReports resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

@@ -34,7 +34,6 @@ class PayrollController extends Controller
     /**
      * Display all Payroll records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class PayrollController extends Controller
     /**
      * Display a paginated listing of Payroll resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class PayrollController extends Controller
      * Store a newly created Payroll resource in storage.
      *
      * @param PayrollStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(PayrollStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class PayrollController extends Controller
      * Display the specified Payroll resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class PayrollController extends Controller
      *
      * @param PayrollUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(PayrollUpdateRequest $request, $id)
     {
-        $data = $this->payrollService->update($id, $request->validated());
+        $data = $this->payrollService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class PayrollController extends Controller
      * Remove the specified Payroll resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

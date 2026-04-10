@@ -3,6 +3,7 @@
 namespace App\Repositories\Core;
 
 use App\Models\Core\Settings;
+use App\Interfaces\Core\SettingsInterface;
 
 /**
  * Class SettingsRepository
@@ -10,7 +11,7 @@ use App\Models\Core\Settings;
  * Repository for managing Settings resources.
  * Provides CRUD operations with database queries.
  */
-class SettingsRepository
+class SettingsRepository implements SettingsInterface
 {
     /**
      * @var Settings
@@ -85,7 +86,7 @@ class SettingsRepository
      * @param array $data
      * @return \App\Models\Core\Settings
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

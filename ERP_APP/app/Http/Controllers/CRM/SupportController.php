@@ -34,7 +34,6 @@ class SupportController extends Controller
     /**
      * Display all Support records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class SupportController extends Controller
     /**
      * Display a paginated listing of Support resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class SupportController extends Controller
      * Store a newly created Support resource in storage.
      *
      * @param SupportStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(SupportStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class SupportController extends Controller
      * Display the specified Support resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class SupportController extends Controller
      *
      * @param SupportUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(SupportUpdateRequest $request, $id)
     {
-        $data = $this->supportService->update($id, $request->validated());
+        $data = $this->supportService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class SupportController extends Controller
      * Remove the specified Support resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

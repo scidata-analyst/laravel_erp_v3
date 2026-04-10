@@ -29,7 +29,6 @@ trait PerformanceTrait
     /**
      * Display all Performance records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -39,7 +38,6 @@ trait PerformanceTrait
     /**
      * Display a paginated listing of Performance resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -49,7 +47,6 @@ trait PerformanceTrait
     /**
      * Store a newly created Performance resource in storage.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(array $data)
     {
@@ -60,7 +57,6 @@ trait PerformanceTrait
      * Display the specified Performance resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -72,9 +68,8 @@ trait PerformanceTrait
      *
      * @param PerformanceRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         
     }
@@ -83,7 +78,6 @@ trait PerformanceTrait
      * Remove the specified Performance resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

@@ -3,8 +3,9 @@
 namespace App\Services\Purchase;
 
 use App\Repositories\Purchase\SupplierPaymentsRepository;
+use App\Interfaces\Purchase\SupplierPaymentsInterface;
 
-class SupplierPaymentsService
+class SupplierPaymentsService implements SupplierPaymentsInterface
 {
     protected $repository;
 
@@ -33,9 +34,9 @@ class SupplierPaymentsService
         return $this->repository->show($id);
     }
 
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
-        return $this->repository->update($id, $data);
+        return $this->repository->update($data, $id);
     }
 
     public function destroy($id)

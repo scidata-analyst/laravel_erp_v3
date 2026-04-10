@@ -3,6 +3,7 @@
 namespace App\Repositories\Inventory;
 
 use App\Models\Inventory\BatchTracking;
+use App\Interfaces\Inventory\BatchTrackingInterface;
 
 /**
  * Class BatchTrackingRepository
@@ -10,7 +11,7 @@ use App\Models\Inventory\BatchTracking;
  * Repository for managing BatchTracking resources.
  * Provides CRUD operations with database queries.
  */
-class BatchTrackingRepository
+class BatchTrackingRepository implements BatchTrackingInterface
 {
     /**
      * @var BatchTracking
@@ -85,7 +86,7 @@ class BatchTrackingRepository
      * @param array $data
      * @return \App\Models\Inventory\BatchTracking
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

@@ -3,8 +3,9 @@
 namespace App\Services\Accounting;
 
 use App\Repositories\Accounting\GlRepository;
+use App\Interfaces\Accounting\GlInterface;
 
-class GlService
+class GlService implements GlInterface
 {
     protected $repository;
 
@@ -33,9 +34,9 @@ class GlService
         return $this->repository->show($id);
     }
 
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
-        return $this->repository->update($id, $data);
+        return $this->repository->update($data, $id);
     }
 
     public function destroy($id)

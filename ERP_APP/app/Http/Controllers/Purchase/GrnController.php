@@ -34,7 +34,6 @@ class GrnController extends Controller
     /**
      * Display all Grn records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class GrnController extends Controller
     /**
      * Display a paginated listing of Grn resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class GrnController extends Controller
      * Store a newly created Grn resource in storage.
      *
      * @param GrnStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(GrnStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class GrnController extends Controller
      * Display the specified Grn resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class GrnController extends Controller
      *
      * @param GrnUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(GrnUpdateRequest $request, $id)
     {
-        $data = $this->grnService->update($id, $request->validated());
+        $data = $this->grnService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class GrnController extends Controller
      * Remove the specified Grn resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

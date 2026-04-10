@@ -3,6 +3,7 @@
 namespace App\Repositories\Production;
 
 use App\Models\Production\WorkOrders;
+use App\Interfaces\Production\WorkOrdersInterface;
 
 /**
  * Class WorkOrdersRepository
@@ -10,7 +11,7 @@ use App\Models\Production\WorkOrders;
  * Repository for managing WorkOrders resources.
  * Provides CRUD operations with database queries.
  */
-class WorkOrdersRepository
+class WorkOrdersRepository implements WorkOrdersInterface
 {
     /**
      * @var WorkOrders
@@ -85,7 +86,7 @@ class WorkOrdersRepository
      * @param array $data
      * @return \App\Models\Production\WorkOrders
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

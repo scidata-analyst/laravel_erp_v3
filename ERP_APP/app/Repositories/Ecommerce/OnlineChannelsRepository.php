@@ -3,6 +3,7 @@
 namespace App\Repositories\Ecommerce;
 
 use App\Models\Ecommerce\OnlineChannels;
+use App\Interfaces\Ecommerce\OnlineChannelsInterface;
 
 /**
  * Class OnlineChannelsRepository
@@ -10,7 +11,7 @@ use App\Models\Ecommerce\OnlineChannels;
  * Repository for managing OnlineChannels resources.
  * Provides CRUD operations with database queries.
  */
-class OnlineChannelsRepository
+class OnlineChannelsRepository implements OnlineChannelsInterface
 {
     /**
      * @var OnlineChannels
@@ -80,12 +81,12 @@ class OnlineChannelsRepository
 
     /**
      * Update the specified OnlineChannels resource in storage.
-     *
+     *s
      * @param int $id
      * @param array $data
      * @return \App\Models\Ecommerce\OnlineChannels
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

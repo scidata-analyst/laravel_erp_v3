@@ -3,6 +3,7 @@
 namespace App\Repositories\Accounting;
 
 use App\Models\Accounting\Gl;
+use App\Interfaces\Accounting\GlInterface;
 
 /**
  * Class GlRepository
@@ -10,7 +11,7 @@ use App\Models\Accounting\Gl;
  * Repository for managing Gl resources.
  * Provides CRUD operations with database queries.
  */
-class GlRepository
+class GlRepository implements GlInterface
 {
     /**
      * @var Gl
@@ -85,7 +86,7 @@ class GlRepository
      * @param array $data
      * @return \App\Models\Accounting\Gl
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

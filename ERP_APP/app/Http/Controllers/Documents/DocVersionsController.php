@@ -34,7 +34,6 @@ class DocVersionsController extends Controller
     /**
      * Display all DocVersions records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class DocVersionsController extends Controller
     /**
      * Display a paginated listing of DocVersions resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class DocVersionsController extends Controller
      * Store a newly created DocVersions resource in storage.
      *
      * @param DocVersionsStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(DocVersionsStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class DocVersionsController extends Controller
      * Display the specified DocVersions resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class DocVersionsController extends Controller
      *
      * @param DocVersionsUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(DocVersionsUpdateRequest $request, $id)
     {
-        $data = $this->docVersionsService->update($id, $request->validated());
+        $data = $this->docVersionsService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class DocVersionsController extends Controller
      * Remove the specified DocVersions resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

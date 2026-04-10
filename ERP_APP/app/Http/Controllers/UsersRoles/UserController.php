@@ -34,7 +34,6 @@ class UserController extends Controller
     /**
      * Display all User records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class UserController extends Controller
     /**
      * Display a paginated listing of User resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class UserController extends Controller
      * Store a newly created User resource in storage.
      *
      * @param UserStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(UserStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class UserController extends Controller
      * Display the specified User resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class UserController extends Controller
      *
      * @param UserUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(UserUpdateRequest $request, $id)
     {
-        $data = $this->userService->update($id, $request->validated());
+        $data = $this->userService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class UserController extends Controller
      * Remove the specified User resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

@@ -3,8 +3,9 @@
 namespace App\Services\Ecommerce;
 
 use App\Repositories\Ecommerce\PosRepository;
+use App\Interfaces\Ecommerce\PosInterface;
 
-class PosService
+class PosService implements PosInterface
 {
     protected $repository;
 
@@ -33,9 +34,9 @@ class PosService
         return $this->repository->show($id);
     }
 
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
-        return $this->repository->update($id, $data);
+        return $this->repository->update($data, $id);
     }
 
     public function destroy($id)

@@ -3,6 +3,7 @@
 namespace App\Repositories\Logistics;
 
 use App\Models\Logistics\Routes;
+use App\Interfaces\Logistics\RoutesInterface;
 
 /**
  * Class RoutesRepository
@@ -10,7 +11,7 @@ use App\Models\Logistics\Routes;
  * Repository for managing Routes resources.
  * Provides CRUD operations with database queries.
  */
-class RoutesRepository
+class RoutesRepository implements RoutesInterface
 {
     /**
      * @var Routes
@@ -85,7 +86,7 @@ class RoutesRepository
      * @param array $data
      * @return \App\Models\Logistics\Routes
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

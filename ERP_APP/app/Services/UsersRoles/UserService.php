@@ -3,8 +3,9 @@
 namespace App\Services\UsersRoles;
 
 use App\Repositories\UsersRoles\UserRepository;
+use App\Interfaces\UsersRoles\UserInterface;
 
-class UserService
+class UserService implements UserInterface
 {
     protected $repository;
 
@@ -33,9 +34,9 @@ class UserService
         return $this->repository->show($id);
     }
 
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
-        return $this->repository->update($id, $data);
+        return $this->repository->update($data, $id);
     }
 
     public function destroy($id)

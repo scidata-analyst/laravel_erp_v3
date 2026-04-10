@@ -3,6 +3,7 @@
 namespace App\Repositories\Ecommerce;
 
 use App\Models\Ecommerce\Pos;
+use App\Interfaces\Ecommerce\PosInterface;
 
 /**
  * Class PosRepository
@@ -10,7 +11,7 @@ use App\Models\Ecommerce\Pos;
  * Repository for managing Pos resources.
  * Provides CRUD operations with database queries.
  */
-class PosRepository
+class PosRepository implements PosInterface
 {
     /**
      * @var Pos
@@ -85,7 +86,7 @@ class PosRepository
      * @param array $data
      * @return \App\Models\Ecommerce\Pos
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

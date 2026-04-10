@@ -14,21 +14,18 @@ interface OnlineChannelsInterface
     /**
      * Display all OnlineChannels records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all();
 
     /**
      * Display a paginated listing of OnlineChannels resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index();
 
     /**
      * Store a newly created OnlineChannels resource in storage.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(array $request);
 
@@ -36,7 +33,6 @@ interface OnlineChannelsInterface
      * Display the specified OnlineChannels resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id);
 
@@ -44,7 +40,6 @@ interface OnlineChannelsInterface
      * Update the specified OnlineChannels resource in storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(array $data, $id);
 
@@ -52,7 +47,6 @@ interface OnlineChannelsInterface
      * Remove the specified OnlineChannels resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id);
 }

@@ -34,7 +34,6 @@ class TaxController extends Controller
     /**
      * Display all Tax records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class TaxController extends Controller
     /**
      * Display a paginated listing of Tax resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class TaxController extends Controller
      * Store a newly created Tax resource in storage.
      *
      * @param TaxStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(TaxStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class TaxController extends Controller
      * Display the specified Tax resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class TaxController extends Controller
      *
      * @param TaxUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(TaxUpdateRequest $request, $id)
     {
-        $data = $this->taxService->update($id, $request->validated());
+        $data = $this->taxService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class TaxController extends Controller
      * Remove the specified Tax resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

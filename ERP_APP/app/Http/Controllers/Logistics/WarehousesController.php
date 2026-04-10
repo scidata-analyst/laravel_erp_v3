@@ -34,7 +34,6 @@ class WarehousesController extends Controller
     /**
      * Display all Warehouses records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class WarehousesController extends Controller
     /**
      * Display a paginated listing of Warehouses resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class WarehousesController extends Controller
      * Store a newly created Warehouses resource in storage.
      *
      * @param WarehousesStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(WarehousesStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class WarehousesController extends Controller
      * Display the specified Warehouses resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class WarehousesController extends Controller
      *
      * @param WarehousesUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(WarehousesUpdateRequest $request, $id)
     {
-        $data = $this->warehousesService->update($id, $request->validated());
+        $data = $this->warehousesService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class WarehousesController extends Controller
      * Remove the specified Warehouses resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

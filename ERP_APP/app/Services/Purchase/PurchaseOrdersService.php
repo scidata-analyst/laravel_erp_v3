@@ -3,8 +3,9 @@
 namespace App\Services\Purchase;
 
 use App\Repositories\Purchase\PurchaseOrdersRepository;
+use App\Interfaces\Purchase\PurchaseOrdersInterface;
 
-class PurchaseOrdersService
+class PurchaseOrdersService implements PurchaseOrdersInterface
 {
     protected $repository;
 
@@ -33,9 +34,9 @@ class PurchaseOrdersService
         return $this->repository->show($id);
     }
 
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
-        return $this->repository->update($id, $data);
+        return $this->repository->update($data, $id);
     }
 
     public function destroy($id)

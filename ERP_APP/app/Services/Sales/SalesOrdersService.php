@@ -3,8 +3,9 @@
 namespace App\Services\Sales;
 
 use App\Repositories\Sales\SalesOrdersRepository;
+use App\Interfaces\Sales\SalesOrdersInterface;
 
-class SalesOrdersService
+class SalesOrdersService implements SalesOrdersInterface
 {
     protected $repository;
 
@@ -33,9 +34,9 @@ class SalesOrdersService
         return $this->repository->show($id);
     }
 
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
-        return $this->repository->update($id, $data);
+        return $this->repository->update($data, $id);
     }
 
     public function destroy($id)

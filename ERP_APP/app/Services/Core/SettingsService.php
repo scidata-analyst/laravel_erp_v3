@@ -3,8 +3,9 @@
 namespace App\Services\Core;
 
 use App\Repositories\Core\SettingsRepository;
+use App\Interfaces\Core\SettingsInterface;
 
-class SettingsService
+class SettingsService implements SettingsInterface
 {
     protected $repository;
 
@@ -33,9 +34,9 @@ class SettingsService
         return $this->repository->show($id);
     }
 
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
-        return $this->repository->update($id, $data);
+        return $this->repository->update($data, $id);
     }
 
     public function destroy($id)

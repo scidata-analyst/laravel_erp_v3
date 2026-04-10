@@ -3,6 +3,7 @@
 namespace App\Repositories\Accounting;
 
 use App\Models\Accounting\Tax;
+use App\Interfaces\Accounting\TaxInterface;
 
 /**
  * Class TaxRepository
@@ -10,7 +11,7 @@ use App\Models\Accounting\Tax;
  * Repository for managing Tax resources.
  * Provides CRUD operations with database queries.
  */
-class TaxRepository
+class TaxRepository implements TaxInterface
 {
     /**
      * @var Tax
@@ -85,7 +86,7 @@ class TaxRepository
      * @param array $data
      * @return \App\Models\Accounting\Tax
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

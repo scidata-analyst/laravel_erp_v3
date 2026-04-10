@@ -3,6 +3,7 @@
 namespace App\Repositories\QualityControl;
 
 use App\Models\QualityControl\Compliance;
+use App\Interfaces\QualityControl\ComplianceInterface;
 
 /**
  * Class ComplianceRepository
@@ -10,7 +11,7 @@ use App\Models\QualityControl\Compliance;
  * Repository for managing Compliance resources.
  * Provides CRUD operations with database queries.
  */
-class ComplianceRepository
+class ComplianceRepository implements ComplianceInterface
 {
     /**
      * @var Compliance
@@ -85,7 +86,7 @@ class ComplianceRepository
      * @param array $data
      * @return \App\Models\QualityControl\Compliance
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

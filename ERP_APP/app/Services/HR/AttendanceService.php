@@ -3,8 +3,9 @@
 namespace App\Services\HR;
 
 use App\Repositories\HR\AttendanceRepository;
+use App\Interfaces\HR\AttendanceInterface;
 
-class AttendanceService
+class AttendanceService implements AttendanceInterface
 {
     protected $repository;
 
@@ -33,9 +34,9 @@ class AttendanceService
         return $this->repository->show($id);
     }
 
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
-        return $this->repository->update($id, $data);
+        return $this->repository->update($data, $id);
     }
 
     public function destroy($id)

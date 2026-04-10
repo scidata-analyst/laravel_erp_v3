@@ -3,6 +3,7 @@
 namespace App\Repositories\Sales;
 
 use App\Models\Sales\Customers;
+use App\Interfaces\Sales\CustomersInterface;
 
 /**
  * Class CustomersRepository
@@ -10,7 +11,7 @@ use App\Models\Sales\Customers;
  * Repository for managing Customers resources.
  * Provides CRUD operations with database queries.
  */
-class CustomersRepository
+class CustomersRepository implements CustomersInterface
 {
     /**
      * @var Customers
@@ -85,7 +86,7 @@ class CustomersRepository
      * @param array $data
      * @return \App\Models\Sales\Customers
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

@@ -29,7 +29,6 @@ trait OnlineChannelsTrait
     /**
      * Display all OnlineChannels records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -39,7 +38,6 @@ trait OnlineChannelsTrait
     /**
      * Display a paginated listing of OnlineChannels resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -49,7 +47,6 @@ trait OnlineChannelsTrait
     /**
      * Store a newly created OnlineChannels resource in storage.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(array $data)
     {
@@ -60,7 +57,6 @@ trait OnlineChannelsTrait
      * Display the specified OnlineChannels resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -72,9 +68,8 @@ trait OnlineChannelsTrait
      *
      * @param OnlineChannelsRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         
     }
@@ -83,7 +78,6 @@ trait OnlineChannelsTrait
      * Remove the specified OnlineChannels resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

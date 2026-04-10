@@ -3,6 +3,7 @@
 namespace App\Repositories\HR;
 
 use App\Models\HR\Employees;
+use App\Interfaces\HR\EmployeesInterface;
 
 /**
  * Class EmployeesRepository
@@ -10,7 +11,7 @@ use App\Models\HR\Employees;
  * Repository for managing Employees resources.
  * Provides CRUD operations with database queries.
  */
-class EmployeesRepository
+class EmployeesRepository implements EmployeesInterface
 {
     /**
      * @var Employees
@@ -85,7 +86,7 @@ class EmployeesRepository
      * @param array $data
      * @return \App\Models\HR\Employees
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

@@ -34,7 +34,6 @@ class QcChecklistsController extends Controller
     /**
      * Display all QcChecklists records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class QcChecklistsController extends Controller
     /**
      * Display a paginated listing of QcChecklists resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class QcChecklistsController extends Controller
      * Store a newly created QcChecklists resource in storage.
      *
      * @param QcChecklistsStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(QcChecklistsStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class QcChecklistsController extends Controller
      * Display the specified QcChecklists resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class QcChecklistsController extends Controller
      *
      * @param QcChecklistsUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(QcChecklistsUpdateRequest $request, $id)
     {
-        $data = $this->qcChecklistsService->update($id, $request->validated());
+        $data = $this->qcChecklistsService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class QcChecklistsController extends Controller
      * Remove the specified QcChecklists resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

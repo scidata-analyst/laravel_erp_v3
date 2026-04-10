@@ -3,6 +3,7 @@
 namespace App\Repositories\HR;
 
 use App\Models\HR\Payroll;
+use App\Interfaces\HR\PayrollInterface;
 
 /**
  * Class PayrollRepository
@@ -10,7 +11,7 @@ use App\Models\HR\Payroll;
  * Repository for managing Payroll resources.
  * Provides CRUD operations with database queries.
  */
-class PayrollRepository
+class PayrollRepository implements PayrollInterface
 {
     /**
      * @var Payroll
@@ -85,7 +86,7 @@ class PayrollRepository
      * @param array $data
      * @return \App\Models\HR\Payroll
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

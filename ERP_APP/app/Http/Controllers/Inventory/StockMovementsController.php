@@ -34,7 +34,6 @@ class StockMovementsController extends Controller
     /**
      * Display all StockMovements records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class StockMovementsController extends Controller
     /**
      * Display a paginated listing of StockMovements resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class StockMovementsController extends Controller
      * Store a newly created StockMovements resource in storage.
      *
      * @param StockMovementsStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(StockMovementsStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class StockMovementsController extends Controller
      * Display the specified StockMovements resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class StockMovementsController extends Controller
      *
      * @param StockMovementsUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(StockMovementsUpdateRequest $request, $id)
     {
-        $data = $this->stockMovementsService->update($id, $request->validated());
+        $data = $this->stockMovementsService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class StockMovementsController extends Controller
      * Remove the specified StockMovements resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

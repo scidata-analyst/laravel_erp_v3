@@ -34,7 +34,6 @@ class PerformanceController extends Controller
     /**
      * Display all Performance records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class PerformanceController extends Controller
     /**
      * Display a paginated listing of Performance resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class PerformanceController extends Controller
      * Store a newly created Performance resource in storage.
      *
      * @param PerformanceStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(PerformanceStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class PerformanceController extends Controller
      * Display the specified Performance resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class PerformanceController extends Controller
      *
      * @param PerformanceUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(PerformanceUpdateRequest $request, $id)
     {
-        $data = $this->performanceService->update($id, $request->validated());
+        $data = $this->performanceService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class PerformanceController extends Controller
      * Remove the specified Performance resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

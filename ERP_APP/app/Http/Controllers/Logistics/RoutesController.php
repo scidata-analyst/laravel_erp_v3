@@ -34,7 +34,6 @@ class RoutesController extends Controller
     /**
      * Display all Routes records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class RoutesController extends Controller
     /**
      * Display a paginated listing of Routes resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class RoutesController extends Controller
      * Store a newly created Routes resource in storage.
      *
      * @param RoutesStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(RoutesStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class RoutesController extends Controller
      * Display the specified Routes resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class RoutesController extends Controller
      *
      * @param RoutesUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(RoutesUpdateRequest $request, $id)
     {
-        $data = $this->routesService->update($id, $request->validated());
+        $data = $this->routesService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class RoutesController extends Controller
      * Remove the specified Routes resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

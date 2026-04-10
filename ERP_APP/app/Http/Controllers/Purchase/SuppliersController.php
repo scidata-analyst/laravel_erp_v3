@@ -34,7 +34,6 @@ class SuppliersController extends Controller
     /**
      * Display all Suppliers records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class SuppliersController extends Controller
     /**
      * Display a paginated listing of Suppliers resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class SuppliersController extends Controller
      * Store a newly created Suppliers resource in storage.
      *
      * @param SuppliersStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(SuppliersStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class SuppliersController extends Controller
      * Display the specified Suppliers resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class SuppliersController extends Controller
      *
      * @param SuppliersUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(SuppliersUpdateRequest $request, $id)
     {
-        $data = $this->suppliersService->update($id, $request->validated());
+        $data = $this->suppliersService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class SuppliersController extends Controller
      * Remove the specified Suppliers resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

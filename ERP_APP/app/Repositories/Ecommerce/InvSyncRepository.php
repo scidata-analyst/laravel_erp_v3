@@ -3,6 +3,7 @@
 namespace App\Repositories\Ecommerce;
 
 use App\Models\Ecommerce\InvSync;
+use App\Interfaces\Ecommerce\InvSyncInterface;
 
 /**
  * Class InvSyncRepository
@@ -10,7 +11,7 @@ use App\Models\Ecommerce\InvSync;
  * Repository for managing InvSync resources.
  * Provides CRUD operations with database queries.
  */
-class InvSyncRepository
+class InvSyncRepository implements InvSyncInterface
 {
     /**
      * @var InvSync
@@ -85,7 +86,7 @@ class InvSyncRepository
      * @param array $data
      * @return \App\Models\Ecommerce\InvSync
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

@@ -3,6 +3,7 @@
 namespace App\Repositories\Logistics;
 
 use App\Models\Logistics\Warehouses;
+use App\Interfaces\Logistics\WarehousesInterface;
 
 /**
  * Class WarehousesRepository
@@ -10,7 +11,7 @@ use App\Models\Logistics\Warehouses;
  * Repository for managing Warehouses resources.
  * Provides CRUD operations with database queries.
  */
-class WarehousesRepository
+class WarehousesRepository implements WarehousesInterface
 {
     /**
      * @var Warehouses
@@ -85,7 +86,7 @@ class WarehousesRepository
      * @param array $data
      * @return \App\Models\Logistics\Warehouses
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

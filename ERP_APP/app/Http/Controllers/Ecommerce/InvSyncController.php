@@ -34,7 +34,6 @@ class InvSyncController extends Controller
     /**
      * Display all InvSync records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class InvSyncController extends Controller
     /**
      * Display a paginated listing of InvSync resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class InvSyncController extends Controller
      * Store a newly created InvSync resource in storage.
      *
      * @param InvSyncStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(InvSyncStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class InvSyncController extends Controller
      * Display the specified InvSync resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class InvSyncController extends Controller
      *
      * @param InvSyncUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(InvSyncUpdateRequest $request, $id)
     {
-        $data = $this->invSyncService->update($id, $request->validated());
+        $data = $this->invSyncService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class InvSyncController extends Controller
      * Remove the specified InvSync resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

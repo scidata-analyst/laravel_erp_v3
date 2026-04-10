@@ -3,6 +3,7 @@
 namespace App\Repositories\Sales;
 
 use App\Models\Sales\SalesOrders;
+use App\Interfaces\Sales\SalesOrdersInterface;
 
 /**
  * Class SalesOrdersRepository
@@ -10,7 +11,7 @@ use App\Models\Sales\SalesOrders;
  * Repository for managing SalesOrders resources.
  * Provides CRUD operations with database queries.
  */
-class SalesOrdersRepository
+class SalesOrdersRepository implements SalesOrdersInterface
 {
     /**
      * @var SalesOrders
@@ -85,7 +86,7 @@ class SalesOrdersRepository
      * @param array $data
      * @return \App\Models\Sales\SalesOrders
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

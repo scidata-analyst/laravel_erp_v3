@@ -34,7 +34,6 @@ class SalesOrdersController extends Controller
     /**
      * Display all SalesOrders records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class SalesOrdersController extends Controller
     /**
      * Display a paginated listing of SalesOrders resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class SalesOrdersController extends Controller
      * Store a newly created SalesOrders resource in storage.
      *
      * @param SalesOrdersStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(SalesOrdersStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class SalesOrdersController extends Controller
      * Display the specified SalesOrders resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class SalesOrdersController extends Controller
      *
      * @param SalesOrdersUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(SalesOrdersUpdateRequest $request, $id)
     {
-        $data = $this->salesOrdersService->update($id, $request->validated());
+        $data = $this->salesOrdersService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class SalesOrdersController extends Controller
      * Remove the specified SalesOrders resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

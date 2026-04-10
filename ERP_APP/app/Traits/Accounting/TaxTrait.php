@@ -29,7 +29,6 @@ trait TaxTrait
     /**
      * Display all Tax records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -39,7 +38,6 @@ trait TaxTrait
     /**
      * Display a paginated listing of Tax resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -49,7 +47,6 @@ trait TaxTrait
     /**
      * Store a newly created Tax resource in storage.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(array $data)
     {
@@ -60,7 +57,6 @@ trait TaxTrait
      * Display the specified Tax resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -72,9 +68,8 @@ trait TaxTrait
      *
      * @param TaxRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         
     }
@@ -83,7 +78,6 @@ trait TaxTrait
      * Remove the specified Tax resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

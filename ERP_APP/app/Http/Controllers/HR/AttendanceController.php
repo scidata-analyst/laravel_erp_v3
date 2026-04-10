@@ -34,7 +34,6 @@ class AttendanceController extends Controller
     /**
      * Display all Attendance records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class AttendanceController extends Controller
     /**
      * Display a paginated listing of Attendance resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class AttendanceController extends Controller
      * Store a newly created Attendance resource in storage.
      *
      * @param AttendanceStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(AttendanceStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class AttendanceController extends Controller
      * Display the specified Attendance resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class AttendanceController extends Controller
      *
      * @param AttendanceUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(AttendanceUpdateRequest $request, $id)
     {
-        $data = $this->attendanceService->update($id, $request->validated());
+        $data = $this->attendanceService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class AttendanceController extends Controller
      * Remove the specified Attendance resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

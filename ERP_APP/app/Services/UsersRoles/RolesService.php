@@ -3,8 +3,9 @@
 namespace App\Services\UsersRoles;
 
 use App\Repositories\UsersRoles\RolesRepository;
+use App\Interfaces\UsersRoles\RolesInterface;
 
-class RolesService
+class RolesService implements RolesInterface
 {
     protected $repository;
 
@@ -33,9 +34,9 @@ class RolesService
         return $this->repository->show($id);
     }
 
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
-        return $this->repository->update($id, $data);
+        return $this->repository->update($data, $id);
     }
 
     public function destroy($id)

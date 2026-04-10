@@ -34,7 +34,6 @@ class FinReportsController extends Controller
     /**
      * Display all FinReports records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class FinReportsController extends Controller
     /**
      * Display a paginated listing of FinReports resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class FinReportsController extends Controller
      * Store a newly created FinReports resource in storage.
      *
      * @param FinReportsStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(FinReportsStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class FinReportsController extends Controller
      * Display the specified FinReports resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class FinReportsController extends Controller
      *
      * @param FinReportsUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(FinReportsUpdateRequest $request, $id)
     {
-        $data = $this->finReportsService->update($id, $request->validated());
+        $data = $this->finReportsService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class FinReportsController extends Controller
      * Remove the specified FinReports resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

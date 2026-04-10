@@ -3,6 +3,7 @@
 namespace App\Repositories\QualityControl;
 
 use App\Models\QualityControl\Defects;
+use App\Interfaces\QualityControl\DefectsInterface;
 
 /**
  * Class DefectsRepository
@@ -10,7 +11,7 @@ use App\Models\QualityControl\Defects;
  * Repository for managing Defects resources.
  * Provides CRUD operations with database queries.
  */
-class DefectsRepository
+class DefectsRepository implements DefectsInterface
 {
     /**
      * @var Defects
@@ -85,7 +86,7 @@ class DefectsRepository
      * @param array $data
      * @return \App\Models\QualityControl\Defects
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

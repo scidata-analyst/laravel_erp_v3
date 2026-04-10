@@ -3,6 +3,7 @@
 namespace App\Repositories\Purchase;
 
 use App\Models\Purchase\PurchaseOrders;
+use App\Interfaces\Purchase\PurchaseOrdersInterface;
 
 /**
  * Class PurchaseOrdersRepository
@@ -10,7 +11,7 @@ use App\Models\Purchase\PurchaseOrders;
  * Repository for managing PurchaseOrders resources.
  * Provides CRUD operations with database queries.
  */
-class PurchaseOrdersRepository
+class PurchaseOrdersRepository implements PurchaseOrdersInterface
 {
     /**
      * @var PurchaseOrders
@@ -85,7 +86,7 @@ class PurchaseOrdersRepository
      * @param array $data
      * @return \App\Models\Purchase\PurchaseOrders
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

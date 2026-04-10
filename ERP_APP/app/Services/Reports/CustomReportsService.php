@@ -3,8 +3,9 @@
 namespace App\Services\Reports;
 
 use App\Repositories\Reports\CustomReportsRepository;
+use App\Interfaces\Reports\CustomReportsInterface;
 
-class CustomReportsService
+class CustomReportsService implements CustomReportsInterface
 {
     protected $repository;
 
@@ -33,9 +34,9 @@ class CustomReportsService
         return $this->repository->show($id);
     }
 
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
-        return $this->repository->update($id, $data);
+        return $this->repository->update($data, $id);
     }
 
     public function destroy($id)

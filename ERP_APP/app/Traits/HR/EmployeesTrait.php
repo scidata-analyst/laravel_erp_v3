@@ -29,7 +29,6 @@ trait EmployeesTrait
     /**
      * Display all Employees records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -39,7 +38,6 @@ trait EmployeesTrait
     /**
      * Display a paginated listing of Employees resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -49,7 +47,6 @@ trait EmployeesTrait
     /**
      * Store a newly created Employees resource in storage.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(array $data)
     {
@@ -60,7 +57,6 @@ trait EmployeesTrait
      * Display the specified Employees resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -72,9 +68,8 @@ trait EmployeesTrait
      *
      * @param EmployeesRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         
     }
@@ -83,7 +78,6 @@ trait EmployeesTrait
      * Remove the specified Employees resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

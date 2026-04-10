@@ -3,8 +3,9 @@
 namespace App\Services\Inventory;
 
 use App\Repositories\Inventory\StockValuationRepository;
+use App\Interfaces\Inventory\StockValuationInterface;
 
-class StockValuationService
+class StockValuationService implements StockValuationInterface
 {
     protected $repository;
 
@@ -33,9 +34,9 @@ class StockValuationService
         return $this->repository->show($id);
     }
 
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
-        return $this->repository->update($id, $data);
+        return $this->repository->update($data, $id);
     }
 
     public function destroy($id)

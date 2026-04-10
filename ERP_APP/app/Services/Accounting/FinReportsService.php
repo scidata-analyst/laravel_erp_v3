@@ -3,8 +3,9 @@
 namespace App\Services\Accounting;
 
 use App\Repositories\Accounting\FinReportsRepository;
+use App\Interfaces\Accounting\FinReportsInterface;
 
-class FinReportsService
+class FinReportsService implements FinReportsInterface
 {
     protected $repository;
 
@@ -33,9 +34,9 @@ class FinReportsService
         return $this->repository->show($id);
     }
 
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
-        return $this->repository->update($id, $data);
+        return $this->repository->update($data, $id);
     }
 
     public function destroy($id)

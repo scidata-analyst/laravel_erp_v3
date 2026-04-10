@@ -3,6 +3,7 @@
 namespace App\Repositories\Reports;
 
 use App\Models\Reports\BiDashboards;
+use App\Interfaces\Reports\BiDashboardsInterface;
 
 /**
  * Class BiDashboardsRepository
@@ -10,7 +11,7 @@ use App\Models\Reports\BiDashboards;
  * Repository for managing BiDashboards resources.
  * Provides CRUD operations with database queries.
  */
-class BiDashboardsRepository
+class BiDashboardsRepository implements BiDashboardsInterface
 {
     /**
      * @var BiDashboards
@@ -85,7 +86,7 @@ class BiDashboardsRepository
      * @param array $data
      * @return \App\Models\Reports\BiDashboards
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

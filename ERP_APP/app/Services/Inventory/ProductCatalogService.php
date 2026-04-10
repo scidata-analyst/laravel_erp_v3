@@ -3,14 +3,9 @@
 namespace App\Services\Inventory;
 
 use App\Models\Inventory\ProductCatalog;
+use App\Interfaces\Inventory\ProductCatalogInterface;
 
-/**
- * Class ProductCatalogService
- *
- * Service for managing ProductCatalog resources.
- * Provides CRUD operations with JSON responses.
- */
-class ProductCatalogService
+class ProductCatalogService implements ProductCatalogInterface
 {
     /**
      * @var ProductCatalogService
@@ -29,7 +24,6 @@ class ProductCatalogService
     /**
      * Display all ProductCatalog records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -39,7 +33,6 @@ class ProductCatalogService
     /**
      * Display a paginated listing of ProductCatalog resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -49,7 +42,6 @@ class ProductCatalogService
     /**
      * Store a newly created ProductCatalog resource in storage.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(array $data)
     {
@@ -60,7 +52,6 @@ class ProductCatalogService
      * Display the specified ProductCatalog resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -72,9 +63,8 @@ class ProductCatalogService
      *
      * @param ProductCatalogRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         
     }
@@ -83,7 +73,6 @@ class ProductCatalogService
      * Remove the specified ProductCatalog resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

@@ -3,6 +3,7 @@
 namespace App\Repositories\CRM;
 
 use App\Models\CRM\Leads;
+use App\Interfaces\CRM\LeadsInterface;
 
 /**
  * Class LeadsRepository
@@ -10,7 +11,7 @@ use App\Models\CRM\Leads;
  * Repository for managing Leads resources.
  * Provides CRUD operations with database queries.
  */
-class LeadsRepository
+class LeadsRepository implements LeadsInterface
 {
     /**
      * @var Leads
@@ -85,7 +86,7 @@ class LeadsRepository
      * @param array $data
      * @return \App\Models\CRM\Leads
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

@@ -34,7 +34,6 @@ class EmployeesController extends Controller
     /**
      * Display all Employees records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class EmployeesController extends Controller
     /**
      * Display a paginated listing of Employees resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class EmployeesController extends Controller
      * Store a newly created Employees resource in storage.
      *
      * @param EmployeesStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(EmployeesStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class EmployeesController extends Controller
      * Display the specified Employees resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class EmployeesController extends Controller
      *
      * @param EmployeesUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(EmployeesUpdateRequest $request, $id)
     {
-        $data = $this->employeesService->update($id, $request->validated());
+        $data = $this->employeesService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class EmployeesController extends Controller
      * Remove the specified Employees resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

@@ -3,6 +3,7 @@
 namespace App\Repositories\Inventory;
 
 use App\Models\Inventory\ProductCatalog;
+use App\Interfaces\Inventory\ProductCatalogInterface;
 
 /**
  * Class ProductCatalogRepository
@@ -10,7 +11,7 @@ use App\Models\Inventory\ProductCatalog;
  * Repository for managing ProductCatalog resources.
  * Provides CRUD operations with database queries.
  */
-class ProductCatalogRepository
+class ProductCatalogRepository implements ProductCatalogInterface
 {
     /**
      * @var ProductCatalog
@@ -86,7 +87,7 @@ class ProductCatalogRepository
      * @param array $data
      * @return \App\Models\Inventory\ProductCatalog
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

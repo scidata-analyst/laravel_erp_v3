@@ -3,6 +3,7 @@
 namespace App\Repositories\Documents;
 
 use App\Models\Documents\DocLibrary;
+use App\Interfaces\Documents\DocLibraryInterface;
 
 /**
  * Class DocLibraryRepository
@@ -10,7 +11,7 @@ use App\Models\Documents\DocLibrary;
  * Repository for managing DocLibrary resources.
  * Provides CRUD operations with database queries.
  */
-class DocLibraryRepository
+class DocLibraryRepository implements DocLibraryInterface
 {
     /**
      * @var DocLibrary
@@ -85,7 +86,7 @@ class DocLibraryRepository
      * @param array $data
      * @return \App\Models\Documents\DocLibrary
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

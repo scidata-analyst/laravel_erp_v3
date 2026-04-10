@@ -3,8 +3,9 @@
 namespace App\Services\Documents;
 
 use App\Repositories\Documents\DocVersionsRepository;
+use App\Interfaces\Documents\DocVersionsInterface;
 
-class DocVersionsService
+class DocVersionsService implements DocVersionsInterface
 {
     protected $repository;
 
@@ -33,9 +34,9 @@ class DocVersionsService
         return $this->repository->show($id);
     }
 
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
-        return $this->repository->update($id, $data);
+        return $this->repository->update($data, $id);
     }
 
     public function destroy($id)

@@ -34,7 +34,6 @@ class BiDashboardsController extends Controller
     /**
      * Display all BiDashboards records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class BiDashboardsController extends Controller
     /**
      * Display a paginated listing of BiDashboards resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class BiDashboardsController extends Controller
      * Store a newly created BiDashboards resource in storage.
      *
      * @param BiDashboardsStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(BiDashboardsStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class BiDashboardsController extends Controller
      * Display the specified BiDashboards resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class BiDashboardsController extends Controller
      *
      * @param BiDashboardsUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(BiDashboardsUpdateRequest $request, $id)
     {
-        $data = $this->biDashboardsService->update($id, $request->validated());
+        $data = $this->biDashboardsService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class BiDashboardsController extends Controller
      * Remove the specified BiDashboards resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

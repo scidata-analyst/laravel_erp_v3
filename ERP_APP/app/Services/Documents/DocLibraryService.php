@@ -3,8 +3,9 @@
 namespace App\Services\Documents;
 
 use App\Repositories\Documents\DocLibraryRepository;
+use App\Interfaces\Documents\DocLibraryInterface;
 
-class DocLibraryService
+class DocLibraryService implements DocLibraryInterface
 {
     protected $repository;
 
@@ -33,9 +34,9 @@ class DocLibraryService
         return $this->repository->show($id);
     }
 
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
-        return $this->repository->update($id, $data);
+        return $this->repository->update($data, $id);
     }
 
     public function destroy($id)

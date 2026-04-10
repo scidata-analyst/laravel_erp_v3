@@ -34,7 +34,6 @@ class LeadsController extends Controller
     /**
      * Display all Leads records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class LeadsController extends Controller
     /**
      * Display a paginated listing of Leads resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class LeadsController extends Controller
      * Store a newly created Leads resource in storage.
      *
      * @param LeadsStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(LeadsStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class LeadsController extends Controller
      * Display the specified Leads resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class LeadsController extends Controller
      *
      * @param LeadsUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(LeadsUpdateRequest $request, $id)
     {
-        $data = $this->leadsService->update($id, $request->validated());
+        $data = $this->leadsService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class LeadsController extends Controller
      * Remove the specified Leads resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

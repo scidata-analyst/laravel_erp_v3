@@ -3,6 +3,7 @@
 namespace App\Repositories\CRM;
 
 use App\Models\CRM\Support;
+use App\Interfaces\CRM\SupportInterface;
 
 /**
  * Class SupportRepository
@@ -10,7 +11,7 @@ use App\Models\CRM\Support;
  * Repository for managing Support resources.
  * Provides CRUD operations with database queries.
  */
-class SupportRepository
+class SupportRepository implements SupportInterface
 {
     /**
      * @var Support
@@ -85,7 +86,7 @@ class SupportRepository
      * @param array $data
      * @return \App\Models\CRM\Support
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

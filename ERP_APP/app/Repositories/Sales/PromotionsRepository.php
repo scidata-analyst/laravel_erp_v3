@@ -3,6 +3,7 @@
 namespace App\Repositories\Sales;
 
 use App\Models\Sales\Promotions;
+use App\Interfaces\Sales\PromotionsInterface;
 
 /**
  * Class PromotionsRepository
@@ -10,7 +11,7 @@ use App\Models\Sales\Promotions;
  * Repository for managing Promotions resources.
  * Provides CRUD operations with database queries.
  */
-class PromotionsRepository
+class PromotionsRepository implements PromotionsInterface
 {
     /**
      * @var Promotions
@@ -85,7 +86,7 @@ class PromotionsRepository
      * @param array $data
      * @return \App\Models\Sales\Promotions
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

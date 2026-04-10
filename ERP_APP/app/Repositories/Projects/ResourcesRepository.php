@@ -3,6 +3,7 @@
 namespace App\Repositories\Projects;
 
 use App\Models\Projects\Resources;
+use App\Interfaces\Projects\ResourcesInterface;
 
 /**
  * Class ResourcesRepository
@@ -10,7 +11,7 @@ use App\Models\Projects\Resources;
  * Repository for managing Resources resources.
  * Provides CRUD operations with database queries.
  */
-class ResourcesRepository
+class ResourcesRepository implements ResourcesInterface
 {
     /**
      * @var Resources
@@ -85,7 +86,7 @@ class ResourcesRepository
      * @param array $data
      * @return \App\Models\Projects\Resources
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

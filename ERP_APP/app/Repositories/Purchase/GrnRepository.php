@@ -3,6 +3,7 @@
 namespace App\Repositories\Purchase;
 
 use App\Models\Purchase\Grn;
+use App\Interfaces\Purchase\GrnInterface;
 
 /**
  * Class GrnRepository
@@ -10,7 +11,7 @@ use App\Models\Purchase\Grn;
  * Repository for managing Grn resources.
  * Provides CRUD operations with database queries.
  */
-class GrnRepository
+class GrnRepository implements GrnInterface
 {
     /**
      * @var Grn
@@ -85,7 +86,7 @@ class GrnRepository
      * @param array $data
      * @return \App\Models\Purchase\Grn
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

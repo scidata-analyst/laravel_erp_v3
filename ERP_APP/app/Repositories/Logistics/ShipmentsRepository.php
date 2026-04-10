@@ -3,6 +3,7 @@
 namespace App\Repositories\Logistics;
 
 use App\Models\Logistics\Shipments;
+use App\Interfaces\Logistics\ShipmentsInterface;
 
 /**
  * Class ShipmentsRepository
@@ -10,7 +11,7 @@ use App\Models\Logistics\Shipments;
  * Repository for managing Shipments resources.
  * Provides CRUD operations with database queries.
  */
-class ShipmentsRepository
+class ShipmentsRepository implements ShipmentsInterface
 {
     /**
      * @var Shipments
@@ -85,7 +86,7 @@ class ShipmentsRepository
      * @param array $data
      * @return \App\Models\Logistics\Shipments
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

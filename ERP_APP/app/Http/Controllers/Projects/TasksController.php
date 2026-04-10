@@ -34,7 +34,6 @@ class TasksController extends Controller
     /**
      * Display all Tasks records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class TasksController extends Controller
     /**
      * Display a paginated listing of Tasks resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class TasksController extends Controller
      * Store a newly created Tasks resource in storage.
      *
      * @param TasksStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(TasksStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class TasksController extends Controller
      * Display the specified Tasks resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class TasksController extends Controller
      *
      * @param TasksUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(TasksUpdateRequest $request, $id)
     {
-        $data = $this->tasksService->update($id, $request->validated());
+        $data = $this->tasksService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class TasksController extends Controller
      * Remove the specified Tasks resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

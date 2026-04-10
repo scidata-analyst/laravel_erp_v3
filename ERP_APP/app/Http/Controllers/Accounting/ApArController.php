@@ -34,7 +34,6 @@ class ApArController extends Controller
     /**
      * Display all ApAr records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class ApArController extends Controller
     /**
      * Display a paginated listing of ApAr resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class ApArController extends Controller
      * Store a newly created ApAr resource in storage.
      *
      * @param ApArStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(ApArStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class ApArController extends Controller
      * Display the specified ApAr resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class ApArController extends Controller
      *
      * @param ApArUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(ApArUpdateRequest $request, $id)
     {
-        $data = $this->apArService->update($id, $request->validated());
+        $data = $this->apArService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class ApArController extends Controller
      * Remove the specified ApAr resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

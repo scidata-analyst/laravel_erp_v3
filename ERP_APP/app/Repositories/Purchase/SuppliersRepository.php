@@ -3,6 +3,7 @@
 namespace App\Repositories\Purchase;
 
 use App\Models\Purchase\Suppliers;
+use App\Interfaces\Purchase\SuppliersInterface;
 
 /**
  * Class SuppliersRepository
@@ -10,7 +11,7 @@ use App\Models\Purchase\Suppliers;
  * Repository for managing Suppliers resources.
  * Provides CRUD operations with database queries.
  */
-class SuppliersRepository
+class SuppliersRepository implements SuppliersInterface
 {
     /**
      * @var Suppliers
@@ -85,7 +86,7 @@ class SuppliersRepository
      * @param array $data
      * @return \App\Models\Purchase\Suppliers
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

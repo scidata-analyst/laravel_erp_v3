@@ -3,6 +3,7 @@
 namespace App\Repositories\Reports;
 
 use App\Models\Reports\Forecasting;
+use App\Interfaces\Reports\ForecastingInterface;
 
 /**
  * Class ForecastingRepository
@@ -10,7 +11,7 @@ use App\Models\Reports\Forecasting;
  * Repository for managing Forecasting resources.
  * Provides CRUD operations with database queries.
  */
-class ForecastingRepository
+class ForecastingRepository implements ForecastingInterface
 {
     /**
      * @var Forecasting
@@ -85,7 +86,7 @@ class ForecastingRepository
      * @param array $data
      * @return \App\Models\Reports\Forecasting
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

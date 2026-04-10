@@ -3,6 +3,7 @@
 namespace App\Repositories\Accounting;
 
 use App\Models\Accounting\FinReports;
+use App\Interfaces\Accounting\FinReportsInterface;
 
 /**
  * Class FinReportsRepository
@@ -10,7 +11,7 @@ use App\Models\Accounting\FinReports;
  * Repository for managing FinReports resources.
  * Provides CRUD operations with database queries.
  */
-class FinReportsRepository
+class FinReportsRepository implements FinReportsInterface
 {
     /**
      * @var FinReports
@@ -85,7 +86,7 @@ class FinReportsRepository
      * @param array $data
      * @return \App\Models\Accounting\FinReports
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

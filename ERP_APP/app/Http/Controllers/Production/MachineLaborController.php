@@ -34,7 +34,6 @@ class MachineLaborController extends Controller
     /**
      * Display all MachineLabor records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class MachineLaborController extends Controller
     /**
      * Display a paginated listing of MachineLabor resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class MachineLaborController extends Controller
      * Store a newly created MachineLabor resource in storage.
      *
      * @param MachineLaborStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(MachineLaborStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class MachineLaborController extends Controller
      * Display the specified MachineLabor resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class MachineLaborController extends Controller
      *
      * @param MachineLaborUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(MachineLaborUpdateRequest $request, $id)
     {
-        $data = $this->machineLaborService->update($id, $request->validated());
+        $data = $this->machineLaborService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class MachineLaborController extends Controller
      * Remove the specified MachineLabor resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

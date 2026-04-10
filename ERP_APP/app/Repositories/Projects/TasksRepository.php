@@ -3,6 +3,7 @@
 namespace App\Repositories\Projects;
 
 use App\Models\Projects\Tasks;
+use App\Interfaces\Projects\TasksInterface;
 
 /**
  * Class TasksRepository
@@ -10,7 +11,7 @@ use App\Models\Projects\Tasks;
  * Repository for managing Tasks resources.
  * Provides CRUD operations with database queries.
  */
-class TasksRepository
+class TasksRepository implements TasksInterface
 {
     /**
      * @var Tasks
@@ -85,7 +86,7 @@ class TasksRepository
      * @param array $data
      * @return \App\Models\Projects\Tasks
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

@@ -3,6 +3,7 @@
 namespace App\Repositories\Production;
 
 use App\Models\Production\Bom;
+use App\Interfaces\Production\BomInterface;
 
 /**
  * Class BomRepository
@@ -10,7 +11,7 @@ use App\Models\Production\Bom;
  * Repository for managing Bom resources.
  * Provides CRUD operations with database queries.
  */
-class BomRepository
+class BomRepository implements BomInterface
 {
     /**
      * @var Bom
@@ -85,7 +86,7 @@ class BomRepository
      * @param array $data
      * @return \App\Models\Production\Bom
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

@@ -34,7 +34,6 @@ class DefectsController extends Controller
     /**
      * Display all Defects records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class DefectsController extends Controller
     /**
      * Display a paginated listing of Defects resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class DefectsController extends Controller
      * Store a newly created Defects resource in storage.
      *
      * @param DefectsStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(DefectsStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class DefectsController extends Controller
      * Display the specified Defects resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class DefectsController extends Controller
      *
      * @param DefectsUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(DefectsUpdateRequest $request, $id)
     {
-        $data = $this->defectsService->update($id, $request->validated());
+        $data = $this->defectsService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class DefectsController extends Controller
      * Remove the specified Defects resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

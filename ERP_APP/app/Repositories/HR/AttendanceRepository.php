@@ -3,6 +3,7 @@
 namespace App\Repositories\HR;
 
 use App\Models\HR\Attendance;
+use App\Interfaces\HR\AttendanceInterface;
 
 /**
  * Class AttendanceRepository
@@ -10,7 +11,7 @@ use App\Models\HR\Attendance;
  * Repository for managing Attendance resources.
  * Provides CRUD operations with database queries.
  */
-class AttendanceRepository
+class AttendanceRepository implements AttendanceInterface
 {
     /**
      * @var Attendance
@@ -85,7 +86,7 @@ class AttendanceRepository
      * @param array $data
      * @return \App\Models\HR\Attendance
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

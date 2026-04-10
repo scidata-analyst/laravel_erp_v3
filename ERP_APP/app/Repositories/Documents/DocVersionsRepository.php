@@ -3,6 +3,7 @@
 namespace App\Repositories\Documents;
 
 use App\Models\Documents\DocVersions;
+use App\Interfaces\Documents\DocVersionsInterface;
 
 /**
  * Class DocVersionsRepository
@@ -10,7 +11,7 @@ use App\Models\Documents\DocVersions;
  * Repository for managing DocVersions resources.
  * Provides CRUD operations with database queries.
  */
-class DocVersionsRepository
+class DocVersionsRepository implements DocVersionsInterface
 {
     /**
      * @var DocVersions
@@ -85,7 +86,7 @@ class DocVersionsRepository
      * @param array $data
      * @return \App\Models\Documents\DocVersions
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

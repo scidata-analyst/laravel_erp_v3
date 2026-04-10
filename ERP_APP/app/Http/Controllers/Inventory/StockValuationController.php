@@ -34,7 +34,6 @@ class StockValuationController extends Controller
     /**
      * Display all StockValuation records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class StockValuationController extends Controller
     /**
      * Display a paginated listing of StockValuation resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class StockValuationController extends Controller
      * Store a newly created StockValuation resource in storage.
      *
      * @param StockValuationStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(StockValuationStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class StockValuationController extends Controller
      * Display the specified StockValuation resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class StockValuationController extends Controller
      *
      * @param StockValuationUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(StockValuationUpdateRequest $request, $id)
     {
-        $data = $this->stockValuationService->update($id, $request->validated());
+        $data = $this->stockValuationService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class StockValuationController extends Controller
      * Remove the specified StockValuation resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

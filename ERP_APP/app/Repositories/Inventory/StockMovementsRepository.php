@@ -3,6 +3,7 @@
 namespace App\Repositories\Inventory;
 
 use App\Models\Inventory\StockMovements;
+use App\Interfaces\Inventory\StockMovementsInterface;
 
 /**
  * Class StockMovementsRepository
@@ -10,7 +11,7 @@ use App\Models\Inventory\StockMovements;
  * Repository for managing StockMovements resources.
  * Provides CRUD operations with database queries.
  */
-class StockMovementsRepository
+class StockMovementsRepository implements StockMovementsInterface
 {
     /**
      * @var StockMovements
@@ -85,7 +86,7 @@ class StockMovementsRepository
      * @param array $data
      * @return \App\Models\Inventory\StockMovements
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

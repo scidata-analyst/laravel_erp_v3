@@ -3,6 +3,7 @@
 namespace App\Repositories\Reports;
 
 use App\Models\Reports\CustomReports;
+use App\Interfaces\Reports\CustomReportsInterface;
 
 /**
  * Class CustomReportsRepository
@@ -10,7 +11,7 @@ use App\Models\Reports\CustomReports;
  * Repository for managing CustomReports resources.
  * Provides CRUD operations with database queries.
  */
-class CustomReportsRepository
+class CustomReportsRepository implements CustomReportsInterface
 {
     /**
      * @var CustomReports
@@ -85,7 +86,7 @@ class CustomReportsRepository
      * @param array $data
      * @return \App\Models\Reports\CustomReports
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

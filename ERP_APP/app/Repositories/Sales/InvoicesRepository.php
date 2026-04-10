@@ -3,6 +3,7 @@
 namespace App\Repositories\Sales;
 
 use App\Models\Sales\Invoices;
+use App\Interfaces\Sales\InvoicesInterface;
 
 /**
  * Class InvoicesRepository
@@ -10,7 +11,7 @@ use App\Models\Sales\Invoices;
  * Repository for managing Invoices resources.
  * Provides CRUD operations with database queries.
  */
-class InvoicesRepository
+class InvoicesRepository implements InvoicesInterface
 {
     /**
      * @var Invoices
@@ -85,7 +86,7 @@ class InvoicesRepository
      * @param array $data
      * @return \App\Models\Sales\Invoices
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

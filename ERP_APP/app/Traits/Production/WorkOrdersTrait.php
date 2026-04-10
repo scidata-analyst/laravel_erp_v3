@@ -29,7 +29,6 @@ trait WorkOrdersTrait
     /**
      * Display all WorkOrders records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -39,7 +38,6 @@ trait WorkOrdersTrait
     /**
      * Display a paginated listing of WorkOrders resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -49,7 +47,6 @@ trait WorkOrdersTrait
     /**
      * Store a newly created WorkOrders resource in storage.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(array $data)
     {
@@ -60,7 +57,6 @@ trait WorkOrdersTrait
      * Display the specified WorkOrders resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -72,9 +68,8 @@ trait WorkOrdersTrait
      *
      * @param WorkOrdersRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         
     }
@@ -83,7 +78,6 @@ trait WorkOrdersTrait
      * Remove the specified WorkOrders resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

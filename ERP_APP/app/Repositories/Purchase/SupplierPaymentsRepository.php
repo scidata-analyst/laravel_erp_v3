@@ -3,6 +3,7 @@
 namespace App\Repositories\Purchase;
 
 use App\Models\Purchase\SupplierPayments;
+use App\Interfaces\Purchase\SupplierPaymentsInterface;
 
 /**
  * Class SupplierPaymentsRepository
@@ -10,7 +11,7 @@ use App\Models\Purchase\SupplierPayments;
  * Repository for managing SupplierPayments resources.
  * Provides CRUD operations with database queries.
  */
-class SupplierPaymentsRepository
+class SupplierPaymentsRepository implements SupplierPaymentsInterface
 {
     /**
      * @var SupplierPayments
@@ -85,7 +86,7 @@ class SupplierPaymentsRepository
      * @param array $data
      * @return \App\Models\Purchase\SupplierPayments
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

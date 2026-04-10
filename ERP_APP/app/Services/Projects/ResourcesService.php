@@ -3,8 +3,9 @@
 namespace App\Services\Projects;
 
 use App\Repositories\Projects\ResourcesRepository;
+use App\Interfaces\Projects\ResourcesInterface;
 
-class ResourcesService
+class ResourcesService implements ResourcesInterface
 {
     protected $repository;
 
@@ -33,9 +34,9 @@ class ResourcesService
         return $this->repository->show($id);
     }
 
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
-        return $this->repository->update($id, $data);
+        return $this->repository->update($data, $id);
     }
 
     public function destroy($id)

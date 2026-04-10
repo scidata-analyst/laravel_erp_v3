@@ -34,7 +34,6 @@ class ShipmentsController extends Controller
     /**
      * Display all Shipments records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class ShipmentsController extends Controller
     /**
      * Display a paginated listing of Shipments resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class ShipmentsController extends Controller
      * Store a newly created Shipments resource in storage.
      *
      * @param ShipmentsStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(ShipmentsStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class ShipmentsController extends Controller
      * Display the specified Shipments resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class ShipmentsController extends Controller
      *
      * @param ShipmentsUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(ShipmentsUpdateRequest $request, $id)
     {
-        $data = $this->shipmentsService->update($id, $request->validated());
+        $data = $this->shipmentsService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class ShipmentsController extends Controller
      * Remove the specified Shipments resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

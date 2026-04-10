@@ -34,7 +34,6 @@ class ResourcesController extends Controller
     /**
      * Display all Resources records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class ResourcesController extends Controller
     /**
      * Display a paginated listing of Resources resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class ResourcesController extends Controller
      * Store a newly created Resources resource in storage.
      *
      * @param ResourcesStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(ResourcesStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class ResourcesController extends Controller
      * Display the specified Resources resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class ResourcesController extends Controller
      *
      * @param ResourcesUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(ResourcesUpdateRequest $request, $id)
     {
-        $data = $this->resourcesService->update($id, $request->validated());
+        $data = $this->resourcesService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class ResourcesController extends Controller
      * Remove the specified Resources resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

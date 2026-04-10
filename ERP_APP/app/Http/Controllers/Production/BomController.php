@@ -34,7 +34,6 @@ class BomController extends Controller
     /**
      * Display all Bom records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class BomController extends Controller
     /**
      * Display a paginated listing of Bom resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class BomController extends Controller
      * Store a newly created Bom resource in storage.
      *
      * @param BomStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(BomStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class BomController extends Controller
      * Display the specified Bom resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class BomController extends Controller
      *
      * @param BomUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(BomUpdateRequest $request, $id)
     {
-        $data = $this->bomService->update($id, $request->validated());
+        $data = $this->bomService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class BomController extends Controller
      * Remove the specified Bom resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

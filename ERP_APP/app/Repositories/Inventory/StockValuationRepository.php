@@ -3,6 +3,7 @@
 namespace App\Repositories\Inventory;
 
 use App\Models\Inventory\StockValuation;
+use App\Interfaces\Inventory\StockValuationInterface;
 
 /**
  * Class StockValuationRepository
@@ -10,7 +11,7 @@ use App\Models\Inventory\StockValuation;
  * Repository for managing StockValuation resources.
  * Provides CRUD operations with database queries.
  */
-class StockValuationRepository
+class StockValuationRepository implements StockValuationInterface
 {
     /**
      * @var StockValuation
@@ -85,7 +86,7 @@ class StockValuationRepository
      * @param array $data
      * @return \App\Models\Inventory\StockValuation
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);

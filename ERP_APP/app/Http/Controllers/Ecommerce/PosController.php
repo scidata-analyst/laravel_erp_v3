@@ -34,7 +34,6 @@ class PosController extends Controller
     /**
      * Display all Pos records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class PosController extends Controller
     /**
      * Display a paginated listing of Pos resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class PosController extends Controller
      * Store a newly created Pos resource in storage.
      *
      * @param PosStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(PosStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class PosController extends Controller
      * Display the specified Pos resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class PosController extends Controller
      *
      * @param PosUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(PosUpdateRequest $request, $id)
     {
-        $data = $this->posService->update($id, $request->validated());
+        $data = $this->posService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class PosController extends Controller
      * Remove the specified Pos resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

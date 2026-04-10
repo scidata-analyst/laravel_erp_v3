@@ -34,7 +34,6 @@ class SettingsController extends Controller
     /**
      * Display all Settings records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class SettingsController extends Controller
     /**
      * Display a paginated listing of Settings resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class SettingsController extends Controller
      * Store a newly created Settings resource in storage.
      *
      * @param SettingsStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(SettingsStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class SettingsController extends Controller
      * Display the specified Settings resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class SettingsController extends Controller
      *
      * @param SettingsUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(SettingsUpdateRequest $request, $id)
     {
-        $data = $this->settingsService->update($id, $request->validated());
+        $data = $this->settingsService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class SettingsController extends Controller
      * Remove the specified Settings resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

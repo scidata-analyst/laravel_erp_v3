@@ -34,7 +34,6 @@ class RolesController extends Controller
     /**
      * Display all Roles records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function all()
     {
@@ -50,7 +49,6 @@ class RolesController extends Controller
     /**
      * Display a paginated listing of Roles resources.
      *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -71,7 +69,6 @@ class RolesController extends Controller
      * Store a newly created Roles resource in storage.
      *
      * @param RolesStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(RolesStoreRequest $request)
     {
@@ -88,7 +85,6 @@ class RolesController extends Controller
      * Display the specified Roles resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -106,11 +102,10 @@ class RolesController extends Controller
      *
      * @param RolesUpdateRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(RolesUpdateRequest $request, $id)
     {
-        $data = $this->rolesService->update($id, $request->validated());
+        $data = $this->rolesService->update($request->validated(), $id);
 
         return response()->json([
             "success" => true,
@@ -123,7 +118,6 @@ class RolesController extends Controller
      * Remove the specified Roles resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {

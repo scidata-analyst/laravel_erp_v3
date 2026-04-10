@@ -3,14 +3,9 @@
 namespace App\Services\Accounting;
 
 use App\Repositories\Accounting\ApArRepository;
+use App\Interfaces\Accounting\ApArInterface;
 
-/**
- * Class ApArService
- *
- * Service for managing ApAr resources.
- * Provides business logic and delegates to repository.
- */
-class ApArService
+class ApArService implements ApArInterface
 {
     /**
      * @var ApArRepository
@@ -79,9 +74,9 @@ class ApArService
      * @param array $data
      * @return \App\Models\Accounting\ApAr
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
-        return $this->repository->update($id, $data);
+        return $this->repository->update($data, $id);
     }
 
     /**

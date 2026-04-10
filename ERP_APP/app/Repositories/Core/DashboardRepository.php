@@ -3,6 +3,7 @@
 namespace App\Repositories\Core;
 
 use App\Models\Core\Dashboard;
+use App\Interfaces\Core\DashboardInterface;
 
 /**
  * Class DashboardRepository
@@ -10,7 +11,7 @@ use App\Models\Core\Dashboard;
  * Repository for managing Dashboard resources.
  * Provides CRUD operations with database queries.
  */
-class DashboardRepository
+class DashboardRepository implements DashboardInterface
 {
     /**
      * @var Dashboard
@@ -85,7 +86,7 @@ class DashboardRepository
      * @param array $data
      * @return \App\Models\Core\Dashboard
      */
-    public function update($id, array $data)
+    public function update(array $data, $id)
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);
