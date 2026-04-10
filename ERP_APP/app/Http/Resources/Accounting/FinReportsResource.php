@@ -14,6 +14,15 @@ class FinReportsResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'type' => $this->type,
+            'period' => $this->period,
+            'start_date' => $this->start_date,
+            'end_date' => $this->end_date,
+            'format' => $this->format,
+            'created_at' => $this->created_at?->toIso8601String(),
+            'updated_at' => $this->updated_at?->toIso8601String(),
+        ];
     }
 }

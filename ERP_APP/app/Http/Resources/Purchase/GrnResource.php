@@ -14,6 +14,17 @@ class GrnResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'purchase_order_id' => $this->purchase_order_id,
+            'supplier_name' => $this->supplier_name,
+            'grn_number' => $this->grn_number,
+            'receipt_date' => $this->receipt_date,
+            'warehouse_id' => $this->warehouse_id,
+            'notes' => $this->notes,
+            'status' => $this->status,
+            'created_at' => $this->created_at?->toIso8601String(),
+            'updated_at' => $this->updated_at?->toIso8601String(),
+        ];
     }
 }

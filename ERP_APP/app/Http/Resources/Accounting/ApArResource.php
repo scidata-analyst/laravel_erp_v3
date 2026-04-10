@@ -14,6 +14,16 @@ class ApArResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'party_name' => $this->party_name,
+            'ap_ar_type' => $this->ap_ar_type,
+            'amount' => $this->amount,
+            'due_date' => $this->due_date,
+            'reference' => $this->reference,
+            'status' => $this->status,
+            'created_at' => $this->created_at?->toIso8601String(),
+            'updated_at' => $this->updated_at?->toIso8601String(),
+        ];
     }
 }

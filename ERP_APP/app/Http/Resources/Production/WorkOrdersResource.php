@@ -14,6 +14,17 @@ class WorkOrdersResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'bom_id' => $this->bom_id,
+            'quantity_to_produce' => $this->quantity_to_produce,
+            'priority' => $this->priority,
+            'start_date' => $this->start_date,
+            'end_date' => $this->end_date,
+            'workshop_line' => $this->workshop_line,
+            'status' => $this->status,
+            'created_at' => $this->created_at?->toIso8601String(),
+            'updated_at' => $this->updated_at?->toIso8601String(),
+        ];
     }
 }

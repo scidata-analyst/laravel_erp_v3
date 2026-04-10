@@ -14,6 +14,17 @@ class ComplianceResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'standard_regulation' => $this->standard_regulation,
+            'scope' => $this->scope,
+            'audit_date' => $this->audit_date,
+            'next_audit_date' => $this->next_audit_date,
+            'auditor' => $this->auditor,
+            'findings_notes' => $this->findings_notes,
+            'status' => $this->status,
+            'created_at' => $this->created_at?->toIso8601String(),
+            'updated_at' => $this->updated_at?->toIso8601String(),
+        ];
     }
 }

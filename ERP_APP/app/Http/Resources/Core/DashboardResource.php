@@ -14,6 +14,12 @@ class DashboardResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'total_revenue' => $this->total_revenue,
+            'sales_orders' => $this->sales_orders,
+            'created_at' => $this->created_at?->toIso8601String(),
+            'updated_at' => $this->updated_at?->toIso8601String(),
+        ];
     }
 }

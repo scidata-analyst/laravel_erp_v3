@@ -14,6 +14,17 @@ class InteractionsResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'customer_id' => $this->customer_id,
+            'contact_person' => $this->contact_person,
+            'interaction_type' => $this->interaction_type,
+            'interaction_date' => $this->interaction_date,
+            'duration' => $this->duration,
+            'summary' => $this->summary,
+            'next_action' => $this->next_action,
+            'created_at' => $this->created_at?->toIso8601String(),
+            'updated_at' => $this->updated_at?->toIso8601String(),
+        ];
     }
 }

@@ -14,6 +14,16 @@ class BatchTrackingResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'product_id' => $this->product_id,
+            'batch_lot_number' => $this->batch_lot_number,
+            'serial_number' => $this->serial_number,
+            'quantity' => $this->quantity,
+            'manufacture_date' => $this->manufacture_date,
+            'expiry_date' => $this->expiry_date,
+            'created_at' => $this->created_at?->toIso8601String(),
+            'updated_at' => $this->updated_at?->toIso8601String(),
+        ];
     }
 }

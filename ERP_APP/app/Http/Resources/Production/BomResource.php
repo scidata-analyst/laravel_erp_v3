@@ -14,6 +14,14 @@ class BomResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'finished_product_name' => $this->finished_product_name,
+            'version' => $this->version,
+            'lead_time_days' => $this->lead_time_days,
+            'status' => $this->status,
+            'created_at' => $this->created_at?->toIso8601String(),
+            'updated_at' => $this->updated_at?->toIso8601String(),
+        ];
     }
 }

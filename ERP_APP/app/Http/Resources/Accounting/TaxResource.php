@@ -14,6 +14,16 @@ class TaxResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'tax_name' => $this->tax_name,
+            'tax_type' => $this->tax_type,
+            'rate' => $this->rate,
+            'filing_period' => $this->filing_period,
+            'applicable_on' => $this->applicable_on,
+            'status' => $this->status,
+            'created_at' => $this->created_at?->toIso8601String(),
+            'updated_at' => $this->updated_at?->toIso8601String(),
+        ];
     }
 }

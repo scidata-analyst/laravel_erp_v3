@@ -14,6 +14,16 @@ class OnlineChannelsResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'channel_name' => $this->channel_name,
+            'platform' => $this->platform,
+            'api_store_url' => $this->api_store_url,
+            'api_key' => $this->api_key,
+            'sync_frequency' => $this->sync_frequency,
+            'status' => $this->status,
+            'created_at' => $this->created_at?->toIso8601String(),
+            'updated_at' => $this->updated_at?->toIso8601String(),
+        ];
     }
 }

@@ -14,6 +14,15 @@ class InvSyncResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'channel_id' => $this->channel_id,
+            'last_sync_time' => $this->last_sync_time,
+            'total_synced_items' => $this->total_synced_items,
+            'sync_errors' => $this->sync_errors,
+            'status' => $this->status,
+            'created_at' => $this->created_at?->toIso8601String(),
+            'updated_at' => $this->updated_at?->toIso8601String(),
+        ];
     }
 }

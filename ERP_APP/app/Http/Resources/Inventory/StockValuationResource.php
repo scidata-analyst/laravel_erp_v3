@@ -14,6 +14,15 @@ class StockValuationResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'product_id' => $this->product_id,
+            'valuation_method' => $this->valuation_method,
+            'unit_cost' => $this->unit_cost,
+            'quantity_on_hand' => $this->quantity_on_hand,
+            'total_value' => $this->total_value,
+            'created_at' => $this->created_at?->toIso8601String(),
+            'updated_at' => $this->updated_at?->toIso8601String(),
+        ];
     }
 }

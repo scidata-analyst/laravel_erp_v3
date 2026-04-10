@@ -14,6 +14,17 @@ class ProjectCostResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'project_name' => $this->project_name,
+            'cost_category' => $this->cost_category,
+            'amount' => $this->amount,
+            'date_incurred' => $this->date_incurred,
+            'approved_by_user_id' => $this->approved_by_user_id,
+            'description' => $this->description,
+            'status' => $this->status,
+            'created_at' => $this->created_at?->toIso8601String(),
+            'updated_at' => $this->updated_at?->toIso8601String(),
+        ];
     }
 }
