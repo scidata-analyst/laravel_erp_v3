@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Repositories\Documents;
 
@@ -8,85 +8,99 @@ use App\Models\Documents\DocLibrary;
  * Class DocLibraryRepository
  *
  * Repository for managing DocLibrary resources.
- * Provides CRUD operations with JSON responses.
+ * Provides CRUD operations with database queries.
  */
 class DocLibraryRepository
 {
     /**
-     * @var DocLibraryRepository
+     * @var DocLibrary
      */
-    protected $docLibraryRepository;
+    protected $model;
 
     /**
      * DocLibraryRepository constructor.
      *
+     * @param DocLibrary $model
      */
-    public function __construct()
+    public function __construct(DocLibrary $model)
     {
-        
+        $this->model = $model;
     }
 
     /**
      * Display all DocLibrary records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function all()
     {
-        $data = $this->docLibraryRepository->all();
+        return $this->model->all();
     }
 
     /**
      * Display a paginated listing of DocLibrary resources.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @param int $perPage
+     * @param string $search
+     * @param array $filters
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        $query = $this->model->query();
+
+        if ($search) {
+            $query->where('title', 'like', "%{$search}%");
+        }
+
+        return $query->paginate($perPage);
     }
 
     /**
      * Store a newly created DocLibrary resource in storage.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @param array $data
+     * @return \App\Models\Documents\DocLibrary
      */
     public function store(array $data)
     {
-        
+        return $this->model->create($data);
     }
 
     /**
      * Display the specified DocLibrary resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return \App\Models\Documents\DocLibrary
      */
     public function show($id)
     {
-        
+        return $this->model->findOrFail($id);
     }
 
     /**
      * Update the specified DocLibrary resource in storage.
      *
-     * @param DocLibraryRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @param array $data
+     * @return \App\Models\Documents\DocLibrary
      */
     public function update($id, array $data)
     {
-        
+        $record = $this->model->findOrFail($id);
+        $record->update($data);
+        return $record;
     }
 
     /**
      * Remove the specified DocLibrary resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return bool
      */
     public function destroy($id)
     {
-        
+        $record = $this->model->findOrFail($id);
+        return $record->delete();
     }
 }

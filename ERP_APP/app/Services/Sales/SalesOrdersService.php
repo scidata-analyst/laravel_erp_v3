@@ -1,92 +1,45 @@
-﻿<?php
+<?php
 
 namespace App\Services\Sales;
 
-use App\Models\Sales\SalesOrders;
+use App\Repositories\Sales\SalesOrdersRepository;
 
-/**
- * Class SalesOrdersService
- *
- * Service for managing SalesOrders resources.
- * Provides CRUD operations with JSON responses.
- */
 class SalesOrdersService
 {
-    /**
-     * @var SalesOrdersService
-     */
-    protected $salesOrdersService;
+    protected $repository;
 
-    /**
-     * SalesOrdersService constructor.
-     *
-     */
-    public function __construct()
+    public function __construct(SalesOrdersRepository $repository)
     {
-        
+        $this->repository = $repository;
     }
 
-    /**
-     * Display all SalesOrders records without pagination.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function all()
     {
-        $data = $this->salesOrdersService->all();
+        return $this->repository->all();
     }
 
-    /**
-     * Display a paginated listing of SalesOrders resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        return $this->repository->index($perPage, $search, $filters);
     }
 
-    /**
-     * Store a newly created SalesOrders resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function store(array $data)
     {
-        
+        return $this->repository->store($data);
     }
 
-    /**
-     * Display the specified SalesOrders resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function show($id)
     {
-        
+        return $this->repository->show($id);
     }
 
-    /**
-     * Update the specified SalesOrders resource in storage.
-     *
-     * @param SalesOrdersRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function update($id, array $data)
     {
-        
+        return $this->repository->update($id, $data);
     }
 
-    /**
-     * Remove the specified SalesOrders resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function destroy($id)
     {
-        
+        return $this->repository->destroy($id);
     }
 }

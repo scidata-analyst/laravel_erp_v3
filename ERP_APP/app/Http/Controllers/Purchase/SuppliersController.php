@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Purchase;
 
 use App\Services\Purchase\SuppliersService;
-use App\Http\Requests\Purchase\SuppliersRequest;
+use App\Http\Requests\Purchase\SuppliersStoreRequest;
+use App\Http\Requests\Purchase\SuppliersUpdateRequest;
 use App\Http\Resources\Purchase\SuppliersResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class SuppliersController extends Controller
     /**
      * Store a newly created Suppliers resource in storage.
      *
-     * @param SuppliersRequest $request
+     * @param SuppliersStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(SuppliersRequest $request)
+    public function store(SuppliersStoreRequest $request)
     {
         $data = $this->suppliersService->store($request->validated());
 
@@ -103,11 +104,11 @@ class SuppliersController extends Controller
     /**
      * Update the specified Suppliers resource in storage.
      *
-     * @param SuppliersRequest $request
+     * @param SuppliersUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(SuppliersRequest $request, $id)
+    public function update(SuppliersUpdateRequest $request, $id)
     {
         $data = $this->suppliersService->update($id, $request->validated());
 

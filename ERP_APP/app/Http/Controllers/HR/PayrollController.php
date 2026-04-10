@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\HR;
 
 use App\Services\HR\PayrollService;
-use App\Http\Requests\HR\PayrollRequest;
+use App\Http\Requests\HR\PayrollStoreRequest;
+use App\Http\Requests\HR\PayrollUpdateRequest;
 use App\Http\Resources\HR\PayrollResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class PayrollController extends Controller
     /**
      * Store a newly created Payroll resource in storage.
      *
-     * @param PayrollRequest $request
+     * @param PayrollStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(PayrollRequest $request)
+    public function store(PayrollStoreRequest $request)
     {
         $data = $this->payrollService->store($request->validated());
 
@@ -103,11 +104,11 @@ class PayrollController extends Controller
     /**
      * Update the specified Payroll resource in storage.
      *
-     * @param PayrollRequest $request
+     * @param PayrollUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(PayrollRequest $request, $id)
+    public function update(PayrollUpdateRequest $request, $id)
     {
         $data = $this->payrollService->update($id, $request->validated());
 

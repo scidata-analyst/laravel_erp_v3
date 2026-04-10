@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Purchase;
 
 use App\Services\Purchase\SupplierPaymentsService;
-use App\Http\Requests\Purchase\SupplierPaymentsRequest;
+use App\Http\Requests\Purchase\SupplierPaymentsStoreRequest;
+use App\Http\Requests\Purchase\SupplierPaymentsUpdateRequest;
 use App\Http\Resources\Purchase\SupplierPaymentsResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class SupplierPaymentsController extends Controller
     /**
      * Store a newly created SupplierPayments resource in storage.
      *
-     * @param SupplierPaymentsRequest $request
+     * @param SupplierPaymentsStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(SupplierPaymentsRequest $request)
+    public function store(SupplierPaymentsStoreRequest $request)
     {
         $data = $this->supplierPaymentsService->store($request->validated());
 
@@ -103,11 +104,11 @@ class SupplierPaymentsController extends Controller
     /**
      * Update the specified SupplierPayments resource in storage.
      *
-     * @param SupplierPaymentsRequest $request
+     * @param SupplierPaymentsUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(SupplierPaymentsRequest $request, $id)
+    public function update(SupplierPaymentsUpdateRequest $request, $id)
     {
         $data = $this->supplierPaymentsService->update($id, $request->validated());
 

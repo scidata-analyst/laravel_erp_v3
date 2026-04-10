@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Projects;
 
 use App\Services\Projects\ResourcesService;
-use App\Http\Requests\Projects\ResourcesRequest;
+use App\Http\Requests\Projects\ResourcesStoreRequest;
+use App\Http\Requests\Projects\ResourcesUpdateRequest;
 use App\Http\Resources\Projects\ResourcesResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class ResourcesController extends Controller
     /**
      * Store a newly created Resources resource in storage.
      *
-     * @param ResourcesRequest $request
+     * @param ResourcesStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(ResourcesRequest $request)
+    public function store(ResourcesStoreRequest $request)
     {
         $data = $this->resourcesService->store($request->validated());
 
@@ -103,11 +104,11 @@ class ResourcesController extends Controller
     /**
      * Update the specified Resources resource in storage.
      *
-     * @param ResourcesRequest $request
+     * @param ResourcesUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(ResourcesRequest $request, $id)
+    public function update(ResourcesUpdateRequest $request, $id)
     {
         $data = $this->resourcesService->update($id, $request->validated());
 

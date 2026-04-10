@@ -1,92 +1,45 @@
-﻿<?php
+<?php
 
 namespace App\Services\Sales;
 
-use App\Models\Sales\Promotions;
+use App\Repositories\Sales\PromotionsRepository;
 
-/**
- * Class PromotionsService
- *
- * Service for managing Promotions resources.
- * Provides CRUD operations with JSON responses.
- */
 class PromotionsService
 {
-    /**
-     * @var PromotionsService
-     */
-    protected $promotionsService;
+    protected $repository;
 
-    /**
-     * PromotionsService constructor.
-     *
-     */
-    public function __construct()
+    public function __construct(PromotionsRepository $repository)
     {
-        
+        $this->repository = $repository;
     }
 
-    /**
-     * Display all Promotions records without pagination.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function all()
     {
-        $data = $this->promotionsService->all();
+        return $this->repository->all();
     }
 
-    /**
-     * Display a paginated listing of Promotions resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        return $this->repository->index($perPage, $search, $filters);
     }
 
-    /**
-     * Store a newly created Promotions resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function store(array $data)
     {
-        
+        return $this->repository->store($data);
     }
 
-    /**
-     * Display the specified Promotions resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function show($id)
     {
-        
+        return $this->repository->show($id);
     }
 
-    /**
-     * Update the specified Promotions resource in storage.
-     *
-     * @param PromotionsRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function update($id, array $data)
     {
-        
+        return $this->repository->update($id, $data);
     }
 
-    /**
-     * Remove the specified Promotions resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function destroy($id)
     {
-        
+        return $this->repository->destroy($id);
     }
 }

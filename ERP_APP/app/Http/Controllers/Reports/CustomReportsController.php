@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Reports;
 
 use App\Services\Reports\CustomReportsService;
-use App\Http\Requests\Reports\CustomReportsRequest;
+use App\Http\Requests\Reports\CustomReportsStoreRequest;
+use App\Http\Requests\Reports\CustomReportsUpdateRequest;
 use App\Http\Resources\Reports\CustomReportsResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class CustomReportsController extends Controller
     /**
      * Store a newly created CustomReports resource in storage.
      *
-     * @param CustomReportsRequest $request
+     * @param CustomReportsStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(CustomReportsRequest $request)
+    public function store(CustomReportsStoreRequest $request)
     {
         $data = $this->customReportsService->store($request->validated());
 
@@ -103,11 +104,11 @@ class CustomReportsController extends Controller
     /**
      * Update the specified CustomReports resource in storage.
      *
-     * @param CustomReportsRequest $request
+     * @param CustomReportsUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(CustomReportsRequest $request, $id)
+    public function update(CustomReportsUpdateRequest $request, $id)
     {
         $data = $this->customReportsService->update($id, $request->validated());
 

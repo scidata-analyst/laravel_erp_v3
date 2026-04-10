@@ -1,92 +1,45 @@
-﻿<?php
+<?php
 
 namespace App\Services\Production;
 
-use App\Models\Production\Bom;
+use App\Repositories\Production\BomRepository;
 
-/**
- * Class BomService
- *
- * Service for managing Bom resources.
- * Provides CRUD operations with JSON responses.
- */
 class BomService
 {
-    /**
-     * @var BomService
-     */
-    protected $bomService;
+    protected $repository;
 
-    /**
-     * BomService constructor.
-     *
-     */
-    public function __construct()
+    public function __construct(BomRepository $repository)
     {
-        
+        $this->repository = $repository;
     }
 
-    /**
-     * Display all Bom records without pagination.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function all()
     {
-        $data = $this->bomService->all();
+        return $this->repository->all();
     }
 
-    /**
-     * Display a paginated listing of Bom resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        return $this->repository->index($perPage, $search, $filters);
     }
 
-    /**
-     * Store a newly created Bom resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function store(array $data)
     {
-        
+        return $this->repository->store($data);
     }
 
-    /**
-     * Display the specified Bom resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function show($id)
     {
-        
+        return $this->repository->show($id);
     }
 
-    /**
-     * Update the specified Bom resource in storage.
-     *
-     * @param BomRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function update($id, array $data)
     {
-        
+        return $this->repository->update($id, $data);
     }
 
-    /**
-     * Remove the specified Bom resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function destroy($id)
     {
-        
+        return $this->repository->destroy($id);
     }
 }

@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Logistics;
 
 use App\Services\Logistics\WarehousesService;
-use App\Http\Requests\Logistics\WarehousesRequest;
+use App\Http\Requests\Logistics\WarehousesStoreRequest;
+use App\Http\Requests\Logistics\WarehousesUpdateRequest;
 use App\Http\Resources\Logistics\WarehousesResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class WarehousesController extends Controller
     /**
      * Store a newly created Warehouses resource in storage.
      *
-     * @param WarehousesRequest $request
+     * @param WarehousesStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(WarehousesRequest $request)
+    public function store(WarehousesStoreRequest $request)
     {
         $data = $this->warehousesService->store($request->validated());
 
@@ -103,11 +104,11 @@ class WarehousesController extends Controller
     /**
      * Update the specified Warehouses resource in storage.
      *
-     * @param WarehousesRequest $request
+     * @param WarehousesUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(WarehousesRequest $request, $id)
+    public function update(WarehousesUpdateRequest $request, $id)
     {
         $data = $this->warehousesService->update($id, $request->validated());
 

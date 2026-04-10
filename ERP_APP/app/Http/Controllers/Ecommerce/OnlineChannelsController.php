@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Ecommerce;
 
 use App\Services\Ecommerce\OnlineChannelsService;
-use App\Http\Requests\Ecommerce\OnlineChannelsRequest;
+use App\Http\Requests\Ecommerce\OnlineChannelsStoreRequest;
+use App\Http\Requests\Ecommerce\OnlineChannelsUpdateRequest;
 use App\Http\Resources\Ecommerce\OnlineChannelsResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class OnlineChannelsController extends Controller
     /**
      * Store a newly created OnlineChannels resource in storage.
      *
-     * @param OnlineChannelsRequest $request
+     * @param OnlineChannelsStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(OnlineChannelsRequest $request)
+    public function store(OnlineChannelsStoreRequest $request)
     {
         $data = $this->onlineChannelsService->store($request->validated());
 
@@ -103,11 +104,11 @@ class OnlineChannelsController extends Controller
     /**
      * Update the specified OnlineChannels resource in storage.
      *
-     * @param OnlineChannelsRequest $request
+     * @param OnlineChannelsUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(OnlineChannelsRequest $request, $id)
+    public function update(OnlineChannelsUpdateRequest $request, $id)
     {
         $data = $this->onlineChannelsService->update($id, $request->validated());
 

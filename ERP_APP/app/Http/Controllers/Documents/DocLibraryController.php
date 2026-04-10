@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Documents;
 
 use App\Services\Documents\DocLibraryService;
-use App\Http\Requests\Documents\DocLibraryRequest;
+use App\Http\Requests\Documents\DocLibraryStoreRequest;
+use App\Http\Requests\Documents\DocLibraryUpdateRequest;
 use App\Http\Resources\Documents\DocLibraryResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class DocLibraryController extends Controller
     /**
      * Store a newly created DocLibrary resource in storage.
      *
-     * @param DocLibraryRequest $request
+     * @param DocLibraryStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(DocLibraryRequest $request)
+    public function store(DocLibraryStoreRequest $request)
     {
         $data = $this->docLibraryService->store($request->validated());
 
@@ -103,11 +104,11 @@ class DocLibraryController extends Controller
     /**
      * Update the specified DocLibrary resource in storage.
      *
-     * @param DocLibraryRequest $request
+     * @param DocLibraryUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(DocLibraryRequest $request, $id)
+    public function update(DocLibraryUpdateRequest $request, $id)
     {
         $data = $this->docLibraryService->update($id, $request->validated());
 

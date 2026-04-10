@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Production;
 
 use App\Services\Production\WorkOrdersService;
-use App\Http\Requests\Production\WorkOrdersRequest;
+use App\Http\Requests\Production\WorkOrdersStoreRequest;
+use App\Http\Requests\Production\WorkOrdersUpdateRequest;
 use App\Http\Resources\Production\WorkOrdersResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class WorkOrdersController extends Controller
     /**
      * Store a newly created WorkOrders resource in storage.
      *
-     * @param WorkOrdersRequest $request
+     * @param WorkOrdersStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(WorkOrdersRequest $request)
+    public function store(WorkOrdersStoreRequest $request)
     {
         $data = $this->workOrdersService->store($request->validated());
 
@@ -103,11 +104,11 @@ class WorkOrdersController extends Controller
     /**
      * Update the specified WorkOrders resource in storage.
      *
-     * @param WorkOrdersRequest $request
+     * @param WorkOrdersUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(WorkOrdersRequest $request, $id)
+    public function update(WorkOrdersUpdateRequest $request, $id)
     {
         $data = $this->workOrdersService->update($id, $request->validated());
 

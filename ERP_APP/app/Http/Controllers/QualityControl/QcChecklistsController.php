@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\QualityControl;
 
 use App\Services\QualityControl\QcChecklistsService;
-use App\Http\Requests\QualityControl\QcChecklistsRequest;
+use App\Http\Requests\QualityControl\QcChecklistsStoreRequest;
+use App\Http\Requests\QualityControl\QcChecklistsUpdateRequest;
 use App\Http\Resources\QualityControl\QcChecklistsResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class QcChecklistsController extends Controller
     /**
      * Store a newly created QcChecklists resource in storage.
      *
-     * @param QcChecklistsRequest $request
+     * @param QcChecklistsStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(QcChecklistsRequest $request)
+    public function store(QcChecklistsStoreRequest $request)
     {
         $data = $this->qcChecklistsService->store($request->validated());
 
@@ -103,11 +104,11 @@ class QcChecklistsController extends Controller
     /**
      * Update the specified QcChecklists resource in storage.
      *
-     * @param QcChecklistsRequest $request
+     * @param QcChecklistsUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(QcChecklistsRequest $request, $id)
+    public function update(QcChecklistsUpdateRequest $request, $id)
     {
         $data = $this->qcChecklistsService->update($id, $request->validated());
 

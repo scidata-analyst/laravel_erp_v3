@@ -1,92 +1,45 @@
-﻿<?php
+<?php
 
 namespace App\Services\Projects;
 
-use App\Models\Projects\ProjectCost;
+use App\Repositories\Projects\ProjectCostRepository;
 
-/**
- * Class ProjectCostService
- *
- * Service for managing ProjectCost resources.
- * Provides CRUD operations with JSON responses.
- */
 class ProjectCostService
 {
-    /**
-     * @var ProjectCostService
-     */
-    protected $projectCostService;
+    protected $repository;
 
-    /**
-     * ProjectCostService constructor.
-     *
-     */
-    public function __construct()
+    public function __construct(ProjectCostRepository $repository)
     {
-        
+        $this->repository = $repository;
     }
 
-    /**
-     * Display all ProjectCost records without pagination.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function all()
     {
-        $data = $this->projectCostService->all();
+        return $this->repository->all();
     }
 
-    /**
-     * Display a paginated listing of ProjectCost resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        return $this->repository->index($perPage, $search, $filters);
     }
 
-    /**
-     * Store a newly created ProjectCost resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function store(array $data)
     {
-        
+        return $this->repository->store($data);
     }
 
-    /**
-     * Display the specified ProjectCost resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function show($id)
     {
-        
+        return $this->repository->show($id);
     }
 
-    /**
-     * Update the specified ProjectCost resource in storage.
-     *
-     * @param ProjectCostRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function update($id, array $data)
     {
-        
+        return $this->repository->update($id, $data);
     }
 
-    /**
-     * Remove the specified ProjectCost resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function destroy($id)
     {
-        
+        return $this->repository->destroy($id);
     }
 }

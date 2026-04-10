@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Sales;
 
 use App\Services\Sales\InvoicesService;
-use App\Http\Requests\Sales\InvoicesRequest;
+use App\Http\Requests\Sales\InvoicesStoreRequest;
+use App\Http\Requests\Sales\InvoicesUpdateRequest;
 use App\Http\Resources\Sales\InvoicesResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class InvoicesController extends Controller
     /**
      * Store a newly created Invoices resource in storage.
      *
-     * @param InvoicesRequest $request
+     * @param InvoicesStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(InvoicesRequest $request)
+    public function store(InvoicesStoreRequest $request)
     {
         $data = $this->invoicesService->store($request->validated());
 
@@ -103,11 +104,11 @@ class InvoicesController extends Controller
     /**
      * Update the specified Invoices resource in storage.
      *
-     * @param InvoicesRequest $request
+     * @param InvoicesUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(InvoicesRequest $request, $id)
+    public function update(InvoicesUpdateRequest $request, $id)
     {
         $data = $this->invoicesService->update($id, $request->validated());
 

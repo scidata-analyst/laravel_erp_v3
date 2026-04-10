@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\HR;
 
 use App\Services\HR\AttendanceService;
-use App\Http\Requests\HR\AttendanceRequest;
+use App\Http\Requests\HR\AttendanceStoreRequest;
+use App\Http\Requests\HR\AttendanceUpdateRequest;
 use App\Http\Resources\HR\AttendanceResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class AttendanceController extends Controller
     /**
      * Store a newly created Attendance resource in storage.
      *
-     * @param AttendanceRequest $request
+     * @param AttendanceStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(AttendanceRequest $request)
+    public function store(AttendanceStoreRequest $request)
     {
         $data = $this->attendanceService->store($request->validated());
 
@@ -103,11 +104,11 @@ class AttendanceController extends Controller
     /**
      * Update the specified Attendance resource in storage.
      *
-     * @param AttendanceRequest $request
+     * @param AttendanceUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(AttendanceRequest $request, $id)
+    public function update(AttendanceUpdateRequest $request, $id)
     {
         $data = $this->attendanceService->update($id, $request->validated());
 

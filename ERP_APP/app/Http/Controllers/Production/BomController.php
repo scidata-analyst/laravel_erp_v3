@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Production;
 
 use App\Services\Production\BomService;
-use App\Http\Requests\Production\BomRequest;
+use App\Http\Requests\Production\BomStoreRequest;
+use App\Http\Requests\Production\BomUpdateRequest;
 use App\Http\Resources\Production\BomResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class BomController extends Controller
     /**
      * Store a newly created Bom resource in storage.
      *
-     * @param BomRequest $request
+     * @param BomStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(BomRequest $request)
+    public function store(BomStoreRequest $request)
     {
         $data = $this->bomService->store($request->validated());
 
@@ -103,11 +104,11 @@ class BomController extends Controller
     /**
      * Update the specified Bom resource in storage.
      *
-     * @param BomRequest $request
+     * @param BomUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(BomRequest $request, $id)
+    public function update(BomUpdateRequest $request, $id)
     {
         $data = $this->bomService->update($id, $request->validated());
 

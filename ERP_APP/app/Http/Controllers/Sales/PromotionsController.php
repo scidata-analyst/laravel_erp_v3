@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Sales;
 
 use App\Services\Sales\PromotionsService;
-use App\Http\Requests\Sales\PromotionsRequest;
+use App\Http\Requests\Sales\PromotionsStoreRequest;
+use App\Http\Requests\Sales\PromotionsUpdateRequest;
 use App\Http\Resources\Sales\PromotionsResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class PromotionsController extends Controller
     /**
      * Store a newly created Promotions resource in storage.
      *
-     * @param PromotionsRequest $request
+     * @param PromotionsStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(PromotionsRequest $request)
+    public function store(PromotionsStoreRequest $request)
     {
         $data = $this->promotionsService->store($request->validated());
 
@@ -103,11 +104,11 @@ class PromotionsController extends Controller
     /**
      * Update the specified Promotions resource in storage.
      *
-     * @param PromotionsRequest $request
+     * @param PromotionsUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(PromotionsRequest $request, $id)
+    public function update(PromotionsUpdateRequest $request, $id)
     {
         $data = $this->promotionsService->update($id, $request->validated());
 

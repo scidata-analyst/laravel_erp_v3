@@ -1,92 +1,45 @@
-﻿<?php
+<?php
 
 namespace App\Services\HR;
 
-use App\Models\HR\Attendance;
+use App\Repositories\HR\AttendanceRepository;
 
-/**
- * Class AttendanceService
- *
- * Service for managing Attendance resources.
- * Provides CRUD operations with JSON responses.
- */
 class AttendanceService
 {
-    /**
-     * @var AttendanceService
-     */
-    protected $attendanceService;
+    protected $repository;
 
-    /**
-     * AttendanceService constructor.
-     *
-     */
-    public function __construct()
+    public function __construct(AttendanceRepository $repository)
     {
-        
+        $this->repository = $repository;
     }
 
-    /**
-     * Display all Attendance records without pagination.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function all()
     {
-        $data = $this->attendanceService->all();
+        return $this->repository->all();
     }
 
-    /**
-     * Display a paginated listing of Attendance resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        return $this->repository->index($perPage, $search, $filters);
     }
 
-    /**
-     * Store a newly created Attendance resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function store(array $data)
     {
-        
+        return $this->repository->store($data);
     }
 
-    /**
-     * Display the specified Attendance resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function show($id)
     {
-        
+        return $this->repository->show($id);
     }
 
-    /**
-     * Update the specified Attendance resource in storage.
-     *
-     * @param AttendanceRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function update($id, array $data)
     {
-        
+        return $this->repository->update($id, $data);
     }
 
-    /**
-     * Remove the specified Attendance resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function destroy($id)
     {
-        
+        return $this->repository->destroy($id);
     }
 }

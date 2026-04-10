@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Inventory;
 
 use App\Services\Inventory\ProductCatalogService;
-use App\Http\Requests\Inventory\ProductCatalogRequest;
+use App\Http\Requests\Inventory\ProductCatalogStoreRequest;
+use App\Http\Requests\Inventory\ProductCatalogUpdateRequest;
 use App\Http\Resources\Inventory\ProductCatalogResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class ProductCatalogController extends Controller
     /**
      * Store a newly created ProductCatalog resource in storage.
      *
-     * @param ProductCatalogRequest $request
+     * @param ProductCatalogStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(ProductCatalogRequest $request)
+    public function store(ProductCatalogStoreRequest $request)
     {
         $data = $this->productCatalogService->store($request->validated());
 
@@ -103,11 +104,11 @@ class ProductCatalogController extends Controller
     /**
      * Update the specified ProductCatalog resource in storage.
      *
-     * @param ProductCatalogRequest $request
+     * @param ProductCatalogUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(ProductCatalogRequest $request, $id)
+    public function update(ProductCatalogUpdateRequest $request, $id)
     {
         $data = $this->productCatalogService->update($id, $request->validated());
 

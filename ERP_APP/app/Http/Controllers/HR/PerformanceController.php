@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\HR;
 
 use App\Services\HR\PerformanceService;
-use App\Http\Requests\HR\PerformanceRequest;
+use App\Http\Requests\HR\PerformanceStoreRequest;
+use App\Http\Requests\HR\PerformanceUpdateRequest;
 use App\Http\Resources\HR\PerformanceResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class PerformanceController extends Controller
     /**
      * Store a newly created Performance resource in storage.
      *
-     * @param PerformanceRequest $request
+     * @param PerformanceStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(PerformanceRequest $request)
+    public function store(PerformanceStoreRequest $request)
     {
         $data = $this->performanceService->store($request->validated());
 
@@ -103,11 +104,11 @@ class PerformanceController extends Controller
     /**
      * Update the specified Performance resource in storage.
      *
-     * @param PerformanceRequest $request
+     * @param PerformanceUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(PerformanceRequest $request, $id)
+    public function update(PerformanceUpdateRequest $request, $id)
     {
         $data = $this->performanceService->update($id, $request->validated());
 

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Repositories\Inventory;
 
@@ -8,85 +8,99 @@ use App\Models\Inventory\BatchTracking;
  * Class BatchTrackingRepository
  *
  * Repository for managing BatchTracking resources.
- * Provides CRUD operations with JSON responses.
+ * Provides CRUD operations with database queries.
  */
 class BatchTrackingRepository
 {
     /**
-     * @var BatchTrackingRepository
+     * @var BatchTracking
      */
-    protected $batchTrackingRepository;
+    protected $model;
 
     /**
      * BatchTrackingRepository constructor.
      *
+     * @param BatchTracking $model
      */
-    public function __construct()
+    public function __construct(BatchTracking $model)
     {
-        
+        $this->model = $model;
     }
 
     /**
      * Display all BatchTracking records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function all()
     {
-        $data = $this->batchTrackingRepository->all();
+        return $this->model->all();
     }
 
     /**
      * Display a paginated listing of BatchTracking resources.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @param int $perPage
+     * @param string $search
+     * @param array $filters
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        $query = $this->model->query();
+
+        if ($search) {
+            $query->where('batch_number', 'like', "%{$search}%");
+        }
+
+        return $query->paginate($perPage);
     }
 
     /**
      * Store a newly created BatchTracking resource in storage.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @param array $data
+     * @return \App\Models\Inventory\BatchTracking
      */
     public function store(array $data)
     {
-        
+        return $this->model->create($data);
     }
 
     /**
      * Display the specified BatchTracking resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return \App\Models\Inventory\BatchTracking
      */
     public function show($id)
     {
-        
+        return $this->model->findOrFail($id);
     }
 
     /**
      * Update the specified BatchTracking resource in storage.
      *
-     * @param BatchTrackingRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @param array $data
+     * @return \App\Models\Inventory\BatchTracking
      */
     public function update($id, array $data)
     {
-        
+        $record = $this->model->findOrFail($id);
+        $record->update($data);
+        return $record;
     }
 
     /**
      * Remove the specified BatchTracking resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return bool
      */
     public function destroy($id)
     {
-        
+        $record = $this->model->findOrFail($id);
+        return $record->delete();
     }
 }

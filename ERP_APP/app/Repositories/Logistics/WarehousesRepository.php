@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Repositories\Logistics;
 
@@ -8,85 +8,99 @@ use App\Models\Logistics\Warehouses;
  * Class WarehousesRepository
  *
  * Repository for managing Warehouses resources.
- * Provides CRUD operations with JSON responses.
+ * Provides CRUD operations with database queries.
  */
 class WarehousesRepository
 {
     /**
-     * @var WarehousesRepository
+     * @var Warehouses
      */
-    protected $warehousesRepository;
+    protected $model;
 
     /**
      * WarehousesRepository constructor.
      *
+     * @param Warehouses $model
      */
-    public function __construct()
+    public function __construct(Warehouses $model)
     {
-        
+        $this->model = $model;
     }
 
     /**
      * Display all Warehouses records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function all()
     {
-        $data = $this->warehousesRepository->all();
+        return $this->model->all();
     }
 
     /**
      * Display a paginated listing of Warehouses resources.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @param int $perPage
+     * @param string $search
+     * @param array $filters
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        $query = $this->model->query();
+
+        if ($search) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        return $query->paginate($perPage);
     }
 
     /**
      * Store a newly created Warehouses resource in storage.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @param array $data
+     * @return \App\Models\Logistics\Warehouses
      */
     public function store(array $data)
     {
-        
+        return $this->model->create($data);
     }
 
     /**
      * Display the specified Warehouses resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return \App\Models\Logistics\Warehouses
      */
     public function show($id)
     {
-        
+        return $this->model->findOrFail($id);
     }
 
     /**
      * Update the specified Warehouses resource in storage.
      *
-     * @param WarehousesRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @param array $data
+     * @return \App\Models\Logistics\Warehouses
      */
     public function update($id, array $data)
     {
-        
+        $record = $this->model->findOrFail($id);
+        $record->update($data);
+        return $record;
     }
 
     /**
      * Remove the specified Warehouses resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return bool
      */
     public function destroy($id)
     {
-        
+        $record = $this->model->findOrFail($id);
+        return $record->delete();
     }
 }

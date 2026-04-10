@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\UsersRoles;
 
 use App\Services\UsersRoles\RolesService;
-use App\Http\Requests\UsersRoles\RolesRequest;
+use App\Http\Requests\UsersRoles\RolesStoreRequest;
+use App\Http\Requests\UsersRoles\RolesUpdateRequest;
 use App\Http\Resources\UsersRoles\RolesResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class RolesController extends Controller
     /**
      * Store a newly created Roles resource in storage.
      *
-     * @param RolesRequest $request
+     * @param RolesStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(RolesRequest $request)
+    public function store(RolesStoreRequest $request)
     {
         $data = $this->rolesService->store($request->validated());
 
@@ -103,11 +104,11 @@ class RolesController extends Controller
     /**
      * Update the specified Roles resource in storage.
      *
-     * @param RolesRequest $request
+     * @param RolesUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(RolesRequest $request, $id)
+    public function update(RolesUpdateRequest $request, $id)
     {
         $data = $this->rolesService->update($id, $request->validated());
 

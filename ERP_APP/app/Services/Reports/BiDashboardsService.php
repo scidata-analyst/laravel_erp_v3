@@ -1,92 +1,45 @@
-﻿<?php
+<?php
 
 namespace App\Services\Reports;
 
-use App\Models\Reports\BiDashboards;
+use App\Repositories\Reports\BiDashboardsRepository;
 
-/**
- * Class BiDashboardsService
- *
- * Service for managing BiDashboards resources.
- * Provides CRUD operations with JSON responses.
- */
 class BiDashboardsService
 {
-    /**
-     * @var BiDashboardsService
-     */
-    protected $biDashboardsService;
+    protected $repository;
 
-    /**
-     * BiDashboardsService constructor.
-     *
-     */
-    public function __construct()
+    public function __construct(BiDashboardsRepository $repository)
     {
-        
+        $this->repository = $repository;
     }
 
-    /**
-     * Display all BiDashboards records without pagination.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function all()
     {
-        $data = $this->biDashboardsService->all();
+        return $this->repository->all();
     }
 
-    /**
-     * Display a paginated listing of BiDashboards resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        return $this->repository->index($perPage, $search, $filters);
     }
 
-    /**
-     * Store a newly created BiDashboards resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function store(array $data)
     {
-        
+        return $this->repository->store($data);
     }
 
-    /**
-     * Display the specified BiDashboards resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function show($id)
     {
-        
+        return $this->repository->show($id);
     }
 
-    /**
-     * Update the specified BiDashboards resource in storage.
-     *
-     * @param BiDashboardsRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function update($id, array $data)
     {
-        
+        return $this->repository->update($id, $data);
     }
 
-    /**
-     * Remove the specified BiDashboards resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function destroy($id)
     {
-        
+        return $this->repository->destroy($id);
     }
 }

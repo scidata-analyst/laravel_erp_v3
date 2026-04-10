@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Documents;
 
 use App\Services\Documents\DocVersionsService;
-use App\Http\Requests\Documents\DocVersionsRequest;
+use App\Http\Requests\Documents\DocVersionsStoreRequest;
+use App\Http\Requests\Documents\DocVersionsUpdateRequest;
 use App\Http\Resources\Documents\DocVersionsResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class DocVersionsController extends Controller
     /**
      * Store a newly created DocVersions resource in storage.
      *
-     * @param DocVersionsRequest $request
+     * @param DocVersionsStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(DocVersionsRequest $request)
+    public function store(DocVersionsStoreRequest $request)
     {
         $data = $this->docVersionsService->store($request->validated());
 
@@ -103,11 +104,11 @@ class DocVersionsController extends Controller
     /**
      * Update the specified DocVersions resource in storage.
      *
-     * @param DocVersionsRequest $request
+     * @param DocVersionsUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(DocVersionsRequest $request, $id)
+    public function update(DocVersionsUpdateRequest $request, $id)
     {
         $data = $this->docVersionsService->update($id, $request->validated());
 

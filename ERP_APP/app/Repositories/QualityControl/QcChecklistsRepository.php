@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Repositories\QualityControl;
 
@@ -8,85 +8,99 @@ use App\Models\QualityControl\QcChecklists;
  * Class QcChecklistsRepository
  *
  * Repository for managing QcChecklists resources.
- * Provides CRUD operations with JSON responses.
+ * Provides CRUD operations with database queries.
  */
 class QcChecklistsRepository
 {
     /**
-     * @var QcChecklistsRepository
+     * @var QcChecklists
      */
-    protected $qcChecklistsRepository;
+    protected $model;
 
     /**
      * QcChecklistsRepository constructor.
      *
+     * @param QcChecklists $model
      */
-    public function __construct()
+    public function __construct(QcChecklists $model)
     {
-        
+        $this->model = $model;
     }
 
     /**
      * Display all QcChecklists records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function all()
     {
-        $data = $this->qcChecklistsRepository->all();
+        return $this->model->all();
     }
 
     /**
      * Display a paginated listing of QcChecklists resources.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @param int $perPage
+     * @param string $search
+     * @param array $filters
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        $query = $this->model->query();
+
+        if ($search) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        return $query->paginate($perPage);
     }
 
     /**
      * Store a newly created QcChecklists resource in storage.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @param array $data
+     * @return \App\Models\QualityControl\QcChecklists
      */
     public function store(array $data)
     {
-        
+        return $this->model->create($data);
     }
 
     /**
      * Display the specified QcChecklists resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return \App\Models\QualityControl\QcChecklists
      */
     public function show($id)
     {
-        
+        return $this->model->findOrFail($id);
     }
 
     /**
      * Update the specified QcChecklists resource in storage.
      *
-     * @param QcChecklistsRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @param array $data
+     * @return \App\Models\QualityControl\QcChecklists
      */
     public function update($id, array $data)
     {
-        
+        $record = $this->model->findOrFail($id);
+        $record->update($data);
+        return $record;
     }
 
     /**
      * Remove the specified QcChecklists resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return bool
      */
     public function destroy($id)
     {
-        
+        $record = $this->model->findOrFail($id);
+        return $record->delete();
     }
 }

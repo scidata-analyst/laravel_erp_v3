@@ -1,92 +1,45 @@
-﻿<?php
+<?php
 
 namespace App\Services\Logistics;
 
-use App\Models\Logistics\Warehouses;
+use App\Repositories\Logistics\WarehousesRepository;
 
-/**
- * Class WarehousesService
- *
- * Service for managing Warehouses resources.
- * Provides CRUD operations with JSON responses.
- */
 class WarehousesService
 {
-    /**
-     * @var WarehousesService
-     */
-    protected $warehousesService;
+    protected $repository;
 
-    /**
-     * WarehousesService constructor.
-     *
-     */
-    public function __construct()
+    public function __construct(WarehousesRepository $repository)
     {
-        
+        $this->repository = $repository;
     }
 
-    /**
-     * Display all Warehouses records without pagination.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function all()
     {
-        $data = $this->warehousesService->all();
+        return $this->repository->all();
     }
 
-    /**
-     * Display a paginated listing of Warehouses resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        return $this->repository->index($perPage, $search, $filters);
     }
 
-    /**
-     * Store a newly created Warehouses resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function store(array $data)
     {
-        
+        return $this->repository->store($data);
     }
 
-    /**
-     * Display the specified Warehouses resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function show($id)
     {
-        
+        return $this->repository->show($id);
     }
 
-    /**
-     * Update the specified Warehouses resource in storage.
-     *
-     * @param WarehousesRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function update($id, array $data)
     {
-        
+        return $this->repository->update($id, $data);
     }
 
-    /**
-     * Remove the specified Warehouses resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function destroy($id)
     {
-        
+        return $this->repository->destroy($id);
     }
 }

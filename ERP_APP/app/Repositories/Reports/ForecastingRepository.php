@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Repositories\Reports;
 
@@ -8,85 +8,99 @@ use App\Models\Reports\Forecasting;
  * Class ForecastingRepository
  *
  * Repository for managing Forecasting resources.
- * Provides CRUD operations with JSON responses.
+ * Provides CRUD operations with database queries.
  */
 class ForecastingRepository
 {
     /**
-     * @var ForecastingRepository
+     * @var Forecasting
      */
-    protected $forecastingRepository;
+    protected $model;
 
     /**
      * ForecastingRepository constructor.
      *
+     * @param Forecasting $model
      */
-    public function __construct()
+    public function __construct(Forecasting $model)
     {
-        
+        $this->model = $model;
     }
 
     /**
      * Display all Forecasting records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function all()
     {
-        $data = $this->forecastingRepository->all();
+        return $this->model->all();
     }
 
     /**
      * Display a paginated listing of Forecasting resources.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @param int $perPage
+     * @param string $search
+     * @param array $filters
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        $query = $this->model->query();
+
+        if ($search) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        return $query->paginate($perPage);
     }
 
     /**
      * Store a newly created Forecasting resource in storage.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @param array $data
+     * @return \App\Models\Reports\Forecasting
      */
     public function store(array $data)
     {
-        
+        return $this->model->create($data);
     }
 
     /**
      * Display the specified Forecasting resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return \App\Models\Reports\Forecasting
      */
     public function show($id)
     {
-        
+        return $this->model->findOrFail($id);
     }
 
     /**
      * Update the specified Forecasting resource in storage.
      *
-     * @param ForecastingRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @param array $data
+     * @return \App\Models\Reports\Forecasting
      */
     public function update($id, array $data)
     {
-        
+        $record = $this->model->findOrFail($id);
+        $record->update($data);
+        return $record;
     }
 
     /**
      * Remove the specified Forecasting resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return bool
      */
     public function destroy($id)
     {
-        
+        $record = $this->model->findOrFail($id);
+        return $record->delete();
     }
 }

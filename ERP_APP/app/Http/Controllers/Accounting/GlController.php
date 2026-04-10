@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Accounting;
 
 use App\Services\Accounting\GlService;
-use App\Http\Requests\Accounting\GlRequest;
+use App\Http\Requests\Accounting\GlStoreRequest;
+use App\Http\Requests\Accounting\GlUpdateRequest;
 use App\Http\Resources\Accounting\GlResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class GlController extends Controller
     /**
      * Store a newly created Gl resource in storage.
      *
-     * @param GlRequest $request
+     * @param GlStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(GlRequest $request)
+    public function store(GlStoreRequest $request)
     {
         $data = $this->glService->store($request->validated());
 
@@ -103,11 +104,11 @@ class GlController extends Controller
     /**
      * Update the specified Gl resource in storage.
      *
-     * @param GlRequest $request
+     * @param GlUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(GlRequest $request, $id)
+    public function update(GlUpdateRequest $request, $id)
     {
         $data = $this->glService->update($id, $request->validated());
 

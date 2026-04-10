@@ -1,92 +1,45 @@
-﻿<?php
+<?php
 
 namespace App\Services\UsersRoles;
 
-use App\Models\UsersRoles\User;
+use App\Repositories\UsersRoles\UserRepository;
 
-/**
- * Class UserService
- *
- * Service for managing User resources.
- * Provides CRUD operations with JSON responses.
- */
 class UserService
 {
-    /**
-     * @var UserService
-     */
-    protected $userService;
+    protected $repository;
 
-    /**
-     * UserService constructor.
-     *
-     */
-    public function __construct()
+    public function __construct(UserRepository $repository)
     {
-        
+        $this->repository = $repository;
     }
 
-    /**
-     * Display all User records without pagination.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function all()
     {
-        $data = $this->userService->all();
+        return $this->repository->all();
     }
 
-    /**
-     * Display a paginated listing of User resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        return $this->repository->index($perPage, $search, $filters);
     }
 
-    /**
-     * Store a newly created User resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function store(array $data)
     {
-        
+        return $this->repository->store($data);
     }
 
-    /**
-     * Display the specified User resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function show($id)
     {
-        
+        return $this->repository->show($id);
     }
 
-    /**
-     * Update the specified User resource in storage.
-     *
-     * @param UserRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function update($id, array $data)
     {
-        
+        return $this->repository->update($id, $data);
     }
 
-    /**
-     * Remove the specified User resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function destroy($id)
     {
-        
+        return $this->repository->destroy($id);
     }
 }

@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Core;
 
 use App\Services\Core\DashboardService;
-use App\Http\Requests\Core\DashboardRequest;
+use App\Http\Requests\Core\DashboardStoreRequest;
+use App\Http\Requests\Core\DashboardUpdateRequest;
 use App\Http\Resources\Core\DashboardResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class DashboardController extends Controller
     /**
      * Store a newly created Dashboard resource in storage.
      *
-     * @param DashboardRequest $request
+     * @param DashboardStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(DashboardRequest $request)
+    public function store(DashboardStoreRequest $request)
     {
         $data = $this->dashboardService->store($request->validated());
 
@@ -103,11 +104,11 @@ class DashboardController extends Controller
     /**
      * Update the specified Dashboard resource in storage.
      *
-     * @param DashboardRequest $request
+     * @param DashboardUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(DashboardRequest $request, $id)
+    public function update(DashboardUpdateRequest $request, $id)
     {
         $data = $this->dashboardService->update($id, $request->validated());
 

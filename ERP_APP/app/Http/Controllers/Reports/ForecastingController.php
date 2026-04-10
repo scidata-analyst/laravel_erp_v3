@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Reports;
 
 use App\Services\Reports\ForecastingService;
-use App\Http\Requests\Reports\ForecastingRequest;
+use App\Http\Requests\Reports\ForecastingStoreRequest;
+use App\Http\Requests\Reports\ForecastingUpdateRequest;
 use App\Http\Resources\Reports\ForecastingResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class ForecastingController extends Controller
     /**
      * Store a newly created Forecasting resource in storage.
      *
-     * @param ForecastingRequest $request
+     * @param ForecastingStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(ForecastingRequest $request)
+    public function store(ForecastingStoreRequest $request)
     {
         $data = $this->forecastingService->store($request->validated());
 
@@ -103,11 +104,11 @@ class ForecastingController extends Controller
     /**
      * Update the specified Forecasting resource in storage.
      *
-     * @param ForecastingRequest $request
+     * @param ForecastingUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(ForecastingRequest $request, $id)
+    public function update(ForecastingUpdateRequest $request, $id)
     {
         $data = $this->forecastingService->update($id, $request->validated());
 

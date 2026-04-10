@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Ecommerce;
 
 use App\Services\Ecommerce\InvSyncService;
-use App\Http\Requests\Ecommerce\InvSyncRequest;
+use App\Http\Requests\Ecommerce\InvSyncStoreRequest;
+use App\Http\Requests\Ecommerce\InvSyncUpdateRequest;
 use App\Http\Resources\Ecommerce\InvSyncResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class InvSyncController extends Controller
     /**
      * Store a newly created InvSync resource in storage.
      *
-     * @param InvSyncRequest $request
+     * @param InvSyncStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(InvSyncRequest $request)
+    public function store(InvSyncStoreRequest $request)
     {
         $data = $this->invSyncService->store($request->validated());
 
@@ -103,11 +104,11 @@ class InvSyncController extends Controller
     /**
      * Update the specified InvSync resource in storage.
      *
-     * @param InvSyncRequest $request
+     * @param InvSyncUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(InvSyncRequest $request, $id)
+    public function update(InvSyncUpdateRequest $request, $id)
     {
         $data = $this->invSyncService->update($id, $request->validated());
 

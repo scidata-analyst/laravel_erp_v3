@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Inventory;
 
 use App\Services\Inventory\StockValuationService;
-use App\Http\Requests\Inventory\StockValuationRequest;
+use App\Http\Requests\Inventory\StockValuationStoreRequest;
+use App\Http\Requests\Inventory\StockValuationUpdateRequest;
 use App\Http\Resources\Inventory\StockValuationResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class StockValuationController extends Controller
     /**
      * Store a newly created StockValuation resource in storage.
      *
-     * @param StockValuationRequest $request
+     * @param StockValuationStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(StockValuationRequest $request)
+    public function store(StockValuationStoreRequest $request)
     {
         $data = $this->stockValuationService->store($request->validated());
 
@@ -103,11 +104,11 @@ class StockValuationController extends Controller
     /**
      * Update the specified StockValuation resource in storage.
      *
-     * @param StockValuationRequest $request
+     * @param StockValuationUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(StockValuationRequest $request, $id)
+    public function update(StockValuationUpdateRequest $request, $id)
     {
         $data = $this->stockValuationService->update($id, $request->validated());
 

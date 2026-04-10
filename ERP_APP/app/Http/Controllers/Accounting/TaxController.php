@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Accounting;
 
 use App\Services\Accounting\TaxService;
-use App\Http\Requests\Accounting\TaxRequest;
+use App\Http\Requests\Accounting\TaxStoreRequest;
+use App\Http\Requests\Accounting\TaxUpdateRequest;
 use App\Http\Resources\Accounting\TaxResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class TaxController extends Controller
     /**
      * Store a newly created Tax resource in storage.
      *
-     * @param TaxRequest $request
+     * @param TaxStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(TaxRequest $request)
+    public function store(TaxStoreRequest $request)
     {
         $data = $this->taxService->store($request->validated());
 
@@ -103,11 +104,11 @@ class TaxController extends Controller
     /**
      * Update the specified Tax resource in storage.
      *
-     * @param TaxRequest $request
+     * @param TaxUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(TaxRequest $request, $id)
+    public function update(TaxUpdateRequest $request, $id)
     {
         $data = $this->taxService->update($id, $request->validated());
 

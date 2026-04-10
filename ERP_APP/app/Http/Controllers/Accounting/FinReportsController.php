@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Accounting;
 
 use App\Services\Accounting\FinReportsService;
-use App\Http\Requests\Accounting\FinReportsRequest;
+use App\Http\Requests\Accounting\FinReportsStoreRequest;
+use App\Http\Requests\Accounting\FinReportsUpdateRequest;
 use App\Http\Resources\Accounting\FinReportsResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class FinReportsController extends Controller
     /**
      * Store a newly created FinReports resource in storage.
      *
-     * @param FinReportsRequest $request
+     * @param FinReportsStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(FinReportsRequest $request)
+    public function store(FinReportsStoreRequest $request)
     {
         $data = $this->finReportsService->store($request->validated());
 
@@ -103,11 +104,11 @@ class FinReportsController extends Controller
     /**
      * Update the specified FinReports resource in storage.
      *
-     * @param FinReportsRequest $request
+     * @param FinReportsUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(FinReportsRequest $request, $id)
+    public function update(FinReportsUpdateRequest $request, $id)
     {
         $data = $this->finReportsService->update($id, $request->validated());
 

@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Purchase;
 
 use App\Services\Purchase\PurchaseOrdersService;
-use App\Http\Requests\Purchase\PurchaseOrdersRequest;
+use App\Http\Requests\Purchase\PurchaseOrdersStoreRequest;
+use App\Http\Requests\Purchase\PurchaseOrdersUpdateRequest;
 use App\Http\Resources\Purchase\PurchaseOrdersResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class PurchaseOrdersController extends Controller
     /**
      * Store a newly created PurchaseOrders resource in storage.
      *
-     * @param PurchaseOrdersRequest $request
+     * @param PurchaseOrdersStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(PurchaseOrdersRequest $request)
+    public function store(PurchaseOrdersStoreRequest $request)
     {
         $data = $this->purchaseOrdersService->store($request->validated());
 
@@ -103,11 +104,11 @@ class PurchaseOrdersController extends Controller
     /**
      * Update the specified PurchaseOrders resource in storage.
      *
-     * @param PurchaseOrdersRequest $request
+     * @param PurchaseOrdersUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(PurchaseOrdersRequest $request, $id)
+    public function update(PurchaseOrdersUpdateRequest $request, $id)
     {
         $data = $this->purchaseOrdersService->update($id, $request->validated());
 

@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Logistics;
 
 use App\Services\Logistics\RoutesService;
-use App\Http\Requests\Logistics\RoutesRequest;
+use App\Http\Requests\Logistics\RoutesStoreRequest;
+use App\Http\Requests\Logistics\RoutesUpdateRequest;
 use App\Http\Resources\Logistics\RoutesResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class RoutesController extends Controller
     /**
      * Store a newly created Routes resource in storage.
      *
-     * @param RoutesRequest $request
+     * @param RoutesStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(RoutesRequest $request)
+    public function store(RoutesStoreRequest $request)
     {
         $data = $this->routesService->store($request->validated());
 
@@ -103,11 +104,11 @@ class RoutesController extends Controller
     /**
      * Update the specified Routes resource in storage.
      *
-     * @param RoutesRequest $request
+     * @param RoutesUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(RoutesRequest $request, $id)
+    public function update(RoutesUpdateRequest $request, $id)
     {
         $data = $this->routesService->update($id, $request->validated());
 

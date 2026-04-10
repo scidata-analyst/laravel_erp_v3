@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\CRM;
 
 use App\Services\CRM\SupportService;
-use App\Http\Requests\CRM\SupportRequest;
+use App\Http\Requests\CRM\SupportStoreRequest;
+use App\Http\Requests\CRM\SupportUpdateRequest;
 use App\Http\Resources\CRM\SupportResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class SupportController extends Controller
     /**
      * Store a newly created Support resource in storage.
      *
-     * @param SupportRequest $request
+     * @param SupportStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(SupportRequest $request)
+    public function store(SupportStoreRequest $request)
     {
         $data = $this->supportService->store($request->validated());
 
@@ -103,11 +104,11 @@ class SupportController extends Controller
     /**
      * Update the specified Support resource in storage.
      *
-     * @param SupportRequest $request
+     * @param SupportUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(SupportRequest $request, $id)
+    public function update(SupportUpdateRequest $request, $id)
     {
         $data = $this->supportService->update($id, $request->validated());
 

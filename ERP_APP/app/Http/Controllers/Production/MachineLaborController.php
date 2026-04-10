@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Production;
 
 use App\Services\Production\MachineLaborService;
-use App\Http\Requests\Production\MachineLaborRequest;
+use App\Http\Requests\Production\MachineLaborStoreRequest;
+use App\Http\Requests\Production\MachineLaborUpdateRequest;
 use App\Http\Resources\Production\MachineLaborResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class MachineLaborController extends Controller
     /**
      * Store a newly created MachineLabor resource in storage.
      *
-     * @param MachineLaborRequest $request
+     * @param MachineLaborStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(MachineLaborRequest $request)
+    public function store(MachineLaborStoreRequest $request)
     {
         $data = $this->machineLaborService->store($request->validated());
 
@@ -103,11 +104,11 @@ class MachineLaborController extends Controller
     /**
      * Update the specified MachineLabor resource in storage.
      *
-     * @param MachineLaborRequest $request
+     * @param MachineLaborUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(MachineLaborRequest $request, $id)
+    public function update(MachineLaborUpdateRequest $request, $id)
     {
         $data = $this->machineLaborService->update($id, $request->validated());
 

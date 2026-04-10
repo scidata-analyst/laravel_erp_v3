@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Logistics;
 
 use App\Services\Logistics\ShipmentsService;
-use App\Http\Requests\Logistics\ShipmentsRequest;
+use App\Http\Requests\Logistics\ShipmentsStoreRequest;
+use App\Http\Requests\Logistics\ShipmentsUpdateRequest;
 use App\Http\Resources\Logistics\ShipmentsResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class ShipmentsController extends Controller
     /**
      * Store a newly created Shipments resource in storage.
      *
-     * @param ShipmentsRequest $request
+     * @param ShipmentsStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(ShipmentsRequest $request)
+    public function store(ShipmentsStoreRequest $request)
     {
         $data = $this->shipmentsService->store($request->validated());
 
@@ -103,11 +104,11 @@ class ShipmentsController extends Controller
     /**
      * Update the specified Shipments resource in storage.
      *
-     * @param ShipmentsRequest $request
+     * @param ShipmentsUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(ShipmentsRequest $request, $id)
+    public function update(ShipmentsUpdateRequest $request, $id)
     {
         $data = $this->shipmentsService->update($id, $request->validated());
 

@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Inventory;
 
 use App\Services\Inventory\StockMovementsService;
-use App\Http\Requests\Inventory\StockMovementsRequest;
+use App\Http\Requests\Inventory\StockMovementsStoreRequest;
+use App\Http\Requests\Inventory\StockMovementsUpdateRequest;
 use App\Http\Resources\Inventory\StockMovementsResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class StockMovementsController extends Controller
     /**
      * Store a newly created StockMovements resource in storage.
      *
-     * @param StockMovementsRequest $request
+     * @param StockMovementsStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(StockMovementsRequest $request)
+    public function store(StockMovementsStoreRequest $request)
     {
         $data = $this->stockMovementsService->store($request->validated());
 
@@ -103,11 +104,11 @@ class StockMovementsController extends Controller
     /**
      * Update the specified StockMovements resource in storage.
      *
-     * @param StockMovementsRequest $request
+     * @param StockMovementsUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(StockMovementsRequest $request, $id)
+    public function update(StockMovementsUpdateRequest $request, $id)
     {
         $data = $this->stockMovementsService->update($id, $request->validated());
 

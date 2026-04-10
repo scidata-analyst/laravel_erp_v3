@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\CRM;
 
 use App\Services\CRM\InteractionsService;
-use App\Http\Requests\CRM\InteractionsRequest;
+use App\Http\Requests\CRM\InteractionsStoreRequest;
+use App\Http\Requests\CRM\InteractionsUpdateRequest;
 use App\Http\Resources\CRM\InteractionsResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class InteractionsController extends Controller
     /**
      * Store a newly created Interactions resource in storage.
      *
-     * @param InteractionsRequest $request
+     * @param InteractionsStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(InteractionsRequest $request)
+    public function store(InteractionsStoreRequest $request)
     {
         $data = $this->interactionsService->store($request->validated());
 
@@ -103,11 +104,11 @@ class InteractionsController extends Controller
     /**
      * Update the specified Interactions resource in storage.
      *
-     * @param InteractionsRequest $request
+     * @param InteractionsUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(InteractionsRequest $request, $id)
+    public function update(InteractionsUpdateRequest $request, $id)
     {
         $data = $this->interactionsService->update($id, $request->validated());
 

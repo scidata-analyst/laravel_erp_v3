@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Ecommerce;
 
 use App\Services\Ecommerce\PosService;
-use App\Http\Requests\Ecommerce\PosRequest;
+use App\Http\Requests\Ecommerce\PosStoreRequest;
+use App\Http\Requests\Ecommerce\PosUpdateRequest;
 use App\Http\Resources\Ecommerce\PosResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class PosController extends Controller
     /**
      * Store a newly created Pos resource in storage.
      *
-     * @param PosRequest $request
+     * @param PosStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(PosRequest $request)
+    public function store(PosStoreRequest $request)
     {
         $data = $this->posService->store($request->validated());
 
@@ -103,11 +104,11 @@ class PosController extends Controller
     /**
      * Update the specified Pos resource in storage.
      *
-     * @param PosRequest $request
+     * @param PosUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(PosRequest $request, $id)
+    public function update(PosUpdateRequest $request, $id)
     {
         $data = $this->posService->update($id, $request->validated());
 

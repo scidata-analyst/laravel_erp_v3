@@ -1,92 +1,45 @@
-﻿<?php
+<?php
 
 namespace App\Services\Sales;
 
-use App\Models\Sales\Invoices;
+use App\Repositories\Sales\InvoicesRepository;
 
-/**
- * Class InvoicesService
- *
- * Service for managing Invoices resources.
- * Provides CRUD operations with JSON responses.
- */
 class InvoicesService
 {
-    /**
-     * @var InvoicesService
-     */
-    protected $invoicesService;
+    protected $repository;
 
-    /**
-     * InvoicesService constructor.
-     *
-     */
-    public function __construct()
+    public function __construct(InvoicesRepository $repository)
     {
-        
+        $this->repository = $repository;
     }
 
-    /**
-     * Display all Invoices records without pagination.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function all()
     {
-        $data = $this->invoicesService->all();
+        return $this->repository->all();
     }
 
-    /**
-     * Display a paginated listing of Invoices resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        return $this->repository->index($perPage, $search, $filters);
     }
 
-    /**
-     * Store a newly created Invoices resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function store(array $data)
     {
-        
+        return $this->repository->store($data);
     }
 
-    /**
-     * Display the specified Invoices resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function show($id)
     {
-        
+        return $this->repository->show($id);
     }
 
-    /**
-     * Update the specified Invoices resource in storage.
-     *
-     * @param InvoicesRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function update($id, array $data)
     {
-        
+        return $this->repository->update($id, $data);
     }
 
-    /**
-     * Remove the specified Invoices resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function destroy($id)
     {
-        
+        return $this->repository->destroy($id);
     }
 }

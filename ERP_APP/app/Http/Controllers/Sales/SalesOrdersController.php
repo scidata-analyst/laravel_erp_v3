@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Sales;
 
 use App\Services\Sales\SalesOrdersService;
-use App\Http\Requests\Sales\SalesOrdersRequest;
+use App\Http\Requests\Sales\SalesOrdersStoreRequest;
+use App\Http\Requests\Sales\SalesOrdersUpdateRequest;
 use App\Http\Resources\Sales\SalesOrdersResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class SalesOrdersController extends Controller
     /**
      * Store a newly created SalesOrders resource in storage.
      *
-     * @param SalesOrdersRequest $request
+     * @param SalesOrdersStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(SalesOrdersRequest $request)
+    public function store(SalesOrdersStoreRequest $request)
     {
         $data = $this->salesOrdersService->store($request->validated());
 
@@ -103,11 +104,11 @@ class SalesOrdersController extends Controller
     /**
      * Update the specified SalesOrders resource in storage.
      *
-     * @param SalesOrdersRequest $request
+     * @param SalesOrdersUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(SalesOrdersRequest $request, $id)
+    public function update(SalesOrdersUpdateRequest $request, $id)
     {
         $data = $this->salesOrdersService->update($id, $request->validated());
 

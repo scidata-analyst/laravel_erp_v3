@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\UsersRoles;
 
 use App\Services\UsersRoles\UserService;
-use App\Http\Requests\UsersRoles\UserRequest;
+use App\Http\Requests\UsersRoles\UserStoreRequest;
+use App\Http\Requests\UsersRoles\UserUpdateRequest;
 use App\Http\Resources\UsersRoles\UserResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class UserController extends Controller
     /**
      * Store a newly created User resource in storage.
      *
-     * @param UserRequest $request
+     * @param UserStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(UserRequest $request)
+    public function store(UserStoreRequest $request)
     {
         $data = $this->userService->store($request->validated());
 
@@ -103,11 +104,11 @@ class UserController extends Controller
     /**
      * Update the specified User resource in storage.
      *
-     * @param UserRequest $request
+     * @param UserUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(UserRequest $request, $id)
+    public function update(UserUpdateRequest $request, $id)
     {
         $data = $this->userService->update($id, $request->validated());
 

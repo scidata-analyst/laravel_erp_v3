@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Inventory;
 
 use App\Services\Inventory\BatchTrackingService;
-use App\Http\Requests\Inventory\BatchTrackingRequest;
+use App\Http\Requests\Inventory\BatchTrackingStoreRequest;
+use App\Http\Requests\Inventory\BatchTrackingUpdateRequest;
 use App\Http\Resources\Inventory\BatchTrackingResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class BatchTrackingController extends Controller
     /**
      * Store a newly created BatchTracking resource in storage.
      *
-     * @param BatchTrackingRequest $request
+     * @param BatchTrackingStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(BatchTrackingRequest $request)
+    public function store(BatchTrackingStoreRequest $request)
     {
         $data = $this->batchTrackingService->store($request->validated());
 
@@ -103,11 +104,11 @@ class BatchTrackingController extends Controller
     /**
      * Update the specified BatchTracking resource in storage.
      *
-     * @param BatchTrackingRequest $request
+     * @param BatchTrackingUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(BatchTrackingRequest $request, $id)
+    public function update(BatchTrackingUpdateRequest $request, $id)
     {
         $data = $this->batchTrackingService->update($id, $request->validated());
 

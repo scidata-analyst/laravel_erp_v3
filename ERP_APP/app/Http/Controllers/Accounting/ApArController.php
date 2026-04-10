@@ -1,9 +1,10 @@
-﻿<?php
+<?php
 
 namespace App\Http\Controllers\Accounting;
 
 use App\Services\Accounting\ApArService;
-use App\Http\Requests\Accounting\ApArRequest;
+use App\Http\Requests\Accounting\ApArStoreRequest;
+use App\Http\Requests\Accounting\ApArUpdateRequest;
 use App\Http\Resources\Accounting\ApArResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class ApArController extends Controller
     /**
      * Store a newly created ApAr resource in storage.
      *
-     * @param ApArRequest $request
+     * @param ApArStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(ApArRequest $request)
+    public function store(ApArStoreRequest $request)
     {
         $data = $this->apArService->store($request->validated());
 
@@ -103,11 +104,11 @@ class ApArController extends Controller
     /**
      * Update the specified ApAr resource in storage.
      *
-     * @param ApArRequest $request
+     * @param ApArUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(ApArRequest $request, $id)
+    public function update(ApArUpdateRequest $request, $id)
     {
         $data = $this->apArService->update($id, $request->validated());
 

@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Projects;
 
 use App\Services\Projects\TasksService;
-use App\Http\Requests\Projects\TasksRequest;
+use App\Http\Requests\Projects\TasksStoreRequest;
+use App\Http\Requests\Projects\TasksUpdateRequest;
 use App\Http\Resources\Projects\TasksResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class TasksController extends Controller
     /**
      * Store a newly created Tasks resource in storage.
      *
-     * @param TasksRequest $request
+     * @param TasksStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(TasksRequest $request)
+    public function store(TasksStoreRequest $request)
     {
         $data = $this->tasksService->store($request->validated());
 
@@ -103,11 +104,11 @@ class TasksController extends Controller
     /**
      * Update the specified Tasks resource in storage.
      *
-     * @param TasksRequest $request
+     * @param TasksUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(TasksRequest $request, $id)
+    public function update(TasksUpdateRequest $request, $id)
     {
         $data = $this->tasksService->update($id, $request->validated());
 

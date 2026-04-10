@@ -1,92 +1,45 @@
-﻿<?php
+<?php
 
 namespace App\Services\Accounting;
 
-use App\Models\Accounting\FinReports;
+use App\Repositories\Accounting\FinReportsRepository;
 
-/**
- * Class FinReportsService
- *
- * Service for managing FinReports resources.
- * Provides CRUD operations with JSON responses.
- */
 class FinReportsService
 {
-    /**
-     * @var FinReportsService
-     */
-    protected $finReportsService;
+    protected $repository;
 
-    /**
-     * FinReportsService constructor.
-     *
-     */
-    public function __construct()
+    public function __construct(FinReportsRepository $repository)
     {
-        
+        $this->repository = $repository;
     }
 
-    /**
-     * Display all FinReports records without pagination.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function all()
     {
-        $data = $this->finReportsService->all();
+        return $this->repository->all();
     }
 
-    /**
-     * Display a paginated listing of FinReports resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        return $this->repository->index($perPage, $search, $filters);
     }
 
-    /**
-     * Store a newly created FinReports resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function store(array $data)
     {
-        
+        return $this->repository->store($data);
     }
 
-    /**
-     * Display the specified FinReports resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function show($id)
     {
-        
+        return $this->repository->show($id);
     }
 
-    /**
-     * Update the specified FinReports resource in storage.
-     *
-     * @param FinReportsRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function update($id, array $data)
     {
-        
+        return $this->repository->update($id, $data);
     }
 
-    /**
-     * Remove the specified FinReports resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function destroy($id)
     {
-        
+        return $this->repository->destroy($id);
     }
 }

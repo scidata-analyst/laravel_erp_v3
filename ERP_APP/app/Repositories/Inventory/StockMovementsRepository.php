@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Repositories\Inventory;
 
@@ -8,85 +8,99 @@ use App\Models\Inventory\StockMovements;
  * Class StockMovementsRepository
  *
  * Repository for managing StockMovements resources.
- * Provides CRUD operations with JSON responses.
+ * Provides CRUD operations with database queries.
  */
 class StockMovementsRepository
 {
     /**
-     * @var StockMovementsRepository
+     * @var StockMovements
      */
-    protected $stockMovementsRepository;
+    protected $model;
 
     /**
      * StockMovementsRepository constructor.
      *
+     * @param StockMovements $model
      */
-    public function __construct()
+    public function __construct(StockMovements $model)
     {
-        
+        $this->model = $model;
     }
 
     /**
      * Display all StockMovements records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function all()
     {
-        $data = $this->stockMovementsRepository->all();
+        return $this->model->all();
     }
 
     /**
      * Display a paginated listing of StockMovements resources.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @param int $perPage
+     * @param string $search
+     * @param array $filters
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        $query = $this->model->query();
+
+        if ($search) {
+            $query->where('reference', 'like', "%{$search}%");
+        }
+
+        return $query->paginate($perPage);
     }
 
     /**
      * Store a newly created StockMovements resource in storage.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @param array $data
+     * @return \App\Models\Inventory\StockMovements
      */
     public function store(array $data)
     {
-        
+        return $this->model->create($data);
     }
 
     /**
      * Display the specified StockMovements resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return \App\Models\Inventory\StockMovements
      */
     public function show($id)
     {
-        
+        return $this->model->findOrFail($id);
     }
 
     /**
      * Update the specified StockMovements resource in storage.
      *
-     * @param StockMovementsRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @param array $data
+     * @return \App\Models\Inventory\StockMovements
      */
     public function update($id, array $data)
     {
-        
+        $record = $this->model->findOrFail($id);
+        $record->update($data);
+        return $record;
     }
 
     /**
      * Remove the specified StockMovements resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return bool
      */
     public function destroy($id)
     {
-        
+        $record = $this->model->findOrFail($id);
+        return $record->delete();
     }
 }

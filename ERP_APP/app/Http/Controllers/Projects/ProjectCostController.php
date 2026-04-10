@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Projects;
 
 use App\Services\Projects\ProjectCostService;
-use App\Http\Requests\Projects\ProjectCostRequest;
+use App\Http\Requests\Projects\ProjectCostStoreRequest;
+use App\Http\Requests\Projects\ProjectCostUpdateRequest;
 use App\Http\Resources\Projects\ProjectCostResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class ProjectCostController extends Controller
     /**
      * Store a newly created ProjectCost resource in storage.
      *
-     * @param ProjectCostRequest $request
+     * @param ProjectCostStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(ProjectCostRequest $request)
+    public function store(ProjectCostStoreRequest $request)
     {
         $data = $this->projectCostService->store($request->validated());
 
@@ -103,11 +104,11 @@ class ProjectCostController extends Controller
     /**
      * Update the specified ProjectCost resource in storage.
      *
-     * @param ProjectCostRequest $request
+     * @param ProjectCostUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(ProjectCostRequest $request, $id)
+    public function update(ProjectCostUpdateRequest $request, $id)
     {
         $data = $this->projectCostService->update($id, $request->validated());
 

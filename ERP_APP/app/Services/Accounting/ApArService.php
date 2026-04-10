@@ -1,92 +1,97 @@
-﻿<?php
+<?php
 
 namespace App\Services\Accounting;
 
-use App\Models\Accounting\ApAr;
+use App\Repositories\Accounting\ApArRepository;
 
 /**
  * Class ApArService
  *
  * Service for managing ApAr resources.
- * Provides CRUD operations with JSON responses.
+ * Provides business logic and delegates to repository.
  */
 class ApArService
 {
     /**
-     * @var ApArService
+     * @var ApArRepository
      */
-    protected $apArService;
+    protected $repository;
 
     /**
      * ApArService constructor.
      *
+     * @param ApArRepository $repository
      */
-    public function __construct()
+    public function __construct(ApArRepository $repository)
     {
-        
+        $this->repository = $repository;
     }
 
     /**
      * Display all ApAr records without pagination.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function all()
     {
-        $data = $this->apArService->all();
+        return $this->repository->all();
     }
 
     /**
      * Display a paginated listing of ApAr resources.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @param int $perPage
+     * @param string $search
+     * @param array $filters
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        return $this->repository->index($perPage, $search, $filters);
     }
 
     /**
      * Store a newly created ApAr resource in storage.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @param array $data
+     * @return \App\Models\Accounting\ApAr
      */
     public function store(array $data)
     {
-        
+        return $this->repository->store($data);
     }
 
     /**
      * Display the specified ApAr resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return \App\Models\Accounting\ApAr
      */
     public function show($id)
     {
-        
+        return $this->repository->show($id);
     }
 
     /**
      * Update the specified ApAr resource in storage.
      *
-     * @param ApArRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @param array $data
+     * @return \App\Models\Accounting\ApAr
      */
     public function update($id, array $data)
     {
-        
+        return $this->repository->update($id, $data);
     }
 
     /**
      * Remove the specified ApAr resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return bool
      */
     public function destroy($id)
     {
-        
+        return $this->repository->destroy($id);
     }
 }

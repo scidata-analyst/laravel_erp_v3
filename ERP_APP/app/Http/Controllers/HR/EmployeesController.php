@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\HR;
 
 use App\Services\HR\EmployeesService;
-use App\Http\Requests\HR\EmployeesRequest;
+use App\Http\Requests\HR\EmployeesStoreRequest;
+use App\Http\Requests\HR\EmployeesUpdateRequest;
 use App\Http\Resources\HR\EmployeesResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class EmployeesController extends Controller
     /**
      * Store a newly created Employees resource in storage.
      *
-     * @param EmployeesRequest $request
+     * @param EmployeesStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(EmployeesRequest $request)
+    public function store(EmployeesStoreRequest $request)
     {
         $data = $this->employeesService->store($request->validated());
 
@@ -103,11 +104,11 @@ class EmployeesController extends Controller
     /**
      * Update the specified Employees resource in storage.
      *
-     * @param EmployeesRequest $request
+     * @param EmployeesUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(EmployeesRequest $request, $id)
+    public function update(EmployeesUpdateRequest $request, $id)
     {
         $data = $this->employeesService->update($id, $request->validated());
 

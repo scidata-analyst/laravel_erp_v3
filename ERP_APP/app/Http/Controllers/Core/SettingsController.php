@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Core;
 
 use App\Services\Core\SettingsService;
-use App\Http\Requests\Core\SettingsRequest;
+use App\Http\Requests\Core\SettingsStoreRequest;
+use App\Http\Requests\Core\SettingsUpdateRequest;
 use App\Http\Resources\Core\SettingsResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class SettingsController extends Controller
     /**
      * Store a newly created Settings resource in storage.
      *
-     * @param SettingsRequest $request
+     * @param SettingsStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(SettingsRequest $request)
+    public function store(SettingsStoreRequest $request)
     {
         $data = $this->settingsService->store($request->validated());
 
@@ -103,11 +104,11 @@ class SettingsController extends Controller
     /**
      * Update the specified Settings resource in storage.
      *
-     * @param SettingsRequest $request
+     * @param SettingsUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(SettingsRequest $request, $id)
+    public function update(SettingsUpdateRequest $request, $id)
     {
         $data = $this->settingsService->update($id, $request->validated());
 

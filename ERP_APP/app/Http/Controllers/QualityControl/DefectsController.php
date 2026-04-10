@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\QualityControl;
 
 use App\Services\QualityControl\DefectsService;
-use App\Http\Requests\QualityControl\DefectsRequest;
+use App\Http\Requests\QualityControl\DefectsStoreRequest;
+use App\Http\Requests\QualityControl\DefectsUpdateRequest;
 use App\Http\Resources\QualityControl\DefectsResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class DefectsController extends Controller
     /**
      * Store a newly created Defects resource in storage.
      *
-     * @param DefectsRequest $request
+     * @param DefectsStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(DefectsRequest $request)
+    public function store(DefectsStoreRequest $request)
     {
         $data = $this->defectsService->store($request->validated());
 
@@ -103,11 +104,11 @@ class DefectsController extends Controller
     /**
      * Update the specified Defects resource in storage.
      *
-     * @param DefectsRequest $request
+     * @param DefectsUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(DefectsRequest $request, $id)
+    public function update(DefectsUpdateRequest $request, $id)
     {
         $data = $this->defectsService->update($id, $request->validated());
 

@@ -1,92 +1,45 @@
-﻿<?php
+<?php
 
 namespace App\Services\HR;
 
-use App\Models\HR\Employees;
+use App\Repositories\HR\EmployeesRepository;
 
-/**
- * Class EmployeesService
- *
- * Service for managing Employees resources.
- * Provides CRUD operations with JSON responses.
- */
 class EmployeesService
 {
-    /**
-     * @var EmployeesService
-     */
-    protected $employeesService;
+    protected $repository;
 
-    /**
-     * EmployeesService constructor.
-     *
-     */
-    public function __construct()
+    public function __construct(EmployeesRepository $repository)
     {
-        
+        $this->repository = $repository;
     }
 
-    /**
-     * Display all Employees records without pagination.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function all()
     {
-        $data = $this->employeesService->all();
+        return $this->repository->all();
     }
 
-    /**
-     * Display a paginated listing of Employees resources.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        return $this->repository->index($perPage, $search, $filters);
     }
 
-    /**
-     * Store a newly created Employees resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function store(array $data)
     {
-        
+        return $this->repository->store($data);
     }
 
-    /**
-     * Display the specified Employees resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function show($id)
     {
-        
+        return $this->repository->show($id);
     }
 
-    /**
-     * Update the specified Employees resource in storage.
-     *
-     * @param EmployeesRequest $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function update($id, array $data)
     {
-        
+        return $this->repository->update($id, $data);
     }
 
-    /**
-     * Remove the specified Employees resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function destroy($id)
     {
-        
+        return $this->repository->destroy($id);
     }
 }

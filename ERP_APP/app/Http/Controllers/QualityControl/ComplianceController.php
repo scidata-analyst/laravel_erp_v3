@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\QualityControl;
 
 use App\Services\QualityControl\ComplianceService;
-use App\Http\Requests\QualityControl\ComplianceRequest;
+use App\Http\Requests\QualityControl\ComplianceStoreRequest;
+use App\Http\Requests\QualityControl\ComplianceUpdateRequest;
 use App\Http\Resources\QualityControl\ComplianceResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class ComplianceController extends Controller
     /**
      * Store a newly created Compliance resource in storage.
      *
-     * @param ComplianceRequest $request
+     * @param ComplianceStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(ComplianceRequest $request)
+    public function store(ComplianceStoreRequest $request)
     {
         $data = $this->complianceService->store($request->validated());
 
@@ -103,11 +104,11 @@ class ComplianceController extends Controller
     /**
      * Update the specified Compliance resource in storage.
      *
-     * @param ComplianceRequest $request
+     * @param ComplianceUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(ComplianceRequest $request, $id)
+    public function update(ComplianceUpdateRequest $request, $id)
     {
         $data = $this->complianceService->update($id, $request->validated());
 

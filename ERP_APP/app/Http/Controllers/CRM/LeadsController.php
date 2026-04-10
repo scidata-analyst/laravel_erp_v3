@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\CRM;
 
 use App\Services\CRM\LeadsService;
-use App\Http\Requests\CRM\LeadsRequest;
+use App\Http\Requests\CRM\LeadsStoreRequest;
+use App\Http\Requests\CRM\LeadsUpdateRequest;
 use App\Http\Resources\CRM\LeadsResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class LeadsController extends Controller
     /**
      * Store a newly created Leads resource in storage.
      *
-     * @param LeadsRequest $request
+     * @param LeadsStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(LeadsRequest $request)
+    public function store(LeadsStoreRequest $request)
     {
         $data = $this->leadsService->store($request->validated());
 
@@ -103,11 +104,11 @@ class LeadsController extends Controller
     /**
      * Update the specified Leads resource in storage.
      *
-     * @param LeadsRequest $request
+     * @param LeadsUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(LeadsRequest $request, $id)
+    public function update(LeadsUpdateRequest $request, $id)
     {
         $data = $this->leadsService->update($id, $request->validated());
 

@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Reports;
 
 use App\Services\Reports\BiDashboardsService;
-use App\Http\Requests\Reports\BiDashboardsRequest;
+use App\Http\Requests\Reports\BiDashboardsStoreRequest;
+use App\Http\Requests\Reports\BiDashboardsUpdateRequest;
 use App\Http\Resources\Reports\BiDashboardsResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class BiDashboardsController extends Controller
     /**
      * Store a newly created BiDashboards resource in storage.
      *
-     * @param BiDashboardsRequest $request
+     * @param BiDashboardsStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(BiDashboardsRequest $request)
+    public function store(BiDashboardsStoreRequest $request)
     {
         $data = $this->biDashboardsService->store($request->validated());
 
@@ -103,11 +104,11 @@ class BiDashboardsController extends Controller
     /**
      * Update the specified BiDashboards resource in storage.
      *
-     * @param BiDashboardsRequest $request
+     * @param BiDashboardsUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(BiDashboardsRequest $request, $id)
+    public function update(BiDashboardsUpdateRequest $request, $id)
     {
         $data = $this->biDashboardsService->update($id, $request->validated());
 

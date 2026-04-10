@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Purchase;
 
 use App\Services\Purchase\GrnService;
-use App\Http\Requests\Purchase\GrnRequest;
+use App\Http\Requests\Purchase\GrnStoreRequest;
+use App\Http\Requests\Purchase\GrnUpdateRequest;
 use App\Http\Resources\Purchase\GrnResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class GrnController extends Controller
     /**
      * Store a newly created Grn resource in storage.
      *
-     * @param GrnRequest $request
+     * @param GrnStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(GrnRequest $request)
+    public function store(GrnStoreRequest $request)
     {
         $data = $this->grnService->store($request->validated());
 
@@ -103,11 +104,11 @@ class GrnController extends Controller
     /**
      * Update the specified Grn resource in storage.
      *
-     * @param GrnRequest $request
+     * @param GrnUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(GrnRequest $request, $id)
+    public function update(GrnUpdateRequest $request, $id)
     {
         $data = $this->grnService->update($id, $request->validated());
 

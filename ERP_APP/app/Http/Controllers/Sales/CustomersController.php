@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Sales;
 
 use App\Services\Sales\CustomersService;
-use App\Http\Requests\Sales\CustomersRequest;
+use App\Http\Requests\Sales\CustomersStoreRequest;
+use App\Http\Requests\Sales\CustomersUpdateRequest;
 use App\Http\Resources\Sales\CustomersResource;
 use App\Http\Controllers\Controller;
 
@@ -69,10 +70,10 @@ class CustomersController extends Controller
     /**
      * Store a newly created Customers resource in storage.
      *
-     * @param CustomersRequest $request
+     * @param CustomersStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(CustomersRequest $request)
+    public function store(CustomersStoreRequest $request)
     {
         $data = $this->customersService->store($request->validated());
 
@@ -103,11 +104,11 @@ class CustomersController extends Controller
     /**
      * Update the specified Customers resource in storage.
      *
-     * @param CustomersRequest $request
+     * @param CustomersUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(CustomersRequest $request, $id)
+    public function update(CustomersUpdateRequest $request, $id)
     {
         $data = $this->customersService->update($id, $request->validated());
 
