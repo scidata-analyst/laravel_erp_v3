@@ -1,86 +1,93 @@
-﻿<?php
+<?php
 
 namespace App\Traits\QualityControl;
 
-use App\Models\QualityControl\QcChecklists;
+use App\Services\QualityControl\QcChecklistsService;
 
-/**
- * Class QcChecklistsTrait
- *
- * Trait for managing QcChecklists resources.
- * Provides CRUD operations with JSON responses.
- */
 trait QcChecklistsTrait
 {
     /**
-     * @var QcChecklistsTrait
+     * @var QcChecklistsService
      */
-    protected $qcChecklistsTrait;
+    protected $service;
 
     /**
-     * QcChecklistsTrait constructor.
+     * Set the service for this trait.
      *
+     * @param QcChecklistsService $service
+     * @return $this
      */
-    public function __construct()
+    public function setQcChecklistsService(QcChecklistsService $service)
     {
-        
+        $this->service = $service;
+        return $this;
     }
 
     /**
      * Display all QcChecklists records without pagination.
      *
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function all()
     {
-        $data = $this->qcChecklistsTrait->all();
+        return $this->service->all();
     }
 
     /**
      * Display a paginated listing of QcChecklists resources.
      *
+     * @param int $perPage
+     * @param string $search
+     * @param array $filters
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        return $this->service->index($perPage, $search, $filters);
     }
 
     /**
      * Store a newly created QcChecklists resource in storage.
      *
+     * @param array $data
+     * @return \App\Models\QualityControl\QcChecklists
      */
     public function store(array $data)
     {
-        
+        return $this->service->store($data);
     }
 
     /**
      * Display the specified QcChecklists resource.
      *
      * @param int $id
+     * @return \App\Models\QualityControl\QcChecklists
      */
     public function show($id)
     {
-        
+        return $this->service->show($id);
     }
 
     /**
      * Update the specified QcChecklists resource in storage.
      *
-     * @param QcChecklistsRequest $request
      * @param int $id
+     * @param array $data
+     * @return \App\Models\QualityControl\QcChecklists
      */
     public function update(array $data, $id)
     {
-        
+        return $this->service->update($data, $id);
     }
 
     /**
      * Remove the specified QcChecklists resource from storage.
      *
      * @param int $id
+     * @return bool
      */
     public function destroy($id)
     {
-        
+        return $this->service->destroy($id);
     }
 }

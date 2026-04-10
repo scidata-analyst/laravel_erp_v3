@@ -1,86 +1,93 @@
-﻿<?php
+<?php
 
 namespace App\Traits\Inventory;
 
-use App\Models\Inventory\StockValuation;
+use App\Services\Inventory\StockValuationService;
 
-/**
- * Class StockValuationTrait
- *
- * Trait for managing StockValuation resources.
- * Provides CRUD operations with JSON responses.
- */
 trait StockValuationTrait
 {
     /**
-     * @var StockValuationTrait
+     * @var StockValuationService
      */
-    protected $stockValuationTrait;
+    protected $service;
 
     /**
-     * StockValuationTrait constructor.
+     * Set the service for this trait.
      *
+     * @param StockValuationService $service
+     * @return $this
      */
-    public function __construct()
+    public function setStockValuationService(StockValuationService $service)
     {
-        
+        $this->service = $service;
+        return $this;
     }
 
     /**
      * Display all StockValuation records without pagination.
      *
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function all()
     {
-        $data = $this->stockValuationTrait->all();
+        return $this->service->all();
     }
 
     /**
      * Display a paginated listing of StockValuation resources.
      *
+     * @param int $perPage
+     * @param string $search
+     * @param array $filters
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        return $this->service->index($perPage, $search, $filters);
     }
 
     /**
      * Store a newly created StockValuation resource in storage.
      *
+     * @param array $data
+     * @return \App\Models\Inventory\StockValuation
      */
     public function store(array $data)
     {
-        
+        return $this->service->store($data);
     }
 
     /**
      * Display the specified StockValuation resource.
      *
      * @param int $id
+     * @return \App\Models\Inventory\StockValuation
      */
     public function show($id)
     {
-        
+        return $this->service->show($id);
     }
 
     /**
      * Update the specified StockValuation resource in storage.
      *
-     * @param StockValuationRequest $request
      * @param int $id
+     * @param array $data
+     * @return \App\Models\Inventory\StockValuation
      */
     public function update(array $data, $id)
     {
-        
+        return $this->service->update($data, $id);
     }
 
     /**
      * Remove the specified StockValuation resource from storage.
      *
      * @param int $id
+     * @return bool
      */
     public function destroy($id)
     {
-        
+        return $this->service->destroy($id);
     }
 }

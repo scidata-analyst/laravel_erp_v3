@@ -1,86 +1,93 @@
-﻿<?php
+<?php
 
 namespace App\Traits\Sales;
 
-use App\Models\Sales\Promotions;
+use App\Services\Sales\PromotionsService;
 
-/**
- * Class PromotionsTrait
- *
- * Trait for managing Promotions resources.
- * Provides CRUD operations with JSON responses.
- */
 trait PromotionsTrait
 {
     /**
-     * @var PromotionsTrait
+     * @var PromotionsService
      */
-    protected $promotionsTrait;
+    protected $service;
 
     /**
-     * PromotionsTrait constructor.
+     * Set the service for this trait.
      *
+     * @param PromotionsService $service
+     * @return $this
      */
-    public function __construct()
+    public function setPromotionsService(PromotionsService $service)
     {
-        
+        $this->service = $service;
+        return $this;
     }
 
     /**
      * Display all Promotions records without pagination.
      *
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function all()
     {
-        $data = $this->promotionsTrait->all();
+        return $this->service->all();
     }
 
     /**
      * Display a paginated listing of Promotions resources.
      *
+     * @param int $perPage
+     * @param string $search
+     * @param array $filters
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        return $this->service->index($perPage, $search, $filters);
     }
 
     /**
      * Store a newly created Promotions resource in storage.
      *
+     * @param array $data
+     * @return \App\Models\Sales\Promotions
      */
     public function store(array $data)
     {
-        
+        return $this->service->store($data);
     }
 
     /**
      * Display the specified Promotions resource.
      *
      * @param int $id
+     * @return \App\Models\Sales\Promotions
      */
     public function show($id)
     {
-        
+        return $this->service->show($id);
     }
 
     /**
      * Update the specified Promotions resource in storage.
      *
-     * @param PromotionsRequest $request
      * @param int $id
+     * @param array $data
+     * @return \App\Models\Sales\Promotions
      */
     public function update(array $data, $id)
     {
-        
+        return $this->service->update($data, $id);
     }
 
     /**
      * Remove the specified Promotions resource from storage.
      *
      * @param int $id
+     * @return bool
      */
     public function destroy($id)
     {
-        
+        return $this->service->destroy($id);
     }
 }

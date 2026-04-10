@@ -1,86 +1,93 @@
-﻿<?php
+<?php
 
 namespace App\Traits\HR;
 
-use App\Models\HR\Employees;
+use App\Services\HR\EmployeesService;
 
-/**
- * Class EmployeesTrait
- *
- * Trait for managing Employees resources.
- * Provides CRUD operations with JSON responses.
- */
 trait EmployeesTrait
 {
     /**
-     * @var EmployeesTrait
+     * @var EmployeesService
      */
-    protected $employeesTrait;
+    protected $service;
 
     /**
-     * EmployeesTrait constructor.
+     * Set the service for this trait.
      *
+     * @param EmployeesService $service
+     * @return $this
      */
-    public function __construct()
+    public function setEmployeesService(EmployeesService $service)
     {
-        
+        $this->service = $service;
+        return $this;
     }
 
     /**
      * Display all Employees records without pagination.
      *
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function all()
     {
-        $data = $this->employeesTrait->all();
+        return $this->service->all();
     }
 
     /**
      * Display a paginated listing of Employees resources.
      *
+     * @param int $perPage
+     * @param string $search
+     * @param array $filters
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        return $this->service->index($perPage, $search, $filters);
     }
 
     /**
      * Store a newly created Employees resource in storage.
      *
+     * @param array $data
+     * @return \App\Models\HR\Employees
      */
     public function store(array $data)
     {
-        
+        return $this->service->store($data);
     }
 
     /**
      * Display the specified Employees resource.
      *
      * @param int $id
+     * @return \App\Models\HR\Employees
      */
     public function show($id)
     {
-        
+        return $this->service->show($id);
     }
 
     /**
      * Update the specified Employees resource in storage.
      *
-     * @param EmployeesRequest $request
      * @param int $id
+     * @param array $data
+     * @return \App\Models\HR\Employees
      */
     public function update(array $data, $id)
     {
-        
+        return $this->service->update($data, $id);
     }
 
     /**
      * Remove the specified Employees resource from storage.
      *
      * @param int $id
+     * @return bool
      */
     public function destroy($id)
     {
-        
+        return $this->service->destroy($id);
     }
 }

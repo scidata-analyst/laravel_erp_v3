@@ -1,86 +1,93 @@
-﻿<?php
+<?php
 
 namespace App\Traits\Ecommerce;
 
-use App\Models\Ecommerce\OnlineChannels;
+use App\Services\Ecommerce\OnlineChannelsService;
 
-/**
- * Class OnlineChannelsTrait
- *
- * Trait for managing OnlineChannels resources.
- * Provides CRUD operations with JSON responses.
- */
 trait OnlineChannelsTrait
 {
     /**
-     * @var OnlineChannelsTrait
+     * @var OnlineChannelsService
      */
-    protected $onlineChannelsTrait;
+    protected $service;
 
     /**
-     * OnlineChannelsTrait constructor.
+     * Set the service for this trait.
      *
+     * @param OnlineChannelsService $service
+     * @return $this
      */
-    public function __construct()
+    public function setOnlineChannelsService(OnlineChannelsService $service)
     {
-        
+        $this->service = $service;
+        return $this;
     }
 
     /**
      * Display all OnlineChannels records without pagination.
      *
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function all()
     {
-        $data = $this->onlineChannelsTrait->all();
+        return $this->service->all();
     }
 
     /**
      * Display a paginated listing of OnlineChannels resources.
      *
+     * @param int $perPage
+     * @param string $search
+     * @param array $filters
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        return $this->service->index($perPage, $search, $filters);
     }
 
     /**
      * Store a newly created OnlineChannels resource in storage.
      *
+     * @param array $data
+     * @return \App\Models\Ecommerce\OnlineChannels
      */
     public function store(array $data)
     {
-        
+        return $this->service->store($data);
     }
 
     /**
      * Display the specified OnlineChannels resource.
      *
      * @param int $id
+     * @return \App\Models\Ecommerce\OnlineChannels
      */
     public function show($id)
     {
-        
+        return $this->service->show($id);
     }
 
     /**
      * Update the specified OnlineChannels resource in storage.
      *
-     * @param OnlineChannelsRequest $request
      * @param int $id
+     * @param array $data
+     * @return \App\Models\Ecommerce\OnlineChannels
      */
     public function update(array $data, $id)
     {
-        
+        return $this->service->update($data, $id);
     }
 
     /**
      * Remove the specified OnlineChannels resource from storage.
      *
      * @param int $id
+     * @return bool
      */
     public function destroy($id)
     {
-        
+        return $this->service->destroy($id);
     }
 }

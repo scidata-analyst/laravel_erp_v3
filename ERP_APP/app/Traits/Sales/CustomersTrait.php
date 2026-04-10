@@ -1,86 +1,93 @@
-﻿<?php
+<?php
 
 namespace App\Traits\Sales;
 
-use App\Models\Sales\Customers;
+use App\Services\Sales\CustomersService;
 
-/**
- * Class CustomersTrait
- *
- * Trait for managing Customers resources.
- * Provides CRUD operations with JSON responses.
- */
 trait CustomersTrait
 {
     /**
-     * @var CustomersTrait
+     * @var CustomersService
      */
-    protected $customersTrait;
+    protected $service;
 
     /**
-     * CustomersTrait constructor.
+     * Set the service for this trait.
      *
+     * @param CustomersService $service
+     * @return $this
      */
-    public function __construct()
+    public function setCustomersService(CustomersService $service)
     {
-        
+        $this->service = $service;
+        return $this;
     }
 
     /**
      * Display all Customers records without pagination.
      *
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function all()
     {
-        $data = $this->customersTrait->all();
+        return $this->service->all();
     }
 
     /**
      * Display a paginated listing of Customers resources.
      *
+     * @param int $perPage
+     * @param string $search
+     * @param array $filters
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        return $this->service->index($perPage, $search, $filters);
     }
 
     /**
      * Store a newly created Customers resource in storage.
      *
+     * @param array $data
+     * @return \App\Models\Sales\Customers
      */
     public function store(array $data)
     {
-        
+        return $this->service->store($data);
     }
 
     /**
      * Display the specified Customers resource.
      *
      * @param int $id
+     * @return \App\Models\Sales\Customers
      */
     public function show($id)
     {
-        
+        return $this->service->show($id);
     }
 
     /**
      * Update the specified Customers resource in storage.
      *
-     * @param CustomersRequest $request
      * @param int $id
+     * @param array $data
+     * @return \App\Models\Sales\Customers
      */
     public function update(array $data, $id)
     {
-        
+        return $this->service->update($data, $id);
     }
 
     /**
      * Remove the specified Customers resource from storage.
      *
      * @param int $id
+     * @return bool
      */
     public function destroy($id)
     {
-        
+        return $this->service->destroy($id);
     }
 }

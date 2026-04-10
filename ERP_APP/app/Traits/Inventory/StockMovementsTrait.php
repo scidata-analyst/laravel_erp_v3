@@ -1,86 +1,93 @@
-﻿<?php
+<?php
 
 namespace App\Traits\Inventory;
 
-use App\Models\Inventory\StockMovements;
+use App\Services\Inventory\StockMovementsService;
 
-/**
- * Class StockMovementsTrait
- *
- * Trait for managing StockMovements resources.
- * Provides CRUD operations with JSON responses.
- */
 trait StockMovementsTrait
 {
     /**
-     * @var StockMovementsTrait
+     * @var StockMovementsService
      */
-    protected $stockMovementsTrait;
+    protected $service;
 
     /**
-     * StockMovementsTrait constructor.
+     * Set the service for this trait.
      *
+     * @param StockMovementsService $service
+     * @return $this
      */
-    public function __construct()
+    public function setStockMovementsService(StockMovementsService $service)
     {
-        
+        $this->service = $service;
+        return $this;
     }
 
     /**
      * Display all StockMovements records without pagination.
      *
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function all()
     {
-        $data = $this->stockMovementsTrait->all();
+        return $this->service->all();
     }
 
     /**
      * Display a paginated listing of StockMovements resources.
      *
+     * @param int $perPage
+     * @param string $search
+     * @param array $filters
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        return $this->service->index($perPage, $search, $filters);
     }
 
     /**
      * Store a newly created StockMovements resource in storage.
      *
+     * @param array $data
+     * @return \App\Models\Inventory\StockMovements
      */
     public function store(array $data)
     {
-        
+        return $this->service->store($data);
     }
 
     /**
      * Display the specified StockMovements resource.
      *
      * @param int $id
+     * @return \App\Models\Inventory\StockMovements
      */
     public function show($id)
     {
-        
+        return $this->service->show($id);
     }
 
     /**
      * Update the specified StockMovements resource in storage.
      *
-     * @param StockMovementsRequest $request
      * @param int $id
+     * @param array $data
+     * @return \App\Models\Inventory\StockMovements
      */
     public function update(array $data, $id)
     {
-        
+        return $this->service->update($data, $id);
     }
 
     /**
      * Remove the specified StockMovements resource from storage.
      *
      * @param int $id
+     * @return bool
      */
     public function destroy($id)
     {
-        
+        return $this->service->destroy($id);
     }
 }

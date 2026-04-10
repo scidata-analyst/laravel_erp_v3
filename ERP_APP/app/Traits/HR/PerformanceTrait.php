@@ -1,86 +1,93 @@
-﻿<?php
+<?php
 
 namespace App\Traits\HR;
 
-use App\Models\HR\Performance;
+use App\Services\HR\PerformanceService;
 
-/**
- * Class PerformanceTrait
- *
- * Trait for managing Performance resources.
- * Provides CRUD operations with JSON responses.
- */
 trait PerformanceTrait
 {
     /**
-     * @var PerformanceTrait
+     * @var PerformanceService
      */
-    protected $performanceTrait;
+    protected $service;
 
     /**
-     * PerformanceTrait constructor.
+     * Set the service for this trait.
      *
+     * @param PerformanceService $service
+     * @return $this
      */
-    public function __construct()
+    public function setPerformanceService(PerformanceService $service)
     {
-        
+        $this->service = $service;
+        return $this;
     }
 
     /**
      * Display all Performance records without pagination.
      *
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function all()
     {
-        $data = $this->performanceTrait->all();
+        return $this->service->all();
     }
 
     /**
      * Display a paginated listing of Performance resources.
      *
+     * @param int $perPage
+     * @param string $search
+     * @param array $filters
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        return $this->service->index($perPage, $search, $filters);
     }
 
     /**
      * Store a newly created Performance resource in storage.
      *
+     * @param array $data
+     * @return \App\Models\HR\Performance
      */
     public function store(array $data)
     {
-        
+        return $this->service->store($data);
     }
 
     /**
      * Display the specified Performance resource.
      *
      * @param int $id
+     * @return \App\Models\HR\Performance
      */
     public function show($id)
     {
-        
+        return $this->service->show($id);
     }
 
     /**
      * Update the specified Performance resource in storage.
      *
-     * @param PerformanceRequest $request
      * @param int $id
+     * @param array $data
+     * @return \App\Models\HR\Performance
      */
     public function update(array $data, $id)
     {
-        
+        return $this->service->update($data, $id);
     }
 
     /**
      * Remove the specified Performance resource from storage.
      *
      * @param int $id
+     * @return bool
      */
     public function destroy($id)
     {
-        
+        return $this->service->destroy($id);
     }
 }

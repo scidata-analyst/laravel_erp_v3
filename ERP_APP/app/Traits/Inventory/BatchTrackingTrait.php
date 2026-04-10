@@ -1,86 +1,93 @@
-﻿<?php
+<?php
 
 namespace App\Traits\Inventory;
 
-use App\Models\Inventory\BatchTracking;
+use App\Services\Inventory\BatchTrackingService;
 
-/**
- * Class BatchTrackingTrait
- *
- * Trait for managing BatchTracking resources.
- * Provides CRUD operations with JSON responses.
- */
 trait BatchTrackingTrait
 {
     /**
-     * @var BatchTrackingTrait
+     * @var BatchTrackingService
      */
-    protected $batchTrackingTrait;
+    protected $service;
 
     /**
-     * BatchTrackingTrait constructor.
+     * Set the service for this trait.
      *
+     * @param BatchTrackingService $service
+     * @return $this
      */
-    public function __construct()
+    public function setBatchTrackingService(BatchTrackingService $service)
     {
-        
+        $this->service = $service;
+        return $this;
     }
 
     /**
      * Display all BatchTracking records without pagination.
      *
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function all()
     {
-        $data = $this->batchTrackingTrait->all();
+        return $this->service->all();
     }
 
     /**
      * Display a paginated listing of BatchTracking resources.
      *
+     * @param int $perPage
+     * @param string $search
+     * @param array $filters
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        return $this->service->index($perPage, $search, $filters);
     }
 
     /**
      * Store a newly created BatchTracking resource in storage.
      *
+     * @param array $data
+     * @return \App\Models\Inventory\BatchTracking
      */
     public function store(array $data)
     {
-        
+        return $this->service->store($data);
     }
 
     /**
      * Display the specified BatchTracking resource.
      *
      * @param int $id
+     * @return \App\Models\Inventory\BatchTracking
      */
     public function show($id)
     {
-        
+        return $this->service->show($id);
     }
 
     /**
      * Update the specified BatchTracking resource in storage.
      *
-     * @param BatchTrackingRequest $request
      * @param int $id
+     * @param array $data
+     * @return \App\Models\Inventory\BatchTracking
      */
     public function update(array $data, $id)
     {
-        
+        return $this->service->update($data, $id);
     }
 
     /**
      * Remove the specified BatchTracking resource from storage.
      *
      * @param int $id
+     * @return bool
      */
     public function destroy($id)
     {
-        
+        return $this->service->destroy($id);
     }
 }

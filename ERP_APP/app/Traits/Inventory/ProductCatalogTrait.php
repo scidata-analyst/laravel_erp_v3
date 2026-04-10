@@ -1,86 +1,93 @@
-﻿<?php
+<?php
 
 namespace App\Traits\Inventory;
 
-use App\Models\Inventory\ProductCatalog;
+use App\Services\Inventory\ProductCatalogService;
 
-/**
- * Class ProductCatalogTrait
- *
- * Trait for managing ProductCatalog resources.
- * Provides CRUD operations with JSON responses.
- */
 trait ProductCatalogTrait
 {
     /**
-     * @var ProductCatalogTrait
+     * @var ProductCatalogService
      */
-    protected $productCatalogTrait;
+    protected $service;
 
     /**
-     * ProductCatalogTrait constructor.
+     * Set the service for this trait.
      *
+     * @param ProductCatalogService $service
+     * @return $this
      */
-    public function __construct()
+    public function setProductCatalogService(ProductCatalogService $service)
     {
-        
+        $this->service = $service;
+        return $this;
     }
 
     /**
      * Display all ProductCatalog records without pagination.
      *
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function all()
     {
-        $data = $this->productCatalogTrait->all();
+        return $this->service->all();
     }
 
     /**
      * Display a paginated listing of ProductCatalog resources.
      *
+     * @param int $perPage
+     * @param string $search
+     * @param array $filters
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        return $this->service->index($perPage, $search, $filters);
     }
 
     /**
      * Store a newly created ProductCatalog resource in storage.
      *
+     * @param array $data
+     * @return \App\Models\Inventory\ProductCatalog
      */
     public function store(array $data)
     {
-        
+        return $this->service->store($data);
     }
 
     /**
      * Display the specified ProductCatalog resource.
      *
      * @param int $id
+     * @return \App\Models\Inventory\ProductCatalog
      */
     public function show($id)
     {
-        
+        return $this->service->show($id);
     }
 
     /**
      * Update the specified ProductCatalog resource in storage.
      *
-     * @param ProductCatalogRequest $request
      * @param int $id
+     * @param array $data
+     * @return \App\Models\Inventory\ProductCatalog
      */
     public function update(array $data, $id)
     {
-        
+        return $this->service->update($data, $id);
     }
 
     /**
      * Remove the specified ProductCatalog resource from storage.
      *
      * @param int $id
+     * @return bool
      */
     public function destroy($id)
     {
-        
+        return $this->service->destroy($id);
     }
 }

@@ -1,86 +1,93 @@
-﻿<?php
+<?php
 
 namespace App\Traits\Sales;
 
-use App\Models\Sales\SalesOrders;
+use App\Services\Sales\SalesOrdersService;
 
-/**
- * Class SalesOrdersTrait
- *
- * Trait for managing SalesOrders resources.
- * Provides CRUD operations with JSON responses.
- */
 trait SalesOrdersTrait
 {
     /**
-     * @var SalesOrdersTrait
+     * @var SalesOrdersService
      */
-    protected $salesOrdersTrait;
+    protected $service;
 
     /**
-     * SalesOrdersTrait constructor.
+     * Set the service for this trait.
      *
+     * @param SalesOrdersService $service
+     * @return $this
      */
-    public function __construct()
+    public function setSalesOrdersService(SalesOrdersService $service)
     {
-        
+        $this->service = $service;
+        return $this;
     }
 
     /**
      * Display all SalesOrders records without pagination.
      *
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function all()
     {
-        $data = $this->salesOrdersTrait->all();
+        return $this->service->all();
     }
 
     /**
      * Display a paginated listing of SalesOrders resources.
      *
+     * @param int $perPage
+     * @param string $search
+     * @param array $filters
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        return $this->service->index($perPage, $search, $filters);
     }
 
     /**
      * Store a newly created SalesOrders resource in storage.
      *
+     * @param array $data
+     * @return \App\Models\Sales\SalesOrders
      */
     public function store(array $data)
     {
-        
+        return $this->service->store($data);
     }
 
     /**
      * Display the specified SalesOrders resource.
      *
      * @param int $id
+     * @return \App\Models\Sales\SalesOrders
      */
     public function show($id)
     {
-        
+        return $this->service->show($id);
     }
 
     /**
      * Update the specified SalesOrders resource in storage.
      *
-     * @param SalesOrdersRequest $request
      * @param int $id
+     * @param array $data
+     * @return \App\Models\Sales\SalesOrders
      */
     public function update(array $data, $id)
     {
-        
+        return $this->service->update($data, $id);
     }
 
     /**
      * Remove the specified SalesOrders resource from storage.
      *
      * @param int $id
+     * @return bool
      */
     public function destroy($id)
     {
-        
+        return $this->service->destroy($id);
     }
 }

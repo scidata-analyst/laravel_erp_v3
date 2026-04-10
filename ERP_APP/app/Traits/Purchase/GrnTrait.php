@@ -1,86 +1,93 @@
-﻿<?php
+<?php
 
 namespace App\Traits\Purchase;
 
-use App\Models\Purchase\Grn;
+use App\Services\Purchase\GrnService;
 
-/**
- * Class GrnTrait
- *
- * Trait for managing Grn resources.
- * Provides CRUD operations with JSON responses.
- */
 trait GrnTrait
 {
     /**
-     * @var GrnTrait
+     * @var GrnService
      */
-    protected $grnTrait;
+    protected $service;
 
     /**
-     * GrnTrait constructor.
+     * Set the service for this trait.
      *
+     * @param GrnService $service
+     * @return $this
      */
-    public function __construct()
+    public function setGrnService(GrnService $service)
     {
-        
+        $this->service = $service;
+        return $this;
     }
 
     /**
      * Display all Grn records without pagination.
      *
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function all()
     {
-        $data = $this->grnTrait->all();
+        return $this->service->all();
     }
 
     /**
      * Display a paginated listing of Grn resources.
      *
+     * @param int $perPage
+     * @param string $search
+     * @param array $filters
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        return $this->service->index($perPage, $search, $filters);
     }
 
     /**
      * Store a newly created Grn resource in storage.
      *
+     * @param array $data
+     * @return \App\Models\Purchase\Grn
      */
     public function store(array $data)
     {
-        
+        return $this->service->store($data);
     }
 
     /**
      * Display the specified Grn resource.
      *
      * @param int $id
+     * @return \App\Models\Purchase\Grn
      */
     public function show($id)
     {
-        
+        return $this->service->show($id);
     }
 
     /**
      * Update the specified Grn resource in storage.
      *
-     * @param GrnRequest $request
      * @param int $id
+     * @param array $data
+     * @return \App\Models\Purchase\Grn
      */
     public function update(array $data, $id)
     {
-        
+        return $this->service->update($data, $id);
     }
 
     /**
      * Remove the specified Grn resource from storage.
      *
      * @param int $id
+     * @return bool
      */
     public function destroy($id)
     {
-        
+        return $this->service->destroy($id);
     }
 }
