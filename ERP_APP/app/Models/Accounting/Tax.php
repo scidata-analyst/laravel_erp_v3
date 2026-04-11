@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Models\Accounting;
 
@@ -19,7 +19,7 @@ class Tax extends Model
      *
      * @var string
      */
-    protected $table = 'tax_config';
+    protected $table = 'taxes';
 
     /**
      * The attributes that are mass assignable.

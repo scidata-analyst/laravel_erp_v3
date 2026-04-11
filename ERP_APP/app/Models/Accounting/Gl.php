@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Models\Accounting;
 
@@ -19,7 +19,7 @@ class Gl extends Model
      *
      * @var string
      */
-    protected $table = "general_ledger";
+    protected $table = "gl_accounts";
 
     /**
      * The attributes that are mass assignable.

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Models\UsersRoles;
 
@@ -20,7 +20,7 @@ class User extends Model
      *
      * @var string
      */
-    protected $table = "User_TABLE";
+    protected $table = "users";
 
     /**
      * The attributes that are mass assignable.
