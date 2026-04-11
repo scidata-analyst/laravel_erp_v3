@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Purchase\SupplierPaymentsController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Purchase\SupplierPaymentsController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Purchase/supplier-payments')->group(function () {
+Route::prefix('api/v1/purchase/supplier-payments')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [SupplierPaymentsController::class, 'all'])

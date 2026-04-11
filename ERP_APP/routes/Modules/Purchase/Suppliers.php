@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Purchase\SuppliersController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Purchase\SuppliersController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Purchase/suppliers')->group(function () {
+Route::prefix('api/v1/purchase/suppliers')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [SuppliersController::class, 'all'])

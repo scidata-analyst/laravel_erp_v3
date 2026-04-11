@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CRM\SupportController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\CRM\SupportController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/CRM/support')->group(function () {
+Route::prefix('api/v1/crm/support')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [SupportController::class, 'all'])

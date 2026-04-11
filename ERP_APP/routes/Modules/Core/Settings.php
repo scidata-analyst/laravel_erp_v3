@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Core\SettingsController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Core\SettingsController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Core/settings')->group(function () {
+Route::prefix('api/v1/core/settings')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [SettingsController::class, 'all'])

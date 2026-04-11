@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Sales\CustomersController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Sales\CustomersController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Sales/customers')->group(function () {
+Route::prefix('api/v1/sales/customers')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [CustomersController::class, 'all'])

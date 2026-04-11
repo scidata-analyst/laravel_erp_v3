@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Core\DashboardController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Core\DashboardController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Core/dashboard')->group(function () {
+Route::prefix('api/v1/core/dashboard')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [DashboardController::class, 'all'])

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CRM\InteractionsController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\CRM\InteractionsController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/CRM/interactions')->group(function () {
+Route::prefix('api/v1/crm/interactions')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [InteractionsController::class, 'all'])

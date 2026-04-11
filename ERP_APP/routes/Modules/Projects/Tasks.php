@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Projects\TasksController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Projects\TasksController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Projects/tasks')->group(function () {
+Route::prefix('api/v1/projects/tasks')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [TasksController::class, 'all'])

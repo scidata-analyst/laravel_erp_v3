@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Reports\BiDashboardsController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Reports\BiDashboardsController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Reports/bi-dashboards')->group(function () {
+Route::prefix('api/v1/reports/bi-dashboards')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [BiDashboardsController::class, 'all'])

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Accounting\FinReportsController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Accounting\FinReportsController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Accounting/fin-reports')->group(function () {
+Route::prefix('api/v1/accounting/fin-reports')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [FinReportsController::class, 'all'])

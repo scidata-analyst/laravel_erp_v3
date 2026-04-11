@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\QualityControl\QcChecklistsController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\QualityControl\QcChecklistsController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/QualityControl/qc-checklists')->group(function () {
+Route::prefix('api/v1/qualitycontrol/qc-checklists')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [QcChecklistsController::class, 'all'])

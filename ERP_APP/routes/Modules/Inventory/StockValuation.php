@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Inventory\StockValuationController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Inventory\StockValuationController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Inventory/stock-valuation')->group(function () {
+Route::prefix('api/v1/inventory/stock-valuation')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [StockValuationController::class, 'all'])

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Inventory\ProductCatalogController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Inventory\ProductCatalogController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Inventory/product-catalog')->group(function () {
+Route::prefix('api/v1/inventory/product-catalog')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [ProductCatalogController::class, 'all'])

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Inventory\BatchTrackingController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Inventory\BatchTrackingController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Inventory/batch-tracking')->group(function () {
+Route::prefix('api/v1/inventory/batch-tracking')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [BatchTrackingController::class, 'all'])

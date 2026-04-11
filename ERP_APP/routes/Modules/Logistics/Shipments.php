@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Logistics\ShipmentsController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Logistics\ShipmentsController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Logistics/shipments')->group(function () {
+Route::prefix('api/v1/logistics/shipments')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [ShipmentsController::class, 'all'])

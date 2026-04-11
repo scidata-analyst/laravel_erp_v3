@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Production\MachineLaborController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Production\MachineLaborController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Production/machine-labor')->group(function () {
+Route::prefix('api/v1/production/machine-labor')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [MachineLaborController::class, 'all'])

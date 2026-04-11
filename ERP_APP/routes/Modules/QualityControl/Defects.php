@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\QualityControl\DefectsController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\QualityControl\DefectsController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/QualityControl/defects')->group(function () {
+Route::prefix('api/v1/qualitycontrol/defects')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [DefectsController::class, 'all'])

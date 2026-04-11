@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\QualityControl\ComplianceController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\QualityControl\ComplianceController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/QualityControl/compliance')->group(function () {
+Route::prefix('api/v1/qualitycontrol/compliance')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [ComplianceController::class, 'all'])

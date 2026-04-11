@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Documents\DocVersionsController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Documents\DocVersionsController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Documents/doc-versions')->group(function () {
+Route::prefix('api/v1/documents/doc-versions')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [DocVersionsController::class, 'all'])

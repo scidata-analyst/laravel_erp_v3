@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Reports\CustomReportsController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Reports\CustomReportsController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Reports/custom-reports')->group(function () {
+Route::prefix('api/v1/reports/custom-reports')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [CustomReportsController::class, 'all'])

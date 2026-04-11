@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Sales\PromotionsController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Sales\PromotionsController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Sales/promotions')->group(function () {
+Route::prefix('api/v1/sales/promotions')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [PromotionsController::class, 'all'])

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Ecommerce\InvSyncController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Ecommerce\InvSyncController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Ecommerce/inv-sync')->group(function () {
+Route::prefix('api/v1/ecommerce/inv-sync')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [InvSyncController::class, 'all'])

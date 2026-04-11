@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Inventory\StockMovementsController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Inventory\StockMovementsController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Inventory/stock-movements')->group(function () {
+Route::prefix('api/v1/inventory/stock-movements')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [StockMovementsController::class, 'all'])

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Projects\ProjectCostController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Projects\ProjectCostController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Projects/project-cost')->group(function () {
+Route::prefix('api/v1/projects/project-cost')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [ProjectCostController::class, 'all'])

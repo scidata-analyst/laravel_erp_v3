@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Projects\ResourcesController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Projects\ResourcesController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Projects/resources')->group(function () {
+Route::prefix('api/v1/projects/resources')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [ResourcesController::class, 'all'])

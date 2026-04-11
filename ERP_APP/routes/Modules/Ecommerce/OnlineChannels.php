@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Ecommerce\OnlineChannelsController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Ecommerce\OnlineChannelsController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Ecommerce/online-channels')->group(function () {
+Route::prefix('api/v1/ecommerce/online-channels')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [OnlineChannelsController::class, 'all'])

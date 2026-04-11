@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Sales\InvoicesController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Sales\InvoicesController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Sales/invoices')->group(function () {
+Route::prefix('api/v1/sales/invoices')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [InvoicesController::class, 'all'])

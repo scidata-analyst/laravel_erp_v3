@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Accounting\GlController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Accounting\GlController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Accounting/gl')->group(function () {
+Route::prefix('api/v1/accounting/gl')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [GlController::class, 'all'])

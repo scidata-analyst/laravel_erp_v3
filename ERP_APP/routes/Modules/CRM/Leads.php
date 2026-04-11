@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CRM\LeadsController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\CRM\LeadsController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/CRM/leads')->group(function () {
+Route::prefix('api/v1/crm/leads')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [LeadsController::class, 'all'])

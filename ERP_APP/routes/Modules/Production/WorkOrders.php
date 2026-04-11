@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Production\WorkOrdersController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Production\WorkOrdersController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Production/work-orders')->group(function () {
+Route::prefix('api/v1/production/work-orders')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [WorkOrdersController::class, 'all'])

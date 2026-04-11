@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Documents\DocLibraryController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Documents\DocLibraryController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Documents/doc-library')->group(function () {
+Route::prefix('api/v1/documents/doc-library')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [DocLibraryController::class, 'all'])

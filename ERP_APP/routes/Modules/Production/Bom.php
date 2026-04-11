@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Production\BomController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Production\BomController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Production/bom')->group(function () {
+Route::prefix('api/v1/production/bom')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [BomController::class, 'all'])

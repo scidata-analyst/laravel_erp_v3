@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsersRoles\RolesController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\UsersRoles\RolesController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/UsersRoles/roles')->group(function () {
+Route::prefix('api/v1/usersroles/roles')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [RolesController::class, 'all'])

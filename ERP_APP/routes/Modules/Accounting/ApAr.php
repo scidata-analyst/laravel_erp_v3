@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Accounting\ApArController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Accounting\ApArController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Accounting/ap-ar')->group(function () {
+Route::prefix('api/v1/accounting/ap-ar')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [ApArController::class, 'all'])

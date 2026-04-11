@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HR\AttendanceController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\HR\AttendanceController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/HR/attendance')->group(function () {
+Route::prefix('api/v1/hr/attendance')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [AttendanceController::class, 'all'])

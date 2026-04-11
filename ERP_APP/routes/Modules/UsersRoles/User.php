@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsersRoles\UserController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\UsersRoles\UserController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/UsersRoles/user')->group(function () {
+Route::prefix('api/v1/usersroles/user')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [UserController::class, 'all'])

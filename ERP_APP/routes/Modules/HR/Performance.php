@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HR\PerformanceController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\HR\PerformanceController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/HR/performance')->group(function () {
+Route::prefix('api/v1/hr/performance')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [PerformanceController::class, 'all'])

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Ecommerce\PosController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Ecommerce\PosController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Ecommerce/pos')->group(function () {
+Route::prefix('api/v1/ecommerce/pos')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [PosController::class, 'all'])

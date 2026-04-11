@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HR\PayrollController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\HR\PayrollController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/HR/payroll')->group(function () {
+Route::prefix('api/v1/hr/payroll')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [PayrollController::class, 'all'])

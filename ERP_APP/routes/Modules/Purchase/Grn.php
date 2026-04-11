@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Purchase\GrnController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Purchase\GrnController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Purchase/grn')->group(function () {
+Route::prefix('api/v1/purchase/grn')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [GrnController::class, 'all'])

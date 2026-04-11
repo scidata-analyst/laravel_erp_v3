@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Accounting\TaxController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Accounting\TaxController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Accounting/tax')->group(function () {
+Route::prefix('api/v1/accounting/tax')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [TaxController::class, 'all'])

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Logistics\WarehousesController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Logistics\WarehousesController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Logistics/warehouses')->group(function () {
+Route::prefix('api/v1/logistics/warehouses')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [WarehousesController::class, 'all'])

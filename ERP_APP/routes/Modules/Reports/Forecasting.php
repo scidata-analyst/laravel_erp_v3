@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Reports\ForecastingController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Reports\ForecastingController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Reports/forecasting')->group(function () {
+Route::prefix('api/v1/reports/forecasting')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [ForecastingController::class, 'all'])

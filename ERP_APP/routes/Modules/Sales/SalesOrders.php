@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Sales\SalesOrdersController;
@@ -23,7 +23,7 @@ use App\Http\Controllers\Sales\SalesOrdersController;
  * =============================================================================
  */
 
-Route::prefix('api/v1/Sales/sales-orders')->group(function () {
+Route::prefix('api/v1/sales/sales-orders')->group(function () {
 
     // Get all records (no pagination)
     Route::get('/all', [SalesOrdersController::class, 'all'])
