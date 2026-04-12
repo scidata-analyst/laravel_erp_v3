@@ -58,11 +58,15 @@ class CustomersController extends Controller
 
         $data = $this->customersService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Customers records fetched successfully",
-            "data" => CustomersResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "Customers records fetched successfully",
+                "data" => CustomersResource::collection($data)
+            ]);
+        }
+
+        return view("sales.customers", compact("data"));
     }
 
     /**

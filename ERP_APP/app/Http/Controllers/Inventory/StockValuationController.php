@@ -58,11 +58,15 @@ class StockValuationController extends Controller
 
         $data = $this->stockValuationService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "StockValuation records fetched successfully",
-            "data" => StockValuationResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "StockValuation records fetched successfully",
+                "data" => StockValuationResource::collection($data)
+            ]);
+        }
+
+        return view("inventory.stock_valuation", compact("data"));
     }
 
     /**

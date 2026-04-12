@@ -58,11 +58,15 @@ class DashboardController extends Controller
 
         $data = $this->dashboardService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Dashboard records fetched successfully",
-            "data" => DashboardResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "Dashboard records fetched successfully",
+                "data" => DashboardResource::collection($data)
+            ]);
+        }
+
+        return view("core.dashboard", compact("data"));
     }
 
     /**

@@ -58,11 +58,15 @@ class UserController extends Controller
 
         $data = $this->userService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "User records fetched successfully",
-            "data" => UserResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "User records fetched successfully",
+                "data" => UserResource::collection($data)
+            ]);
+        }
+
+        return view("users_roles.user", compact("data"));
     }
 
     /**

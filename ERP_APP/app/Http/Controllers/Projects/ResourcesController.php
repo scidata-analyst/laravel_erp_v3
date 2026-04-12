@@ -58,11 +58,15 @@ class ResourcesController extends Controller
 
         $data = $this->resourcesService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Resources records fetched successfully",
-            "data" => ResourcesResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "Resources records fetched successfully",
+                "data" => ResourcesResource::collection($data)
+            ]);
+        }
+
+        return view("projects.resources", compact("data"));
     }
 
     /**

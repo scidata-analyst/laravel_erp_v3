@@ -58,11 +58,15 @@ class AttendanceController extends Controller
 
         $data = $this->attendanceService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Attendance records fetched successfully",
-            "data" => AttendanceResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "Attendance records fetched successfully",
+                "data" => AttendanceResource::collection($data)
+            ]);
+        }
+
+        return view("hr.attendance", compact("data"));
     }
 
     /**

@@ -58,11 +58,15 @@ class BiDashboardsController extends Controller
 
         $data = $this->biDashboardsService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "BiDashboards records fetched successfully",
-            "data" => BiDashboardsResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "BiDashboards records fetched successfully",
+                "data" => BiDashboardsResource::collection($data)
+            ]);
+        }
+
+        return view("reports.bi_dashboards", compact("data"));
     }
 
     /**

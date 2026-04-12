@@ -58,11 +58,15 @@ class GrnController extends Controller
 
         $data = $this->grnService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Grn records fetched successfully",
-            "data" => GrnResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "Grn records fetched successfully",
+                "data" => GrnResource::collection($data)
+            ]);
+        }
+
+        return view("purchase.grn", compact("data"));
     }
 
     /**

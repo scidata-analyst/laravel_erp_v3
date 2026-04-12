@@ -58,11 +58,15 @@ class ShipmentsController extends Controller
 
         $data = $this->shipmentsService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Shipments records fetched successfully",
-            "data" => ShipmentsResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "Shipments records fetched successfully",
+                "data" => ShipmentsResource::collection($data)
+            ]);
+        }
+
+        return view("logistics.shipments", compact("data"));
     }
 
     /**

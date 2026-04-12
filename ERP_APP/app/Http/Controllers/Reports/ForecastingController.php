@@ -58,11 +58,15 @@ class ForecastingController extends Controller
 
         $data = $this->forecastingService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Forecasting records fetched successfully",
-            "data" => ForecastingResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "Forecasting records fetched successfully",
+                "data" => ForecastingResource::collection($data)
+            ]);
+        }
+
+        return view("reports.forecasting", compact("data"));
     }
 
     /**

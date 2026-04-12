@@ -58,11 +58,15 @@ class InvSyncController extends Controller
 
         $data = $this->invSyncService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "InvSync records fetched successfully",
-            "data" => InvSyncResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "InvSync records fetched successfully",
+                "data" => InvSyncResource::collection($data)
+            ]);
+        }
+
+        return view("ecommerce.inv_sync", compact("data"));
     }
 
     /**

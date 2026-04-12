@@ -58,11 +58,15 @@ class SupplierPaymentsController extends Controller
 
         $data = $this->supplierPaymentsService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "SupplierPayments records fetched successfully",
-            "data" => SupplierPaymentsResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "SupplierPayments records fetched successfully",
+                "data" => SupplierPaymentsResource::collection($data)
+            ]);
+        }
+
+        return view("purchase.supplier_payments", compact("data"));
     }
 
     /**

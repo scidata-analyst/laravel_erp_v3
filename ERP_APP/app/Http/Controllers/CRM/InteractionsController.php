@@ -58,11 +58,15 @@ class InteractionsController extends Controller
 
         $data = $this->interactionsService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Interactions records fetched successfully",
-            "data" => InteractionsResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "Interactions records fetched successfully",
+                "data" => InteractionsResource::collection($data)
+            ]);
+        }
+
+        return view("crm.interactions", compact("data"));
     }
 
     /**

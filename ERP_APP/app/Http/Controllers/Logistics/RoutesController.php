@@ -58,11 +58,15 @@ class RoutesController extends Controller
 
         $data = $this->routesService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Routes records fetched successfully",
-            "data" => RoutesResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "Routes records fetched successfully",
+                "data" => RoutesResource::collection($data)
+            ]);
+        }
+
+        return view("logistics.routes", compact("data"));
     }
 
     /**

@@ -58,11 +58,15 @@ class SupportController extends Controller
 
         $data = $this->supportService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Support records fetched successfully",
-            "data" => SupportResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "Support records fetched successfully",
+                "data" => SupportResource::collection($data)
+            ]);
+        }
+
+        return view("crm.support", compact("data"));
     }
 
     /**

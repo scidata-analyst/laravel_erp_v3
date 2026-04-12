@@ -58,11 +58,15 @@ class BatchTrackingController extends Controller
 
         $data = $this->batchTrackingService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "BatchTracking records fetched successfully",
-            "data" => BatchTrackingResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "BatchTracking records fetched successfully",
+                "data" => BatchTrackingResource::collection($data)
+            ]);
+        }
+
+        return view("inventory.batch_tracking", compact("data"));
     }
 
     /**

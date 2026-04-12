@@ -58,11 +58,15 @@ class SettingsController extends Controller
 
         $data = $this->settingsService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Settings records fetched successfully",
-            "data" => SettingsResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "Settings records fetched successfully",
+                "data" => SettingsResource::collection($data)
+            ]);
+        }
+
+        return view("core.settings", compact("data"));
     }
 
     /**

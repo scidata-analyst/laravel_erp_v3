@@ -58,11 +58,15 @@ class SalesOrdersController extends Controller
 
         $data = $this->salesOrdersService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "SalesOrders records fetched successfully",
-            "data" => SalesOrdersResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "SalesOrders records fetched successfully",
+                "data" => SalesOrdersResource::collection($data)
+            ]);
+        }
+
+        return view("sales.sales_orders", compact("data"));
     }
 
     /**

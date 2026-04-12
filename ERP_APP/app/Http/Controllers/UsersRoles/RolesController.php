@@ -58,11 +58,15 @@ class RolesController extends Controller
 
         $data = $this->rolesService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Roles records fetched successfully",
-            "data" => RolesResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "Roles records fetched successfully",
+                "data" => RolesResource::collection($data)
+            ]);
+        }
+
+        return view("users_roles.roles", compact("data"));
     }
 
     /**

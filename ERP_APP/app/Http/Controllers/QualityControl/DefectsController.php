@@ -58,11 +58,15 @@ class DefectsController extends Controller
 
         $data = $this->defectsService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Defects records fetched successfully",
-            "data" => DefectsResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "Defects records fetched successfully",
+                "data" => DefectsResource::collection($data)
+            ]);
+        }
+
+        return view("quality_control.defects", compact("data"));
     }
 
     /**

@@ -58,11 +58,15 @@ class StockMovementsController extends Controller
 
         $data = $this->stockMovementsService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "StockMovements records fetched successfully",
-            "data" => StockMovementsResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "StockMovements records fetched successfully",
+                "data" => StockMovementsResource::collection($data)
+            ]);
+        }
+
+        return view("inventory.stock_movements", compact("data"));
     }
 
     /**

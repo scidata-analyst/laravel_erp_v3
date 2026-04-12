@@ -58,11 +58,15 @@ class TasksController extends Controller
 
         $data = $this->tasksService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Tasks records fetched successfully",
-            "data" => TasksResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "Tasks records fetched successfully",
+                "data" => TasksResource::collection($data)
+            ]);
+        }
+
+        return view("projects.tasks", compact("data"));
     }
 
     /**

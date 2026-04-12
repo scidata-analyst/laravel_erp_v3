@@ -58,11 +58,15 @@ class QcChecklistsController extends Controller
 
         $data = $this->qcChecklistsService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "QcChecklists records fetched successfully",
-            "data" => QcChecklistsResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "QcChecklists records fetched successfully",
+                "data" => QcChecklistsResource::collection($data)
+            ]);
+        }
+
+        return view("quality_control.qc_checklists", compact("data"));
     }
 
     /**

@@ -58,11 +58,15 @@ class GlController extends Controller
 
         $data = $this->glService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Gl records fetched successfully",
-            "data" => GlResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "Gl records fetched successfully",
+                "data" => GlResource::collection($data)
+            ]);
+        }
+
+        return view("accounting.gl", compact("data"));
     }
 
     /**

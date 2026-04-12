@@ -58,11 +58,15 @@ class PosController extends Controller
 
         $data = $this->posService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Pos records fetched successfully",
-            "data" => PosResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "Pos records fetched successfully",
+                "data" => PosResource::collection($data)
+            ]);
+        }
+
+        return view("ecommerce.pos", compact("data"));
     }
 
     /**

@@ -58,11 +58,15 @@ class PromotionsController extends Controller
 
         $data = $this->promotionsService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Promotions records fetched successfully",
-            "data" => PromotionsResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "Promotions records fetched successfully",
+                "data" => PromotionsResource::collection($data)
+            ]);
+        }
+
+        return view("sales.promotions", compact("data"));
     }
 
     /**

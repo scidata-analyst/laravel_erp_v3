@@ -58,11 +58,15 @@ class PayrollController extends Controller
 
         $data = $this->payrollService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Payroll records fetched successfully",
-            "data" => PayrollResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "Payroll records fetched successfully",
+                "data" => PayrollResource::collection($data)
+            ]);
+        }
+
+        return view("hr.payroll", compact("data"));
     }
 
     /**

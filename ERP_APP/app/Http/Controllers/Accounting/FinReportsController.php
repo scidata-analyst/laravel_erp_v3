@@ -58,11 +58,15 @@ class FinReportsController extends Controller
 
         $data = $this->finReportsService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "FinReports records fetched successfully",
-            "data" => FinReportsResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "FinReports records fetched successfully",
+                "data" => FinReportsResource::collection($data)
+            ]);
+        }
+
+        return view("accounting.fin_reports", compact("data"));
     }
 
     /**

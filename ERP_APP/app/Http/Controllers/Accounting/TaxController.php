@@ -58,11 +58,15 @@ class TaxController extends Controller
 
         $data = $this->taxService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Tax records fetched successfully",
-            "data" => TaxResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "Tax records fetched successfully",
+                "data" => TaxResource::collection($data)
+            ]);
+        }
+
+        return view("accounting.tax", compact("data"));
     }
 
     /**

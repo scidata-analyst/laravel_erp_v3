@@ -58,11 +58,15 @@ class WarehousesController extends Controller
 
         $data = $this->warehousesService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Warehouses records fetched successfully",
-            "data" => WarehousesResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "Warehouses records fetched successfully",
+                "data" => WarehousesResource::collection($data)
+            ]);
+        }
+
+        return view("logistics.warehouses", compact("data"));
     }
 
     /**

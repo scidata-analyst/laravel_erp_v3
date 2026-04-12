@@ -58,11 +58,15 @@ class MachineLaborController extends Controller
 
         $data = $this->machineLaborService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "MachineLabor records fetched successfully",
-            "data" => MachineLaborResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "MachineLabor records fetched successfully",
+                "data" => MachineLaborResource::collection($data)
+            ]);
+        }
+
+        return view("production.machine_labor", compact("data"));
     }
 
     /**

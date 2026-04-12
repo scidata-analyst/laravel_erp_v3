@@ -58,11 +58,15 @@ class ComplianceController extends Controller
 
         $data = $this->complianceService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Compliance records fetched successfully",
-            "data" => ComplianceResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "Compliance records fetched successfully",
+                "data" => ComplianceResource::collection($data)
+            ]);
+        }
+
+        return view("quality_control.compliance", compact("data"));
     }
 
     /**

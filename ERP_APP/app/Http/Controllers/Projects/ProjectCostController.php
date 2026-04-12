@@ -58,11 +58,15 @@ class ProjectCostController extends Controller
 
         $data = $this->projectCostService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "ProjectCost records fetched successfully",
-            "data" => ProjectCostResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "ProjectCost records fetched successfully",
+                "data" => ProjectCostResource::collection($data)
+            ]);
+        }
+
+        return view("projects.project_cost", compact("data"));
     }
 
     /**

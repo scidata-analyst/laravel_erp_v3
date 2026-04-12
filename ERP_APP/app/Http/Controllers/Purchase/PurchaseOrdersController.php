@@ -58,11 +58,15 @@ class PurchaseOrdersController extends Controller
 
         $data = $this->purchaseOrdersService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "PurchaseOrders records fetched successfully",
-            "data" => PurchaseOrdersResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "PurchaseOrders records fetched successfully",
+                "data" => PurchaseOrdersResource::collection($data)
+            ]);
+        }
+
+        return view("purchase.purchase_orders", compact("data"));
     }
 
     /**

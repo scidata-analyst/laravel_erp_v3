@@ -58,11 +58,15 @@ class OnlineChannelsController extends Controller
 
         $data = $this->onlineChannelsService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "OnlineChannels records fetched successfully",
-            "data" => OnlineChannelsResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "OnlineChannels records fetched successfully",
+                "data" => OnlineChannelsResource::collection($data)
+            ]);
+        }
+
+        return view("ecommerce.online_channels", compact("data"));
     }
 
     /**

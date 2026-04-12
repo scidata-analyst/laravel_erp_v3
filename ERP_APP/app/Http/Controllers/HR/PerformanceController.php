@@ -58,11 +58,15 @@ class PerformanceController extends Controller
 
         $data = $this->performanceService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Performance records fetched successfully",
-            "data" => PerformanceResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "Performance records fetched successfully",
+                "data" => PerformanceResource::collection($data)
+            ]);
+        }
+
+        return view("hr.performance", compact("data"));
     }
 
     /**

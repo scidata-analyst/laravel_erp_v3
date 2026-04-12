@@ -58,11 +58,15 @@ class WorkOrdersController extends Controller
 
         $data = $this->workOrdersService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "WorkOrders records fetched successfully",
-            "data" => WorkOrdersResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "WorkOrders records fetched successfully",
+                "data" => WorkOrdersResource::collection($data)
+            ]);
+        }
+
+        return view("production.work_orders", compact("data"));
     }
 
     /**

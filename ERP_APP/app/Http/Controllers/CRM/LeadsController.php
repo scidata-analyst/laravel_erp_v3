@@ -58,11 +58,15 @@ class LeadsController extends Controller
 
         $data = $this->leadsService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Leads records fetched successfully",
-            "data" => LeadsResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "Leads records fetched successfully",
+                "data" => LeadsResource::collection($data)
+            ]);
+        }
+
+        return view("crm.leads", compact("data"));
     }
 
     /**

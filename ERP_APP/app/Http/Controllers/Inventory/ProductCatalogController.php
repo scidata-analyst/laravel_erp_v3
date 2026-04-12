@@ -58,11 +58,15 @@ class ProductCatalogController extends Controller
 
         $data = $this->productCatalogService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "ProductCatalog records fetched successfully",
-            "data" => ProductCatalogResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "ProductCatalog records fetched successfully",
+                "data" => ProductCatalogResource::collection($data)
+            ]);
+        }
+
+        return view("inventory.product_catalog", compact("data"));
     }
 
     /**

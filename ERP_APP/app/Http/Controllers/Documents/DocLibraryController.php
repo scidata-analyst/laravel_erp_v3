@@ -58,11 +58,15 @@ class DocLibraryController extends Controller
 
         $data = $this->docLibraryService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "DocLibrary records fetched successfully",
-            "data" => DocLibraryResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "DocLibrary records fetched successfully",
+                "data" => DocLibraryResource::collection($data)
+            ]);
+        }
+
+        return view("documents.doc_library", compact("data"));
     }
 
     /**

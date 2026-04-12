@@ -58,11 +58,15 @@ class EmployeesController extends Controller
 
         $data = $this->employeesService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Employees records fetched successfully",
-            "data" => EmployeesResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "Employees records fetched successfully",
+                "data" => EmployeesResource::collection($data)
+            ]);
+        }
+
+        return view("hr.employees", compact("data"));
     }
 
     /**

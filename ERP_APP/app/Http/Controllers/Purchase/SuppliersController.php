@@ -58,11 +58,15 @@ class SuppliersController extends Controller
 
         $data = $this->suppliersService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Suppliers records fetched successfully",
-            "data" => SuppliersResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "Suppliers records fetched successfully",
+                "data" => SuppliersResource::collection($data)
+            ]);
+        }
+
+        return view("purchase.suppliers", compact("data"));
     }
 
     /**

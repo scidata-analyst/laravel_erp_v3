@@ -58,11 +58,15 @@ class CustomReportsController extends Controller
 
         $data = $this->customReportsService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "CustomReports records fetched successfully",
-            "data" => CustomReportsResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "CustomReports records fetched successfully",
+                "data" => CustomReportsResource::collection($data)
+            ]);
+        }
+
+        return view("reports.custom_reports", compact("data"));
     }
 
     /**

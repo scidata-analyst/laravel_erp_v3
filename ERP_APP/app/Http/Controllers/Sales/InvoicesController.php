@@ -58,11 +58,15 @@ class InvoicesController extends Controller
 
         $data = $this->invoicesService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Invoices records fetched successfully",
-            "data" => InvoicesResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "Invoices records fetched successfully",
+                "data" => InvoicesResource::collection($data)
+            ]);
+        }
+
+        return view("sales.invoices", compact("data"));
     }
 
     /**

@@ -58,11 +58,15 @@ class ApArController extends Controller
 
         $data = $this->apArService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "ApAr records fetched successfully",
-            "data" => ApArResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "ApAr records fetched successfully",
+                "data" => ApArResource::collection($data)
+            ]);
+        }
+
+        return view("accounting.ap_ar", compact("data"));
     }
 
     /**

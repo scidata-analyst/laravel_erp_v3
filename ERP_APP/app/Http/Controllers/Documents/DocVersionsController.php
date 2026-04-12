@@ -58,11 +58,15 @@ class DocVersionsController extends Controller
 
         $data = $this->docVersionsService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "DocVersions records fetched successfully",
-            "data" => DocVersionsResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "DocVersions records fetched successfully",
+                "data" => DocVersionsResource::collection($data)
+            ]);
+        }
+
+        return view("documents.doc_versions", compact("data"));
     }
 
     /**

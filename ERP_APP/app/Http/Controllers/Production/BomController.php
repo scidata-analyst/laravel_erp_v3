@@ -58,11 +58,15 @@ class BomController extends Controller
 
         $data = $this->bomService->index($perPage, $search, $filters);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Bom records fetched successfully",
-            "data" => BomResource::collection($data)
-        ]);
+        if (request()->ajax()) {
+            return response()->json([
+                "success" => true,
+                "message" => "Bom records fetched successfully",
+                "data" => BomResource::collection($data)
+            ]);
+        }
+
+        return view("production.bom", compact("data"));
     }
 
     /**
