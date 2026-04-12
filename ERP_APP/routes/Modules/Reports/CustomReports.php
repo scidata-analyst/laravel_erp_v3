@@ -25,27 +25,27 @@ use App\Http\Controllers\Reports\CustomReportsController;
 
 Route::prefix('api/v1/reports/custom-reports')->group(function () {
 
-    // Get all records (no pagination)
+    
     Route::get('/all', [CustomReportsController::class, 'all'])
         ->name('custom_reports.all');
 
-    // Paginated list
+    
     Route::get('/', [CustomReportsController::class, 'index'])
         ->name('custom_reports.index');
 
-    // Create
+    
     Route::post('/', [CustomReportsController::class, 'store'])
         ->name('custom_reports.store');
 
-    // Show single
+    
     Route::get('/{id}', [CustomReportsController::class, 'show'])
         ->name('custom_reports.show');
 
-    // Update
+    
     Route::put('/{id}', [CustomReportsController::class, 'update'])
         ->name('custom_reports.update');
 
-    // Delete
+    
     Route::delete('/{id}', [CustomReportsController::class, 'destroy'])
         ->name('custom_reports.destroy');
 

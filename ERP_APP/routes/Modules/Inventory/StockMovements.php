@@ -25,27 +25,27 @@ use App\Http\Controllers\Inventory\StockMovementsController;
 
 Route::prefix('api/v1/inventory/stock-movements')->group(function () {
 
-    // Get all records (no pagination)
+    
     Route::get('/all', [StockMovementsController::class, 'all'])
         ->name('stock_movements.all');
 
-    // Paginated list
+    
     Route::get('/', [StockMovementsController::class, 'index'])
         ->name('stock_movements.index');
 
-    // Create
+    
     Route::post('/', [StockMovementsController::class, 'store'])
         ->name('stock_movements.store');
 
-    // Show single
+    
     Route::get('/{id}', [StockMovementsController::class, 'show'])
         ->name('stock_movements.show');
 
-    // Update
+    
     Route::put('/{id}', [StockMovementsController::class, 'update'])
         ->name('stock_movements.update');
 
-    // Delete
+    
     Route::delete('/{id}', [StockMovementsController::class, 'destroy'])
         ->name('stock_movements.destroy');
 

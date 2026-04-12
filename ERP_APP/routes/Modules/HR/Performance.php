@@ -25,27 +25,27 @@ use App\Http\Controllers\HR\PerformanceController;
 
 Route::prefix('api/v1/hr/performance')->group(function () {
 
-    // Get all records (no pagination)
+    
     Route::get('/all', [PerformanceController::class, 'all'])
         ->name('performance.all');
 
-    // Paginated list
+    
     Route::get('/', [PerformanceController::class, 'index'])
         ->name('performance.index');
 
-    // Create
+    
     Route::post('/', [PerformanceController::class, 'store'])
         ->name('performance.store');
 
-    // Show single
+    
     Route::get('/{id}', [PerformanceController::class, 'show'])
         ->name('performance.show');
 
-    // Update
+    
     Route::put('/{id}', [PerformanceController::class, 'update'])
         ->name('performance.update');
 
-    // Delete
+    
     Route::delete('/{id}', [PerformanceController::class, 'destroy'])
         ->name('performance.destroy');
 

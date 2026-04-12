@@ -25,27 +25,27 @@ use App\Http\Controllers\Production\WorkOrdersController;
 
 Route::prefix('api/v1/production/work-orders')->group(function () {
 
-    // Get all records (no pagination)
+    
     Route::get('/all', [WorkOrdersController::class, 'all'])
         ->name('work_orders.all');
 
-    // Paginated list
+    
     Route::get('/', [WorkOrdersController::class, 'index'])
         ->name('work_orders.index');
 
-    // Create
+    
     Route::post('/', [WorkOrdersController::class, 'store'])
         ->name('work_orders.store');
 
-    // Show single
+    
     Route::get('/{id}', [WorkOrdersController::class, 'show'])
         ->name('work_orders.show');
 
-    // Update
+    
     Route::put('/{id}', [WorkOrdersController::class, 'update'])
         ->name('work_orders.update');
 
-    // Delete
+    
     Route::delete('/{id}', [WorkOrdersController::class, 'destroy'])
         ->name('work_orders.destroy');
 

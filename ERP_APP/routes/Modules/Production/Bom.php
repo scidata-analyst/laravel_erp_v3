@@ -25,27 +25,27 @@ use App\Http\Controllers\Production\BomController;
 
 Route::prefix('api/v1/production/bom')->group(function () {
 
-    // Get all records (no pagination)
+    
     Route::get('/all', [BomController::class, 'all'])
         ->name('bom.all');
 
-    // Paginated list
+    
     Route::get('/', [BomController::class, 'index'])
         ->name('bom.index');
 
-    // Create
+    
     Route::post('/', [BomController::class, 'store'])
         ->name('bom.store');
 
-    // Show single
+    
     Route::get('/{id}', [BomController::class, 'show'])
         ->name('bom.show');
 
-    // Update
+    
     Route::put('/{id}', [BomController::class, 'update'])
         ->name('bom.update');
 
-    // Delete
+    
     Route::delete('/{id}', [BomController::class, 'destroy'])
         ->name('bom.destroy');
 

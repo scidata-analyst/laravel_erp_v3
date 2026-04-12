@@ -25,27 +25,27 @@ use App\Http\Controllers\QualityControl\ComplianceController;
 
 Route::prefix('api/v1/qualitycontrol/compliance')->group(function () {
 
-    // Get all records (no pagination)
+    
     Route::get('/all', [ComplianceController::class, 'all'])
         ->name('compliance.all');
 
-    // Paginated list
+    
     Route::get('/', [ComplianceController::class, 'index'])
         ->name('compliance.index');
 
-    // Create
+    
     Route::post('/', [ComplianceController::class, 'store'])
         ->name('compliance.store');
 
-    // Show single
+    
     Route::get('/{id}', [ComplianceController::class, 'show'])
         ->name('compliance.show');
 
-    // Update
+    
     Route::put('/{id}', [ComplianceController::class, 'update'])
         ->name('compliance.update');
 
-    // Delete
+    
     Route::delete('/{id}', [ComplianceController::class, 'destroy'])
         ->name('compliance.destroy');
 

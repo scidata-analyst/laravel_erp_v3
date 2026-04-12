@@ -25,27 +25,27 @@ use App\Http\Controllers\Accounting\TaxController;
 
 Route::prefix('api/v1/accounting/tax')->group(function () {
 
-    // Get all records (no pagination)
+    
     Route::get('/all', [TaxController::class, 'all'])
         ->name('tax.all');
 
-    // Paginated list
+    
     Route::get('/', [TaxController::class, 'index'])
         ->name('tax.index');
 
-    // Create
+    
     Route::post('/', [TaxController::class, 'store'])
         ->name('tax.store');
 
-    // Show single
+    
     Route::get('/{id}', [TaxController::class, 'show'])
         ->name('tax.show');
 
-    // Update
+    
     Route::put('/{id}', [TaxController::class, 'update'])
         ->name('tax.update');
 
-    // Delete
+    
     Route::delete('/{id}', [TaxController::class, 'destroy'])
         ->name('tax.destroy');
 

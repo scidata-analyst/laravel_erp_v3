@@ -28,7 +28,7 @@ function showPage(pageId) {
   const target = document.getElementById('page-' + pageId);
   if (target) target.classList.add('active');
 
-  // Update nav highlights
+   nav highlights
   document.querySelectorAll('.sidebar-nav-item').forEach(item => {
     item.classList.remove('active');
     if (item.getAttribute('onclick') && item.getAttribute('onclick').includes("'" + pageId + "'")) {
@@ -36,7 +36,7 @@ function showPage(pageId) {
     }
   });
 
-  // Update topbar
+   topbar
   const info = pageMap[pageId] || { title: pageId, crumb: pageId };
   document.getElementById('topbarTitle').textContent = info.title;
   document.getElementById('topbarBreadcrumb').textContent = info.crumb;

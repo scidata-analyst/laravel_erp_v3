@@ -25,27 +25,27 @@ use App\Http\Controllers\Purchase\GrnController;
 
 Route::prefix('api/v1/purchase/grn')->group(function () {
 
-    // Get all records (no pagination)
+    
     Route::get('/all', [GrnController::class, 'all'])
         ->name('grn.all');
 
-    // Paginated list
+    
     Route::get('/', [GrnController::class, 'index'])
         ->name('grn.index');
 
-    // Create
+    
     Route::post('/', [GrnController::class, 'store'])
         ->name('grn.store');
 
-    // Show single
+    
     Route::get('/{id}', [GrnController::class, 'show'])
         ->name('grn.show');
 
-    // Update
+    
     Route::put('/{id}', [GrnController::class, 'update'])
         ->name('grn.update');
 
-    // Delete
+    
     Route::delete('/{id}', [GrnController::class, 'destroy'])
         ->name('grn.destroy');
 

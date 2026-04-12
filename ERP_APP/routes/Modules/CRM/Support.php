@@ -25,27 +25,27 @@ use App\Http\Controllers\CRM\SupportController;
 
 Route::prefix('api/v1/crm/support')->group(function () {
 
-    // Get all records (no pagination)
+    
     Route::get('/all', [SupportController::class, 'all'])
         ->name('support.all');
 
-    // Paginated list
+    
     Route::get('/', [SupportController::class, 'index'])
         ->name('support.index');
 
-    // Create
+    
     Route::post('/', [SupportController::class, 'store'])
         ->name('support.store');
 
-    // Show single
+    
     Route::get('/{id}', [SupportController::class, 'show'])
         ->name('support.show');
 
-    // Update
+    
     Route::put('/{id}', [SupportController::class, 'update'])
         ->name('support.update');
 
-    // Delete
+    
     Route::delete('/{id}', [SupportController::class, 'destroy'])
         ->name('support.destroy');
 

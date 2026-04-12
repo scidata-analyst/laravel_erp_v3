@@ -25,27 +25,27 @@ use App\Http\Controllers\Sales\InvoicesController;
 
 Route::prefix('api/v1/sales/invoices')->group(function () {
 
-    // Get all records (no pagination)
+    
     Route::get('/all', [InvoicesController::class, 'all'])
         ->name('invoices.all');
 
-    // Paginated list
+    
     Route::get('/', [InvoicesController::class, 'index'])
         ->name('invoices.index');
 
-    // Create
+    
     Route::post('/', [InvoicesController::class, 'store'])
         ->name('invoices.store');
 
-    // Show single
+    
     Route::get('/{id}', [InvoicesController::class, 'show'])
         ->name('invoices.show');
 
-    // Update
+    
     Route::put('/{id}', [InvoicesController::class, 'update'])
         ->name('invoices.update');
 
-    // Delete
+    
     Route::delete('/{id}', [InvoicesController::class, 'destroy'])
         ->name('invoices.destroy');
 

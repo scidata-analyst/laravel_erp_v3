@@ -25,27 +25,27 @@ use App\Http\Controllers\CRM\LeadsController;
 
 Route::prefix('api/v1/crm/leads')->group(function () {
 
-    // Get all records (no pagination)
+    
     Route::get('/all', [LeadsController::class, 'all'])
         ->name('leads.all');
 
-    // Paginated list
+    
     Route::get('/', [LeadsController::class, 'index'])
         ->name('leads.index');
 
-    // Create
+    
     Route::post('/', [LeadsController::class, 'store'])
         ->name('leads.store');
 
-    // Show single
+    
     Route::get('/{id}', [LeadsController::class, 'show'])
         ->name('leads.show');
 
-    // Update
+    
     Route::put('/{id}', [LeadsController::class, 'update'])
         ->name('leads.update');
 
-    // Delete
+    
     Route::delete('/{id}', [LeadsController::class, 'destroy'])
         ->name('leads.destroy');
 

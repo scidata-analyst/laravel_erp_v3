@@ -25,27 +25,27 @@ use App\Http\Controllers\HR\PayrollController;
 
 Route::prefix('api/v1/hr/payroll')->group(function () {
 
-    // Get all records (no pagination)
+    
     Route::get('/all', [PayrollController::class, 'all'])
         ->name('payroll.all');
 
-    // Paginated list
+    
     Route::get('/', [PayrollController::class, 'index'])
         ->name('payroll.index');
 
-    // Create
+    
     Route::post('/', [PayrollController::class, 'store'])
         ->name('payroll.store');
 
-    // Show single
+    
     Route::get('/{id}', [PayrollController::class, 'show'])
         ->name('payroll.show');
 
-    // Update
+    
     Route::put('/{id}', [PayrollController::class, 'update'])
         ->name('payroll.update');
 
-    // Delete
+    
     Route::delete('/{id}', [PayrollController::class, 'destroy'])
         ->name('payroll.destroy');
 

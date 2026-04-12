@@ -25,27 +25,27 @@ use App\Http\Controllers\Core\DashboardController;
 
 Route::prefix('api/v1/core/dashboard')->group(function () {
 
-    // Get all records (no pagination)
+    
     Route::get('/all', [DashboardController::class, 'all'])
         ->name('dashboard.all');
 
-    // Paginated list
+    
     Route::get('/', [DashboardController::class, 'index'])
         ->name('dashboard.index');
 
-    // Create
+    
     Route::post('/', [DashboardController::class, 'store'])
         ->name('dashboard.store');
 
-    // Show single
+    
     Route::get('/{id}', [DashboardController::class, 'show'])
         ->name('dashboard.show');
 
-    // Update
+    
     Route::put('/{id}', [DashboardController::class, 'update'])
         ->name('dashboard.update');
 
-    // Delete
+    
     Route::delete('/{id}', [DashboardController::class, 'destroy'])
         ->name('dashboard.destroy');
 

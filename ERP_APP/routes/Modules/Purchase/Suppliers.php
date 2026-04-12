@@ -25,27 +25,27 @@ use App\Http\Controllers\Purchase\SuppliersController;
 
 Route::prefix('api/v1/purchase/suppliers')->group(function () {
 
-    // Get all records (no pagination)
+    
     Route::get('/all', [SuppliersController::class, 'all'])
         ->name('suppliers.all');
 
-    // Paginated list
+    
     Route::get('/', [SuppliersController::class, 'index'])
         ->name('suppliers.index');
 
-    // Create
+    
     Route::post('/', [SuppliersController::class, 'store'])
         ->name('suppliers.store');
 
-    // Show single
+    
     Route::get('/{id}', [SuppliersController::class, 'show'])
         ->name('suppliers.show');
 
-    // Update
+    
     Route::put('/{id}', [SuppliersController::class, 'update'])
         ->name('suppliers.update');
 
-    // Delete
+    
     Route::delete('/{id}', [SuppliersController::class, 'destroy'])
         ->name('suppliers.destroy');
 

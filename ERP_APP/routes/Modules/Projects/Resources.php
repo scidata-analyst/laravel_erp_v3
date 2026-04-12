@@ -25,27 +25,27 @@ use App\Http\Controllers\Projects\ResourcesController;
 
 Route::prefix('api/v1/projects/resources')->group(function () {
 
-    // Get all records (no pagination)
+    
     Route::get('/all', [ResourcesController::class, 'all'])
         ->name('resources.all');
 
-    // Paginated list
+    
     Route::get('/', [ResourcesController::class, 'index'])
         ->name('resources.index');
 
-    // Create
+    
     Route::post('/', [ResourcesController::class, 'store'])
         ->name('resources.store');
 
-    // Show single
+    
     Route::get('/{id}', [ResourcesController::class, 'show'])
         ->name('resources.show');
 
-    // Update
+    
     Route::put('/{id}', [ResourcesController::class, 'update'])
         ->name('resources.update');
 
-    // Delete
+    
     Route::delete('/{id}', [ResourcesController::class, 'destroy'])
         ->name('resources.destroy');
 

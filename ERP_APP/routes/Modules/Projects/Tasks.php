@@ -25,27 +25,27 @@ use App\Http\Controllers\Projects\TasksController;
 
 Route::prefix('api/v1/projects/tasks')->group(function () {
 
-    // Get all records (no pagination)
+    
     Route::get('/all', [TasksController::class, 'all'])
         ->name('tasks.all');
 
-    // Paginated list
+    
     Route::get('/', [TasksController::class, 'index'])
         ->name('tasks.index');
 
-    // Create
+    
     Route::post('/', [TasksController::class, 'store'])
         ->name('tasks.store');
 
-    // Show single
+    
     Route::get('/{id}', [TasksController::class, 'show'])
         ->name('tasks.show');
 
-    // Update
+    
     Route::put('/{id}', [TasksController::class, 'update'])
         ->name('tasks.update');
 
-    // Delete
+    
     Route::delete('/{id}', [TasksController::class, 'destroy'])
         ->name('tasks.destroy');
 

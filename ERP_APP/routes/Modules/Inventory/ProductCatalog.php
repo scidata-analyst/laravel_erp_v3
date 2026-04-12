@@ -25,27 +25,27 @@ use App\Http\Controllers\Inventory\ProductCatalogController;
 
 Route::prefix('api/v1/inventory/product-catalog')->group(function () {
 
-    // Get all records (no pagination)
+    
     Route::get('/all', [ProductCatalogController::class, 'all'])
         ->name('product_catalog.all');
 
-    // Paginated list
+    
     Route::get('/', [ProductCatalogController::class, 'index'])
         ->name('product_catalog.index');
 
-    // Create
+    
     Route::post('/', [ProductCatalogController::class, 'store'])
         ->name('product_catalog.store');
 
-    // Show single
+    
     Route::get('/{id}', [ProductCatalogController::class, 'show'])
         ->name('product_catalog.show');
 
-    // Update
+    
     Route::put('/{id}', [ProductCatalogController::class, 'update'])
         ->name('product_catalog.update');
 
-    // Delete
+    
     Route::delete('/{id}', [ProductCatalogController::class, 'destroy'])
         ->name('product_catalog.destroy');
 

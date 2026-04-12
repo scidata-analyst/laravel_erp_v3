@@ -25,27 +25,27 @@ use App\Http\Controllers\Ecommerce\InvSyncController;
 
 Route::prefix('api/v1/ecommerce/inv-sync')->group(function () {
 
-    // Get all records (no pagination)
+    
     Route::get('/all', [InvSyncController::class, 'all'])
         ->name('inv_sync.all');
 
-    // Paginated list
+    
     Route::get('/', [InvSyncController::class, 'index'])
         ->name('inv_sync.index');
 
-    // Create
+    
     Route::post('/', [InvSyncController::class, 'store'])
         ->name('inv_sync.store');
 
-    // Show single
+    
     Route::get('/{id}', [InvSyncController::class, 'show'])
         ->name('inv_sync.show');
 
-    // Update
+    
     Route::put('/{id}', [InvSyncController::class, 'update'])
         ->name('inv_sync.update');
 
-    // Delete
+    
     Route::delete('/{id}', [InvSyncController::class, 'destroy'])
         ->name('inv_sync.destroy');
 

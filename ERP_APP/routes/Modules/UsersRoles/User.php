@@ -25,27 +25,27 @@ use App\Http\Controllers\UsersRoles\UserController;
 
 Route::prefix('api/v1/usersroles/user')->group(function () {
 
-    // Get all records (no pagination)
+    
     Route::get('/all', [UserController::class, 'all'])
         ->name('user.all');
 
-    // Paginated list
+    
     Route::get('/', [UserController::class, 'index'])
         ->name('user.index');
 
-    // Create
+    
     Route::post('/', [UserController::class, 'store'])
         ->name('user.store');
 
-    // Show single
+    
     Route::get('/{id}', [UserController::class, 'show'])
         ->name('user.show');
 
-    // Update
+    
     Route::put('/{id}', [UserController::class, 'update'])
         ->name('user.update');
 
-    // Delete
+    
     Route::delete('/{id}', [UserController::class, 'destroy'])
         ->name('user.destroy');
 

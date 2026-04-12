@@ -25,27 +25,27 @@ use App\Http\Controllers\Accounting\GlController;
 
 Route::prefix('api/v1/accounting/gl')->group(function () {
 
-    // Get all records (no pagination)
+    
     Route::get('/all', [GlController::class, 'all'])
         ->name('gl.all');
 
-    // Paginated list
+    
     Route::get('/', [GlController::class, 'index'])
         ->name('gl.index');
 
-    // Create
+    
     Route::post('/', [GlController::class, 'store'])
         ->name('gl.store');
 
-    // Show single
+    
     Route::get('/{id}', [GlController::class, 'show'])
         ->name('gl.show');
 
-    // Update
+    
     Route::put('/{id}', [GlController::class, 'update'])
         ->name('gl.update');
 
-    // Delete
+    
     Route::delete('/{id}', [GlController::class, 'destroy'])
         ->name('gl.destroy');
 

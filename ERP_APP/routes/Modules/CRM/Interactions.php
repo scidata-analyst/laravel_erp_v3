@@ -25,27 +25,27 @@ use App\Http\Controllers\CRM\InteractionsController;
 
 Route::prefix('api/v1/crm/interactions')->group(function () {
 
-    // Get all records (no pagination)
+    
     Route::get('/all', [InteractionsController::class, 'all'])
         ->name('interactions.all');
 
-    // Paginated list
+    
     Route::get('/', [InteractionsController::class, 'index'])
         ->name('interactions.index');
 
-    // Create
+    
     Route::post('/', [InteractionsController::class, 'store'])
         ->name('interactions.store');
 
-    // Show single
+    
     Route::get('/{id}', [InteractionsController::class, 'show'])
         ->name('interactions.show');
 
-    // Update
+    
     Route::put('/{id}', [InteractionsController::class, 'update'])
         ->name('interactions.update');
 
-    // Delete
+    
     Route::delete('/{id}', [InteractionsController::class, 'destroy'])
         ->name('interactions.destroy');
 

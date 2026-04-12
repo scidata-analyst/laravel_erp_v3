@@ -25,27 +25,27 @@ use App\Http\Controllers\Logistics\ShipmentsController;
 
 Route::prefix('api/v1/logistics/shipments')->group(function () {
 
-    // Get all records (no pagination)
+    
     Route::get('/all', [ShipmentsController::class, 'all'])
         ->name('shipments.all');
 
-    // Paginated list
+    
     Route::get('/', [ShipmentsController::class, 'index'])
         ->name('shipments.index');
 
-    // Create
+    
     Route::post('/', [ShipmentsController::class, 'store'])
         ->name('shipments.store');
 
-    // Show single
+    
     Route::get('/{id}', [ShipmentsController::class, 'show'])
         ->name('shipments.show');
 
-    // Update
+    
     Route::put('/{id}', [ShipmentsController::class, 'update'])
         ->name('shipments.update');
 
-    // Delete
+    
     Route::delete('/{id}', [ShipmentsController::class, 'destroy'])
         ->name('shipments.destroy');
 

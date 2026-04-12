@@ -25,27 +25,27 @@ use App\Http\Controllers\Reports\BiDashboardsController;
 
 Route::prefix('api/v1/reports/bi-dashboards')->group(function () {
 
-    // Get all records (no pagination)
+    
     Route::get('/all', [BiDashboardsController::class, 'all'])
         ->name('bi_dashboards.all');
 
-    // Paginated list
+    
     Route::get('/', [BiDashboardsController::class, 'index'])
         ->name('bi_dashboards.index');
 
-    // Create
+    
     Route::post('/', [BiDashboardsController::class, 'store'])
         ->name('bi_dashboards.store');
 
-    // Show single
+    
     Route::get('/{id}', [BiDashboardsController::class, 'show'])
         ->name('bi_dashboards.show');
 
-    // Update
+    
     Route::put('/{id}', [BiDashboardsController::class, 'update'])
         ->name('bi_dashboards.update');
 
-    // Delete
+    
     Route::delete('/{id}', [BiDashboardsController::class, 'destroy'])
         ->name('bi_dashboards.destroy');
 
