@@ -54,10 +54,10 @@
         <span class="nav-arrow"><i class="bi bi-chevron-right"></i></span>
       </button>
       <div class="nav-submenu">
-        <a class="nav-submenu-link" href="suppliers.html" data-page="suppliers"><span>Suppliers</span></a>
-        <a class="nav-submenu-link" href="purchase-orders.html" data-page="purchase-orders"><span>Purchase Orders</span></a>
-        <a class="nav-submenu-link" href="grn.html" data-page="grn"><span>GRN</span></a>
-        <a class="nav-submenu-link" href="supplier-payments.html" data-page="supplier-payments"><span>Payments</span></a>
+        <a class="nav-submenu-link" href="{{ route('suppliers.index') }}" data-page="suppliers"><span>Suppliers</span></a>
+        <a class="nav-submenu-link" href="{{ route('purchase_orders.index') }}" data-page="purchase-orders"><span>Purchase Orders</span></a>
+        <a class="nav-submenu-link" href="{{ route('grn.index') }}" data-page="grn"><span>GRN</span></a>
+        <a class="nav-submenu-link" href="{{ route('supplier_payments.index') }}" data-page="supplier-payments"><span>Payments</span></a>
       </div>
     </div>
 
@@ -67,10 +67,10 @@
         <span class="nav-arrow"><i class="bi bi-chevron-right"></i></span>
       </button>
       <div class="nav-submenu">
-        <a class="nav-submenu-link" href="customers.html" data-page="customers"><span>Customers</span></a>
-        <a class="nav-submenu-link" href="sales-orders.html" data-page="sales-orders"><span>Sales Orders</span></a>
-        <a class="nav-submenu-link" href="invoices.html" data-page="invoices"><span>Invoices</span></a>
-        <a class="nav-submenu-link" href="promotions.html" data-page="promotions"><span>Discounts &amp; Promos</span></a>
+        <a class="nav-submenu-link" href="{{ route('customers.index') }}" data-page="customers"><span>Customers</span></a>
+        <a class="nav-submenu-link" href="{{ route('sales_orders.index') }}" data-page="sales-orders"><span>Sales Orders</span></a>
+        <a class="nav-submenu-link" href="{{ route('invoices.index') }}" data-page="invoices"><span>Invoices</span></a>
+        <a class="nav-submenu-link" href="{{ route('promotions.index') }}" data-page="promotions"><span>Discounts &amp; Promos</span></a>
       </div>
     </div>
 
@@ -156,9 +156,9 @@
         <span class="nav-arrow"><i class="bi bi-chevron-right"></i></span>
       </button>
       <div class="nav-submenu">
-        <a class="nav-submenu-link" href="qc-checklists.html" data-page="qc-checklists"><span>QC Checklists</span></a>
-        <a class="nav-submenu-link" href="defects.html" data-page="defects"><span>Defect Tracking</span></a>
-        <a class="nav-submenu-link" href="compliance.html" data-page="compliance"><span>Compliance Reports</span></a>
+        <a class="nav-submenu-link" href="{{ route('qc_checklists.index') }}" data-page="qc-checklists"><span>QC Checklists</span></a>
+        <a class="nav-submenu-link" href="{{ route('defects.index') }}" data-page="defects"><span>Defect Tracking</span></a>
+        <a class="nav-submenu-link" href="{{ route('compliance.index') }}" data-page="compliance"><span>Compliance Reports</span></a>
       </div>
     </div>
 
@@ -198,7 +198,7 @@
     </div>
 
     <div class="nav-item">
-      <a class="nav-link" href="settings.html" data-page="settings">
+      <a class="nav-link" href="{{ route('settings.index') }}" data-page="settings">
         <span class="nav-icon"><i class="bi bi-sliders"></i></span><span>Settings</span>
       </a>
     </div>

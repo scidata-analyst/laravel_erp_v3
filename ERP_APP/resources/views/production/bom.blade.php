@@ -24,7 +24,7 @@
     <div class="sidebar-nav">
 
       <div class="nav-section-label">Core</div>
-      <div class="nav-item"><a class="nav-link" href="../index.html" data-page="dashboard"><span class="nav-icon"><i
+      <div class="nav-item"><a class="nav-link" href="{{ route('dashboard') }}" data-page="dashboard"><span class="nav-icon"><i
               class="bi bi-grid-1x2"></i></span><span>Dashboard</span></a></div>
 
       <div class="nav-item">
@@ -33,8 +33,8 @@
           <span class="nav-arrow"><i class="bi bi-chevron-right"></i></span>
         </button>
         <div class="nav-submenu">
-          <a class="nav-submenu-link" href="users.html" data-page="users"><span>Users</span></a>
-          <a class="nav-submenu-link" href="roles.html" data-page="roles"><span>Roles &amp; Permissions</span></a>
+          <a class="nav-submenu-link" href="{{ route('user.index') }}" data-page="users"><span>Users</span></a>
+          <a class="nav-submenu-link" href="{{ route('roles.index') }}" data-page="roles"><span>Roles &amp; Permissions</span></a>
         </div>
       </div>
 
@@ -44,7 +44,7 @@
           <span class="nav-arrow"><i class="bi bi-chevron-right"></i></span>
         </button>
         <div class="nav-submenu">
-          <a class="nav-submenu-link" href="products.html" data-page="products"><span>Product Catalog</span></a>
+          <a class="nav-submenu-link" href="{{ route('product_catalog.index') }}" data-page="products"><span>Product Catalog</span></a>
           <a class="nav-submenu-link" href="stock-movements.html" data-page="stock-movements"><span>Stock
               In/Out</span></a>
           <a class="nav-submenu-link" href="batch-tracking.html" data-page="batch-tracking"><span>Batch /
@@ -89,8 +89,8 @@
           <span class="nav-arrow"><i class="bi bi-chevron-right"></i></span>
         </button>
         <div class="nav-submenu">
-          <a class="nav-submenu-link" href="gl.html" data-page="gl"><span>General Ledger</span></a>
-          <a class="nav-submenu-link" href="ap-ar.html" data-page="ap-ar"><span>AP / AR</span></a>
+          <a class="nav-submenu-link" href="{{ route('gl.index') }}" data-page="gl"><span>General Ledger</span></a>
+          <a class="nav-submenu-link" href="{{ route('ap_ar.index') }}" data-page="ap-ar"><span>AP / AR</span></a>
           <a class="nav-submenu-link" href="tax.html" data-page="tax"><span>Tax &amp; Compliance</span></a>
           <a class="nav-submenu-link" href="fin-reports.html" data-page="fin-reports"><span>Financial Reports</span></a>
         </div>
@@ -118,9 +118,9 @@
           <span class="nav-arrow"><i class="bi bi-chevron-right"></i></span>
         </button>
         <div class="nav-submenu">
-          <a class="nav-submenu-link" href="bom.html" data-page="bom"><span>Bill of Materials</span></a>
-          <a class="nav-submenu-link" href="work-orders.html" data-page="work-orders"><span>Work Orders</span></a>
-          <a class="nav-submenu-link" href="machine-labor.html" data-page="machine-labor"><span>Machine &amp;
+          <a class="nav-submenu-link" href="{{ route('bom.index') }}" data-page="bom"><span>Bill of Materials</span></a>
+          <a class="nav-submenu-link" href="{{ route('work_orders.index') }}" data-page="work-orders"><span>Work Orders</span></a>
+          <a class="nav-submenu-link" href="{{ route('machine_labor.index') }}" data-page="machine-labor"><span>Machine &amp;
               Labor</span></a>
         </div>
       </div>
@@ -143,9 +143,9 @@
           <span class="nav-arrow"><i class="bi bi-chevron-right"></i></span>
         </button>
         <div class="nav-submenu">
-          <a class="nav-submenu-link" href="tasks.html" data-page="tasks"><span>Tasks &amp; Milestones</span></a>
-          <a class="nav-submenu-link" href="resources.html" data-page="resources"><span>Resource Allocation</span></a>
-          <a class="nav-submenu-link" href="project-cost.html" data-page="project-cost"><span>Cost Tracking</span></a>
+          <a class="nav-submenu-link" href="{{ route('tasks.index') }}" data-page="tasks"><span>Tasks &amp; Milestones</span></a>
+          <a class="nav-submenu-link" href="{{ route('resources.index') }}" data-page="resources"><span>Resource Allocation</span></a>
+          <a class="nav-submenu-link" href="{{ route('project_cost.index') }}" data-page="project-cost"><span>Cost Tracking</span></a>
         </div>
       </div>
 
@@ -155,9 +155,9 @@
           <span class="nav-arrow"><i class="bi bi-chevron-right"></i></span>
         </button>
         <div class="nav-submenu">
-          <a class="nav-submenu-link" href="warehouses.html" data-page="warehouses"><span>Multi-Warehouse</span></a>
-          <a class="nav-submenu-link" href="shipments.html" data-page="shipments"><span>Shipments</span></a>
-          <a class="nav-submenu-link" href="routes.html" data-page="routes"><span>Routes &amp; Delivery</span></a>
+          <a class="nav-submenu-link" href="{{ route('warehouses.index') }}" data-page="warehouses"><span>Multi-Warehouse</span></a>
+          <a class="nav-submenu-link" href="{{ route('shipments.index') }}" data-page="shipments"><span>Shipments</span></a>
+          <a class="nav-submenu-link" href="{{ route('logistics_routes.index') }}" data-page="routes"><span>Routes &amp; Delivery</span></a>
         </div>
       </div>
 
@@ -211,7 +211,7 @@
       </div>
 
       <div class="nav-item">
-        <a class="nav-link" href="settings.html" data-page="settings">
+        <a class="nav-link" href="{{ route('settings.index') }}" data-page="settings">
           <span class="nav-icon"><i class="bi bi-sliders"></i></span><span>Settings</span>
         </a>
       </div>
