@@ -146,7 +146,7 @@
       <div class="nav-submenu">
         <a class="nav-submenu-link" href="{{ route('warehouses.index') }}" data-page="warehouses"><span>Multi-Warehouse</span></a>
         <a class="nav-submenu-link" href="{{ route('shipments.index') }}" data-page="shipments"><span>Shipments</span></a>
-        <a class="nav-submenu-link" href="{{ route('logistics_routes.index') }}" data-page="routes"><span>Routes &amp; Delivery</span></a>
+        <a class="nav-submenu-link" href="{{ route('routes.index') }}" data-page="routes"><span>Routes &amp; Delivery</span></a>
       </div>
     </div>
 

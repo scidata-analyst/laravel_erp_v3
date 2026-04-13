@@ -24,8 +24,8 @@
     <div class="sidebar-nav">
 
       <div class="nav-section-label">Core</div>
-      <div class="nav-item"><a class="nav-link" href="{{ route('dashboard') }}" data-page="dashboard"><span class="nav-icon"><i
-              class="bi bi-grid-1x2"></i></span><span>Dashboard</span></a></div>
+      <div class="nav-item"><a class="nav-link" href="{{ route('dashboard') }}" data-page="dashboard"><span
+            class="nav-icon"><i class="bi bi-grid-1x2"></i></span><span>Dashboard</span></a></div>
 
       <div class="nav-item">
         <button class="nav-link nav-toggle">
@@ -34,7 +34,8 @@
         </button>
         <div class="nav-submenu">
           <a class="nav-submenu-link" href="{{ route('user.index') }}" data-page="users"><span>Users</span></a>
-          <a class="nav-submenu-link" href="{{ route('roles.index') }}" data-page="roles"><span>Roles &amp; Permissions</span></a>
+          <a class="nav-submenu-link" href="{{ route('roles.index') }}" data-page="roles"><span>Roles &amp;
+              Permissions</span></a>
         </div>
       </div>
 
@@ -44,7 +45,8 @@
           <span class="nav-arrow"><i class="bi bi-chevron-right"></i></span>
         </button>
         <div class="nav-submenu">
-          <a class="nav-submenu-link" href="{{ route('product_catalog.index') }}" data-page="products"><span>Product Catalog</span></a>
+          <a class="nav-submenu-link" href="{{ route('product_catalog.index') }}" data-page="products"><span>Product
+              Catalog</span></a>
           <a class="nav-submenu-link" href="stock-movements.html" data-page="stock-movements"><span>Stock
               In/Out</span></a>
           <a class="nav-submenu-link" href="batch-tracking.html" data-page="batch-tracking"><span>Batch /
@@ -119,8 +121,10 @@
         </button>
         <div class="nav-submenu">
           <a class="nav-submenu-link" href="{{ route('bom.index') }}" data-page="bom"><span>Bill of Materials</span></a>
-          <a class="nav-submenu-link" href="{{ route('work_orders.index') }}" data-page="work-orders"><span>Work Orders</span></a>
-          <a class="nav-submenu-link" href="{{ route('machine_labor.index') }}" data-page="machine-labor"><span>Machine &amp;
+          <a class="nav-submenu-link" href="{{ route('work_orders.index') }}" data-page="work-orders"><span>Work
+              Orders</span></a>
+          <a class="nav-submenu-link" href="{{ route('machine_labor.index') }}" data-page="machine-labor"><span>Machine
+              &amp;
               Labor</span></a>
         </div>
       </div>
@@ -143,9 +147,12 @@
           <span class="nav-arrow"><i class="bi bi-chevron-right"></i></span>
         </button>
         <div class="nav-submenu">
-          <a class="nav-submenu-link" href="{{ route('tasks.index') }}" data-page="tasks"><span>Tasks &amp; Milestones</span></a>
-          <a class="nav-submenu-link" href="{{ route('resources.index') }}" data-page="resources"><span>Resource Allocation</span></a>
-          <a class="nav-submenu-link" href="{{ route('project_cost.index') }}" data-page="project-cost"><span>Cost Tracking</span></a>
+          <a class="nav-submenu-link" href="{{ route('tasks.index') }}" data-page="tasks"><span>Tasks &amp;
+              Milestones</span></a>
+          <a class="nav-submenu-link" href="{{ route('resources.index') }}" data-page="resources"><span>Resource
+              Allocation</span></a>
+          <a class="nav-submenu-link" href="{{ route('project_cost.index') }}" data-page="project-cost"><span>Cost
+              Tracking</span></a>
         </div>
       </div>
 
@@ -155,9 +162,12 @@
           <span class="nav-arrow"><i class="bi bi-chevron-right"></i></span>
         </button>
         <div class="nav-submenu">
-          <a class="nav-submenu-link" href="{{ route('warehouses.index') }}" data-page="warehouses"><span>Multi-Warehouse</span></a>
-          <a class="nav-submenu-link" href="{{ route('shipments.index') }}" data-page="shipments"><span>Shipments</span></a>
-          <a class="nav-submenu-link" href="{{ route('logistics_routes.index') }}" data-page="routes"><span>Routes &amp; Delivery</span></a>
+          <a class="nav-submenu-link" href="{{ route('warehouses.index') }}"
+            data-page="warehouses"><span>Multi-Warehouse</span></a>
+          <a class="nav-submenu-link" href="{{ route('shipments.index') }}"
+            data-page="shipments"><span>Shipments</span></a>
+          <a class="nav-submenu-link" href="{{ route('routes.index') }}" data-page="routes"><span>Routes &amp;
+              Delivery</span></a>
         </div>
       </div>
 
