@@ -295,73 +295,33 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Adam Khan</td>
-              <td>Lead Developer</td>
-              <td>ERP v2</td>
-              <td>80%</td>
-              <td>2025-01-01</td>
-              <td>2025-03-31</td>
-              <td>20% free</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalResource" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Assign Resource" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>Sara Lee</td>
-              <td>Project Manager</td>
-              <td>ERP v2</td>
-              <td>50%</td>
-              <td>2025-01-01</td>
-              <td>2025-06-30</td>
-              <td>50% free</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalResource" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Assign Resource" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>James R.</td>
-              <td>Tester</td>
-              <td>Mobile App</td>
-              <td>100%</td>
-              <td>2025-01-10</td>
-              <td>2025-02-28</td>
-              <td>Fully booked</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalResource" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Assign Resource" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>Maya P.</td>
-              <td>Business Analyst</td>
-              <td>Infrastructure</td>
-              <td>60%</td>
-              <td>2025-01-15</td>
-              <td>2025-04-30</td>
-              <td>40% free</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalResource" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Assign Resource" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
+            @foreach ($data as $resource)
+              <tr>
+                <td>{{ $resource->employee_id ?? 'N/A' }}</td>
+                <td>{{ $resource->role_on_project ?? 'N/A' }}</td>
+                <td>{{ $resource->project_name ?? 'N/A' }}</td>
+                <td>{{ $resource->allocation_percentage ?? 0 }}%</td>
+                <td>{{ $resource->from_date ? \Carbon\Carbon::parse($resource->from_date)->format('Y-m-d') : 'N/A' }}</td>
+                <td>{{ $resource->to_date ? \Carbon\Carbon::parse($resource->to_date)->format('Y-m-d') : 'N/A' }}</td>
+                <td>{{ 100 - ($resource->allocation_percentage ?? 0) }}% free</td>
+                <td>
+                  <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
+                      data-bs-target="#modalResource" title="Edit"><i class="bi bi-pencil"></i></button><button
+                      class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                      data-delete-label="Assign Resource" title="Delete"><i class="bi bi-trash"></i></button></div>
+                </td>
+              </tr>
+            @endforeach
           </tbody>
         </table>
       </div>
-      <div class="erp-pagination">
-        <button class="pg-btn active">1</button>
-        <button class="pg-btn">2</button>
-        <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+      <div class="d-flex justify-content-between align-items-center mt-5">
+        <div>
+          Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+        </div>
+        <div>
+          {{ $data->links('pagination::bootstrap-5') }}
+        </div>
       </div>
     </div>
   </main>

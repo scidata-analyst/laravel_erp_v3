@@ -315,75 +315,46 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>SKU-0021</td>
-              <td>HP ProBook 450 G9</td>
-              <td>Electronics</td>
-              <td>$849.00</td>
-              <td>142</td>
-              <td>WH-A</td>
-              <td><span class="badge-status badge-active">Active</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalProduct" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Product" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>SKU-0044</td>
-              <td>Logitech MX Master 3</td>
-              <td>Electronics</td>
-              <td>$99.00</td>
-              <td>58</td>
-              <td>WH-B</td>
-              <td><span class="badge-status badge-active">Active</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalProduct" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Product" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>SKU-0071</td>
-              <td>Steel Bracket 10mm</td>
-              <td>Hardware</td>
-              <td>$4.50</td>
-              <td>12</td>
-              <td>WH-A</td>
-              <td><span class="badge-status badge-pending">Low Stock</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalProduct" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Product" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>SKU-0098</td>
-              <td>Office Chair Pro</td>
-              <td>Furniture</td>
-              <td>$320.00</td>
-              <td>0</td>
-              <td>—</td>
-              <td><span class="badge-status badge-inactive">Out of Stock</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalProduct" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Product" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
+            @foreach ($data as $product)
+              <tr>
+                <td>{{ $product->sku }}</td>
+                <td>{{ $product->product_name }}</td>
+                <td>{{ $product->category }}</td>
+                <td>${{ number_format($product->unit_price, 2) }}</td>
+                <td>0</td>
+                <td>{{ $product->warehouse_id ?? 'N/A' }}</td>
+                <td>
+                  @if ($product->status == 'Active')
+                    <span class="badge-status badge-active">Active</span>
+                  @else
+                    <span class="badge-status badge-inactive">Inactive</span>
+                  @endif
+                </td>
+                <td>
+                  <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
+                      data-bs-target="#modalProduct" title="Edit"><i class="bi bi-pencil"></i></button><button
+                      class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                      data-delete-label="Product" title="Delete"><i class="bi bi-trash"></i></button></div>
+                </td>
+              </tr>
+            @endforeach
           </tbody>
         </table>
       </div>
-      <div class="erp-pagination">
-        <button class="pg-btn active">1</button>
-        <button class="pg-btn">2</button>
-        <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+      <div class="d-flex justify-content-between align-items-center mt-5">
+        <div>
+          Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+        </div>
+        <div>
+          {{ $data->links('pagination::bootstrap-5') }}
+        </div>
       </div>
     </div>
+  </main>
+  <button class="pg-btn">2</button>
+  <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+  </div>
+  </div>
   </main>
 
 

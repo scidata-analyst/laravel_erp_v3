@@ -313,77 +313,34 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>P&L January 2025</td>
-              <td>Profit & Loss</td>
-              <td>Jan 2025</td>
-              <td>2025-01-12</td>
-              <td>Maya P.</td>
-              <td>PDF</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-success btn-xs btn-icon btn-export"
-                    title="Download"><i class="bi bi-download"></i></button><button
-                    class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalFinReport"
-                    title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon"
-                    data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Generate Report"
-                    title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>Balance Sheet Q4 2024</td>
-              <td>Balance Sheet</td>
-              <td>Q4 2024</td>
-              <td>2025-01-02</td>
-              <td>Maya P.</td>
-              <td>Excel</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-success btn-xs btn-icon btn-export"
-                    title="Download"><i class="bi bi-download"></i></button><button
-                    class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalFinReport"
-                    title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon"
-                    data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Generate Report"
-                    title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>Cash Flow Dec 2024</td>
-              <td>Cash Flow</td>
-              <td>Dec 2024</td>
-              <td>2024-12-31</td>
-              <td>Adam K.</td>
-              <td>PDF</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-success btn-xs btn-icon btn-export"
-                    title="Download"><i class="bi bi-download"></i></button><button
-                    class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalFinReport"
-                    title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon"
-                    data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Generate Report"
-                    title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>Trial Balance Jan 2025</td>
-              <td>Trial Balance</td>
-              <td>Jan 2025</td>
-              <td>2025-01-12</td>
-              <td>Maya P.</td>
-              <td>PDF</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-success btn-xs btn-icon btn-export"
-                    title="Download"><i class="bi bi-download"></i></button><button
-                    class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalFinReport"
-                    title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon"
-                    data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Generate Report"
-                    title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
+            @foreach ($data as $report)
+              <tr>
+                <td>{{ $report->type ?? 'N/A' }} {{ $report->period ?? '' }}</td>
+                <td>{{ $report->type ?? 'N/A' }}</td>
+                <td>{{ $report->period ?? 'N/A' }}</td>
+                <td>{{ $report->created_at ? \Carbon\Carbon::parse($report->created_at)->format('Y-m-d') : 'N/A' }}</td>
+                <td>—</td>
+                <td>{{ $report->format ?? 'PDF' }}</td>
+                <td>
+                  <div class="d-flex gap-1"><button class="btn-erp btn-success btn-xs btn-icon btn-export"
+                      title="Download"><i class="bi bi-download"></i></button><button
+                      class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalFinReport"
+                      title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon"
+                      data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Generate Report"
+                      title="Delete"><i class="bi bi-trash"></i></button></div>
+                </td>
+              </tr>
+            @endforeach
           </tbody>
         </table>
       </div>
-      <div class="erp-pagination">
-        <button class="pg-btn active">1</button>
-        <button class="pg-btn">2</button>
-        <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+      <div class="d-flex justify-content-between align-items-center mt-5">
+        <div>
+          Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+        </div>
+        <div>
+          {{ $data->links('pagination::bootstrap-5') }}
+        </div>
       </div>
     </div>
   </main>

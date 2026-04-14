@@ -314,58 +314,39 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>LOT-2024-001</td>
-              <td>SN-88421</td>
-              <td>Paracetamol 500mg</td>
-              <td>500</td>
-              <td>2024-01-01</td>
-              <td>2027-01-01</td>
-              <td><span class="badge-status badge-active">Active</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalBatch" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Batch" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>LOT-2024-009</td>
-              <td>SN-72310</td>
-              <td>Battery Pack 18V</td>
-              <td>120</td>
-              <td>2023-06-15</td>
-              <td>2025-06-15</td>
-              <td><span class="badge-status badge-pending">Pending</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalBatch" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Batch" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>LOT-2023-044</td>
-              <td>SN-11902</td>
-              <td>Lubricant WD-40</td>
-              <td>80</td>
-              <td>2023-01-01</td>
-              <td>2024-12-31</td>
-              <td><span class="badge-status badge-inactive">Expired</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalBatch" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Batch" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
+            @foreach ($data as $batch)
+              <tr>
+                <td>{{ $batch->batch_lot_number }}</td>
+                <td>{{ $batch->serial_number ?? 'N/A' }}</td>
+                <td>{{ $batch->product_id ?? 'N/A' }}</td>
+                <td>{{ $batch->quantity }}</td>
+                <td>{{ $batch->manufacture_date ? \Carbon\Carbon::parse($batch->manufacture_date)->format('Y-m-d') : 'N/A' }}</td>
+                <td>{{ $batch->expiry_date ? \Carbon\Carbon::parse($batch->expiry_date)->format('Y-m-d') : 'N/A' }}</td>
+                <td>
+                  @if (\Carbon\Carbon::parse($batch->expiry_date)->isPast())
+                    <span class="badge-status badge-inactive">Expired</span>
+                  @else
+                    <span class="badge-status badge-active">Active</span>
+                  @endif
+                </td>
+                <td>
+                  <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
+                      data-bs-target="#modalBatch" title="Edit"><i class="bi bi-pencil"></i></button><button
+                      class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                      data-delete-label="Batch" title="Delete"><i class="bi bi-trash"></i></button></div>
+                </td>
+              </tr>
+            @endforeach
           </tbody>
         </table>
       </div>
-      <div class="erp-pagination">
-        <button class="pg-btn active">1</button>
-        <button class="pg-btn">2</button>
-        <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+      <div class="d-flex justify-content-between align-items-center mt-5">
+        <div>
+          Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+        </div>
+        <div>
+          {{ $data->links('pagination::bootstrap-5') }}
+        </div>
       </div>
     </div>
   </main>

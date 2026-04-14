@@ -306,42 +306,19 @@
             </tr>
           </thead>
           <tbody>
+            @forelse ($data as $sync)
             <tr>
-              <td>HP ProBook 450 G9</td>
-              <td>SKU-0021</td>
-              <td>142</td>
-              <td>140</td>
-              <td>2</td>
-              <td>142</td>
-              <td>2025-01-12 10:30</td>
+              <td>{{ $sync->channel_id }}</td>
+              <td>{{ $sync->channel_id }}</td>
+              <td>{{ $sync->total_synced_items }}</td>
+              <td>{{ $sync->total_synced_items - $sync->sync_errors }}</td>
+              <td>{{ $sync->sync_errors }}</td>
+              <td>{{ $sync->total_synced_items }}</td>
+              <td style="{{ $sync->sync_errors > 0 ? 'color:var(--accent-4)' : '' }}">{{ \Carbon\Carbon::parse($sync->last_sync_time)->format('Y-m-d H:i') }}{{ $sync->sync_errors > 0 ? ' ⚠' : '' }}</td>
             </tr>
-            <tr>
-              <td>Logitech MX Master 3</td>
-              <td>SKU-0044</td>
-              <td>58</td>
-              <td>55</td>
-              <td>3</td>
-              <td>58</td>
-              <td>2025-01-12 10:30</td>
-            </tr>
-            <tr>
-              <td>Steel Bracket 10mm</td>
-              <td>SKU-0071</td>
-              <td>12</td>
-              <td>0</td>
-              <td>0</td>
-              <td>12</td>
-              <td style="color:var(--accent-4)">2025-01-11 18:00 ⚠</td>
-            </tr>
-            <tr>
-              <td>Office Chair Pro</td>
-              <td>SKU-0098</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>2025-01-12 08:00</td>
-            </tr>
+            @empty
+            <tr><td colspan="7" class="text-center text-muted">No inventory sync records found.</td></tr>
+            @endforelse
           </tbody>
         </table>
       </div>

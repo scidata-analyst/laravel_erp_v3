@@ -341,34 +341,38 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Design mockups</td>
-                <td>ERP v2</td>
-                <td>Adam K.</td>
-                <td><span class="badge-status badge-inactive">High</span></td>
-                <td>Jan 20</td>
-                <td><span class="badge-status badge-info">Draft</span></td>
-                <td>
-                  <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                      data-bs-target="#modalTask" title="Edit"><i class="bi bi-pencil"></i></button><button
-                      class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                      data-delete-label="Task" title="Delete"><i class="bi bi-trash"></i></button></div>
-                </td>
-              </tr>
-              <tr>
-                <td>Database migration</td>
-                <td>ERP v2</td>
-                <td>James R.</td>
-                <td><span class="badge-status badge-pending">Medium</span></td>
-                <td>Jan 15</td>
-                <td><span class="badge-status badge-pending">In Progress</span></td>
-                <td>
-                  <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                      data-bs-target="#modalTask" title="Edit"><i class="bi bi-pencil"></i></button><button
-                      class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                      data-delete-label="Task" title="Delete"><i class="bi bi-trash"></i></button></div>
-                </td>
-              </tr>
+              @foreach ($data as $task)
+                <tr>
+                  <td>{{ $task->task_title }}</td>
+                  <td>{{ $task->project_name ?? 'N/A' }}</td>
+                  <td>{{ $task->assigned_user_id ?? 'N/A' }}</td>
+                  <td>
+                    @if ($task->priority == 'High')
+                      <span class="badge-status badge-inactive">High</span>
+                    @elseif ($task->priority == 'Medium')
+                      <span class="badge-status badge-pending">Medium</span>
+                    @else
+                      <span class="badge-status badge-info">Low</span>
+                    @endif
+                  </td>
+                  <td>{{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->format('M d') : 'N/A' }}</td>
+                  <td>
+                    @if ($task->status == 'Completed')
+                      <span class="badge-status badge-active">Completed</span>
+                    @elseif ($task->status == 'In Progress')
+                      <span class="badge-status badge-pending">In Progress</span>
+                    @else
+                      <span class="badge-status badge-info">{{ $task->status }}</span>
+                    @endif
+                  </td>
+                  <td>
+                    <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
+                        data-bs-target="#modalTask" title="Edit"><i class="bi bi-pencil"></i></button><button
+                        class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                        data-delete-label="Task" title="Delete"><i class="bi bi-trash"></i></button></div>
+                  </td>
+                </tr>
+              @endforeach
             </tbody>
           </table>
         </div>

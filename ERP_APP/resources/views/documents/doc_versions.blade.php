@@ -313,73 +313,39 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Supplier Agreement – TechSource</td>
-              <td>v2.1</td>
-              <td>Adam K.</td>
-              <td>Updated payment clause</td>
-              <td>2025-01-10</td>
-              <td>Sara L.</td>
-              <td><span class="badge-status badge-active">Active</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalVersion" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Version" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>Supplier Agreement – TechSource</td>
-              <td>v2.0</td>
-              <td>Sara L.</td>
-              <td>Added penalty terms</td>
-              <td>2024-10-01</td>
-              <td>Adam K.</td>
-              <td><span class="badge-status badge-inactive">Archived</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalVersion" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Version" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>Employee Handbook</td>
-              <td>v3.0</td>
-              <td>Maya P.</td>
-              <td>Annual policy update</td>
-              <td>2025-01-05</td>
-              <td>Adam K.</td>
-              <td><span class="badge-status badge-active">Active</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalVersion" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Version" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>Quality Manual ISO 9001</td>
-              <td>v1.2</td>
-              <td>Nadia Q.</td>
-              <td>Revised QC section 4.2</td>
-              <td>2024-11-15</td>
-              <td>Adam K.</td>
-              <td><span class="badge-status badge-active">Active</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalVersion" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Version" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
+            @foreach ($data as $version)
+              <tr>
+                <td>{{ $version->document_id ?? 'N/A' }}</td>
+                <td>{{ $version->version ?? 'v1.0' }}</td>
+                <td>{{ $version->changed_by ?? 'N/A' }}</td>
+                <td>{{ $version->change_summary ?? 'N/A' }}</td>
+                <td>{{ $version->created_at ? \Carbon\Carbon::parse($version->created_at)->format('Y-m-d') : 'N/A' }}</td>
+                <td>—</td>
+                <td>
+                  @if ($version->status == 'Active')
+                    <span class="badge-status badge-active">Active</span>
+                  @else
+                    <span class="badge-status badge-inactive">Archived</span>
+                  @endif
+                </td>
+                <td>
+                  <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
+                      data-bs-target="#modalVersion" title="Edit"><i class="bi bi-pencil"></i></button><button
+                      class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                      data-delete-label="Version" title="Delete"><i class="bi bi-trash"></i></button></div>
+                </td>
+              </tr>
+            @endforeach
           </tbody>
         </table>
       </div>
-      <div class="erp-pagination">
-        <button class="pg-btn active">1</button>
-        <button class="pg-btn">2</button>
-        <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+      <div class="d-flex justify-content-between align-items-center mt-5">
+        <div>
+          Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+        </div>
+        <div>
+          {{ $data->links('pagination::bootstrap-5') }}
+        </div>
       </div>
     </div>
   </main>

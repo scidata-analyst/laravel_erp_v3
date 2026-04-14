@@ -311,74 +311,45 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>EMP-001</td>
-              <td>
-                <div class="d-flex align-items-center gap-2">
-                  <div class="avatar-sm" style="background:linear-gradient(135deg,var(--accent),var(--accent-5))">AK
-                  </div>Adam Khan
-                </div>
-              </td>
-              <td>IT Manager</td>
-              <td>IT</td>
-              <td>+1-555-0101</td>
-              <td>2021-03-01</td>
-              <td>$6,500</td>
-              <td><span class="badge-status badge-active">Active</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalEmployee" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Employee" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>EMP-002</td>
-              <td>
-                <div class="d-flex align-items-center gap-2">
-                  <div class="avatar-sm" style="background:linear-gradient(135deg,var(--accent-2),#007a60)">SL</div>Sara
-                  Lee
-                </div>
-              </td>
-              <td>Sales Manager</td>
-              <td>Sales</td>
-              <td>+1-555-0202</td>
-              <td>2020-06-15</td>
-              <td>$5,800</td>
-              <td><span class="badge-status badge-active">Active</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalEmployee" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Employee" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>EMP-003</td>
-              <td>
-                <div class="d-flex align-items-center gap-2">
-                  <div class="avatar-sm" style="background:linear-gradient(135deg,var(--accent-4),#b07a00)">JR</div>
-                  James R.
-                </div>
-              </td>
-              <td>Warehouse Staff</td>
-              <td>Warehouse</td>
-              <td>+1-555-0303</td>
-              <td>2022-09-01</td>
-              <td>$3,200</td>
-              <td><span class="badge-status badge-pending">On Leave</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalEmployee" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Employee" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
+            @foreach ($data as $employee)
+              <tr>
+                <td>{{ $employee->employee_id }}</td>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="avatar-sm" style="background:linear-gradient(135deg,var(--accent),var(--accent-5))">{{ strtoupper(substr($employee->full_name, 0, 2)) }}</div>{{ $employee->full_name }}
+                  </div>
+                </td>
+                <td>{{ $employee->designation }}</td>
+                <td>{{ $employee->department }}</td>
+                <td>{{ $employee->phone }}</td>
+                <td>{{ $employee->join_date ? \Carbon\Carbon::parse($employee->join_date)->format('Y-m-d') : 'N/A' }}</td>
+                <td>${{ number_format($employee->basic_salary, 2) }}</td>
+                <td>
+                  @if ($employee->status == 'Active')
+                    <span class="badge-status badge-active">Active</span>
+                  @else
+                    <span class="badge-status badge-inactive">Inactive</span>
+                  @endif
+                </td>
+                <td>
+                  <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
+                      data-bs-target="#modalEmployee" title="Edit"><i class="bi bi-pencil"></i></button><button
+                      class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                      data-delete-label="Employee" title="Delete"><i class="bi bi-trash"></i></button></div>
+                </td>
+              </tr>
+            @endforeach
           </tbody>
         </table>
       </div>
-      <div class="erp-pagination"><button class="pg-btn active">1</button><button class="pg-btn">2</button><button
-          class="pg-btn">3</button></div>
+      <div class="d-flex justify-content-between align-items-center mt-5">
+        <div>
+          Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+        </div>
+        <div>
+          {{ $data->links('pagination::bootstrap-5') }}
+        </div>
+      </div>
     </div>
   </main>
 

@@ -294,73 +294,33 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>WO-2025-011</td>
-              <td>CNC Machine #1</td>
-              <td>Machine</td>
-              <td>8h</td>
-              <td>8.5h</td>
-              <td>$25.00</td>
-              <td>$212.50</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalMachineLabor" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Entry" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>WO-2025-011</td>
-              <td>John (Operator)</td>
-              <td>Labor</td>
-              <td>8h</td>
-              <td>8.5h</td>
-              <td>$18.00</td>
-              <td>$153.00</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalMachineLabor" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Entry" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>WO-2025-010</td>
-              <td>Assembly Line B</td>
-              <td>Machine</td>
-              <td>4h</td>
-              <td>3.8h</td>
-              <td>$30.00</td>
-              <td>$114.00</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalMachineLabor" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Entry" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>WO-2025-010</td>
-              <td>Sarah (Tech)</td>
-              <td>Labor</td>
-              <td>4h</td>
-              <td>4h</td>
-              <td>$22.00</td>
-              <td>$88.00</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalMachineLabor" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Entry" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
+            @foreach ($data as $ml)
+              <tr>
+                <td>WO-{{ $ml->work_order_id ?? 'N/A' }}</td>
+                <td>{{ $ml->resource_name ?? 'N/A' }}</td>
+                <td>{{ $ml->resource_type ?? 'N/A' }}</td>
+                <td>—</td>
+                <td>{{ $ml->hours_used ?? 0 }}h</td>
+                <td>${{ number_format($ml->cost_per_hour ?? 0, 2) }}</td>
+                <td>${{ number_format($ml->total_cost ?? 0, 2) }}</td>
+                <td>
+                  <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
+                      data-bs-target="#modalMachineLabor" title="Edit"><i class="bi bi-pencil"></i></button><button
+                      class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                      data-delete-label="Entry" title="Delete"><i class="bi bi-trash"></i></button></div>
+                </td>
+              </tr>
+            @endforeach
           </tbody>
         </table>
       </div>
-      <div class="erp-pagination">
-        <button class="pg-btn active">1</button>
-        <button class="pg-btn">2</button>
-        <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+      <div class="d-flex justify-content-between align-items-center mt-5">
+        <div>
+          Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+        </div>
+        <div>
+          {{ $data->links('pagination::bootstrap-5') }}
+        </div>
       </div>
     </div>
   </main>

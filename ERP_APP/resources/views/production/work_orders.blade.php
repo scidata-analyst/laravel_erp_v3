@@ -297,51 +297,35 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>WO-2025-011</td>
-              <td>Assembled PCB Board</td>
-              <td>BOM-001</td>
-              <td>200 units</td>
-              <td>2025-01-13</td>
-              <td>2025-01-16</td>
-              <td>Workshop A</td>
-              <td><span class="badge-status badge-pending">In Progress</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalWorkOrder" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Work Order" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>WO-2025-010</td>
-              <td>Custom Cable Assembly</td>
-              <td>BOM-002</td>
-              <td>500 units</td>
-              <td>2025-01-12</td>
-              <td>2025-01-13</td>
-              <td>Workshop B</td>
-              <td><span class="badge-status badge-active">Completed</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalWorkOrder" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Work Order" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>WO-2025-009</td>
-              <td>Sensor Module</td>
-              <td>BOM-003</td>
-              <td>50 units</td>
-              <td>2025-01-20</td>
-              <td>2025-01-25</td>
-              <td>Workshop A</td>
-              <td><span class="badge-status badge-pending">Scheduled</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalWorkOrder" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
+            @foreach ($data as $workOrder)
+              <tr>
+                <td>WO-{{ $workOrder->id }}</td>
+                <td>{{ $workOrder->bom_id ?? 'N/A' }}</td>
+                <td>BOM-{{ $workOrder->bom_id ?? 'N/A' }}</td>
+                <td>{{ $workOrder->quantity_to_produce ?? 0 }} units</td>
+                <td>{{ $workOrder->start_date ? \Carbon\Carbon::parse($workOrder->start_date)->format('Y-m-d') : 'N/A' }}</td>
+                <td>{{ $workOrder->end_date ? \Carbon\Carbon::parse($workOrder->end_date)->format('Y-m-d') : 'N/A' }}</td>
+                <td>{{ $workOrder->workshop_line ?? 'N/A' }}</td>
+                <td>
+                  @if ($workOrder->status == 'Completed')
+                    <span class="badge-status badge-active">Completed</span>
+                  @elseif ($workOrder->status == 'In Progress')
+                    <span class="badge-status badge-pending">In Progress</span>
+                  @elseif ($workOrder->status == 'Scheduled')
+                    <span class="badge-status badge-info">Scheduled</span>
+                  @else
+                    <span class="badge-status badge-pending">{{ $workOrder->status }}</span>
+                  @endif
+                </td>
+                <td>
+                  <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
+                      data-bs-target="#modalWorkOrder" title="Edit"><i class="bi bi-pencil"></i></button><button
+                      class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                      data-delete-label="Work Order" title="Delete"><i class="bi bi-trash"></i></button></div>
+                </td>
+              </tr>
+            @endforeach
+          </tbody>
                     data-delete-label="Work Order" title="Delete"><i class="bi bi-trash"></i></button></div>
               </td>
             </tr>
@@ -364,10 +348,13 @@
           </tbody>
         </table>
       </div>
-      <div class="erp-pagination">
-        <button class="pg-btn active">1</button>
-        <button class="pg-btn">2</button>
-        <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+      <div class="d-flex justify-content-between align-items-center mt-5">
+        <div>
+          Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+        </div>
+        <div>
+          {{ $data->links('pagination::bootstrap-5') }}
+        </div>
       </div>
     </div>
   </main>

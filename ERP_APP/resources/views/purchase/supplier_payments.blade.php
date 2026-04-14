@@ -255,16 +255,37 @@
   <div class="erp-table-wrap">
     <table class="erp-table" id="tbl-main">
       <thead><tr><th>Payment #</th><th>Supplier</th><th>Invoice Ref</th><th>Amount</th><th>Payment Date</th><th>Method</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody><tr><td>PAY-2025-018</td><td>TechSource Ltd.</td><td>INV-SUP-441</td><td>$32,400</td><td>2025-01-12</td><td>Bank Transfer</td><td><span class="badge-status badge-active">Paid</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalSupplierPay" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Payment" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>PAY-2025-017</td><td>GlobalParts Inc.</td><td>INV-SUP-438</td><td>$8,750</td><td>2025-01-10</td><td>Cheque</td><td><span class="badge-status badge-pending">Pending</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalSupplierPay" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Payment" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>PAY-2025-015</td><td>MedSupply Co.</td><td>INV-SUP-430</td><td>$1,200</td><td>2025-01-08</td><td>Bank Transfer</td><td><span class="badge-status badge-active">Paid</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalSupplierPay" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Payment" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>PAY-2025-012</td><td>TechSource Ltd.</td><td>INV-SUP-421</td><td>$5,600</td><td>2024-12-28</td><td>Bank Transfer</td><td><span class="badge-status badge-inactive">Overdue</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalSupplierPay" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Payment" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr></tbody>
+      <tbody>
+        @foreach ($data as $payment)
+          <tr>
+            <td>{{ $payment->payment_number }}</td>
+            <td>{{ $payment->supplier_id ?? 'N/A' }}</td>
+            <td>{{ $payment->invoice_reference ?? 'N/A' }}</td>
+            <td>${{ number_format($payment->amount, 2) }}</td>
+            <td>{{ $payment->payment_date ? \Carbon\Carbon::parse($payment->payment_date)->format('Y-m-d') : 'N/A' }}</td>
+            <td>{{ $payment->payment_method ?? 'N/A' }}</td>
+            <td>
+              @if ($payment->status == 'Paid')
+                <span class="badge-status badge-active">Paid</span>
+              @elseif ($payment->status == 'Pending')
+                <span class="badge-status badge-pending">Pending</span>
+              @else
+                <span class="badge-status badge-inactive">Overdue</span>
+              @endif
+            </td>
+            <td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalSupplierPay" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Payment" title="Delete"><i class="bi bi-trash"></i></button></div></td>
+          </tr>
+        @endforeach
+      </tbody>
     </table>
   </div>
-  <div class="erp-pagination">
-    <button class="pg-btn active">1</button>
-    <button class="pg-btn">2</button>
-    <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+  <div class="d-flex justify-content-between align-items-center mt-5">
+    <div>
+      Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+    </div>
+    <div>
+      {{ $data->links('pagination::bootstrap-5') }}
+    </div>
   </div>
 </div>
 </main>

@@ -315,73 +315,45 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Main Store</td>
-              <td>Shopify</td>
-              <td>142</td>
-              <td>$28,400</td>
-              <td>Synced</td>
-              <td>2025-01-12 10:30</td>
-              <td><span class="badge-status badge-active">Active</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalChannel" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Channel" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>BD Marketplace</td>
-              <td>Daraz</td>
-              <td>88</td>
-              <td>$9,200</td>
-              <td>Synced</td>
-              <td>2025-01-12 09:15</td>
-              <td><span class="badge-status badge-active">Active</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalChannel" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Channel" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>Social Shop</td>
-              <td>Facebook</td>
-              <td>34</td>
-              <td>$4,100</td>
-              <td>Error</td>
-              <td>2025-01-11 18:00</td>
-              <td><span class="badge-status badge-active">Active</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalChannel" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Channel" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>EU Store</td>
-              <td>WooCommerce</td>
-              <td>21</td>
-              <td>$6,800</td>
-              <td>Synced</td>
-              <td>2025-01-12 08:00</td>
-              <td><span class="badge-status badge-inactive">Inactive</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalChannel" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Channel" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
+            @foreach ($data as $channel)
+              <tr>
+                <td>{{ $channel->channel_name }}</td>
+                <td>{{ $channel->platform }}</td>
+                <td>0</td>
+                <td>$0</td>
+                <td>
+                  @if ($channel->status == 'Active')
+                    Synced
+                  @else
+                    Pending
+                  @endif
+                </td>
+                <td>{{ $channel->updated_at ? \Carbon\Carbon::parse($channel->updated_at)->format('Y-m-d H:i') : 'N/A' }}</td>
+                <td>
+                  @if ($channel->status == 'Active')
+                    <span class="badge-status badge-active">Active</span>
+                  @else
+                    <span class="badge-status badge-inactive">Inactive</span>
+                  @endif
+                </td>
+                <td>
+                  <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
+                      data-bs-target="#modalChannel" title="Edit"><i class="bi bi-pencil"></i></button><button
+                      class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                      data-delete-label="Channel" title="Delete"><i class="bi bi-trash"></i></button></div>
+                </td>
+              </tr>
+            @endforeach
           </tbody>
         </table>
       </div>
-      <div class="erp-pagination">
-        <button class="pg-btn active">1</button>
-        <button class="pg-btn">2</button>
-        <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+      <div class="d-flex justify-content-between align-items-center mt-5">
+        <div>
+          Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+        </div>
+        <div>
+          {{ $data->links('pagination::bootstrap-5') }}
+        </div>
       </div>
     </div>
   </main>

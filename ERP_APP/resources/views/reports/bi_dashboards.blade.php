@@ -255,16 +255,39 @@
   <div class="erp-table-wrap">
     <table class="erp-table" id="tbl-main">
       <thead><tr><th>Widget Name</th><th>Type</th><th>Data Source</th><th>Refresh Rate</th><th>Dashboard</th><th>Created By</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody><tr><td>Sales by Region Map</td><td>Map</td><td>Sales Module</td><td>Hourly</td><td>Executive Dashboard</td><td>Adam K.</td><td><span class="badge-status badge-active">Active</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalBI" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Widget" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>Revenue Trend Chart</td><td>Line Chart</td><td>Finance</td><td>Daily</td><td>Finance Dashboard</td><td>Maya P.</td><td><span class="badge-status badge-active">Active</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalBI" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Widget" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>Top 10 Products</td><td>Bar Chart</td><td>Inventory</td><td>Daily</td><td>Operations</td><td>James R.</td><td><span class="badge-status badge-active">Active</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalBI" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Widget" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>Customer Heatmap</td><td>Heatmap</td><td>CRM</td><td>Weekly</td><td>Marketing</td><td>Sara L.</td><td><span class="badge-status badge-active">Active</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalBI" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Widget" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr></tbody>
+      <tbody>
+      @forelse ($data as $widget)
+      <tr>
+        <td>{{ $widget->widget_name }}</td>
+        <td>{{ $widget->chart_type }}</td>
+        <td>{{ $widget->data_source_module }}</td>
+        <td>{{ $widget->refresh_rate }}</td>
+        <td>{{ $widget->dashboard_name }}</td>
+        <td>{{ $widget->created_by_user_id }}</td>
+        <td>
+          @if($widget->status === 'Active')
+          <span class="badge-status badge-active">Active</span>
+          @elseif($widget->status === 'Inactive')
+          <span class="badge-status badge-inactive">Inactive</span>
+          @else
+          <span class="badge-status">{{ $widget->status }}</span>
+          @endif
+        </td>
+        <td>
+          <div class="d-flex gap-1">
+            <button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalBI" title="Edit"><i class="bi bi-pencil"></i></button>
+            <button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Widget" title="Delete"><i class="bi bi-trash"></i></button>
+          </div>
+        </td>
+      </tr>
+      @empty
+      <tr><td colspan="8" class="text-center text-muted">No BI widgets found.</td></tr>
+      @endforelse
+      </tbody>
     </table>
   </div>
   <div class="erp-pagination">
-    <button class="pg-btn active">1</button>
-    <button class="pg-btn">2</button>
-    <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+    {{ $data->links('pagination::bootstrap-5') }}
   </div>
 </div>
 </main>

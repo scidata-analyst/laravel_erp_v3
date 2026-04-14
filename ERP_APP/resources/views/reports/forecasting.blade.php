@@ -255,16 +255,39 @@
   <div class="erp-table-wrap">
     <table class="erp-table" id="tbl-main">
       <thead><tr><th>Forecast Name</th><th>Type</th><th>Model</th><th>Period</th><th>Accuracy</th><th>Generated On</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody><tr><td>Q1 2025 Sales Forecast</td><td>Sales</td><td>Linear Regression</td><td>Jan–Mar 2025</td><td>92.4%</td><td>2025-01-10</td><td><span class="badge-status badge-active">Active</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalForecast" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Forecast" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>Feb Inventory Demand</td><td>Inventory</td><td>Moving Average</td><td>Feb 2025</td><td>88.1%</td><td>2025-01-11</td><td><span class="badge-status badge-active">Active</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalForecast" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Forecast" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>Annual Revenue 2025</td><td>Revenue</td><td>ML-Based</td><td>FY 2025</td><td>85.6%</td><td>2025-01-05</td><td><span class="badge-status badge-active">Active</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalForecast" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Forecast" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>Q4 2024 Actual vs Forecast</td><td>Sales</td><td>Comparison</td><td>Oct–Dec 2024</td><td>—</td><td>2025-01-01</td><td><span class="badge-status badge-inactive">Archived</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalForecast" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Forecast" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr></tbody>
+      <tbody>
+      @forelse ($data as $forecast)
+      <tr>
+        <td>{{ $forecast->forecast_name }}</td>
+        <td>{{ $forecast->forecast_type }}</td>
+        <td>{{ $forecast->model }}</td>
+        <td>{{ \Carbon\Carbon::parse($forecast->period_from)->format('M Y') }} – {{ \Carbon\Carbon::parse($forecast->period_to)->format('M Y') }}</td>
+        <td>{{ $forecast->accuracy_percentage ? $forecast->accuracy_percentage . '%' : '—' }}</td>
+        <td>{{ \Carbon\Carbon::parse($forecast->created_at)->format('Y-m-d') }}</td>
+        <td>
+          @if($forecast->status === 'Active')
+          <span class="badge-status badge-active">Active</span>
+          @elseif($forecast->status === 'Archived')
+          <span class="badge-status badge-inactive">Archived</span>
+          @else
+          <span class="badge-status">{{ $forecast->status }}</span>
+          @endif
+        </td>
+        <td>
+          <div class="d-flex gap-1">
+            <button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalForecast" title="Edit"><i class="bi bi-pencil"></i></button>
+            <button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Forecast" title="Delete"><i class="bi bi-trash"></i></button>
+          </div>
+        </td>
+      </tr>
+      @empty
+      <tr><td colspan="8" class="text-center text-muted">No forecasts found.</td></tr>
+      @endforelse
+      </tbody>
     </table>
   </div>
   <div class="erp-pagination">
-    <button class="pg-btn active">1</button>
-    <button class="pg-btn">2</button>
-    <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+    {{ $data->links('pagination::bootstrap-5') }}
   </div>
 </div>
 </main>

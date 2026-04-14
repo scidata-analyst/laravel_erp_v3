@@ -255,16 +255,37 @@
   <div class="erp-table-wrap">
     <table class="erp-table" id="tbl-main">
       <thead><tr><th>GRN #</th><th>PO Reference</th><th>Supplier</th><th>Received Date</th><th>Items</th><th>Total Value</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody><tr><td>GRN-2025-041</td><td>PO-2025-0091</td><td>TechSource Ltd.</td><td>2025-01-12</td><td>4 items</td><td>$32,400</td><td><span class="badge-status badge-active">Received</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalGRN" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="GRN" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>GRN-2025-040</td><td>PO-2025-0089</td><td>GlobalParts Inc.</td><td>2025-01-10</td><td>7 items</td><td>$8,750</td><td><span class="badge-status badge-pending">Partial</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalGRN" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="GRN" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>GRN-2025-038</td><td>PO-2025-0085</td><td>MedSupply Co.</td><td>2025-01-08</td><td>2 items</td><td>$1,200</td><td><span class="badge-status badge-info">Draft</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalGRN" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="GRN" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>GRN-2025-035</td><td>PO-2025-0080</td><td>TechSource Ltd.</td><td>2025-01-05</td><td>5 items</td><td>$15,600</td><td><span class="badge-status badge-active">Received</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalGRN" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="GRN" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr></tbody>
+      <tbody>
+        @foreach ($data as $grn)
+          <tr>
+            <td>{{ $grn->grn_number }}</td>
+            <td>{{ $grn->purchase_order_id ?? 'N/A' }}</td>
+            <td>{{ $grn->supplier_name ?? 'N/A' }}</td>
+            <td>{{ $grn->receipt_date ? \Carbon\Carbon::parse($grn->receipt_date)->format('Y-m-d') : 'N/A' }}</td>
+            <td>1 items</td>
+            <td>$0</td>
+            <td>
+              @if ($grn->status == 'Received')
+                <span class="badge-status badge-active">Received</span>
+              @elseif ($grn->status == 'Partial')
+                <span class="badge-status badge-pending">Partial</span>
+              @else
+                <span class="badge-status badge-info">Draft</span>
+              @endif
+            </td>
+            <td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalGRN" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="GRN" title="Delete"><i class="bi bi-trash"></i></button></div></td>
+          </tr>
+        @endforeach
+      </tbody>
     </table>
   </div>
-  <div class="erp-pagination">
-    <button class="pg-btn active">1</button>
-    <button class="pg-btn">2</button>
-    <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+  <div class="d-flex justify-content-between align-items-center mt-5">
+    <div>
+      Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+    </div>
+    <div>
+      {{ $data->links('pagination::bootstrap-5') }}
+    </div>
   </div>
 </div>
 </main>

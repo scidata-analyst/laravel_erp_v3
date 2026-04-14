@@ -255,16 +255,39 @@
   <div class="erp-table-wrap">
     <table class="erp-table" id="tbl-main">
       <thead><tr><th>Report Name</th><th>Module</th><th>Fields</th><th>Schedule</th><th>Last Run</th><th>Format</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody><tr><td>Monthly Sales Summary</td><td>Sales</td><td>Customer, Amount, Status</td><td>1st of month</td><td>2025-01-01</td><td>PDF/Excel</td><td><span class="badge-status badge-active">Active</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalCustomReport" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Build Report" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>Stock Below Reorder</td><td>Inventory</td><td>SKU, Qty, Reorder Level</td><td>Daily 8AM</td><td>2025-01-12</td><td>Excel</td><td><span class="badge-status badge-active">Active</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalCustomReport" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Build Report" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>Payroll Summary</td><td>HR</td><td>Employee, Net Pay, Dept</td><td>Monthly</td><td>2025-01-01</td><td>PDF</td><td><span class="badge-status badge-active">Active</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalCustomReport" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Build Report" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>Overdue Receivables</td><td>Finance</td><td>Customer, Amount, Days</td><td>Weekly Mon</td><td>2025-01-06</td><td>Excel</td><td><span class="badge-status badge-active">Active</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalCustomReport" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Build Report" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr></tbody>
+      <tbody>
+      @forelse ($data as $report)
+      <tr>
+        <td>{{ $report->report_name }}</td>
+        <td>{{ $report->module }}</td>
+        <td>{{ $report->selected_fields }}</td>
+        <td>{{ $report->schedule }}</td>
+        <td>{{ \Carbon\Carbon::parse($report->created_at)->format('Y-m-d') }}</td>
+        <td>{{ $report->output_format }}</td>
+        <td>
+          @if($report->status === 'Active')
+          <span class="badge-status badge-active">Active</span>
+          @elseif($report->status === 'Inactive')
+          <span class="badge-status badge-inactive">Inactive</span>
+          @else
+          <span class="badge-status">{{ $report->status }}</span>
+          @endif
+        </td>
+        <td>
+          <div class="d-flex gap-1">
+            <button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalCustomReport" title="Edit"><i class="bi bi-pencil"></i></button>
+            <button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Build Report" title="Delete"><i class="bi bi-trash"></i></button>
+          </div>
+        </td>
+      </tr>
+      @empty
+      <tr><td colspan="8" class="text-center text-muted">No custom reports found.</td></tr>
+      @endforelse
+      </tbody>
     </table>
   </div>
   <div class="erp-pagination">
-    <button class="pg-btn active">1</button>
-    <button class="pg-btn">2</button>
-    <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+    {{ $data->links('pagination::bootstrap-5') }}
   </div>
 </div>
 </main>

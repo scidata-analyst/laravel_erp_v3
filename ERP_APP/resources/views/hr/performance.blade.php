@@ -315,73 +315,39 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Adam Khan</td>
-              <td>IT</td>
-              <td>Q4 2024</td>
-              <td>92/100</td>
-              <td>95%</td>
-              <td>Excellent</td>
-              <td><span class="badge-status badge-active">Completed</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalPerformance" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Review" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>Sara Lee</td>
-              <td>Sales</td>
-              <td>Q4 2024</td>
-              <td>88/100</td>
-              <td>102%</td>
-              <td>Excellent</td>
-              <td><span class="badge-status badge-active">Completed</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalPerformance" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Review" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>James R.</td>
-              <td>Warehouse</td>
-              <td>Q4 2024</td>
-              <td>74/100</td>
-              <td>78%</td>
-              <td>Satisfactory</td>
-              <td><span class="badge-status badge-pending">In Review</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalPerformance" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Review" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>Maya P.</td>
-              <td>Finance</td>
-              <td>Q4 2024</td>
-              <td>85/100</td>
-              <td>88%</td>
-              <td>Good</td>
-              <td><span class="badge-status badge-active">Completed</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalPerformance" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Review" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
+            @foreach ($data as $perf)
+              <tr>
+                <td>{{ $perf->employee_id ?? 'N/A' }}</td>
+                <td>—</td>
+                <td>{{ $perf->review_period ?? 'N/A' }}</td>
+                <td>{{ $perf->kpi_score }}/100</td>
+                <td>{{ $perf->goal_achievement }}%</td>
+                <td>{{ $perf->overall_rating }}</td>
+                <td>
+                  @if ($perf->status == 'Completed')
+                    <span class="badge-status badge-active">Completed</span>
+                  @else
+                    <span class="badge-status badge-pending">In Review</span>
+                  @endif
+                </td>
+                <td>
+                  <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
+                      data-bs-target="#modalPerformance" title="Edit"><i class="bi bi-pencil"></i></button><button
+                      class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                      data-delete-label="Review" title="Delete"><i class="bi bi-trash"></i></button></div>
+                </td>
+              </tr>
+            @endforeach
           </tbody>
         </table>
       </div>
-      <div class="erp-pagination">
-        <button class="pg-btn active">1</button>
-        <button class="pg-btn">2</button>
-        <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+      <div class="d-flex justify-content-between align-items-center mt-5">
+        <div>
+          Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+        </div>
+        <div>
+          {{ $data->links('pagination::bootstrap-5') }}
+        </div>
       </div>
     </div>
   </main>

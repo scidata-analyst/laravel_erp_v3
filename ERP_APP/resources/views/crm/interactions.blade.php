@@ -315,73 +315,33 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>2025-01-12</td>
-              <td>Acme Corporation</td>
-              <td>Bill Gates</td>
-              <td>Meeting</td>
-              <td>Q1 budget discussion</td>
-              <td>45 min</td>
-              <td>Sara L.</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalInteraction" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Interaction" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>2025-01-11</td>
-              <td>Delta Retailers</td>
-              <td>Amy Chen</td>
-              <td>Call</td>
-              <td>Follow-up on shipment</td>
-              <td>12 min</td>
-              <td>James R.</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalInteraction" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Interaction" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>2025-01-10</td>
-              <td>BetaCorp</td>
-              <td>Carlos M.</td>
-              <td>Demo</td>
-              <td>Product demo – ERP module</td>
-              <td>60 min</td>
-              <td>Adam K.</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalInteraction" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Interaction" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>2025-01-09</td>
-              <td>Omega Group</td>
-              <td>Tony Smith</td>
-              <td>Email</td>
-              <td>Payment reminder sent</td>
-              <td>—</td>
-              <td>Maya P.</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalInteraction" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Interaction" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
+            @foreach ($data as $interaction)
+              <tr>
+                <td>{{ $interaction->interaction_date ? \Carbon\Carbon::parse($interaction->interaction_date)->format('Y-m-d') : 'N/A' }}</td>
+                <td>{{ $interaction->customer_id ?? 'N/A' }}</td>
+                <td>{{ $interaction->contact_person ?? 'N/A' }}</td>
+                <td>{{ $interaction->interaction_type }}</td>
+                <td>{{ $interaction->summary ?? 'N/A' }}</td>
+                <td>{{ $interaction->duration ?? '—' }}</td>
+                <td>—</td>
+                <td>
+                  <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
+                      data-bs-target="#modalInteraction" title="Edit"><i class="bi bi-pencil"></i></button><button
+                      class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                      data-delete-label="Interaction" title="Delete"><i class="bi bi-trash"></i></button></div>
+                </td>
+              </tr>
+            @endforeach
           </tbody>
         </table>
       </div>
-      <div class="erp-pagination">
-        <button class="pg-btn active">1</button>
-        <button class="pg-btn">2</button>
-        <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+      <div class="d-flex justify-content-between align-items-center mt-5">
+        <div>
+          Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+        </div>
+        <div>
+          {{ $data->links('pagination::bootstrap-5') }}
+        </div>
       </div>
     </div>
   </main>

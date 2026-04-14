@@ -297,26 +297,34 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>SHP-2025-041</td>
-              <td>SO-2025-0441</td>
-              <td>Acme Corporation</td>
-              <td>DHL</td>
-              <td>1Z999AA10123456784</td>
-              <td>2025-01-15</td>
-              <td><span class="badge-status badge-active">Delivered</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalShipment" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Shipment" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>SHP-2025-040</td>
-              <td>SO-2025-0440</td>
-              <td>Delta Retailers</td>
-              <td>FedEx</td>
+            @foreach ($data as $shipment)
+              <tr>
+                <td>SHP-{{ $shipment->id }}</td>
+                <td>{{ $shipment->sales_order_id ?? 'N/A' }}</td>
+                <td>—</td>
+                <td>{{ $shipment->carrier ?? 'N/A' }}</td>
+                <td>{{ $shipment->tracking_number ?? 'N/A' }}</td>
+                <td>{{ $shipment->estimated_delivery_date ? \Carbon\Carbon::parse($shipment->estimated_delivery_date)->format('Y-m-d') : 'N/A' }}</td>
+                <td>
+                  @if ($shipment->status == 'Delivered')
+                    <span class="badge-status badge-active">Delivered</span>
+                  @elseif ($shipment->status == 'In Transit')
+                    <span class="badge-status badge-info">In Transit</span>
+                  @elseif ($shipment->status == 'Dispatched')
+                    <span class="badge-status badge-info">Dispatched</span>
+                  @else
+                    <span class="badge-status badge-pending">{{ $shipment->status }}</span>
+                  @endif
+                </td>
+                <td>
+                  <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
+                      data-bs-target="#modalShipment" title="Edit"><i class="bi bi-pencil"></i></button><button
+                      class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                      data-delete-label="Shipment" title="Delete"><i class="bi bi-trash"></i></button></div>
+                </td>
+              </tr>
+            @endforeach
+          </tbody>
               <td>779477671000</td>
               <td>2025-01-18</td>
               <td><span class="badge-status badge-pending">In Transit</span></td>
@@ -360,10 +368,13 @@
           </tbody>
         </table>
       </div>
-      <div class="erp-pagination">
-        <button class="pg-btn active">1</button>
-        <button class="pg-btn">2</button>
-        <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+      <div class="d-flex justify-content-between align-items-center mt-5">
+        <div>
+          Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+        </div>
+        <div>
+          {{ $data->links('pagination::bootstrap-5') }}
+        </div>
       </div>
     </div>
   </main>

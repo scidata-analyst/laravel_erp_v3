@@ -337,61 +337,46 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>MV-2024-001</td>
-              <td>2025-01-12</td>
-              <td>HP ProBook 450</td>
-              <td><span class="badge-status badge-info">Stock In</span></td>
-              <td>+50</td>
-              <td>WH-A</td>
-              <td>Purchase Recv.</td>
-              <td>James R.</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalStockMove" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Movement" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>MV-2024-002</td>
-              <td>2025-01-11</td>
-              <td>Office Chair Pro</td>
-              <td><span class="badge-status badge-info">Stock Out</span></td>
-              <td>-10</td>
-              <td>WH-B</td>
-              <td>Sales Order</td>
-              <td>Sara L.</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalStockMove" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Movement" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>MV-2024-003</td>
-              <td>2025-01-10</td>
-              <td>Steel Bracket 10mm</td>
-              <td><span class="badge-status badge-info">Transfer</span></td>
-              <td>200</td>
-              <td>WH-A → WH-B</td>
-              <td>Rebalancing</td>
-              <td>Adam K.</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalStockMove" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
+            @foreach ($data as $movement)
+              <tr>
+                <td>MV-{{ $movement->id }}</td>
+                <td>{{ $movement->created_at ? \Carbon\Carbon::parse($movement->created_at)->format('Y-m-d') : 'N/A' }}</td>
+                <td>{{ $movement->product_id ?? 'N/A' }}</td>
+                <td>
+                  @if ($movement->movement_type == 'Stock In')
+                    <span class="badge-status badge-info">Stock In</span>
+                  @elseif ($movement->movement_type == 'Stock Out')
+                    <span class="badge-status badge-info">Stock Out</span>
+                  @else
+                    <span class="badge-status badge-info">{{ $movement->movement_type }}</span>
+                  @endif
+                </td>
+                <td>{{ $movement->quantity }}</td>
+                <td>{{ $movement->from_warehouse_id ?? 'N/A' }} → {{ $movement->to_warehouse_id ?? 'N/A' }}</td>
+                <td>{{ $movement->reason ?? 'N/A' }}</td>
+                <td>—</td>
+                <td>
+                  <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
+                      data-bs-target="#modalStockMove" title="Edit"><i class="bi bi-pencil"></i></button><button
+                      class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                      data-delete-label="Movement" title="Delete"><i class="bi bi-trash"></i></button></div>
+                </td>
+              </tr>
+            @endforeach
+          </tbody>
                     data-delete-label="Movement" title="Delete"><i class="bi bi-trash"></i></button></div>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
-      <div class="erp-pagination">
-        <button class="pg-btn active">1</button>
-        <button class="pg-btn">2</button>
-        <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+      <div class="d-flex justify-content-between align-items-center mt-5">
+        <div>
+          Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+        </div>
+        <div>
+          {{ $data->links('pagination::bootstrap-5') }}
+        </div>
       </div>
     </div>
   </main>

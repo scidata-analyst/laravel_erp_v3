@@ -255,15 +255,39 @@
   <div class="erp-table-wrap">
     <table class="erp-table" id="tbl-main">
       <thead><tr><th>SO #</th><th>Customer</th><th>Date</th><th>Items</th><th>Total</th><th>Delivery</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody><tr><td>SO-2025-0441</td><td>Acme Corporation</td><td>2025-01-12</td><td>3</td><td>$4,250.00</td><td>2025-01-15</td><td><span class="badge-status badge-active">Delivered</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalSO" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Order" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>SO-2025-0440</td><td>Delta Retailers</td><td>2025-01-11</td><td>6</td><td>$9,800.00</td><td>2025-01-18</td><td><span class="badge-status badge-info">Dispatched</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalSO" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Order" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>SO-2025-0439</td><td>Omega Group</td><td>2025-01-10</td><td>1</td><td>$1,200.00</td><td>2025-01-20</td><td><span class="badge-status badge-pending">Pending</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalSO" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Order" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr></tbody>
+      <tbody>
+        @foreach ($data as $order)
+          <tr>
+            <td>{{ $order->order_number }}</td>
+            <td>{{ $order->customer_id ?? 'N/A' }}</td>
+            <td>{{ $order->order_date ? \Carbon\Carbon::parse($order->order_date)->format('Y-m-d') : 'N/A' }}</td>
+            <td>1</td>
+            <td>${{ number_format($order->total_amount, 2) }}</td>
+            <td>{{ $order->delivery_date ? \Carbon\Carbon::parse($order->delivery_date)->format('Y-m-d') : 'N/A' }}</td>
+            <td>
+              @if ($order->status == 'Delivered')
+                <span class="badge-status badge-active">Delivered</span>
+              @elseif ($order->status == 'Dispatched')
+                <span class="badge-status badge-info">Dispatched</span>
+              @elseif ($order->status == 'Pending')
+                <span class="badge-status badge-pending">Pending</span>
+              @else
+                <span class="badge-status badge-inactive">{{ $order->status }}</span>
+              @endif
+            </td>
+            <td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalSO" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Order" title="Delete"><i class="bi bi-trash"></i></button></div></td>
+          </tr>
+        @endforeach
+      </tbody>
     </table>
   </div>
-  <div class="erp-pagination">
-    <button class="pg-btn active">1</button>
-    <button class="pg-btn">2</button>
-    <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+  <div class="d-flex justify-content-between align-items-center mt-5">
+    <div>
+      Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+    </div>
+    <div>
+      {{ $data->links('pagination::bootstrap-5') }}
+    </div>
   </div>
 </div>
 </main>

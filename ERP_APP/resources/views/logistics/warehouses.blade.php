@@ -295,28 +295,30 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Main Warehouse</td>
-              <td>WH-A</td>
-              <td>Dhaka, BD</td>
-              <td>James R.</td>
-              <td>10,000 units</td>
-              <td>7,200 (72%)</td>
-              <td><span class="badge-status badge-active">Active</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalWarehouse" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Warehouse" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>Secondary Depot</td>
-              <td>WH-B</td>
-              <td>Chittagong, BD</td>
-              <td>Sara L.</td>
-              <td>5,000 units</td>
-              <td>2,800 (56%)</td>
+            @foreach ($data as $warehouse)
+              <tr>
+                <td>{{ $warehouse->warehouse_name }}</td>
+                <td>{{ $warehouse->warehouse_code }}</td>
+                <td>{{ $warehouse->location_address ?? 'N/A' }}</td>
+                <td>{{ $warehouse->manager_id ?? 'N/A' }}</td>
+                <td>{{ number_format($warehouse->capacity_units ?? 0) }} units</td>
+                <td>0 (0%)</td>
+                <td>
+                  @if ($warehouse->status == 'Active')
+                    <span class="badge-status badge-active">Active</span>
+                  @else
+                    <span class="badge-status badge-inactive">Inactive</span>
+                  @endif
+                </td>
+                <td>
+                  <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
+                      data-bs-target="#modalWarehouse" title="Edit"><i class="bi bi-pencil"></i></button><button
+                      class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                      data-delete-label="Warehouse" title="Delete"><i class="bi bi-trash"></i></button></div>
+                </td>
+              </tr>
+            @endforeach
+          </tbody>
               <td><span class="badge-status badge-active">Active</span></td>
               <td>
                 <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
@@ -358,10 +360,13 @@
           </tbody>
         </table>
       </div>
-      <div class="erp-pagination">
-        <button class="pg-btn active">1</button>
-        <button class="pg-btn">2</button>
-        <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+      <div class="d-flex justify-content-between align-items-center mt-5">
+        <div>
+          Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+        </div>
+        <div>
+          {{ $data->links('pagination::bootstrap-5') }}
+        </div>
       </div>
     </div>
   </main>

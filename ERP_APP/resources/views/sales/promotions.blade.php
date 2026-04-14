@@ -255,16 +255,43 @@
   <div class="erp-table-wrap">
     <table class="erp-table" id="tbl-main">
       <thead><tr><th>Promo Code</th><th>Description</th><th>Discount</th><th>Type</th><th>Valid From</th><th>Valid To</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody><tr><td>SALE20</td><td>20% Off All Electronics</td><td>20%</td><td>Percentage</td><td>2025-01-01</td><td>2025-01-31</td><td><span class="badge-status badge-active">Active</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalPromo" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Promotion" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>BULK50</td><td>Buy 10+ Get $50 Off</td><td>$50</td><td>Fixed</td><td>2025-01-15</td><td>2025-02-15</td><td><span class="badge-status badge-active">Active</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalPromo" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Promotion" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>NEWYEAR</td><td>New Year Bundle Deal</td><td>15%</td><td>Percentage</td><td>2025-01-01</td><td>2025-01-10</td><td><span class="badge-status badge-inactive">Expired</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalPromo" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Promotion" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>VIP2025</td><td>VIP Customer Discount</td><td>10%</td><td>Percentage</td><td>2025-02-01</td><td>2025-03-01</td><td><span class="badge-status badge-pending">Scheduled</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalPromo" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Promotion" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr></tbody>
+      <tbody>
+        @foreach ($data as $promo)
+          <tr>
+            <td>{{ $promo->promo_code }}</td>
+            <td>{{ $promo->description }}</td>
+            <td>
+              @if ($promo->discount_type == 'Percentage')
+                {{ $promo->discount_value }}%
+              @else
+                ${{ number_format($promo->discount_value, 2) }}
+              @endif
+            </td>
+            <td>{{ $promo->discount_type }}</td>
+            <td>{{ $promo->valid_from ? \Carbon\Carbon::parse($promo->valid_from)->format('Y-m-d') : 'N/A' }}</td>
+            <td>{{ $promo->valid_to ? \Carbon\Carbon::parse($promo->valid_to)->format('Y-m-d') : 'N/A' }}</td>
+            <td>
+              @if ($promo->status == 'Active')
+                <span class="badge-status badge-active">Active</span>
+              @elseif ($promo->status == 'Scheduled')
+                <span class="badge-status badge-pending">Scheduled</span>
+              @else
+                <span class="badge-status badge-inactive">Expired</span>
+              @endif
+            </td>
+            <td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalPromo" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Promotion" title="Delete"><i class="bi bi-trash"></i></button></div></td>
+          </tr>
+        @endforeach
+      </tbody>
     </table>
   </div>
-  <div class="erp-pagination">
-    <button class="pg-btn active">1</button>
-    <button class="pg-btn">2</button>
-    <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+  <div class="d-flex justify-content-between align-items-center mt-5">
+    <div>
+      Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+    </div>
+    <div>
+      {{ $data->links('pagination::bootstrap-5') }}
+    </div>
   </div>
 </div>
 </main>

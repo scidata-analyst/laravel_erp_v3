@@ -255,15 +255,39 @@
   <div class="erp-table-wrap">
     <table class="erp-table" id="tbl-main">
       <thead><tr><th>PO #</th><th>Supplier</th><th>Date</th><th>Items</th><th>Total</th><th>Status</th><th>Approved By</th><th>Actions</th></tr></thead>
-      <tbody><tr><td>PO-2025-0091</td><td>TechSource Ltd.</td><td>2025-01-12</td><td>4</td><td>$32,400.00</td><td><span class="badge-status badge-info">Approved</span></td><td>Adam K.</td><td><div class="d-flex gap-1"><button class="btn-erp btn-success btn-xs btn-approve-po">Approve</button><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalPO" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="PO" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>PO-2025-0089</td><td>GlobalParts Inc.</td><td>2025-01-10</td><td>7</td><td>$8,750.00</td><td><span class="badge-status badge-pending">Pending</span></td><td>—</td><td><div class="d-flex gap-1"><button class="btn-erp btn-success btn-xs btn-approve-po">Approve</button><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalPO" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="PO" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>PO-2025-0085</td><td>MedSupply Co.</td><td>2025-01-08</td><td>2</td><td>$1,200.00</td><td><span class="badge-status badge-info">Draft</span></td><td>—</td><td><div class="d-flex gap-1"><button class="btn-erp btn-success btn-xs btn-approve-po">Approve</button><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalPO" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="PO" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr></tbody>
+      <tbody>
+        @foreach ($data as $po)
+          <tr>
+            <td>{{ $po->po_number }}</td>
+            <td>{{ $po->supplier_id ?? 'N/A' }}</td>
+            <td>{{ $po->order_date ? \Carbon\Carbon::parse($po->order_date)->format('Y-m-d') : 'N/A' }}</td>
+            <td>1</td>
+            <td>${{ number_format($po->total_amount, 2) }}</td>
+            <td>
+              @if ($po->status == 'Approved')
+                <span class="badge-status badge-info">Approved</span>
+              @elseif ($po->status == 'Pending')
+                <span class="badge-status badge-pending">Pending</span>
+              @elseif ($po->status == 'Received')
+                <span class="badge-status badge-active">Received</span>
+              @else
+                <span class="badge-status badge-inactive">{{ $po->status }}</span>
+              @endif
+            </td>
+            <td>—</td>
+            <td><div class="d-flex gap-1"><button class="btn-erp btn-success btn-xs btn-approve-po">Approve</button><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalPO" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="PO" title="Delete"><i class="bi bi-trash"></i></button></div></td>
+          </tr>
+        @endforeach
+      </tbody>
     </table>
   </div>
-  <div class="erp-pagination">
-    <button class="pg-btn active">1</button>
-    <button class="pg-btn">2</button>
-    <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+  <div class="d-flex justify-content-between align-items-center mt-5">
+    <div>
+      Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+    </div>
+    <div>
+      {{ $data->links('pagination::bootstrap-5') }}
+    </div>
   </div>
 </div>
 </main>

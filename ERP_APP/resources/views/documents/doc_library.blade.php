@@ -315,81 +315,35 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Supplier Agreement – TechSource</td>
-              <td>Contract</td>
-              <td>TechSource Ltd.</td>
-              <td>v2.1</td>
-              <td>245 KB</td>
-              <td>Adam K.</td>
-              <td>2025-01-10</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-success btn-xs btn-icon btn-export"
-                    title="Download"><i class="bi bi-download"></i></button><button
-                    class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDocument"
-                    title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon"
-                    data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Upload Document"
-                    title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>INV-8823 – Acme Corp</td>
-              <td>Invoice</td>
-              <td>Acme Corporation</td>
-              <td>v1.0</td>
-              <td>88 KB</td>
-              <td>Maya P.</td>
-              <td>2025-01-12</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-success btn-xs btn-icon btn-export"
-                    title="Download"><i class="bi bi-download"></i></button><button
-                    class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDocument"
-                    title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon"
-                    data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Upload Document"
-                    title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>PO-2025-0091</td>
-              <td>Purchase Order</td>
-              <td>TechSource Ltd.</td>
-              <td>v1.0</td>
-              <td>120 KB</td>
-              <td>Sara L.</td>
-              <td>2025-01-12</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-success btn-xs btn-icon btn-export"
-                    title="Download"><i class="bi bi-download"></i></button><button
-                    class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDocument"
-                    title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon"
-                    data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Upload Document"
-                    title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>Q4 2024 Audit Report</td>
-              <td>Report</td>
-              <td>Finance Dept.</td>
-              <td>v1.0</td>
-              <td>1.2 MB</td>
-              <td>Maya P.</td>
-              <td>2025-01-02</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-success btn-xs btn-icon btn-export"
-                    title="Download"><i class="bi bi-download"></i></button><button
-                    class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDocument"
-                    title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon"
-                    data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Upload Document"
-                    title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
+            @foreach ($data as $doc)
+              <tr>
+                <td>{{ $doc->document_name }}</td>
+                <td>{{ $doc->document_type ?? 'N/A' }}</td>
+                <td>{{ $doc->related_to ?? 'N/A' }}</td>
+                <td>{{ $doc->version ?? 'v1.0' }}</td>
+                <td>0 KB</td>
+                <td>{{ $doc->uploaded_by_user_id ?? 'N/A' }}</td>
+                <td>{{ $doc->created_at ? \Carbon\Carbon::parse($doc->created_at)->format('Y-m-d') : 'N/A' }}</td>
+                <td>
+                  <div class="d-flex gap-1"><button class="btn-erp btn-success btn-xs btn-icon btn-export"
+                      title="Download"><i class="bi bi-download"></i></button><button
+                      class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDocument"
+                      title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon"
+                      data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Upload Document"
+                      title="Delete"><i class="bi bi-trash"></i></button></div>
+                </td>
+              </tr>
+            @endforeach
           </tbody>
         </table>
       </div>
-      <div class="erp-pagination">
-        <button class="pg-btn active">1</button>
-        <button class="pg-btn">2</button>
-        <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+      <div class="d-flex justify-content-between align-items-center mt-5">
+        <div>
+          Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+        </div>
+        <div>
+          {{ $data->links('pagination::bootstrap-5') }}
+        </div>
       </div>
     </div>
   </main>

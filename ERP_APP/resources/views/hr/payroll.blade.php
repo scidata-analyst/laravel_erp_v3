@@ -335,38 +335,40 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Adam Khan</td>
-              <td>IT Manager</td>
-              <td>$6,500</td>
-              <td>$800</td>
-              <td>$650</td>
-              <td>$6,650</td>
-              <td><span class="badge-status badge-active">Paid</span></td>
-              <td><button class="btn-erp btn-outline btn-xs"><i class="bi bi-file-earmark-text"></i> Slip</button></td>
-            </tr>
-            <tr>
-              <td>Sara Lee</td>
-              <td>Sales Manager</td>
-              <td>$5,800</td>
-              <td>$600</td>
-              <td>$580</td>
-              <td>$5,820</td>
-              <td><span class="badge-status badge-active">Paid</span></td>
-              <td><button class="btn-erp btn-outline btn-xs"><i class="bi bi-file-earmark-text"></i> Slip</button></td>
-            </tr>
-            <tr>
-              <td>James R.</td>
-              <td>Warehouse Staff</td>
-              <td>$3,200</td>
-              <td>$200</td>
-              <td>$320</td>
-              <td>$3,080</td>
-              <td><span class="badge-status badge-pending">Pending</span></td>
-              <td><button class="btn-erp btn-success btn-xs btn-process-payment">Process</button></td>
-            </tr>
+            @foreach ($data as $payroll)
+              <tr>
+                <td>{{ $payroll->employee_id ?? 'N/A' }}</td>
+                <td>—</td>
+                <td>${{ number_format($payroll->basic_salary, 2) }}</td>
+                <td>${{ number_format($payroll->allowances ?? 0, 2) }}</td>
+                <td>${{ number_format($payroll->deductions ?? 0, 2) }}</td>
+                <td>${{ number_format($payroll->net_pay, 2) }}</td>
+                <td>
+                  @if ($payroll->status == 'Paid')
+                    <span class="badge-status badge-active">Paid</span>
+                  @else
+                    <span class="badge-status badge-pending">Pending</span>
+                  @endif
+                </td>
+                <td>
+                  @if ($payroll->status == 'Paid')
+                    <button class="btn-erp btn-outline btn-xs"><i class="bi bi-file-earmark-text"></i> Slip</button>
+                  @else
+                    <button class="btn-erp btn-success btn-xs btn-process-payment">Process</button>
+                  @endif
+                </td>
+              </tr>
+            @endforeach
           </tbody>
         </table>
+      </div>
+      <div class="d-flex justify-content-between align-items-center mt-5">
+        <div>
+          Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+        </div>
+        <div>
+          {{ $data->links('pagination::bootstrap-5') }}
+        </div>
       </div>
     </div>
   </main>

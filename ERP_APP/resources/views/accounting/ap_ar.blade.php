@@ -315,16 +315,30 @@
             </tr>
           </thead>
           <tbody>
-            @foreach ($data as $user)
+            @foreach ($data as $apar)
               <tr>
-                <td>AP-2025-012</td>
-                <td>TechSource Ltd.</td>
-                <td>Payable</td>
-                <td>2025-02-12</td>
-                <td>$32,400</td>
+                <td>{{ $apar->reference ?? 'N/A' }}</td>
+                <td>{{ $apar->party_name }}</td>
+                <td>
+                  @if ($apar->ap_ar_type == 'Payable')
+                    <span class="badge-status badge-purple">Payable</span>
+                  @else
+                    <span class="badge-status badge-blue">Receivable</span>
+                  @endif
+                </td>
+                <td>{{ $apar->due_date ? \Carbon\Carbon::parse($apar->due_date)->format('Y-m-d') : 'N/A' }}</td>
+                <td>${{ number_format($apar->amount, 2) }}</td>
                 <td>$0</td>
-                <td>$32,400</td>
-                <td><span class="badge-status badge-pending">Pending</span></td>
+                <td>${{ number_format($apar->amount, 2) }}</td>
+                <td>
+                  @if ($apar->status == 'Paid')
+                    <span class="badge-status badge-active">Paid</span>
+                  @elseif ($apar->status == 'Pending')
+                    <span class="badge-status badge-pending">Pending</span>
+                  @else
+                    <span class="badge-status badge-inactive">Overdue</span>
+                  @endif
+                </td>
                 <td>
                   <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
                       data-bs-target="#modalAPAR" title="Edit"><i class="bi bi-pencil"></i></button><button
@@ -336,10 +350,13 @@
           </tbody>
         </table>
       </div>
-      <div class="erp-pagination">
-        <button class="pg-btn active">1</button>
-        <button class="pg-btn">2</button>
-        <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+      <div class="d-flex justify-content-between align-items-center mt-5">
+        <div>
+          Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+        </div>
+        <div>
+          {{ $data->links('pagination::bootstrap-5') }}
+        </div>
       </div>
     </div>
   </main>

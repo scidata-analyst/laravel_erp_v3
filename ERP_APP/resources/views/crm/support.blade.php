@@ -315,73 +315,51 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>TKT-2025-088</td>
-              <td>Acme Corporation</td>
-              <td>Invoice discrepancy issue</td>
-              <td>High</td>
-              <td>Sara L.</td>
-              <td>2025-01-12</td>
-              <td><span class="badge-status badge-pending">Open</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalSupport" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Ticket" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>TKT-2025-085</td>
-              <td>Delta Retailers</td>
-              <td>Delivery delay complaint</td>
-              <td>Medium</td>
-              <td>James R.</td>
-              <td>2025-01-10</td>
-              <td><span class="badge-status badge-pending">In Progress</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalSupport" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Ticket" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>TKT-2025-080</td>
-              <td>Omega Group</td>
-              <td>Product quality defect</td>
-              <td>Urgent</td>
-              <td>Adam K.</td>
-              <td>2025-01-08</td>
-              <td><span class="badge-status badge-pending">In Progress</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalSupport" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Ticket" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>TKT-2025-072</td>
-              <td>Acme Corporation</td>
-              <td>Refund request</td>
-              <td>Low</td>
-              <td>Sara L.</td>
-              <td>2025-01-05</td>
-              <td><span class="badge-status badge-active">Active</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalSupport" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Ticket" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
+            @foreach ($data as $ticket)
+              <tr>
+                <td>{{ $ticket->ticket_number }}</td>
+                <td>{{ $ticket->customer_id ?? 'N/A' }}</td>
+                <td>{{ $ticket->subject }}</td>
+                <td>
+                  @if ($ticket->priority == 'Urgent')
+                    <span class="badge-status badge-inactive">Urgent</span>
+                  @elseif ($ticket->priority == 'High')
+                    <span class="badge-status badge-pending">High</span>
+                  @else
+                    <span class="badge-status badge-info">{{ $ticket->priority }}</span>
+                  @endif
+                </td>
+                <td>{{ $ticket->assigned_user_id ?? 'N/A' }}</td>
+                <td>{{ $ticket->created_at ? \Carbon\Carbon::parse($ticket->created_at)->format('Y-m-d') : 'N/A' }}</td>
+                <td>
+                  @if ($ticket->status == 'Open')
+                    <span class="badge-status badge-pending">Open</span>
+                  @elseif ($ticket->status == 'In Progress')
+                    <span class="badge-status badge-pending">In Progress</span>
+                  @elseif ($ticket->status == 'Resolved')
+                    <span class="badge-status badge-active">Resolved</span>
+                  @else
+                    <span class="badge-status badge-active">{{ $ticket->status }}</span>
+                  @endif
+                </td>
+                <td>
+                  <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
+                      data-bs-target="#modalSupport" title="Edit"><i class="bi bi-pencil"></i></button><button
+                      class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                      data-delete-label="Ticket" title="Delete"><i class="bi bi-trash"></i></button></div>
+                </td>
+              </tr>
+            @endforeach
           </tbody>
         </table>
       </div>
-      <div class="erp-pagination">
-        <button class="pg-btn active">1</button>
-        <button class="pg-btn">2</button>
-        <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+      <div class="d-flex justify-content-between align-items-center mt-5">
+        <div>
+          Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+        </div>
+        <div>
+          {{ $data->links('pagination::bootstrap-5') }}
+        </div>
       </div>
     </div>
   </main>

@@ -255,16 +255,41 @@
   <div class="erp-table-wrap">
     <table class="erp-table" id="tbl-main">
       <thead><tr><th>Report #</th><th>Standard/Regulation</th><th>Scope</th><th>Audit Date</th><th>Next Audit</th><th>Auditor</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody><tr><td>COMP-2025-01</td><td>ISO 9001:2015</td><td>Quality Management</td><td>2025-01-10</td><td>2026-01-10</td><td>Ext. Auditor</td><td><span class="badge-status badge-active">Active</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalCompliance" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Report" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>COMP-2024-08</td><td>OHSAS 18001</td><td>Workplace Safety</td><td>2024-09-15</td><td>2025-09-15</td><td>Ext. Auditor</td><td><span class="badge-status badge-active">Active</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalCompliance" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Report" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>COMP-2024-05</td><td>BSTI Certification</td><td>Product Standards</td><td>2024-06-01</td><td>2025-06-01</td><td>BSTI</td><td><span class="badge-status badge-pending">Pending</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalCompliance" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Report" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>COMP-2024-02</td><td>Fire Safety Code</td><td>Building</td><td>2024-03-20</td><td>2025-03-20</td><td>Fire Dept.</td><td><span class="badge-status badge-inactive">Failed</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalCompliance" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Report" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr></tbody>
+      <tbody>
+        @forelse ($data as $compliance)
+        <tr>
+          <td>COMP-{{ $compliance->id }}</td>
+          <td>{{ $compliance->standard_regulation }}</td>
+          <td>{{ $compliance->scope }}</td>
+          <td>{{ \Carbon\Carbon::parse($compliance->audit_date)->format('Y-m-d') }}</td>
+          <td>{{ \Carbon\Carbon::parse($compliance->next_audit_date)->format('Y-m-d') }}</td>
+          <td>{{ $compliance->auditor }}</td>
+          <td>
+            @if($compliance->status === 'Compliant' || $compliance->status === 'Active')
+            <span class="badge-status badge-active">Compliant</span>
+            @elseif($compliance->status === 'Non-Compliant' || $compliance->status === 'Failed')
+            <span class="badge-status badge-inactive">Failed</span>
+            @elseif($compliance->status === 'Pending')
+            <span class="badge-status badge-pending">Pending</span>
+            @else
+            <span class="badge-status">{{ $compliance->status }}</span>
+            @endif
+          </td>
+          <td>
+            <div class="d-flex gap-1">
+              <button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalCompliance" title="Edit"><i class="bi bi-pencil"></i></button>
+              <button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Report" title="Delete"><i class="bi bi-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+        @empty
+        <tr><td colspan="8" class="text-center text-muted">No compliance reports found.</td></tr>
+        @endforelse
+      </tbody>
     </table>
   </div>
   <div class="erp-pagination">
-    <button class="pg-btn active">1</button>
-    <button class="pg-btn">2</button>
-    <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+    {{ $data->links('pagination::bootstrap-5') }}
   </div>
 </div>
 </main>

@@ -326,33 +326,17 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>HP ProBook 450 G9</td>
-              <td>SKU-0021</td>
-              <td>142</td>
-              <td>FIFO</td>
-              <td>$720.00</td>
-              <td>$102,240.00</td>
-              <td>2025-01-12</td>
-            </tr>
-            <tr>
-              <td>Logitech MX Master 3</td>
-              <td>SKU-0044</td>
-              <td>58</td>
-              <td>FIFO</td>
-              <td>$75.00</td>
-              <td>$4,350.00</td>
-              <td>2025-01-11</td>
-            </tr>
-            <tr>
-              <td>Steel Bracket 10mm</td>
-              <td>SKU-0071</td>
-              <td>12</td>
-              <td>Avg Cost</td>
-              <td>$3.20</td>
-              <td>$38.40</td>
-              <td>2025-01-10</td>
-            </tr>
+            @foreach ($data as $valuation)
+              <tr>
+                <td>{{ $valuation->product_id ?? 'N/A' }}</td>
+                <td>—</td>
+                <td>{{ $valuation->quantity_on_hand ?? 0 }}</td>
+                <td>{{ $valuation->valuation_method ?? 'FIFO' }}</td>
+                <td>${{ number_format($valuation->unit_cost ?? 0, 2) }}</td>
+                <td>${{ number_format($valuation->total_value ?? 0, 2) }}</td>
+                <td>{{ $valuation->updated_at ? \Carbon\Carbon::parse($valuation->updated_at)->format('Y-m-d') : 'N/A' }}</td>
+              </tr>
+            @endforeach
           </tbody>
         </table>
       </div>

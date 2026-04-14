@@ -255,15 +255,35 @@
   <div class="erp-table-wrap">
     <table class="erp-table" id="tbl-main">
       <thead><tr><th>Supplier</th><th>Contact</th><th>Email</th><th>Country</th><th>Payment Terms</th><th>Rating</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody><tr><td>TechSource Ltd.</td><td>David M.</td><td>david@techsource.com</td><td>USA</td><td>Net 30</td><td>⭐⭐⭐⭐⭐</td><td><span class="badge-status badge-active">Active</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalSupplier" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Supplier" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>GlobalParts Inc.</td><td>Lucy W.</td><td>lucy@globalparts.com</td><td>China</td><td>Net 60</td><td>⭐⭐⭐⭐</td><td><span class="badge-status badge-active">Active</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalSupplier" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Supplier" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>MedSupply Co.</td><td>Raj S.</td><td>raj@medsupply.com</td><td>India</td><td>Prepaid</td><td>⭐⭐⭐</td><td><span class="badge-status badge-inactive">Inactive</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalSupplier" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Supplier" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr></tbody>
+      <tbody>
+        @foreach ($data as $supplier)
+          <tr>
+            <td>{{ $supplier->company_name }}</td>
+            <td>{{ $supplier->contact_person }}</td>
+            <td>{{ $supplier->email }}</td>
+            <td>{{ $supplier->country }}</td>
+            <td>{{ $supplier->payment_terms }}</td>
+            <td>⭐⭐⭐⭐</td>
+            <td>
+              @if ($supplier->status == 'Active')
+                <span class="badge-status badge-active">Active</span>
+              @else
+                <span class="badge-status badge-inactive">Inactive</span>
+              @endif
+            </td>
+            <td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalSupplier" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Supplier" title="Delete"><i class="bi bi-trash"></i></button></div></td>
+          </tr>
+        @endforeach
+      </tbody>
     </table>
   </div>
-  <div class="erp-pagination">
-    <button class="pg-btn active">1</button>
-    <button class="pg-btn">2</button>
-    <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+  <div class="d-flex justify-content-between align-items-center mt-5">
+    <div>
+      Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+    </div>
+    <div>
+      {{ $data->links('pagination::bootstrap-5') }}
+    </div>
   </div>
 </div>
 </main>

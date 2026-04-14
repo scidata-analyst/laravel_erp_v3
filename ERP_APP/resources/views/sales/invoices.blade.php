@@ -255,15 +255,38 @@
   <div class="erp-table-wrap">
     <table class="erp-table" id="tbl-main">
       <thead><tr><th>Invoice #</th><th>Customer</th><th>Date</th><th>Due Date</th><th>Amount</th><th>Paid</th><th>Balance</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody><tr><td>INV-8823</td><td>Acme Corporation</td><td>2025-01-01</td><td>2025-01-31</td><td>$12,400</td><td>$12,400</td><td>$0</td><td><span class="badge-status badge-active">Paid</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" title="Print"><i class="bi bi-printer"></i></button><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalInvoice" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Invoice" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>INV-8801</td><td>Delta Retailers</td><td>2024-12-20</td><td>2025-01-20</td><td>$3,200</td><td>$1,000</td><td>$2,200</td><td><span class="badge-status badge-pending">Pending</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" title="Print"><i class="bi bi-printer"></i></button><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalInvoice" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Invoice" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>INV-8790</td><td>Omega Group</td><td>2024-12-01</td><td>2025-01-01</td><td>$10,800</td><td>$0</td><td>$10,800</td><td><span class="badge-status badge-inactive">Overdue</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" title="Print"><i class="bi bi-printer"></i></button><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalInvoice" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Invoice" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr></tbody>
+      <tbody>
+        @foreach ($data as $invoice)
+          <tr>
+            <td>{{ $invoice->invoice_number }}</td>
+            <td>{{ $invoice->customer_id ?? 'N/A' }}</td>
+            <td>{{ $invoice->invoice_date ? \Carbon\Carbon::parse($invoice->invoice_date)->format('Y-m-d') : 'N/A' }}</td>
+            <td>{{ $invoice->due_date ? \Carbon\Carbon::parse($invoice->due_date)->format('Y-m-d') : 'N/A' }}</td>
+            <td>${{ number_format($invoice->amount, 2) }}</td>
+            <td>$0</td>
+            <td>${{ number_format($invoice->amount, 2) }}</td>
+            <td>
+              @if ($invoice->status == 'Paid')
+                <span class="badge-status badge-active">Paid</span>
+              @elseif ($invoice->status == 'Pending')
+                <span class="badge-status badge-pending">Pending</span>
+              @else
+                <span class="badge-status badge-inactive">Overdue</span>
+              @endif
+            </td>
+            <td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" title="Print"><i class="bi bi-printer"></i></button><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalInvoice" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Invoice" title="Delete"><i class="bi bi-trash"></i></button></div></td>
+          </tr>
+        @endforeach
+      </tbody>
     </table>
   </div>
-  <div class="erp-pagination">
-    <button class="pg-btn active">1</button>
-    <button class="pg-btn">2</button>
-    <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+  <div class="d-flex justify-content-between align-items-center mt-5">
+    <div>
+      Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+    </div>
+    <div>
+      {{ $data->links('pagination::bootstrap-5') }}
+    </div>
   </div>
 </div>
 </main>

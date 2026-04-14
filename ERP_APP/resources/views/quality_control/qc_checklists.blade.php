@@ -255,16 +255,35 @@
   <div class="erp-table-wrap">
     <table class="erp-table" id="tbl-main">
       <thead><tr><th>Checklist #</th><th>Product/Batch</th><th>Inspector</th><th>Inspection Type</th><th>Items Checked</th><th>Pass Rate</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody><tr><td>QC-2025-041</td><td>LOT-2024-001</td><td>Nadia Q.</td><td>Incoming</td><td>20/20</td><td>100%</td><td><span class="badge-status badge-active">Active</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalQC" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Checklist" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>QC-2025-040</td><td>WO-2025-011</td><td>Kamal I.</td><td>In-Process</td><td>15/18</td><td>83%</td><td><span class="badge-status badge-inactive">Failed</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalQC" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Checklist" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>QC-2025-038</td><td>WO-2025-010</td><td>Nadia Q.</td><td>Final</td><td>18/18</td><td>100%</td><td><span class="badge-status badge-active">Active</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalQC" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Checklist" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr>
-<tr><td>QC-2025-035</td><td>LOT-2024-009</td><td>Kamal I.</td><td>Incoming</td><td>12/15</td><td>80%</td><td><span class="badge-status badge-inactive">Failed</span></td><td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalQC" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Checklist" title="Delete"><i class="bi bi-trash"></i></button></div></td></tr></tbody>
+      <tbody>
+        @foreach ($data as $checklist)
+          <tr>
+            <td>QC-{{ $checklist->id }}</td>
+            <td>{{ $checklist->product_batch_work_order ?? 'N/A' }}</td>
+            <td>{{ $checklist->inspector_id ?? 'N/A' }}</td>
+            <td>{{ $checklist->inspection_type ?? 'N/A' }}</td>
+            <td>0/0</td>
+            <td>0%</td>
+            <td>
+              @if ($checklist->status == 'Passed')
+                <span class="badge-status badge-active">Active</span>
+              @else
+                <span class="badge-status badge-inactive">Failed</span>
+              @endif
+            </td>
+            <td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalQC" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Checklist" title="Delete"><i class="bi bi-trash"></i></button></div></td>
+          </tr>
+        @endforeach
+      </tbody>
     </table>
   </div>
-  <div class="erp-pagination">
-    <button class="pg-btn active">1</button>
-    <button class="pg-btn">2</button>
-    <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+  <div class="d-flex justify-content-between align-items-center mt-5">
+    <div>
+      Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+    </div>
+    <div>
+      {{ $data->links('pagination::bootstrap-5') }}
+    </div>
   </div>
 </div>
 </main>

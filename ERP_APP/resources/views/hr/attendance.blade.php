@@ -315,73 +315,43 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Adam Khan</td>
-              <td>2025-01-12</td>
-              <td>09:02</td>
-              <td>18:05</td>
-              <td>9h 3m</td>
-              <td>—</td>
-              <td><span class="badge-status badge-active">Active</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalAttendance" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Attendance" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>Sara Lee</td>
-              <td>2025-01-12</td>
-              <td>08:55</td>
-              <td>17:58</td>
-              <td>9h 3m</td>
-              <td>—</td>
-              <td><span class="badge-status badge-active">Active</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalAttendance" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Attendance" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>James R.</td>
-              <td>2025-01-12</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>Annual Leave</td>
-              <td><span class="badge-status badge-pending">Pending</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalAttendance" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Attendance" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>Maya P.</td>
-              <td>2025-01-12</td>
-              <td>09:30</td>
-              <td>14:00</td>
-              <td>4h 30m</td>
-              <td>—</td>
-              <td><span class="badge-status badge-active">Active</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalAttendance" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Attendance" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
+            @foreach ($data as $attendance)
+              <tr>
+                <td>{{ $attendance->employee_id ?? 'N/A' }}</td>
+                <td>{{ $attendance->attendance_date ? \Carbon\Carbon::parse($attendance->attendance_date)->format('Y-m-d') : 'N/A' }}</td>
+                <td>{{ $attendance->check_in_time ?? '—' }}</td>
+                <td>{{ $attendance->check_out_time ?? '—' }}</td>
+                <td>—</td>
+                <td>{{ $attendance->leave_type ?? '—' }}</td>
+                <td>
+                  @if ($attendance->status == 'Present')
+                    <span class="badge-status badge-active">Present</span>
+                  @elseif ($attendance->status == 'Absent')
+                    <span class="badge-status badge-inactive">Absent</span>
+                  @elseif ($attendance->status == 'Leave')
+                    <span class="badge-status badge-pending">Leave</span>
+                  @else
+                    <span class="badge-status badge-info">{{ $attendance->status }}</span>
+                  @endif
+                </td>
+                <td>
+                  <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
+                      data-bs-target="#modalAttendance" title="Edit"><i class="bi bi-pencil"></i></button><button
+                      class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                      data-delete-label="Attendance" title="Delete"><i class="bi bi-trash"></i></button></div>
+                </td>
+              </tr>
+            @endforeach
           </tbody>
         </table>
       </div>
-      <div class="erp-pagination">
-        <button class="pg-btn active">1</button>
-        <button class="pg-btn">2</button>
-        <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+      <div class="d-flex justify-content-between align-items-center mt-5">
+        <div>
+          Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+        </div>
+        <div>
+          {{ $data->links('pagination::bootstrap-5') }}
+        </div>
       </div>
     </div>
   </main>

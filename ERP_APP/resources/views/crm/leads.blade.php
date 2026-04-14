@@ -344,55 +344,44 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>John Doe</td>
-              <td>Alpha Tech</td>
-              <td>$45,000</td>
-              <td><span class="badge-status badge-info">Proposal</span></td>
-              <td>Sara L.</td>
-              <td>2025-01-20</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalLead" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Lead" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>Emma Brown</td>
-              <td>Sunrise Ltd.</td>
-              <td>$12,000</td>
-              <td><span class="badge-status badge-pending">Qualified</span></td>
-              <td>James R.</td>
-              <td>2025-01-22</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalLead" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Lead" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>Carlos M.</td>
-              <td>BetaCorp</td>
-              <td>$88,000</td>
-              <td><span class="badge-status badge-active">Won</span></td>
-              <td>Sara L.</td>
-              <td>Closed</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalLead" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Lead" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
+            @foreach ($data as $lead)
+              <tr>
+                <td>{{ $lead->lead_name }}</td>
+                <td>{{ $lead->company }}</td>
+                <td>${{ number_format($lead->deal_value, 2) }}</td>
+                <td>
+                  @if ($lead->stage == 'Won')
+                    <span class="badge-status badge-active">Won</span>
+                  @elseif ($lead->stage == 'Lost')
+                    <span class="badge-status badge-inactive">Lost</span>
+                  @elseif ($lead->stage == 'Proposal')
+                    <span class="badge-status badge-info">Proposal</span>
+                  @elseif ($lead->stage == 'Qualified')
+                    <span class="badge-status badge-pending">Qualified</span>
+                  @else
+                    <span class="badge-status badge-info">{{ $lead->stage }}</span>
+                  @endif
+                </td>
+                <td>{{ $lead->assigned_user_id ?? 'N/A' }}</td>
+                <td>—</td>
+                <td>
+                  <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
+                      data-bs-target="#modalLead" title="Edit"><i class="bi bi-pencil"></i></button><button
+                      class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                      data-delete-label="Lead" title="Delete"><i class="bi bi-trash"></i></button></div>
+                </td>
+              </tr>
+            @endforeach
           </tbody>
         </table>
       </div>
-      <div class="erp-pagination">
-        <button class="pg-btn active">1</button>
-        <button class="pg-btn">2</button>
-        <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+      <div class="d-flex justify-content-between align-items-center mt-5">
+        <div>
+          Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+        </div>
+        <div>
+          {{ $data->links('pagination::bootstrap-5') }}
+        </div>
       </div>
     </div>
   </main>

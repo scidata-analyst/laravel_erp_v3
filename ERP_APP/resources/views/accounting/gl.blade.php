@@ -315,69 +315,32 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>1001</td>
-              <td>Cash & Cash Equivalents</td>
-              <td><span class="badge-status badge-info">Asset</span></td>
-              <td>$420,000</td>
-              <td>$180,000</td>
-              <td>$240,000</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalGL" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Entry" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>2001</td>
-              <td>Accounts Payable</td>
-              <td><span class="badge-status badge-info">Liability</span></td>
-              <td>$50,000</td>
-              <td>$120,000</td>
-              <td>($70,000)</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalGL" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Entry" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>4001</td>
-              <td>Sales Revenue</td>
-              <td><span class="badge-status badge-info">Revenue</span></td>
-              <td>$0</td>
-              <td>$2,400,000</td>
-              <td>$2,400,000</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalGL" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Entry" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>5001</td>
-              <td>Cost of Goods Sold</td>
-              <td><span class="badge-status badge-info">Expense</span></td>
-              <td>$1,560,000</td>
-              <td>$0</td>
-              <td>($1,560,000)</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalGL" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Entry" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
+            @foreach ($data as $gl)
+              <tr>
+                <td>{{ $gl->code }}</td>
+                <td>{{ $gl->name }}</td>
+                <td><span class="badge-status badge-info">{{ $gl->type }}</span></td>
+                <td>${{ number_format($gl->debit ?? 0, 2) }}</td>
+                <td>${{ number_format($gl->credit ?? 0, 2) }}</td>
+                <td>${{ number_format(($gl->credit ?? 0) - ($gl->debit ?? 0), 2) }}</td>
+                <td>
+                  <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
+                      data-bs-target="#modalGL" title="Edit"><i class="bi bi-pencil"></i></button><button
+                      class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                      data-delete-label="Entry" title="Delete"><i class="bi bi-trash"></i></button></div>
+                </td>
+              </tr>
+            @endforeach
           </tbody>
         </table>
       </div>
-      <div class="erp-pagination">
-        <button class="pg-btn active">1</button>
-        <button class="pg-btn">2</button>
-        <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+      <div class="d-flex justify-content-between align-items-center mt-5">
+        <div>
+          Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+        </div>
+        <div>
+          {{ $data->links('pagination::bootstrap-5') }}
+        </div>
       </div>
     </div>
   </main>

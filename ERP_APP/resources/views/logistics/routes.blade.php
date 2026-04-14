@@ -294,29 +294,30 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Dhaka North</td>
-              <td>Zone A</td>
-              <td>Karim D.</td>
-              <td>TRK-001</td>
-              <td>12 stops</td>
-              <td>2.5 hrs</td>
-              <td><span class="badge-status badge-active">Active</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalRoute" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Route" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>Dhaka South</td>
-              <td>Zone B</td>
-              <td>Rahim M.</td>
-              <td>TRK-002</td>
-              <td>9 stops</td>
-              <td>2.0 hrs</td>
-              <td><span class="badge-status badge-active">Active</span></td>
+            @foreach ($data as $route)
+              <tr>
+                <td>{{ $route->route_name }}</td>
+                <td>{{ $route->zone_area ?? 'N/A' }}</td>
+                <td>{{ $route->driver_name ?? 'N/A' }}</td>
+                <td>{{ $route->vehicle_id ?? 'N/A' }}</td>
+                <td>{{ $route->number_of_stops ?? 0 }} stops</td>
+                <td>—</td>
+                <td>
+                  @if ($route->status == 'Active')
+                    <span class="badge-status badge-active">Active</span>
+                  @else
+                    <span class="badge-status badge-inactive">Inactive</span>
+                  @endif
+                </td>
+                <td>
+                  <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
+                      data-bs-target="#modalRoute" title="Edit"><i class="bi bi-pencil"></i></button><button
+                      class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                      data-delete-label="Route" title="Delete"><i class="bi bi-trash"></i></button></div>
+                </td>
+              </tr>
+            @endforeach
+          </tbody>
               <td>
                 <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
                     data-bs-target="#modalRoute" title="Edit"><i class="bi bi-pencil"></i></button><button
@@ -357,10 +358,13 @@
           </tbody>
         </table>
       </div>
-      <div class="erp-pagination">
-        <button class="pg-btn active">1</button>
-        <button class="pg-btn">2</button>
-        <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+      <div class="d-flex justify-content-between align-items-center mt-5">
+        <div>
+          Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+        </div>
+        <div>
+          {{ $data->links('pagination::bootstrap-5') }}
+        </div>
       </div>
     </div>
   </main>

@@ -314,73 +314,41 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>POS-001</td>
-              <td>Main Store – Counter 1</td>
-              <td>Anika R.</td>
-              <td>2025-01-12 09:00</td>
-              <td>$4,820</td>
-              <td>42 txns</td>
-              <td><span class="badge-status badge-active">Active</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalPOS" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Terminal" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>POS-002</td>
-              <td>Main Store – Counter 2</td>
-              <td>Farhan S.</td>
-              <td>2025-01-12 09:00</td>
-              <td>$3,110</td>
-              <td>28 txns</td>
-              <td><span class="badge-status badge-active">Active</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalPOS" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Terminal" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>POS-003</td>
-              <td>Branch – Gulshan</td>
-              <td>Tania M.</td>
-              <td>2025-01-12 10:00</td>
-              <td>$1,940</td>
-              <td>18 txns</td>
-              <td><span class="badge-status badge-active">Active</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalPOS" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Terminal" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>POS-004</td>
-              <td>Branch – Dhanmondi</td>
-              <td>—</td>
-              <td>—</td>
-              <td>$0</td>
-              <td>0 txns</td>
-              <td><span class="badge-status badge-inactive">Offline</span></td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalPOS" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Terminal" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
+            @foreach ($data as $pos)
+              <tr>
+                <td>{{ $pos->terminal_id }}</td>
+                <td>{{ $pos->location ?? 'N/A' }}</td>
+                <td>{{ $pos->assigned_cashier_id ?? '—' }}</td>
+                <td>{{ $pos->created_at ? \Carbon\Carbon::parse($pos->created_at)->format('Y-m-d H:i') : '—' }}</td>
+                <td>$0</td>
+                <td>0 txns</td>
+                <td>
+                  @if ($pos->status == 'Online' || $pos->status == 'Active')
+                    <span class="badge-status badge-active">Active</span>
+                  @elseif ($pos->status == 'Offline')
+                    <span class="badge-status badge-inactive">Offline</span>
+                  @else
+                    <span class="badge-status badge-pending">{{ $pos->status }}</span>
+                  @endif
+                </td>
+                <td>
+                  <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
+                      data-bs-target="#modalPOS" title="Edit"><i class="bi bi-pencil"></i></button><button
+                      class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                      data-delete-label="Terminal" title="Delete"><i class="bi bi-trash"></i></button></div>
+                </td>
+              </tr>
+            @endforeach
           </tbody>
         </table>
       </div>
-      <div class="erp-pagination">
-        <button class="pg-btn active">1</button>
-        <button class="pg-btn">2</button>
-        <button class="pg-btn"><i class="bi bi-chevron-right"></i></button>
+      <div class="d-flex justify-content-between align-items-center mt-5">
+        <div>
+          Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+        </div>
+        <div>
+          {{ $data->links('pagination::bootstrap-5') }}
+        </div>
       </div>
     </div>
   </main>
