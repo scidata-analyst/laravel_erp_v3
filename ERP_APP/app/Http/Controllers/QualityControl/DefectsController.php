@@ -39,11 +39,11 @@ class DefectsController extends Controller
     {
         $data = $this->defectsService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All Defects records fetched successfully",
-            "data" => DefectsResource::collection($data)
-        ]);
+        return DefectsResource::collection($data)
+            ->additional([
+                'success' => true,
+                'message' => 'All Defects records fetched successfully',
+            ]);
     }
 
     /**
@@ -58,14 +58,6 @@ class DefectsController extends Controller
 
         $data = $this->defectsService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "Defects records fetched successfully",
-                "data" => DefectsResource::collection($data)
-            ]);
-        }
-
         return view("quality_control.defects", compact("data"));
     }
 
@@ -78,11 +70,10 @@ class DefectsController extends Controller
     {
         $data = $this->defectsService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "Defects record created successfully",
-            "data" => new DefectsResource($data)
-        ], 201);
+        return (new DefectsResource($data))->additional([
+            'success' => true,
+            'message' => 'Defects record created successfully',
+        ]);
     }
 
     /**
@@ -94,10 +85,9 @@ class DefectsController extends Controller
     {
         $data = $this->defectsService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Defects record fetched successfully",
-            "data" => new DefectsResource($data)
+        return (new DefectsResource($data))->additional([
+            'success' => true,
+            'message' => 'Defects record fetched successfully',
         ]);
     }
 
@@ -111,10 +101,9 @@ class DefectsController extends Controller
     {
         $data = $this->defectsService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Defects record updated successfully",
-            "data" => new DefectsResource($data)
+        return (new DefectsResource($data))->additional([
+            'success' => true,
+            'message' => 'Defects record updated successfully',
         ]);
     }
 

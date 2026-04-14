@@ -39,11 +39,7 @@ class BatchTrackingController extends Controller
     {
         $data = $this->batchTrackingService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All BatchTracking records fetched successfully",
-            "data" => BatchTrackingResource::collection($data)
-        ]);
+        return BatchTrackingResource::collection($data)->additional(['success' => true, 'message' => 'All BatchTracking records fetched successfully']);
     }
 
     /**
@@ -58,14 +54,6 @@ class BatchTrackingController extends Controller
 
         $data = $this->batchTrackingService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "BatchTracking records fetched successfully",
-                "data" => BatchTrackingResource::collection($data)
-            ]);
-        }
-
         return view("inventory.batch_tracking", compact("data"));
     }
 
@@ -78,11 +66,7 @@ class BatchTrackingController extends Controller
     {
         $data = $this->batchTrackingService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "BatchTracking record created successfully",
-            "data" => new BatchTrackingResource($data)
-        ], 201);
+        return (new BatchTrackingResource($data))->additional(['success' => true, 'message' => 'BatchTracking record created successfully']);
     }
 
     /**
@@ -94,11 +78,7 @@ class BatchTrackingController extends Controller
     {
         $data = $this->batchTrackingService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "BatchTracking record fetched successfully",
-            "data" => new BatchTrackingResource($data)
-        ]);
+        return (new BatchTrackingResource($data))->additional(['success' => true, 'message' => 'BatchTracking record fetched successfully']);
     }
 
     /**
@@ -111,11 +91,7 @@ class BatchTrackingController extends Controller
     {
         $data = $this->batchTrackingService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "BatchTracking record updated successfully",
-            "data" => new BatchTrackingResource($data)
-        ]);
+        return (new BatchTrackingResource($data))->additional(['success' => true, 'message' => 'BatchTracking record updated successfully']);
     }
 
     /**
@@ -127,9 +103,6 @@ class BatchTrackingController extends Controller
     {
         $this->batchTrackingService->destroy($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "BatchTracking record deleted successfully"
-        ]);
+        return response()->json(["success" => true, "message" => "BatchTracking record deleted successfully"]);
     }
 }

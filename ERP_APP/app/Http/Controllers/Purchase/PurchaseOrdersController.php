@@ -39,11 +39,11 @@ class PurchaseOrdersController extends Controller
     {
         $data = $this->purchaseOrdersService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All PurchaseOrders records fetched successfully",
-            "data" => PurchaseOrdersResource::collection($data)
-        ]);
+        return PurchaseOrdersResource::collection($data)
+            ->additional([
+                'success' => true,
+                'message' => 'PurchaseOrders records fetched successfully',
+            ]);
     }
 
     /**
@@ -58,14 +58,6 @@ class PurchaseOrdersController extends Controller
 
         $data = $this->purchaseOrdersService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "PurchaseOrders records fetched successfully",
-                "data" => PurchaseOrdersResource::collection($data)
-            ]);
-        }
-
         return view("purchase.purchase_orders", compact("data"));
     }
 
@@ -78,11 +70,10 @@ class PurchaseOrdersController extends Controller
     {
         $data = $this->purchaseOrdersService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "PurchaseOrders record created successfully",
-            "data" => new PurchaseOrdersResource($data)
-        ], 201);
+        return (new PurchaseOrdersResource($data))->additional([
+            'success' => true,
+            'message' => 'PurchaseOrders record created successfully',
+        ]);
     }
 
     /**
@@ -94,10 +85,9 @@ class PurchaseOrdersController extends Controller
     {
         $data = $this->purchaseOrdersService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "PurchaseOrders record fetched successfully",
-            "data" => new PurchaseOrdersResource($data)
+        return (new PurchaseOrdersResource($data))->additional([
+            'success' => true,
+            'message' => 'PurchaseOrders record fetched successfully',
         ]);
     }
 
@@ -111,10 +101,9 @@ class PurchaseOrdersController extends Controller
     {
         $data = $this->purchaseOrdersService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "PurchaseOrders record updated successfully",
-            "data" => new PurchaseOrdersResource($data)
+        return (new PurchaseOrdersResource($data))->additional([
+            'success' => true,
+            'message' => 'PurchaseOrders record updated successfully',
         ]);
     }
 

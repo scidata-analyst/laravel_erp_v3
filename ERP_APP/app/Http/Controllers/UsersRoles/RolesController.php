@@ -39,10 +39,9 @@ class RolesController extends Controller
     {
         $data = $this->rolesService->all();
 
-        return response()->json([
+        return RolesResource::collection($data)->additional([
             "success" => true,
-            "message" => "All Roles records fetched successfully",
-            "data" => RolesResource::collection($data)
+            "message" => "All Roles records fetched successfully"
         ]);
     }
 
@@ -70,11 +69,10 @@ class RolesController extends Controller
     {
         $data = $this->rolesService->store($request->validated());
 
-        return response()->json([
+        return (new RolesResource($data))->additional([
             "success" => true,
-            "message" => "Roles record created successfully",
-            "data" => new RolesResource($data)
-        ], 201);
+            "message" => "Roles record created successfully"
+        ]);
     }
 
     /**
@@ -86,10 +84,9 @@ class RolesController extends Controller
     {
         $data = $this->rolesService->show($id);
 
-        return response()->json([
+        return (new RolesResource($data))->additional([
             "success" => true,
-            "message" => "Roles record fetched successfully",
-            "data" => new RolesResource($data)
+            "message" => "Roles record fetched successfully"
         ]);
     }
 
@@ -103,10 +100,9 @@ class RolesController extends Controller
     {
         $data = $this->rolesService->update($request->validated(), $id);
 
-        return response()->json([
+        return (new RolesResource($data))->additional([
             "success" => true,
-            "message" => "Roles record updated successfully",
-            "data" => new RolesResource($data)
+            "message" => "Roles record updated successfully"
         ]);
     }
 
@@ -119,9 +115,6 @@ class RolesController extends Controller
     {
         $this->rolesService->destroy($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Roles record deleted successfully"
-        ]);
+        return response()->json(["success" => true, "message" => "Roles record deleted successfully"]);
     }
 }

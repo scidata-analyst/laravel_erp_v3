@@ -39,11 +39,11 @@ class EmployeesController extends Controller
     {
         $data = $this->employeesService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All Employees records fetched successfully",
-            "data" => EmployeesResource::collection($data)
-        ]);
+        return EmployeesResource::collection($data)
+            ->additional([
+                'success' => true,
+                'message' => 'All Employees records fetched successfully',
+            ]);
     }
 
     /**
@@ -58,14 +58,6 @@ class EmployeesController extends Controller
 
         $data = $this->employeesService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "Employees records fetched successfully",
-                "data" => EmployeesResource::collection($data)
-            ]);
-        }
-
         return view("hr.employees", compact("data"));
     }
 
@@ -78,11 +70,10 @@ class EmployeesController extends Controller
     {
         $data = $this->employeesService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "Employees record created successfully",
-            "data" => new EmployeesResource($data)
-        ], 201);
+        return (new EmployeesResource($data))->additional([
+            'success' => true,
+            'message' => 'Employees record created successfully',
+        ]);
     }
 
     /**
@@ -94,10 +85,9 @@ class EmployeesController extends Controller
     {
         $data = $this->employeesService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Employees record fetched successfully",
-            "data" => new EmployeesResource($data)
+        return (new EmployeesResource($data))->additional([
+            'success' => true,
+            'message' => 'Employees record fetched successfully',
         ]);
     }
 
@@ -111,10 +101,9 @@ class EmployeesController extends Controller
     {
         $data = $this->employeesService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Employees record updated successfully",
-            "data" => new EmployeesResource($data)
+        return (new EmployeesResource($data))->additional([
+            'success' => true,
+            'message' => 'Employees record updated successfully',
         ]);
     }
 

@@ -39,11 +39,11 @@ class TasksController extends Controller
     {
         $data = $this->tasksService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All Tasks records fetched successfully",
-            "data" => TasksResource::collection($data)
-        ]);
+        return TasksResource::collection($data)
+            ->additional([
+                'success' => true,
+                'message' => 'All Tasks records fetched successfully',
+            ]);
     }
 
     /**
@@ -58,14 +58,6 @@ class TasksController extends Controller
 
         $data = $this->tasksService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "Tasks records fetched successfully",
-                "data" => TasksResource::collection($data)
-            ]);
-        }
-
         return view("projects.tasks", compact("data"));
     }
 
@@ -78,11 +70,10 @@ class TasksController extends Controller
     {
         $data = $this->tasksService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "Tasks record created successfully",
-            "data" => new TasksResource($data)
-        ], 201);
+        return (new TasksResource($data))->additional([
+            'success' => true,
+            'message' => 'Tasks record created successfully',
+        ]);
     }
 
     /**
@@ -94,10 +85,9 @@ class TasksController extends Controller
     {
         $data = $this->tasksService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Tasks record fetched successfully",
-            "data" => new TasksResource($data)
+        return (new TasksResource($data))->additional([
+            'success' => true,
+            'message' => 'Tasks record fetched successfully',
         ]);
     }
 
@@ -111,10 +101,9 @@ class TasksController extends Controller
     {
         $data = $this->tasksService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Tasks record updated successfully",
-            "data" => new TasksResource($data)
+        return (new TasksResource($data))->additional([
+            'success' => true,
+            'message' => 'Tasks record updated successfully',
         ]);
     }
 

@@ -39,11 +39,11 @@ class CustomReportsController extends Controller
     {
         $data = $this->customReportsService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All CustomReports records fetched successfully",
-            "data" => CustomReportsResource::collection($data)
-        ]);
+        return CustomReportsResource::collection($data)
+            ->additional([
+                'success' => true,
+                'message' => 'All CustomReports records fetched successfully',
+            ]);
     }
 
     /**
@@ -58,14 +58,6 @@ class CustomReportsController extends Controller
 
         $data = $this->customReportsService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "CustomReports records fetched successfully",
-                "data" => CustomReportsResource::collection($data)
-            ]);
-        }
-
         return view("reports.custom_reports", compact("data"));
     }
 
@@ -78,11 +70,10 @@ class CustomReportsController extends Controller
     {
         $data = $this->customReportsService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "CustomReports record created successfully",
-            "data" => new CustomReportsResource($data)
-        ], 201);
+        return (new CustomReportsResource($data))->additional([
+            'success' => true,
+            'message' => 'CustomReports record created successfully',
+        ]);
     }
 
     /**
@@ -94,10 +85,9 @@ class CustomReportsController extends Controller
     {
         $data = $this->customReportsService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "CustomReports record fetched successfully",
-            "data" => new CustomReportsResource($data)
+        return (new CustomReportsResource($data))->additional([
+            'success' => true,
+            'message' => 'CustomReports record fetched successfully',
         ]);
     }
 
@@ -111,10 +101,9 @@ class CustomReportsController extends Controller
     {
         $data = $this->customReportsService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "CustomReports record updated successfully",
-            "data" => new CustomReportsResource($data)
+        return (new CustomReportsResource($data))->additional([
+            'success' => true,
+            'message' => 'CustomReports record updated successfully',
         ]);
     }
 

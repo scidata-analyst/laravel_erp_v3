@@ -39,11 +39,11 @@ class ResourcesController extends Controller
     {
         $data = $this->resourcesService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All Resources records fetched successfully",
-            "data" => ResourcesResource::collection($data)
-        ]);
+        return ResourcesResource::collection($data)
+            ->additional([
+                'success' => true,
+                'message' => 'All Resources records fetched successfully',
+            ]);
     }
 
     /**
@@ -58,14 +58,6 @@ class ResourcesController extends Controller
 
         $data = $this->resourcesService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "Resources records fetched successfully",
-                "data" => ResourcesResource::collection($data)
-            ]);
-        }
-
         return view("projects.resources", compact("data"));
     }
 
@@ -78,11 +70,10 @@ class ResourcesController extends Controller
     {
         $data = $this->resourcesService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "Resources record created successfully",
-            "data" => new ResourcesResource($data)
-        ], 201);
+        return (new ResourcesResource($data))->additional([
+            'success' => true,
+            'message' => 'Resources record created successfully',
+        ]);
     }
 
     /**
@@ -94,10 +85,9 @@ class ResourcesController extends Controller
     {
         $data = $this->resourcesService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Resources record fetched successfully",
-            "data" => new ResourcesResource($data)
+        return (new ResourcesResource($data))->additional([
+            'success' => true,
+            'message' => 'Resources record fetched successfully',
         ]);
     }
 
@@ -111,10 +101,9 @@ class ResourcesController extends Controller
     {
         $data = $this->resourcesService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Resources record updated successfully",
-            "data" => new ResourcesResource($data)
+        return (new ResourcesResource($data))->additional([
+            'success' => true,
+            'message' => 'Resources record updated successfully',
         ]);
     }
 

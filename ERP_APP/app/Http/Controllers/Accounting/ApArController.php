@@ -69,7 +69,7 @@ class ApArController extends Controller
     {
         $data = $this->apArService->store($request->validated());
 
-        return ApArResource::collection($data)->additional([
+        return (new ApArResource($data))->additional([
             'success' => true,
             'message' => 'ApAr records created successfully',
         ]);
@@ -84,7 +84,7 @@ class ApArController extends Controller
     {
         $data = $this->apArService->show($id);
 
-        return ApArResource::collection($data)->additional([
+        return (new ApArResource($data))->additional([
             'success' => true,
             'message' => 'ApAr records fetched successfully',
         ]);
@@ -100,7 +100,7 @@ class ApArController extends Controller
     {
         $data = $this->apArService->update($request->validated(), $id);
 
-        return ApArResource::collection($data)->additional([
+        return (new ApArResource($data))->additional([
             'success' => true,
             'message' => 'ApAr records updated successfully',
         ]);

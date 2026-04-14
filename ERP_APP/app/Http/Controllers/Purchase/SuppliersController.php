@@ -39,11 +39,11 @@ class SuppliersController extends Controller
     {
         $data = $this->suppliersService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All Suppliers records fetched successfully",
-            "data" => SuppliersResource::collection($data)
-        ]);
+        return SuppliersResource::collection($data)
+            ->additional([
+                'success' => true,
+                'message' => 'Suppliers records fetched successfully',
+            ]);
     }
 
     /**
@@ -58,14 +58,6 @@ class SuppliersController extends Controller
 
         $data = $this->suppliersService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "Suppliers records fetched successfully",
-                "data" => SuppliersResource::collection($data)
-            ]);
-        }
-
         return view("purchase.suppliers", compact("data"));
     }
 
@@ -78,11 +70,10 @@ class SuppliersController extends Controller
     {
         $data = $this->suppliersService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "Suppliers record created successfully",
-            "data" => new SuppliersResource($data)
-        ], 201);
+        return (new SuppliersResource($data))->additional([
+            'success' => true,
+            'message' => 'Suppliers record created successfully',
+        ]);
     }
 
     /**
@@ -94,10 +85,9 @@ class SuppliersController extends Controller
     {
         $data = $this->suppliersService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Suppliers record fetched successfully",
-            "data" => new SuppliersResource($data)
+        return (new SuppliersResource($data))->additional([
+            'success' => true,
+            'message' => 'Suppliers record fetched successfully',
         ]);
     }
 
@@ -111,10 +101,9 @@ class SuppliersController extends Controller
     {
         $data = $this->suppliersService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Suppliers record updated successfully",
-            "data" => new SuppliersResource($data)
+        return (new SuppliersResource($data))->additional([
+            'success' => true,
+            'message' => 'Suppliers record updated successfully',
         ]);
     }
 

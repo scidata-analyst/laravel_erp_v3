@@ -39,11 +39,11 @@ class InvoicesController extends Controller
     {
         $data = $this->invoicesService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All Invoices records fetched successfully",
-            "data" => InvoicesResource::collection($data)
-        ]);
+        return InvoicesResource::collection($data)
+            ->additional([
+                'success' => true,
+                'message' => 'All Invoices records fetched successfully',
+            ]);
     }
 
     /**
@@ -58,14 +58,6 @@ class InvoicesController extends Controller
 
         $data = $this->invoicesService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "Invoices records fetched successfully",
-                "data" => InvoicesResource::collection($data)
-            ]);
-        }
-
         return view("sales.invoices", compact("data"));
     }
 
@@ -78,11 +70,10 @@ class InvoicesController extends Controller
     {
         $data = $this->invoicesService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "Invoices record created successfully",
-            "data" => new InvoicesResource($data)
-        ], 201);
+        return (new InvoicesResource($data))->additional([
+            'success' => true,
+            'message' => 'Invoices record created successfully',
+        ]);
     }
 
     /**
@@ -94,10 +85,9 @@ class InvoicesController extends Controller
     {
         $data = $this->invoicesService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Invoices record fetched successfully",
-            "data" => new InvoicesResource($data)
+        return (new InvoicesResource($data))->additional([
+            'success' => true,
+            'message' => 'Invoices record fetched successfully',
         ]);
     }
 
@@ -111,10 +101,9 @@ class InvoicesController extends Controller
     {
         $data = $this->invoicesService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Invoices record updated successfully",
-            "data" => new InvoicesResource($data)
+        return (new InvoicesResource($data))->additional([
+            'success' => true,
+            'message' => 'Invoices record updated successfully',
         ]);
     }
 
@@ -127,9 +116,6 @@ class InvoicesController extends Controller
     {
         $this->invoicesService->destroy($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Invoices record deleted successfully"
-        ]);
+        return response()->json(["success" => true, "message" => "Invoices record deleted successfully"]);
     }
 }

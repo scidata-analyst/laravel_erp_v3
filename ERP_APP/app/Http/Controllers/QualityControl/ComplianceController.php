@@ -39,11 +39,11 @@ class ComplianceController extends Controller
     {
         $data = $this->complianceService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All Compliance records fetched successfully",
-            "data" => ComplianceResource::collection($data)
-        ]);
+        return ComplianceResource::collection($data)
+            ->additional([
+                'success' => true,
+                'message' => 'All Compliance records fetched successfully',
+            ]);
     }
 
     /**
@@ -58,14 +58,6 @@ class ComplianceController extends Controller
 
         $data = $this->complianceService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "Compliance records fetched successfully",
-                "data" => ComplianceResource::collection($data)
-            ]);
-        }
-
         return view("quality_control.compliance", compact("data"));
     }
 
@@ -78,11 +70,10 @@ class ComplianceController extends Controller
     {
         $data = $this->complianceService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "Compliance record created successfully",
-            "data" => new ComplianceResource($data)
-        ], 201);
+        return (new ComplianceResource($data))->additional([
+            'success' => true,
+            'message' => 'Compliance record created successfully',
+        ]);
     }
 
     /**
@@ -94,10 +85,9 @@ class ComplianceController extends Controller
     {
         $data = $this->complianceService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Compliance record fetched successfully",
-            "data" => new ComplianceResource($data)
+        return (new ComplianceResource($data))->additional([
+            'success' => true,
+            'message' => 'Compliance record fetched successfully',
         ]);
     }
 
@@ -111,10 +101,9 @@ class ComplianceController extends Controller
     {
         $data = $this->complianceService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Compliance record updated successfully",
-            "data" => new ComplianceResource($data)
+        return (new ComplianceResource($data))->additional([
+            'success' => true,
+            'message' => 'Compliance record updated successfully',
         ]);
     }
 

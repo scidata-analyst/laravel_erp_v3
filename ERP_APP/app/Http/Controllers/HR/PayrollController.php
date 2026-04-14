@@ -39,11 +39,11 @@ class PayrollController extends Controller
     {
         $data = $this->payrollService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All Payroll records fetched successfully",
-            "data" => PayrollResource::collection($data)
-        ]);
+        return PayrollResource::collection($data)
+            ->additional([
+                'success' => true,
+                'message' => 'All Payroll records fetched successfully',
+            ]);
     }
 
     /**
@@ -58,14 +58,6 @@ class PayrollController extends Controller
 
         $data = $this->payrollService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "Payroll records fetched successfully",
-                "data" => PayrollResource::collection($data)
-            ]);
-        }
-
         return view("hr.payroll", compact("data"));
     }
 
@@ -78,11 +70,10 @@ class PayrollController extends Controller
     {
         $data = $this->payrollService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "Payroll record created successfully",
-            "data" => new PayrollResource($data)
-        ], 201);
+        return (new PayrollResource($data))->additional([
+            'success' => true,
+            'message' => 'Payroll record created successfully',
+        ]);
     }
 
     /**
@@ -94,10 +85,9 @@ class PayrollController extends Controller
     {
         $data = $this->payrollService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Payroll record fetched successfully",
-            "data" => new PayrollResource($data)
+        return (new PayrollResource($data))->additional([
+            'success' => true,
+            'message' => 'Payroll record fetched successfully',
         ]);
     }
 
@@ -111,10 +101,9 @@ class PayrollController extends Controller
     {
         $data = $this->payrollService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Payroll record updated successfully",
-            "data" => new PayrollResource($data)
+        return (new PayrollResource($data))->additional([
+            'success' => true,
+            'message' => 'Payroll record updated successfully',
         ]);
     }
 

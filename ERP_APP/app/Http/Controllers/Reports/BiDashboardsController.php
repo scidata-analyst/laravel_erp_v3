@@ -39,11 +39,11 @@ class BiDashboardsController extends Controller
     {
         $data = $this->biDashboardsService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All BiDashboards records fetched successfully",
-            "data" => BiDashboardsResource::collection($data)
-        ]);
+        return BiDashboardsResource::collection($data)
+            ->additional([
+                'success' => true,
+                'message' => 'All BiDashboards records fetched successfully',
+            ]);
     }
 
     /**
@@ -58,14 +58,6 @@ class BiDashboardsController extends Controller
 
         $data = $this->biDashboardsService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "BiDashboards records fetched successfully",
-                "data" => BiDashboardsResource::collection($data)
-            ]);
-        }
-
         return view("reports.bi_dashboards", compact("data"));
     }
 
@@ -78,11 +70,10 @@ class BiDashboardsController extends Controller
     {
         $data = $this->biDashboardsService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "BiDashboards record created successfully",
-            "data" => new BiDashboardsResource($data)
-        ], 201);
+        return (new BiDashboardsResource($data))->additional([
+            'success' => true,
+            'message' => 'BiDashboards record created successfully',
+        ]);
     }
 
     /**
@@ -94,10 +85,9 @@ class BiDashboardsController extends Controller
     {
         $data = $this->biDashboardsService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "BiDashboards record fetched successfully",
-            "data" => new BiDashboardsResource($data)
+        return (new BiDashboardsResource($data))->additional([
+            'success' => true,
+            'message' => 'BiDashboards record fetched successfully',
         ]);
     }
 
@@ -111,10 +101,9 @@ class BiDashboardsController extends Controller
     {
         $data = $this->biDashboardsService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "BiDashboards record updated successfully",
-            "data" => new BiDashboardsResource($data)
+        return (new BiDashboardsResource($data))->additional([
+            'success' => true,
+            'message' => 'BiDashboards record updated successfully',
         ]);
     }
 

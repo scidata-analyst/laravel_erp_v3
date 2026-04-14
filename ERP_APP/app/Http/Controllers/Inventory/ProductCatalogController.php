@@ -39,11 +39,7 @@ class ProductCatalogController extends Controller
     {
         $data = $this->productCatalogService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All ProductCatalog records fetched successfully",
-            "data" => ProductCatalogResource::collection($data)
-        ]);
+        return ProductCatalogResource::collection($data)->additional(['success' => true, 'message' => 'All ProductCatalog records fetched successfully']);
     }
 
     /**
@@ -58,14 +54,6 @@ class ProductCatalogController extends Controller
 
         $data = $this->productCatalogService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "ProductCatalog records fetched successfully",
-                "data" => ProductCatalogResource::collection($data)
-            ]);
-        }
-
         return view("inventory.product_catalog", compact("data"));
     }
 
@@ -78,11 +66,7 @@ class ProductCatalogController extends Controller
     {
         $data = $this->productCatalogService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "ProductCatalog record created successfully",
-            "data" => new ProductCatalogResource($data)
-        ], 201);
+        return (new ProductCatalogResource($data))->additional(['success' => true, 'message' => 'ProductCatalog record created successfully']);
     }
 
     /**
@@ -94,11 +78,7 @@ class ProductCatalogController extends Controller
     {
         $data = $this->productCatalogService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "ProductCatalog record fetched successfully",
-            "data" => new ProductCatalogResource($data)
-        ]);
+        return (new ProductCatalogResource($data))->additional(['success' => true, 'message' => 'ProductCatalog record fetched successfully']);
     }
 
     /**
@@ -111,11 +91,7 @@ class ProductCatalogController extends Controller
     {
         $data = $this->productCatalogService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "ProductCatalog record updated successfully",
-            "data" => new ProductCatalogResource($data)
-        ]);
+        return (new ProductCatalogResource($data))->additional(['success' => true, 'message' => 'ProductCatalog record updated successfully']);
     }
 
     /**
@@ -127,9 +103,6 @@ class ProductCatalogController extends Controller
     {
         $this->productCatalogService->destroy($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "ProductCatalog record deleted successfully"
-        ]);
+        return response()->json(["success" => true, "message" => "ProductCatalog record deleted successfully"]);
     }
 }

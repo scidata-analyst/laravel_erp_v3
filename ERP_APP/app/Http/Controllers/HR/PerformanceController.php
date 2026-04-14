@@ -39,11 +39,11 @@ class PerformanceController extends Controller
     {
         $data = $this->performanceService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All Performance records fetched successfully",
-            "data" => PerformanceResource::collection($data)
-        ]);
+        return PerformanceResource::collection($data)
+            ->additional([
+                'success' => true,
+                'message' => 'All Performance records fetched successfully',
+            ]);
     }
 
     /**
@@ -58,14 +58,6 @@ class PerformanceController extends Controller
 
         $data = $this->performanceService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "Performance records fetched successfully",
-                "data" => PerformanceResource::collection($data)
-            ]);
-        }
-
         return view("hr.performance", compact("data"));
     }
 
@@ -78,11 +70,10 @@ class PerformanceController extends Controller
     {
         $data = $this->performanceService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "Performance record created successfully",
-            "data" => new PerformanceResource($data)
-        ], 201);
+        return (new PerformanceResource($data))->additional([
+            'success' => true,
+            'message' => 'Performance record created successfully',
+        ]);
     }
 
     /**
@@ -94,10 +85,9 @@ class PerformanceController extends Controller
     {
         $data = $this->performanceService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Performance record fetched successfully",
-            "data" => new PerformanceResource($data)
+        return (new PerformanceResource($data))->additional([
+            'success' => true,
+            'message' => 'Performance record fetched successfully',
         ]);
     }
 
@@ -111,10 +101,9 @@ class PerformanceController extends Controller
     {
         $data = $this->performanceService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Performance record updated successfully",
-            "data" => new PerformanceResource($data)
+        return (new PerformanceResource($data))->additional([
+            'success' => true,
+            'message' => 'Performance record updated successfully',
         ]);
     }
 

@@ -39,10 +39,9 @@ class RoutesController extends Controller
     {
         $data = $this->routesService->all();
 
-        return response()->json([
+        return RoutesResource::collection($data)->additional([
             "success" => true,
-            "message" => "All Routes records fetched successfully",
-            "data" => RoutesResource::collection($data)
+            "message" => "All Routes records fetched successfully"
         ]);
     }
 
@@ -58,14 +57,6 @@ class RoutesController extends Controller
 
         $data = $this->routesService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "Routes records fetched successfully",
-                "data" => RoutesResource::collection($data)
-            ]);
-        }
-
         return view("logistics.routes", compact("data"));
     }
 
@@ -78,11 +69,10 @@ class RoutesController extends Controller
     {
         $data = $this->routesService->store($request->validated());
 
-        return response()->json([
+        return (new RoutesResource($data))->additional([
             "success" => true,
-            "message" => "Routes record created successfully",
-            "data" => new RoutesResource($data)
-        ], 201);
+            "message" => "Routes record created successfully"
+        ]);
     }
 
     /**
@@ -94,10 +84,9 @@ class RoutesController extends Controller
     {
         $data = $this->routesService->show($id);
 
-        return response()->json([
+        return (new RoutesResource($data))->additional([
             "success" => true,
-            "message" => "Routes record fetched successfully",
-            "data" => new RoutesResource($data)
+            "message" => "Routes record fetched successfully"
         ]);
     }
 
@@ -111,10 +100,9 @@ class RoutesController extends Controller
     {
         $data = $this->routesService->update($request->validated(), $id);
 
-        return response()->json([
+        return (new RoutesResource($data))->additional([
             "success" => true,
-            "message" => "Routes record updated successfully",
-            "data" => new RoutesResource($data)
+            "message" => "Routes record updated successfully"
         ]);
     }
 

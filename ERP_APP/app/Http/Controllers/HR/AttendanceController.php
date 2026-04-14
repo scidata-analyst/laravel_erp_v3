@@ -39,11 +39,11 @@ class AttendanceController extends Controller
     {
         $data = $this->attendanceService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All Attendance records fetched successfully",
-            "data" => AttendanceResource::collection($data)
-        ]);
+        return AttendanceResource::collection($data)
+            ->additional([
+                'success' => true,
+                'message' => 'All Attendance records fetched successfully',
+            ]);
     }
 
     /**
@@ -58,14 +58,6 @@ class AttendanceController extends Controller
 
         $data = $this->attendanceService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "Attendance records fetched successfully",
-                "data" => AttendanceResource::collection($data)
-            ]);
-        }
-
         return view("hr.attendance", compact("data"));
     }
 
@@ -78,11 +70,10 @@ class AttendanceController extends Controller
     {
         $data = $this->attendanceService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "Attendance record created successfully",
-            "data" => new AttendanceResource($data)
-        ], 201);
+        return (new AttendanceResource($data))->additional([
+            'success' => true,
+            'message' => 'Attendance record created successfully',
+        ]);
     }
 
     /**
@@ -94,10 +85,9 @@ class AttendanceController extends Controller
     {
         $data = $this->attendanceService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Attendance record fetched successfully",
-            "data" => new AttendanceResource($data)
+        return (new AttendanceResource($data))->additional([
+            'success' => true,
+            'message' => 'Attendance record fetched successfully',
         ]);
     }
 
@@ -111,10 +101,9 @@ class AttendanceController extends Controller
     {
         $data = $this->attendanceService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Attendance record updated successfully",
-            "data" => new AttendanceResource($data)
+        return (new AttendanceResource($data))->additional([
+            'success' => true,
+            'message' => 'Attendance record updated successfully',
         ]);
     }
 

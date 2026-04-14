@@ -39,11 +39,11 @@ class CustomersController extends Controller
     {
         $data = $this->customersService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All Customers records fetched successfully",
-            "data" => CustomersResource::collection($data)
-        ]);
+        return CustomersResource::collection($data)
+            ->additional([
+                'success' => true,
+                'message' => 'All Customers records fetched successfully',
+            ]);
     }
 
     /**
@@ -58,14 +58,6 @@ class CustomersController extends Controller
 
         $data = $this->customersService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "Customers records fetched successfully",
-                "data" => CustomersResource::collection($data)
-            ]);
-        }
-
         return view("sales.customers", compact("data"));
     }
 
@@ -78,11 +70,10 @@ class CustomersController extends Controller
     {
         $data = $this->customersService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "Customers record created successfully",
-            "data" => new CustomersResource($data)
-        ], 201);
+        return (new CustomersResource($data))->additional([
+            'success' => true,
+            'message' => 'Customers record created successfully',
+        ]);
     }
 
     /**
@@ -94,10 +85,9 @@ class CustomersController extends Controller
     {
         $data = $this->customersService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Customers record fetched successfully",
-            "data" => new CustomersResource($data)
+        return (new CustomersResource($data))->additional([
+            'success' => true,
+            'message' => 'Customers record fetched successfully',
         ]);
     }
 
@@ -111,10 +101,9 @@ class CustomersController extends Controller
     {
         $data = $this->customersService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Customers record updated successfully",
-            "data" => new CustomersResource($data)
+        return (new CustomersResource($data))->additional([
+            'success' => true,
+            'message' => 'Customers record updated successfully',
         ]);
     }
 
@@ -127,9 +116,6 @@ class CustomersController extends Controller
     {
         $this->customersService->destroy($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Customers record deleted successfully"
-        ]);
+        return response()->json(["success" => true, "message" => "Customers record deleted successfully"]);
     }
 }

@@ -39,10 +39,9 @@ class LeadsController extends Controller
     {
         $data = $this->leadsService->all();
 
-        return response()->json([
+        return LeadsResource::collection($data)->additional([
             "success" => true,
-            "message" => "All Leads records fetched successfully",
-            "data" => LeadsResource::collection($data)
+            "message" => "All Leads records fetched successfully"
         ]);
     }
 
@@ -58,14 +57,6 @@ class LeadsController extends Controller
 
         $data = $this->leadsService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "Leads records fetched successfully",
-                "data" => LeadsResource::collection($data)
-            ]);
-        }
-
         return view("crm.leads", compact("data"));
     }
 
@@ -78,11 +69,10 @@ class LeadsController extends Controller
     {
         $data = $this->leadsService->store($request->validated());
 
-        return response()->json([
+        return (new LeadsResource($data))->additional([
             "success" => true,
-            "message" => "Leads record created successfully",
-            "data" => new LeadsResource($data)
-        ], 201);
+            "message" => "Leads record created successfully"
+        ]);
     }
 
     /**
@@ -94,10 +84,9 @@ class LeadsController extends Controller
     {
         $data = $this->leadsService->show($id);
 
-        return response()->json([
+        return (new LeadsResource($data))->additional([
             "success" => true,
-            "message" => "Leads record fetched successfully",
-            "data" => new LeadsResource($data)
+            "message" => "Leads record fetched successfully"
         ]);
     }
 
@@ -111,10 +100,9 @@ class LeadsController extends Controller
     {
         $data = $this->leadsService->update($request->validated(), $id);
 
-        return response()->json([
+        return (new LeadsResource($data))->additional([
             "success" => true,
-            "message" => "Leads record updated successfully",
-            "data" => new LeadsResource($data)
+            "message" => "Leads record updated successfully"
         ]);
     }
 

@@ -39,10 +39,9 @@ class MachineLaborController extends Controller
     {
         $data = $this->machineLaborService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All MachineLabor records fetched successfully",
-            "data" => MachineLaborResource::collection($data)
+        return MachineLaborResource::collection($data)->additional([
+            'success' => true,
+            'message' => 'All MachineLabor records fetched successfully',
         ]);
     }
 
@@ -58,14 +57,6 @@ class MachineLaborController extends Controller
 
         $data = $this->machineLaborService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "MachineLabor records fetched successfully",
-                "data" => MachineLaborResource::collection($data)
-            ]);
-        }
-
         return view("production.machine_labor", compact("data"));
     }
 
@@ -78,11 +69,10 @@ class MachineLaborController extends Controller
     {
         $data = $this->machineLaborService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "MachineLabor record created successfully",
-            "data" => new MachineLaborResource($data)
-        ], 201);
+        return (new MachineLaborResource($data))->additional([
+            'success' => true,
+            'message' => 'MachineLabor record created successfully',
+        ]);
     }
 
     /**
@@ -94,10 +84,9 @@ class MachineLaborController extends Controller
     {
         $data = $this->machineLaborService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "MachineLabor record fetched successfully",
-            "data" => new MachineLaborResource($data)
+        return (new MachineLaborResource($data))->additional([
+            'success' => true,
+            'message' => 'MachineLabor record fetched successfully',
         ]);
     }
 
@@ -111,10 +100,9 @@ class MachineLaborController extends Controller
     {
         $data = $this->machineLaborService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "MachineLabor record updated successfully",
-            "data" => new MachineLaborResource($data)
+        return (new MachineLaborResource($data))->additional([
+            'success' => true,
+            'message' => 'MachineLabor record updated successfully',
         ]);
     }
 

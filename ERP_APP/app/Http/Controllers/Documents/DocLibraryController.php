@@ -39,10 +39,9 @@ class DocLibraryController extends Controller
     {
         $data = $this->docLibraryService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All DocLibrary records fetched successfully",
-            "data" => DocLibraryResource::collection($data)
+        return DocLibraryResource::collection($data)->additional([
+            'success' => true,
+            'message' => 'All DocLibrary records fetched successfully',
         ]);
     }
 
@@ -58,14 +57,6 @@ class DocLibraryController extends Controller
 
         $data = $this->docLibraryService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "DocLibrary records fetched successfully",
-                "data" => DocLibraryResource::collection($data)
-            ]);
-        }
-
         return view("documents.doc_library", compact("data"));
     }
 
@@ -78,11 +69,10 @@ class DocLibraryController extends Controller
     {
         $data = $this->docLibraryService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "DocLibrary record created successfully",
-            "data" => new DocLibraryResource($data)
-        ], 201);
+        return (new DocLibraryResource($data))->additional([
+            'success' => true,
+            'message' => 'DocLibrary record created successfully',
+        ]);
     }
 
     /**
@@ -94,10 +84,9 @@ class DocLibraryController extends Controller
     {
         $data = $this->docLibraryService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "DocLibrary record fetched successfully",
-            "data" => new DocLibraryResource($data)
+        return (new DocLibraryResource($data))->additional([
+            'success' => true,
+            'message' => 'DocLibrary record fetched successfully',
         ]);
     }
 
@@ -111,10 +100,9 @@ class DocLibraryController extends Controller
     {
         $data = $this->docLibraryService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "DocLibrary record updated successfully",
-            "data" => new DocLibraryResource($data)
+        return (new DocLibraryResource($data))->additional([
+            'success' => true,
+            'message' => 'DocLibrary record updated successfully',
         ]);
     }
 
@@ -132,4 +120,3 @@ class DocLibraryController extends Controller
             "message" => "DocLibrary record deleted successfully"
         ]);
     }
-}

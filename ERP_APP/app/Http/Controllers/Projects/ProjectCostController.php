@@ -39,11 +39,11 @@ class ProjectCostController extends Controller
     {
         $data = $this->projectCostService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All ProjectCost records fetched successfully",
-            "data" => ProjectCostResource::collection($data)
-        ]);
+        return ProjectCostResource::collection($data)
+            ->additional([
+                'success' => true,
+                'message' => 'All ProjectCost records fetched successfully',
+            ]);
     }
 
     /**
@@ -58,14 +58,6 @@ class ProjectCostController extends Controller
 
         $data = $this->projectCostService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "ProjectCost records fetched successfully",
-                "data" => ProjectCostResource::collection($data)
-            ]);
-        }
-
         return view("projects.project_cost", compact("data"));
     }
 
@@ -78,11 +70,10 @@ class ProjectCostController extends Controller
     {
         $data = $this->projectCostService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "ProjectCost record created successfully",
-            "data" => new ProjectCostResource($data)
-        ], 201);
+        return (new ProjectCostResource($data))->additional([
+            'success' => true,
+            'message' => 'ProjectCost record created successfully',
+        ]);
     }
 
     /**
@@ -94,10 +85,9 @@ class ProjectCostController extends Controller
     {
         $data = $this->projectCostService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "ProjectCost record fetched successfully",
-            "data" => new ProjectCostResource($data)
+        return (new ProjectCostResource($data))->additional([
+            'success' => true,
+            'message' => 'ProjectCost record fetched successfully',
         ]);
     }
 
@@ -111,10 +101,9 @@ class ProjectCostController extends Controller
     {
         $data = $this->projectCostService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "ProjectCost record updated successfully",
-            "data" => new ProjectCostResource($data)
+        return (new ProjectCostResource($data))->additional([
+            'success' => true,
+            'message' => 'ProjectCost record updated successfully',
         ]);
     }
 

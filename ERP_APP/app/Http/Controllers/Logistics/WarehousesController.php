@@ -39,10 +39,9 @@ class WarehousesController extends Controller
     {
         $data = $this->warehousesService->all();
 
-        return response()->json([
+        return WarehousesResource::collection($data)->additional([
             "success" => true,
-            "message" => "All Warehouses records fetched successfully",
-            "data" => WarehousesResource::collection($data)
+            "message" => "All Warehouses records fetched successfully"
         ]);
     }
 
@@ -58,14 +57,6 @@ class WarehousesController extends Controller
 
         $data = $this->warehousesService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "Warehouses records fetched successfully",
-                "data" => WarehousesResource::collection($data)
-            ]);
-        }
-
         return view("logistics.warehouses", compact("data"));
     }
 
@@ -78,11 +69,10 @@ class WarehousesController extends Controller
     {
         $data = $this->warehousesService->store($request->validated());
 
-        return response()->json([
+        return (new WarehousesResource($data))->additional([
             "success" => true,
-            "message" => "Warehouses record created successfully",
-            "data" => new WarehousesResource($data)
-        ], 201);
+            "message" => "Warehouses record created successfully"
+        ]);
     }
 
     /**
@@ -94,10 +84,9 @@ class WarehousesController extends Controller
     {
         $data = $this->warehousesService->show($id);
 
-        return response()->json([
+        return (new WarehousesResource($data))->additional([
             "success" => true,
-            "message" => "Warehouses record fetched successfully",
-            "data" => new WarehousesResource($data)
+            "message" => "Warehouses record fetched successfully"
         ]);
     }
 
@@ -111,10 +100,9 @@ class WarehousesController extends Controller
     {
         $data = $this->warehousesService->update($request->validated(), $id);
 
-        return response()->json([
+        return (new WarehousesResource($data))->additional([
             "success" => true,
-            "message" => "Warehouses record updated successfully",
-            "data" => new WarehousesResource($data)
+            "message" => "Warehouses record updated successfully"
         ]);
     }
 
@@ -132,4 +120,5 @@ class WarehousesController extends Controller
             "message" => "Warehouses record deleted successfully"
         ]);
     }
+}
 }

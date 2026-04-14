@@ -39,10 +39,9 @@ class GlController extends Controller
     {
         $data = $this->glService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All Gl records fetched successfully",
-            "data" => GlResource::collection($data)
+        return GlResource::collection($data)->additional([
+            'success' => true,
+            'message' => 'All Gl records fetched successfully',
         ]);
     }
 
@@ -58,14 +57,6 @@ class GlController extends Controller
 
         $data = $this->glService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "Gl records fetched successfully",
-                "data" => GlResource::collection($data)
-            ]);
-        }
-
         return view("accounting.gl", compact("data"));
     }
 
@@ -78,11 +69,10 @@ class GlController extends Controller
     {
         $data = $this->glService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "Gl record created successfully",
-            "data" => new GlResource($data)
-        ], 201);
+        return (new GlResource($data))->additional([
+            'success' => true,
+            'message' => 'Gl record created successfully',
+        ]);
     }
 
     /**
@@ -94,10 +84,9 @@ class GlController extends Controller
     {
         $data = $this->glService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Gl record fetched successfully",
-            "data" => new GlResource($data)
+        return (new GlResource($data))->additional([
+            'success' => true,
+            'message' => 'Gl record fetched successfully',
         ]);
     }
 
@@ -111,10 +100,9 @@ class GlController extends Controller
     {
         $data = $this->glService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Gl record updated successfully",
-            "data" => new GlResource($data)
+        return (new GlResource($data))->additional([
+            'success' => true,
+            'message' => 'Gl record updated successfully',
         ]);
     }
 

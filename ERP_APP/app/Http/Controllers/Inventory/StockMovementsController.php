@@ -39,11 +39,7 @@ class StockMovementsController extends Controller
     {
         $data = $this->stockMovementsService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All StockMovements records fetched successfully",
-            "data" => StockMovementsResource::collection($data)
-        ]);
+        return StockMovementsResource::collection($data)->additional(['success' => true, 'message' => 'All StockMovements records fetched successfully']);
     }
 
     /**
@@ -58,14 +54,6 @@ class StockMovementsController extends Controller
 
         $data = $this->stockMovementsService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "StockMovements records fetched successfully",
-                "data" => StockMovementsResource::collection($data)
-            ]);
-        }
-
         return view("inventory.stock_movements", compact("data"));
     }
 
@@ -78,11 +66,7 @@ class StockMovementsController extends Controller
     {
         $data = $this->stockMovementsService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "StockMovements record created successfully",
-            "data" => new StockMovementsResource($data)
-        ], 201);
+        return (new StockMovementsResource($data))->additional(['success' => true, 'message' => 'StockMovements record created successfully']);
     }
 
     /**
@@ -94,11 +78,7 @@ class StockMovementsController extends Controller
     {
         $data = $this->stockMovementsService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "StockMovements record fetched successfully",
-            "data" => new StockMovementsResource($data)
-        ]);
+        return (new StockMovementsResource($data))->additional(['success' => true, 'message' => 'StockMovements record fetched successfully']);
     }
 
     /**
@@ -111,11 +91,7 @@ class StockMovementsController extends Controller
     {
         $data = $this->stockMovementsService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "StockMovements record updated successfully",
-            "data" => new StockMovementsResource($data)
-        ]);
+        return (new StockMovementsResource($data))->additional(['success' => true, 'message' => 'StockMovements record updated successfully']);
     }
 
     /**
@@ -127,9 +103,6 @@ class StockMovementsController extends Controller
     {
         $this->stockMovementsService->destroy($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "StockMovements record deleted successfully"
-        ]);
+        return response()->json(["success" => true, "message" => "StockMovements record deleted successfully"]);
     }
 }

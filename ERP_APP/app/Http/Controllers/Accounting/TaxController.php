@@ -39,10 +39,9 @@ class TaxController extends Controller
     {
         $data = $this->taxService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All Tax records fetched successfully",
-            "data" => TaxResource::collection($data)
+        return TaxResource::collection($data)->additional([
+            'success' => true,
+            'message' => 'All Tax records fetched successfully',
         ]);
     }
 
@@ -58,14 +57,6 @@ class TaxController extends Controller
 
         $data = $this->taxService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "Tax records fetched successfully",
-                "data" => TaxResource::collection($data)
-            ]);
-        }
-
         return view("accounting.tax", compact("data"));
     }
 
@@ -78,11 +69,10 @@ class TaxController extends Controller
     {
         $data = $this->taxService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "Tax record created successfully",
-            "data" => new TaxResource($data)
-        ], 201);
+        return (new TaxResource($data))->additional([
+            'success' => true,
+            'message' => 'Tax record created successfully',
+        ]);
     }
 
     /**
@@ -94,10 +84,9 @@ class TaxController extends Controller
     {
         $data = $this->taxService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Tax record fetched successfully",
-            "data" => new TaxResource($data)
+        return (new TaxResource($data))->additional([
+            'success' => true,
+            'message' => 'Tax record fetched successfully',
         ]);
     }
 
@@ -111,10 +100,9 @@ class TaxController extends Controller
     {
         $data = $this->taxService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Tax record updated successfully",
-            "data" => new TaxResource($data)
+        return (new TaxResource($data))->additional([
+            'success' => true,
+            'message' => 'Tax record updated successfully',
         ]);
     }
 

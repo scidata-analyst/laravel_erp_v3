@@ -39,10 +39,9 @@ class InvSyncController extends Controller
     {
         $data = $this->invSyncService->all();
 
-        return response()->json([
+        return InvSyncResource::collection($data)->additional([
             "success" => true,
-            "message" => "All InvSync records fetched successfully",
-            "data" => InvSyncResource::collection($data)
+            "message" => "All InvSync records fetched successfully"
         ]);
     }
 
@@ -58,14 +57,6 @@ class InvSyncController extends Controller
 
         $data = $this->invSyncService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "InvSync records fetched successfully",
-                "data" => InvSyncResource::collection($data)
-            ]);
-        }
-
         return view("ecommerce.inv_sync", compact("data"));
     }
 
@@ -78,11 +69,10 @@ class InvSyncController extends Controller
     {
         $data = $this->invSyncService->store($request->validated());
 
-        return response()->json([
+        return (new InvSyncResource($data))->additional([
             "success" => true,
-            "message" => "InvSync record created successfully",
-            "data" => new InvSyncResource($data)
-        ], 201);
+            "message" => "InvSync record created successfully"
+        ]);
     }
 
     /**
@@ -94,10 +84,9 @@ class InvSyncController extends Controller
     {
         $data = $this->invSyncService->show($id);
 
-        return response()->json([
+        return (new InvSyncResource($data))->additional([
             "success" => true,
-            "message" => "InvSync record fetched successfully",
-            "data" => new InvSyncResource($data)
+            "message" => "InvSync record fetched successfully"
         ]);
     }
 
@@ -111,10 +100,9 @@ class InvSyncController extends Controller
     {
         $data = $this->invSyncService->update($request->validated(), $id);
 
-        return response()->json([
+        return (new InvSyncResource($data))->additional([
             "success" => true,
-            "message" => "InvSync record updated successfully",
-            "data" => new InvSyncResource($data)
+            "message" => "InvSync record updated successfully"
         ]);
     }
 

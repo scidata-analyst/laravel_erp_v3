@@ -39,10 +39,9 @@ class InteractionsController extends Controller
     {
         $data = $this->interactionsService->all();
 
-        return response()->json([
+        return InteractionsResource::collection($data)->additional([
             "success" => true,
-            "message" => "All Interactions records fetched successfully",
-            "data" => InteractionsResource::collection($data)
+            "message" => "All Interactions records fetched successfully"
         ]);
     }
 
@@ -58,14 +57,6 @@ class InteractionsController extends Controller
 
         $data = $this->interactionsService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "Interactions records fetched successfully",
-                "data" => InteractionsResource::collection($data)
-            ]);
-        }
-
         return view("crm.interactions", compact("data"));
     }
 
@@ -78,11 +69,10 @@ class InteractionsController extends Controller
     {
         $data = $this->interactionsService->store($request->validated());
 
-        return response()->json([
+        return (new InteractionsResource($data))->additional([
             "success" => true,
-            "message" => "Interactions record created successfully",
-            "data" => new InteractionsResource($data)
-        ], 201);
+            "message" => "Interactions record created successfully"
+        ]);
     }
 
     /**
@@ -94,10 +84,9 @@ class InteractionsController extends Controller
     {
         $data = $this->interactionsService->show($id);
 
-        return response()->json([
+        return (new InteractionsResource($data))->additional([
             "success" => true,
-            "message" => "Interactions record fetched successfully",
-            "data" => new InteractionsResource($data)
+            "message" => "Interactions record fetched successfully"
         ]);
     }
 
@@ -111,10 +100,9 @@ class InteractionsController extends Controller
     {
         $data = $this->interactionsService->update($request->validated(), $id);
 
-        return response()->json([
+        return (new InteractionsResource($data))->additional([
             "success" => true,
-            "message" => "Interactions record updated successfully",
-            "data" => new InteractionsResource($data)
+            "message" => "Interactions record updated successfully"
         ]);
     }
 

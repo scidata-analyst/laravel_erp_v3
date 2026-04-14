@@ -39,10 +39,9 @@ class FinReportsController extends Controller
     {
         $data = $this->finReportsService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All FinReports records fetched successfully",
-            "data" => FinReportsResource::collection($data)
+        return FinReportsResource::collection($data)->additional([
+            'success' => true,
+            'message' => 'All FinReports records fetched successfully',
         ]);
     }
 
@@ -58,14 +57,6 @@ class FinReportsController extends Controller
 
         $data = $this->finReportsService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "FinReports records fetched successfully",
-                "data" => FinReportsResource::collection($data)
-            ]);
-        }
-
         return view("accounting.fin_reports", compact("data"));
     }
 
@@ -78,11 +69,10 @@ class FinReportsController extends Controller
     {
         $data = $this->finReportsService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "FinReports record created successfully",
-            "data" => new FinReportsResource($data)
-        ], 201);
+        return (new FinReportsResource($data))->additional([
+            'success' => true,
+            'message' => 'FinReports record created successfully',
+        ]);
     }
 
     /**
@@ -94,10 +84,9 @@ class FinReportsController extends Controller
     {
         $data = $this->finReportsService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "FinReports record fetched successfully",
-            "data" => new FinReportsResource($data)
+        return (new FinReportsResource($data))->additional([
+            'success' => true,
+            'message' => 'FinReports record fetched successfully',
         ]);
     }
 
@@ -111,10 +100,9 @@ class FinReportsController extends Controller
     {
         $data = $this->finReportsService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "FinReports record updated successfully",
-            "data" => new FinReportsResource($data)
+        return (new FinReportsResource($data))->additional([
+            'success' => true,
+            'message' => 'FinReports record updated successfully',
         ]);
     }
 

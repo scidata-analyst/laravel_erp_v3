@@ -39,10 +39,9 @@ class SupportController extends Controller
     {
         $data = $this->supportService->all();
 
-        return response()->json([
+        return SupportResource::collection($data)->additional([
             "success" => true,
-            "message" => "All Support records fetched successfully",
-            "data" => SupportResource::collection($data)
+            "message" => "All Support records fetched successfully"
         ]);
     }
 
@@ -58,14 +57,6 @@ class SupportController extends Controller
 
         $data = $this->supportService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "Support records fetched successfully",
-                "data" => SupportResource::collection($data)
-            ]);
-        }
-
         return view("crm.support", compact("data"));
     }
 
@@ -78,11 +69,10 @@ class SupportController extends Controller
     {
         $data = $this->supportService->store($request->validated());
 
-        return response()->json([
+        return (new SupportResource($data))->additional([
             "success" => true,
-            "message" => "Support record created successfully",
-            "data" => new SupportResource($data)
-        ], 201);
+            "message" => "Support record created successfully"
+        ]);
     }
 
     /**
@@ -94,10 +84,9 @@ class SupportController extends Controller
     {
         $data = $this->supportService->show($id);
 
-        return response()->json([
+        return (new SupportResource($data))->additional([
             "success" => true,
-            "message" => "Support record fetched successfully",
-            "data" => new SupportResource($data)
+            "message" => "Support record fetched successfully"
         ]);
     }
 
@@ -111,10 +100,9 @@ class SupportController extends Controller
     {
         $data = $this->supportService->update($request->validated(), $id);
 
-        return response()->json([
+        return (new SupportResource($data))->additional([
             "success" => true,
-            "message" => "Support record updated successfully",
-            "data" => new SupportResource($data)
+            "message" => "Support record updated successfully"
         ]);
     }
 

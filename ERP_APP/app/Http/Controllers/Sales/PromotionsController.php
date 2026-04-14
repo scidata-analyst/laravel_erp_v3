@@ -39,11 +39,11 @@ class PromotionsController extends Controller
     {
         $data = $this->promotionsService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All Promotions records fetched successfully",
-            "data" => PromotionsResource::collection($data)
-        ]);
+        return PromotionsResource::collection($data)
+            ->additional([
+                'success' => true,
+                'message' => 'All Promotions records fetched successfully',
+            ]);
     }
 
     /**
@@ -58,14 +58,6 @@ class PromotionsController extends Controller
 
         $data = $this->promotionsService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "Promotions records fetched successfully",
-                "data" => PromotionsResource::collection($data)
-            ]);
-        }
-
         return view("sales.promotions", compact("data"));
     }
 
@@ -78,11 +70,10 @@ class PromotionsController extends Controller
     {
         $data = $this->promotionsService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "Promotions record created successfully",
-            "data" => new PromotionsResource($data)
-        ], 201);
+        return (new PromotionsResource($data))->additional([
+            'success' => true,
+            'message' => 'Promotions record created successfully',
+        ]);
     }
 
     /**
@@ -94,10 +85,9 @@ class PromotionsController extends Controller
     {
         $data = $this->promotionsService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Promotions record fetched successfully",
-            "data" => new PromotionsResource($data)
+        return (new PromotionsResource($data))->additional([
+            'success' => true,
+            'message' => 'Promotions record fetched successfully',
         ]);
     }
 
@@ -111,10 +101,9 @@ class PromotionsController extends Controller
     {
         $data = $this->promotionsService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Promotions record updated successfully",
-            "data" => new PromotionsResource($data)
+        return (new PromotionsResource($data))->additional([
+            'success' => true,
+            'message' => 'Promotions record updated successfully',
         ]);
     }
 
@@ -127,9 +116,6 @@ class PromotionsController extends Controller
     {
         $this->promotionsService->destroy($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Promotions record deleted successfully"
-        ]);
+        return response()->json(["success" => true, "message" => "Promotions record deleted successfully"]);
     }
 }

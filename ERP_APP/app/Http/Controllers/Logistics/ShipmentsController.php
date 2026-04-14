@@ -39,10 +39,9 @@ class ShipmentsController extends Controller
     {
         $data = $this->shipmentsService->all();
 
-        return response()->json([
+        return ShipmentsResource::collection($data)->additional([
             "success" => true,
-            "message" => "All Shipments records fetched successfully",
-            "data" => ShipmentsResource::collection($data)
+            "message" => "All Shipments records fetched successfully"
         ]);
     }
 
@@ -58,14 +57,6 @@ class ShipmentsController extends Controller
 
         $data = $this->shipmentsService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "Shipments records fetched successfully",
-                "data" => ShipmentsResource::collection($data)
-            ]);
-        }
-
         return view("logistics.shipments", compact("data"));
     }
 
@@ -78,11 +69,10 @@ class ShipmentsController extends Controller
     {
         $data = $this->shipmentsService->store($request->validated());
 
-        return response()->json([
+        return (new ShipmentsResource($data))->additional([
             "success" => true,
-            "message" => "Shipments record created successfully",
-            "data" => new ShipmentsResource($data)
-        ], 201);
+            "message" => "Shipments record created successfully"
+        ]);
     }
 
     /**
@@ -94,10 +84,9 @@ class ShipmentsController extends Controller
     {
         $data = $this->shipmentsService->show($id);
 
-        return response()->json([
+        return (new ShipmentsResource($data))->additional([
             "success" => true,
-            "message" => "Shipments record fetched successfully",
-            "data" => new ShipmentsResource($data)
+            "message" => "Shipments record fetched successfully"
         ]);
     }
 
@@ -111,10 +100,9 @@ class ShipmentsController extends Controller
     {
         $data = $this->shipmentsService->update($request->validated(), $id);
 
-        return response()->json([
+        return (new ShipmentsResource($data))->additional([
             "success" => true,
-            "message" => "Shipments record updated successfully",
-            "data" => new ShipmentsResource($data)
+            "message" => "Shipments record updated successfully"
         ]);
     }
 

@@ -39,10 +39,9 @@ class PosController extends Controller
     {
         $data = $this->posService->all();
 
-        return response()->json([
+        return PosResource::collection($data)->additional([
             "success" => true,
-            "message" => "All Pos records fetched successfully",
-            "data" => PosResource::collection($data)
+            "message" => "All Pos records fetched successfully"
         ]);
     }
 
@@ -58,14 +57,6 @@ class PosController extends Controller
 
         $data = $this->posService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "Pos records fetched successfully",
-                "data" => PosResource::collection($data)
-            ]);
-        }
-
         return view("ecommerce.pos", compact("data"));
     }
 
@@ -78,11 +69,10 @@ class PosController extends Controller
     {
         $data = $this->posService->store($request->validated());
 
-        return response()->json([
+        return (new PosResource($data))->additional([
             "success" => true,
-            "message" => "Pos record created successfully",
-            "data" => new PosResource($data)
-        ], 201);
+            "message" => "Pos record created successfully"
+        ]);
     }
 
     /**
@@ -94,10 +84,9 @@ class PosController extends Controller
     {
         $data = $this->posService->show($id);
 
-        return response()->json([
+        return (new PosResource($data))->additional([
             "success" => true,
-            "message" => "Pos record fetched successfully",
-            "data" => new PosResource($data)
+            "message" => "Pos record fetched successfully"
         ]);
     }
 
@@ -111,10 +100,9 @@ class PosController extends Controller
     {
         $data = $this->posService->update($request->validated(), $id);
 
-        return response()->json([
+        return (new PosResource($data))->additional([
             "success" => true,
-            "message" => "Pos record updated successfully",
-            "data" => new PosResource($data)
+            "message" => "Pos record updated successfully"
         ]);
     }
 

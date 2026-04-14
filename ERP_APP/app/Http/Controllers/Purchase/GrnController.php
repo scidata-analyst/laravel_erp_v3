@@ -39,11 +39,11 @@ class GrnController extends Controller
     {
         $data = $this->grnService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All Grn records fetched successfully",
-            "data" => GrnResource::collection($data)
-        ]);
+        return GrnResource::collection($data)
+            ->additional([
+                'success' => true,
+                'message' => 'Grn records fetched successfully',
+            ]);
     }
 
     /**
@@ -58,14 +58,6 @@ class GrnController extends Controller
 
         $data = $this->grnService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "Grn records fetched successfully",
-                "data" => GrnResource::collection($data)
-            ]);
-        }
-
         return view("purchase.grn", compact("data"));
     }
 
@@ -78,11 +70,10 @@ class GrnController extends Controller
     {
         $data = $this->grnService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "Grn record created successfully",
-            "data" => new GrnResource($data)
-        ], 201);
+        return (new GrnResource($data))->additional([
+            'success' => true,
+            'message' => 'Grn record created successfully',
+        ]);
     }
 
     /**
@@ -94,10 +85,9 @@ class GrnController extends Controller
     {
         $data = $this->grnService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Grn record fetched successfully",
-            "data" => new GrnResource($data)
+        return (new GrnResource($data))->additional([
+            'success' => true,
+            'message' => 'Grn record fetched successfully',
         ]);
     }
 
@@ -111,10 +101,9 @@ class GrnController extends Controller
     {
         $data = $this->grnService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Grn record updated successfully",
-            "data" => new GrnResource($data)
+        return (new GrnResource($data))->additional([
+            'success' => true,
+            'message' => 'Grn record updated successfully',
         ]);
     }
 

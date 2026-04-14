@@ -39,11 +39,7 @@ class StockValuationController extends Controller
     {
         $data = $this->stockValuationService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All StockValuation records fetched successfully",
-            "data" => StockValuationResource::collection($data)
-        ]);
+        return StockValuationResource::collection($data)->additional(['success' => true, 'message' => 'All StockValuation records fetched successfully']);
     }
 
     /**
@@ -58,14 +54,6 @@ class StockValuationController extends Controller
 
         $data = $this->stockValuationService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "StockValuation records fetched successfully",
-                "data" => StockValuationResource::collection($data)
-            ]);
-        }
-
         return view("inventory.stock_valuation", compact("data"));
     }
 
@@ -78,11 +66,7 @@ class StockValuationController extends Controller
     {
         $data = $this->stockValuationService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "StockValuation record created successfully",
-            "data" => new StockValuationResource($data)
-        ], 201);
+        return (new StockValuationResource($data))->additional(['success' => true, 'message' => 'StockValuation record created successfully']);
     }
 
     /**
@@ -94,11 +78,7 @@ class StockValuationController extends Controller
     {
         $data = $this->stockValuationService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "StockValuation record fetched successfully",
-            "data" => new StockValuationResource($data)
-        ]);
+        return (new StockValuationResource($data))->additional(['success' => true, 'message' => 'StockValuation record fetched successfully']);
     }
 
     /**
@@ -111,11 +91,7 @@ class StockValuationController extends Controller
     {
         $data = $this->stockValuationService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "StockValuation record updated successfully",
-            "data" => new StockValuationResource($data)
-        ]);
+        return (new StockValuationResource($data))->additional(['success' => true, 'message' => 'StockValuation record updated successfully']);
     }
 
     /**
@@ -127,9 +103,6 @@ class StockValuationController extends Controller
     {
         $this->stockValuationService->destroy($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "StockValuation record deleted successfully"
-        ]);
+        return response()->json(["success" => true, "message" => "StockValuation record deleted successfully"]);
     }
 }

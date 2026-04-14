@@ -39,10 +39,9 @@ class WorkOrdersController extends Controller
     {
         $data = $this->workOrdersService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All WorkOrders records fetched successfully",
-            "data" => WorkOrdersResource::collection($data)
+        return WorkOrdersResource::collection($data)->additional([
+            'success' => true,
+            'message' => 'All WorkOrders records fetched successfully',
         ]);
     }
 
@@ -58,14 +57,6 @@ class WorkOrdersController extends Controller
 
         $data = $this->workOrdersService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "WorkOrders records fetched successfully",
-                "data" => WorkOrdersResource::collection($data)
-            ]);
-        }
-
         return view("production.work_orders", compact("data"));
     }
 
@@ -78,11 +69,10 @@ class WorkOrdersController extends Controller
     {
         $data = $this->workOrdersService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "WorkOrders record created successfully",
-            "data" => new WorkOrdersResource($data)
-        ], 201);
+        return (new WorkOrdersResource($data))->additional([
+            'success' => true,
+            'message' => 'WorkOrders record created successfully',
+        ]);
     }
 
     /**
@@ -94,10 +84,9 @@ class WorkOrdersController extends Controller
     {
         $data = $this->workOrdersService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "WorkOrders record fetched successfully",
-            "data" => new WorkOrdersResource($data)
+        return (new WorkOrdersResource($data))->additional([
+            'success' => true,
+            'message' => 'WorkOrders record fetched successfully',
         ]);
     }
 
@@ -111,10 +100,9 @@ class WorkOrdersController extends Controller
     {
         $data = $this->workOrdersService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "WorkOrders record updated successfully",
-            "data" => new WorkOrdersResource($data)
+        return (new WorkOrdersResource($data))->additional([
+            'success' => true,
+            'message' => 'WorkOrders record updated successfully',
         ]);
     }
 

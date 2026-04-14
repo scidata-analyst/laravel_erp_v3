@@ -39,11 +39,11 @@ class SalesOrdersController extends Controller
     {
         $data = $this->salesOrdersService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All SalesOrders records fetched successfully",
-            "data" => SalesOrdersResource::collection($data)
-        ]);
+        return SalesOrdersResource::collection($data)
+            ->additional([
+                'success' => true,
+                'message' => 'All SalesOrders records fetched successfully',
+            ]);
     }
 
     /**
@@ -58,14 +58,6 @@ class SalesOrdersController extends Controller
 
         $data = $this->salesOrdersService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "SalesOrders records fetched successfully",
-                "data" => SalesOrdersResource::collection($data)
-            ]);
-        }
-
         return view("sales.sales_orders", compact("data"));
     }
 
@@ -78,11 +70,10 @@ class SalesOrdersController extends Controller
     {
         $data = $this->salesOrdersService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "SalesOrders record created successfully",
-            "data" => new SalesOrdersResource($data)
-        ], 201);
+        return (new SalesOrdersResource($data))->additional([
+            'success' => true,
+            'message' => 'SalesOrders record created successfully',
+        ]);
     }
 
     /**
@@ -94,10 +85,9 @@ class SalesOrdersController extends Controller
     {
         $data = $this->salesOrdersService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "SalesOrders record fetched successfully",
-            "data" => new SalesOrdersResource($data)
+        return (new SalesOrdersResource($data))->additional([
+            'success' => true,
+            'message' => 'SalesOrders record fetched successfully',
         ]);
     }
 
@@ -111,10 +101,9 @@ class SalesOrdersController extends Controller
     {
         $data = $this->salesOrdersService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "SalesOrders record updated successfully",
-            "data" => new SalesOrdersResource($data)
+        return (new SalesOrdersResource($data))->additional([
+            'success' => true,
+            'message' => 'SalesOrders record updated successfully',
         ]);
     }
 
@@ -127,9 +116,6 @@ class SalesOrdersController extends Controller
     {
         $this->salesOrdersService->destroy($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "SalesOrders record deleted successfully"
-        ]);
+        return response()->json(["success" => true, "message" => "SalesOrders record deleted successfully"]);
     }
 }

@@ -39,11 +39,11 @@ class SupplierPaymentsController extends Controller
     {
         $data = $this->supplierPaymentsService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All SupplierPayments records fetched successfully",
-            "data" => SupplierPaymentsResource::collection($data)
-        ]);
+        return SupplierPaymentsResource::collection($data)
+            ->additional([
+                'success' => true,
+                'message' => 'SupplierPayments records fetched successfully',
+            ]);
     }
 
     /**
@@ -58,14 +58,6 @@ class SupplierPaymentsController extends Controller
 
         $data = $this->supplierPaymentsService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "SupplierPayments records fetched successfully",
-                "data" => SupplierPaymentsResource::collection($data)
-            ]);
-        }
-
         return view("purchase.supplier_payments", compact("data"));
     }
 
@@ -78,11 +70,10 @@ class SupplierPaymentsController extends Controller
     {
         $data = $this->supplierPaymentsService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "SupplierPayments record created successfully",
-            "data" => new SupplierPaymentsResource($data)
-        ], 201);
+        return (new SupplierPaymentsResource($data))->additional([
+            'success' => true,
+            'message' => 'SupplierPayments record created successfully',
+        ]);
     }
 
     /**
@@ -94,10 +85,9 @@ class SupplierPaymentsController extends Controller
     {
         $data = $this->supplierPaymentsService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "SupplierPayments record fetched successfully",
-            "data" => new SupplierPaymentsResource($data)
+        return (new SupplierPaymentsResource($data))->additional([
+            'success' => true,
+            'message' => 'SupplierPayments record fetched successfully',
         ]);
     }
 
@@ -111,10 +101,9 @@ class SupplierPaymentsController extends Controller
     {
         $data = $this->supplierPaymentsService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "SupplierPayments record updated successfully",
-            "data" => new SupplierPaymentsResource($data)
+        return (new SupplierPaymentsResource($data))->additional([
+            'success' => true,
+            'message' => 'SupplierPayments record updated successfully',
         ]);
     }
 

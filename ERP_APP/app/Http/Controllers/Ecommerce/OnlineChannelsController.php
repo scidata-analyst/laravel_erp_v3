@@ -39,10 +39,9 @@ class OnlineChannelsController extends Controller
     {
         $data = $this->onlineChannelsService->all();
 
-        return response()->json([
+        return OnlineChannelsResource::collection($data)->additional([
             "success" => true,
-            "message" => "All OnlineChannels records fetched successfully",
-            "data" => OnlineChannelsResource::collection($data)
+            "message" => "All OnlineChannels records fetched successfully"
         ]);
     }
 
@@ -58,14 +57,6 @@ class OnlineChannelsController extends Controller
 
         $data = $this->onlineChannelsService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "OnlineChannels records fetched successfully",
-                "data" => OnlineChannelsResource::collection($data)
-            ]);
-        }
-
         return view("ecommerce.online_channels", compact("data"));
     }
 
@@ -78,11 +69,10 @@ class OnlineChannelsController extends Controller
     {
         $data = $this->onlineChannelsService->store($request->validated());
 
-        return response()->json([
+        return (new OnlineChannelsResource($data))->additional([
             "success" => true,
-            "message" => "OnlineChannels record created successfully",
-            "data" => new OnlineChannelsResource($data)
-        ], 201);
+            "message" => "OnlineChannels record created successfully"
+        ]);
     }
 
     /**
@@ -94,10 +84,9 @@ class OnlineChannelsController extends Controller
     {
         $data = $this->onlineChannelsService->show($id);
 
-        return response()->json([
+        return (new OnlineChannelsResource($data))->additional([
             "success" => true,
-            "message" => "OnlineChannels record fetched successfully",
-            "data" => new OnlineChannelsResource($data)
+            "message" => "OnlineChannels record fetched successfully"
         ]);
     }
 
@@ -111,10 +100,9 @@ class OnlineChannelsController extends Controller
     {
         $data = $this->onlineChannelsService->update($request->validated(), $id);
 
-        return response()->json([
+        return (new OnlineChannelsResource($data))->additional([
             "success" => true,
-            "message" => "OnlineChannels record updated successfully",
-            "data" => new OnlineChannelsResource($data)
+            "message" => "OnlineChannels record updated successfully"
         ]);
     }
 

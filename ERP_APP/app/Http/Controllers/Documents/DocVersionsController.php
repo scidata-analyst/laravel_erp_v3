@@ -39,10 +39,9 @@ class DocVersionsController extends Controller
     {
         $data = $this->docVersionsService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All DocVersions records fetched successfully",
-            "data" => DocVersionsResource::collection($data)
+        return DocVersionsResource::collection($data)->additional([
+            'success' => true,
+            'message' => 'All DocVersions records fetched successfully',
         ]);
     }
 
@@ -58,14 +57,6 @@ class DocVersionsController extends Controller
 
         $data = $this->docVersionsService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "DocVersions records fetched successfully",
-                "data" => DocVersionsResource::collection($data)
-            ]);
-        }
-
         return view("documents.doc_versions", compact("data"));
     }
 
@@ -78,11 +69,10 @@ class DocVersionsController extends Controller
     {
         $data = $this->docVersionsService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "DocVersions record created successfully",
-            "data" => new DocVersionsResource($data)
-        ], 201);
+        return (new DocVersionsResource($data))->additional([
+            'success' => true,
+            'message' => 'DocVersions record created successfully',
+        ]);
     }
 
     /**
@@ -94,10 +84,9 @@ class DocVersionsController extends Controller
     {
         $data = $this->docVersionsService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "DocVersions record fetched successfully",
-            "data" => new DocVersionsResource($data)
+        return (new DocVersionsResource($data))->additional([
+            'success' => true,
+            'message' => 'DocVersions record fetched successfully',
         ]);
     }
 
@@ -111,10 +100,9 @@ class DocVersionsController extends Controller
     {
         $data = $this->docVersionsService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "DocVersions record updated successfully",
-            "data" => new DocVersionsResource($data)
+        return (new DocVersionsResource($data))->additional([
+            'success' => true,
+            'message' => 'DocVersions record updated successfully',
         ]);
     }
 

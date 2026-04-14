@@ -39,11 +39,11 @@ class QcChecklistsController extends Controller
     {
         $data = $this->qcChecklistsService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All QcChecklists records fetched successfully",
-            "data" => QcChecklistsResource::collection($data)
-        ]);
+        return QcChecklistsResource::collection($data)
+            ->additional([
+                'success' => true,
+                'message' => 'All QcChecklists records fetched successfully',
+            ]);
     }
 
     /**
@@ -58,14 +58,6 @@ class QcChecklistsController extends Controller
 
         $data = $this->qcChecklistsService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "QcChecklists records fetched successfully",
-                "data" => QcChecklistsResource::collection($data)
-            ]);
-        }
-
         return view("quality_control.qc_checklists", compact("data"));
     }
 
@@ -78,11 +70,10 @@ class QcChecklistsController extends Controller
     {
         $data = $this->qcChecklistsService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "QcChecklists record created successfully",
-            "data" => new QcChecklistsResource($data)
-        ], 201);
+        return (new QcChecklistsResource($data))->additional([
+            'success' => true,
+            'message' => 'QcChecklists record created successfully',
+        ]);
     }
 
     /**
@@ -94,10 +85,9 @@ class QcChecklistsController extends Controller
     {
         $data = $this->qcChecklistsService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "QcChecklists record fetched successfully",
-            "data" => new QcChecklistsResource($data)
+        return (new QcChecklistsResource($data))->additional([
+            'success' => true,
+            'message' => 'QcChecklists record fetched successfully',
         ]);
     }
 
@@ -111,10 +101,9 @@ class QcChecklistsController extends Controller
     {
         $data = $this->qcChecklistsService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "QcChecklists record updated successfully",
-            "data" => new QcChecklistsResource($data)
+        return (new QcChecklistsResource($data))->additional([
+            'success' => true,
+            'message' => 'QcChecklists record updated successfully',
         ]);
     }
 

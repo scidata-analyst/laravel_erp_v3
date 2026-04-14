@@ -39,10 +39,9 @@ class BomController extends Controller
     {
         $data = $this->bomService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All Bom records fetched successfully",
-            "data" => BomResource::collection($data)
+        return BomResource::collection($data)->additional([
+            'success' => true,
+            'message' => 'All Bom records fetched successfully',
         ]);
     }
 
@@ -58,14 +57,6 @@ class BomController extends Controller
 
         $data = $this->bomService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "Bom records fetched successfully",
-                "data" => BomResource::collection($data)
-            ]);
-        }
-
         return view("production.bom", compact("data"));
     }
 
@@ -78,11 +69,10 @@ class BomController extends Controller
     {
         $data = $this->bomService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "Bom record created successfully",
-            "data" => new BomResource($data)
-        ], 201);
+        return (new BomResource($data))->additional([
+            'success' => true,
+            'message' => 'Bom record created successfully',
+        ]);
     }
 
     /**
@@ -94,10 +84,9 @@ class BomController extends Controller
     {
         $data = $this->bomService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Bom record fetched successfully",
-            "data" => new BomResource($data)
+        return (new BomResource($data))->additional([
+            'success' => true,
+            'message' => 'Bom record fetched successfully',
         ]);
     }
 
@@ -111,10 +100,9 @@ class BomController extends Controller
     {
         $data = $this->bomService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "Bom record updated successfully",
-            "data" => new BomResource($data)
+        return (new BomResource($data))->additional([
+            'success' => true,
+            'message' => 'Bom record updated successfully',
         ]);
     }
 
