@@ -313,91 +313,52 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>001</td>
-              <td>
-                <div class="d-flex align-items-center gap-2">
-                  <div class="avatar-sm" style="background:linear-gradient(135deg,var(--accent),var(--accent-5))">AK
-                  </div>Adam Khan
-                </div>
-              </td>
-              <td>adam@nexus.com</td>
-              <td><span class="badge-status badge-purple">Admin</span></td>
-              <td>IT</td>
-              <td><span class="badge-status badge-active">Active</span></td>
-              <td>Today 10:22</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalUser" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="User" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>002</td>
-              <td>
-                <div class="d-flex align-items-center gap-2">
-                  <div class="avatar-sm" style="background:linear-gradient(135deg,var(--accent-2),#007a60)">SL</div>Sara
-                  Lee
-                </div>
-              </td>
-              <td>sara@nexus.com</td>
-              <td><span class="badge-status badge-info">Manager</span></td>
-              <td>Sales</td>
-              <td><span class="badge-status badge-active">Active</span></td>
-              <td>Today 09:14</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalUser" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="User" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>003</td>
-              <td>
-                <div class="d-flex align-items-center gap-2">
-                  <div class="avatar-sm" style="background:linear-gradient(135deg,var(--accent-4),#b07a00)">JR</div>
-                  James R.
-                </div>
-              </td>
-              <td>james@nexus.com</td>
-              <td><span class="badge-status badge-pending">Staff</span></td>
-              <td>Warehouse</td>
-              <td><span class="badge-status badge-inactive">Inactive</span></td>
-              <td>2 days ago</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalUser" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="User" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
-            <tr>
-              <td>004</td>
-              <td>
-                <div class="d-flex align-items-center gap-2">
-                  <div class="avatar-sm" style="background:linear-gradient(135deg,var(--accent-3),#b00000)">MP</div>Maya
-                  P.
-                </div>
-              </td>
-              <td>maya@nexus.com</td>
-              <td><span class="badge-status badge-info">Manager</span></td>
-              <td>Finance</td>
-              <td><span class="badge-status badge-active">Active</span></td>
-              <td>Yesterday</td>
-              <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalUser" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="User" title="Delete"><i class="bi bi-trash"></i></button></div>
-              </td>
-            </tr>
+            @foreach ($data as $user)
+              <tr>
+                <td>001</td>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="avatar-sm" style="background:linear-gradient(135deg,var(--accent),var(--accent-5))">AK
+                    </div> {{ $user->user_name }}
+                  </div>
+                </td>
+                <td>{{ $user->email }}</td>
+                <td><span class="badge-status badge-purple">{{ $user->role_name }}</span></td>
+                <td>IT</td>
+                <td>
+                  @if ($user->is_active == 1)
+                    <span class="badge-status badge-active">Active</span>
+                  @endif
+
+                  @if ($user->is_active == 0)
+                    <span class="badge-status badge-inactive">InActive</span>
+                  @endif
+                </td>
+                <td>Today 10:22</td>
+                <td>
+                  <div class="d-flex gap-1">
+                    <button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalUser"
+                      title="Edit"><i class="bi bi-pencil"></i></button>
+                    <button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal"
+                      data-bs-target="#modalDelete" data-delete-label="User" title="Delete"><i
+                        class="bi bi-trash"></i></button>
+                  </div>
+                </td>
+              </tr>
+            @endforeach
           </tbody>
         </table>
       </div>
-      <div class="erp-pagination"><button class="pg-btn active">1</button><button class="pg-btn">2</button><button
-          class="pg-btn">3</button></div>
+
+      <div class="d-flex justify-content-between align-items-center mt-5">
+        <div>
+          Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+        </div>
+
+        <div>
+          {{ $data->links('pagination::bootstrap-5') }}
+        </div>
+      </div>
     </div>
   </main>
 

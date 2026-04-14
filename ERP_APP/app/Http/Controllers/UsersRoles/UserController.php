@@ -7,6 +7,7 @@ use App\Http\Requests\UsersRoles\UserStoreRequest;
 use App\Http\Requests\UsersRoles\UserUpdateRequest;
 use App\Http\Resources\UsersRoles\UserResource;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 
 /**
  * Class UserController
@@ -58,14 +59,6 @@ class UserController extends Controller
 
         $data = $this->userService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "User records fetched successfully",
-                "data" => UserResource::collection($data)
-            ]);
-        }
-
         return view("users_roles.user", compact("data"));
     }
 
@@ -78,11 +71,7 @@ class UserController extends Controller
     {
         $data = $this->userService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "User record created successfully",
-            "data" => new UserResource($data)
-        ], 201);
+        return UserResource::collection($data);
     }
 
     /**
@@ -94,11 +83,7 @@ class UserController extends Controller
     {
         $data = $this->userService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "User record fetched successfully",
-            "data" => new UserResource($data)
-        ]);
+        return UserResource::collection($data);
     }
 
     /**
@@ -111,11 +96,7 @@ class UserController extends Controller
     {
         $data = $this->userService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "User record updated successfully",
-            "data" => new UserResource($data)
-        ]);
+        return UserResource::collection($data);
     }
 
     /**

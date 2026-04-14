@@ -54,6 +54,8 @@ class UserRepository implements UserInterface
             $query->where('name', 'like', "%{$search}%");
         }
 
+        $query->with('role');
+
         return $query->paginate($perPage);
     }
 
