@@ -120,3 +120,4 @@ class DocLibraryController extends Controller
             "message" => "DocLibrary record deleted successfully"
         ]);
     }
+}

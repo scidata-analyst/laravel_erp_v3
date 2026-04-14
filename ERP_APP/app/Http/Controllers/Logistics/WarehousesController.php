@@ -121,4 +121,3 @@ class WarehousesController extends Controller
         ]);
     }
 }
-}
