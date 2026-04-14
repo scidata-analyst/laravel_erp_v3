@@ -16,11 +16,11 @@ class UserUpdateRequest extends FormRequest
 
     public function rules(): array
     {
-        $userId = $this->route('user');
+        $userId = $this->route('id') ?? $this->route('user');
         return [
-            'name' => ['sometimes', 'string', 'max:255'],
-            'email' => ['sometimes', 'email', 'max:255', 'unique:User_TABLE,email,' . $userId],
-            'password' => ['sometimes', 'string', 'min:8'],
+            'user_name' => ['sometimes', 'string', 'max:255'],
+            'email' => ['sometimes', 'email', 'max:255', 'unique:users,email,' . $userId],
+            'password' => ['nullable', 'string', 'min:8'],
             'role_id' => ['sometimes', 'integer', 'exists:roles,id'],
             'status' => ['nullable', 'string', 'max:50'],
         ];
@@ -30,7 +30,7 @@ class UserUpdateRequest extends FormRequest
     {
         return [
             'email.email' => 'Please enter a valid email address.',
-            'email.unique' => 'The email must be unique.',
+            'email.unique' => 'The email has already been taken.',
             'password.min' => 'Password must be at least 8 characters.',
             'role_id.exists' => 'The selected role is invalid.',
         ];

@@ -71,9 +71,9 @@ class UserController extends Controller
     {
         $data = $this->userService->store($request->validated());
 
-        return UserResource::collection($data)->additional([
+        return (new UserResource($data))->additional([
             'success' => true,
-            'message' => 'User records created successfully',
+            'message' => 'User created successfully',
         ]);
     }
 
@@ -100,11 +100,17 @@ class UserController extends Controller
      */
     public function update(UserUpdateRequest $request, $id)
     {
-        $data = $this->userService->update($request->validated(), $id);
+        $validated = $request->validated();
+        
+        if (empty($validated['password'])) {
+            unset($validated['password']);
+        }
+        
+        $data = $this->userService->update($validated, $id);
 
-        return UserResource::collection($data)->additional([
+        return (new UserResource($data))->additional([
             'success' => true,
-            'message' => 'User records updated successfully',
+            'message' => 'User updated successfully',
         ]);
     }
 
