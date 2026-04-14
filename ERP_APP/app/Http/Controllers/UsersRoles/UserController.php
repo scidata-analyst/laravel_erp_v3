@@ -40,11 +40,11 @@ class UserController extends Controller
     {
         $data = $this->userService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All User records fetched successfully",
-            "data" => UserResource::collection($data)
-        ]);
+        return UserResource::collection($data)
+            ->additional([
+                'success' => true,
+                'message' => 'User records fetched successfully',
+            ]);
     }
 
     /**
@@ -71,7 +71,10 @@ class UserController extends Controller
     {
         $data = $this->userService->store($request->validated());
 
-        return UserResource::collection($data);
+        return UserResource::collection($data)->additional([
+            'success' => true,
+            'message' => 'User records created successfully',
+        ]);
     }
 
     /**
@@ -83,7 +86,10 @@ class UserController extends Controller
     {
         $data = $this->userService->show($id);
 
-        return UserResource::collection($data);
+        return UserResource::collection($data)->additional([
+            'success' => true,
+            'message' => 'User records fetched successfully',
+        ]);
     }
 
     /**
@@ -96,7 +102,10 @@ class UserController extends Controller
     {
         $data = $this->userService->update($request->validated(), $id);
 
-        return UserResource::collection($data);
+        return UserResource::collection($data)->additional([
+            'success' => true,
+            'message' => 'User records updated successfully',
+        ]);
     }
 
     /**

@@ -39,10 +39,9 @@ class ApArController extends Controller
     {
         $data = $this->apArService->all();
 
-        return response()->json([
-            "success" => true,
-            "message" => "All ApAr records fetched successfully",
-            "data" => ApArResource::collection($data)
+        return ApArResource::collection($data)->additional([
+            'success' => true,
+            'message' => 'ApAr records fetched successfully',
         ]);
     }
 
@@ -58,14 +57,6 @@ class ApArController extends Controller
 
         $data = $this->apArService->index($perPage, $search, $filters);
 
-        if (request()->ajax()) {
-            return response()->json([
-                "success" => true,
-                "message" => "ApAr records fetched successfully",
-                "data" => ApArResource::collection($data)
-            ]);
-        }
-
         return view("accounting.ap_ar", compact("data"));
     }
 
@@ -78,11 +69,10 @@ class ApArController extends Controller
     {
         $data = $this->apArService->store($request->validated());
 
-        return response()->json([
-            "success" => true,
-            "message" => "ApAr record created successfully",
-            "data" => new ApArResource($data)
-        ], 201);
+        return ApArResource::collection($data)->additional([
+            'success' => true,
+            'message' => 'ApAr records created successfully',
+        ]);
     }
 
     /**
@@ -94,10 +84,9 @@ class ApArController extends Controller
     {
         $data = $this->apArService->show($id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "ApAr record fetched successfully",
-            "data" => new ApArResource($data)
+        return ApArResource::collection($data)->additional([
+            'success' => true,
+            'message' => 'ApAr records fetched successfully',
         ]);
     }
 
@@ -111,10 +100,9 @@ class ApArController extends Controller
     {
         $data = $this->apArService->update($request->validated(), $id);
 
-        return response()->json([
-            "success" => true,
-            "message" => "ApAr record updated successfully",
-            "data" => new ApArResource($data)
+        return ApArResource::collection($data)->additional([
+            'success' => true,
+            'message' => 'ApAr records updated successfully',
         ]);
     }
 
