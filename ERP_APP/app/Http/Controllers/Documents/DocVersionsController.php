@@ -51,7 +51,7 @@ class DocVersionsController extends Controller
      */
     public function index()
     {
-        $perPage = request()->get("per_page", 15);
+        $perPage = request()->get("per_page", 10);
         $search = request()->get("search", "");
         $filters = request()->get("filters", []);
 

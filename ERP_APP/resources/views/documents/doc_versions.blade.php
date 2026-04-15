@@ -74,7 +74,7 @@
   </div>
   <div class="d-flex justify-content-between align-items-center mt-5">
     <div>
-      Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+      Showing {{ $data->firstItem() ?? 0 }} to {{ $data->lastItem() ?? 0 }} of {{ $data->total() ?? 0 }}
     </div>
     <div>
       {{ $data->links('pagination::bootstrap-5') }}

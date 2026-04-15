@@ -78,8 +78,13 @@
       </tbody>
     </table>
   </div>
-  <div class="erp-pagination">
-    {{ $data->links('pagination::bootstrap-5') }}
+  <div class="d-flex justify-content-between align-items-center mt-5">
+    <div>
+      Showing {{ $data->firstItem() ?? 0 }} to {{ $data->lastItem() ?? 0 }} of {{ $data->total() ?? 0 }}
+    </div>
+    <div>
+      {{ $data->links('pagination::bootstrap-5') }}
+    </div>
   </div>
 </div>
 

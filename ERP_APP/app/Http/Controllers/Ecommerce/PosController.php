@@ -51,7 +51,7 @@ class PosController extends Controller
      */
     public function index()
     {
-        $perPage = request()->get("per_page", 15);
+        $perPage = request()->get("per_page", 5);
         $search = request()->get("search", "");
         $filters = request()->get("filters", []);
 
