@@ -11,7 +11,7 @@
     </div>
     <div class="d-flex gap-2">
       <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-      <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalProduct"><i
+      <button class="btn-erp btn-primary" id="btn-add-product" data-bs-toggle="modal" data-bs-target="#modalProduct"><i
           class="bi bi-plus-lg"></i> Add Product</button>
     </div>
   </div>
@@ -61,9 +61,20 @@
                 @endif
               </td>
               <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalProduct" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon btn-edit" 
+                    data-id="{{ $product->id }}"
+                    data-product_name="{{ $product->product_name }}"
+                    data-sku="{{ $product->sku }}"
+                    data-category="{{ $product->category }}"
+                    data-unit_price="{{ $product->unit_price }}"
+                    data-cost_price="{{ $product->cost_price ?? '' }}"
+                    data-warehouse_id="{{ $product->warehouse_id ?? '' }}"
+                    data-reorder_level="{{ $product->reorder_level ?? '' }}"
+                    data-valuation_method="{{ $product->valuation_method ?? 'FIFO' }}"
+                    data-description="{{ $product->description ?? '' }}"
+                    data-status="{{ $product->status }}"
+                    data-bs-toggle="modal" data-bs-target="#modalProduct" title="Edit"><i class="bi bi-pencil"></i></button><button
+                    class="btn-erp btn-danger btn-xs btn-icon btn-delete" data-id="{{ $product->id }}" data-product_name="{{ $product->product_name }}" data-bs-toggle="modal" data-bs-target="#modalDelete"
                     data-delete-label="Product" title="Delete"><i class="bi bi-trash"></i></button></div>
               </td>
             </tr>
@@ -86,48 +97,58 @@
       <div class="modal-content"
         style="background:var(--bg-card);border:1px solid var(--border-active);border-radius:var(--radius)">
         <div class="modal-header" style="border-color:var(--border)">
-          <h5 class="modal-title" style="color:var(--text-primary);font-weight:600">Add / Edit Product</h5>
+          <h5 class="modal-title" id="modal-title" style="color:var(--text-primary);font-weight:600">Add / Edit Product</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <div class="row g-3">
+          <form id="form-product">
+            @csrf
+            <input type="hidden" name="id" id="product-id">
+            <div class="row g-3">
             <div class="col-md-8"><label class="erp-form-label">Product Name</label><input class="erp-form-control"
-                type="text" placeholder="Product name" /></div>
+                type="text" name="product_name" id="product_name" placeholder="Product name" /></div>
             <div class="col-md-4"><label class="erp-form-label">SKU</label><input class="erp-form-control" type="text"
-                placeholder="SKU-XXXX" /></div>
-            <div class="col-md-6"><label class="erp-form-label">Category</label><select class="erp-form-control">
-                <option>Electronics</option>
-                <option>Hardware</option>
-                <option>Apparel</option>
-                <option>Furniture</option>
+                name="sku" id="sku" placeholder="SKU-XXXX" /></div>
+            <div class="col-md-6"><label class="erp-form-label">Category</label><select class="erp-form-control" name="category" id="category">
+                <option value="">Select Category</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Hardware">Hardware</option>
+                <option value="Apparel">Apparel</option>
+                <option value="Furniture">Furniture</option>
               </select></div>
             <div class="col-md-3"><label class="erp-form-label">Unit Price ($)</label><input class="erp-form-control"
-                type="number" placeholder="0.00" /></div>
+                type="number" name="unit_price" id="unit_price" placeholder="0.00" step="0.01" /></div>
             <div class="col-md-3"><label class="erp-form-label">Cost Price ($)</label><input class="erp-form-control"
-                type="number" placeholder="0.00" /></div>
-            <div class="col-md-6"><label class="erp-form-label">Warehouse</label><select class="erp-form-control">
-                <option>WH-A</option>
-                <option>WH-B</option>
-                <option>WH-C</option>
+                type="number" name="cost_price" id="cost_price" placeholder="0.00" step="0.01" /></div>
+            <div class="col-md-6"><label class="erp-form-label">Warehouse</label><select class="erp-form-control" name="warehouse_id" id="warehouse_id">
+                <option value="">Select Warehouse</option>
+                <option value="WH-A">WH-A</option>
+                <option value="WH-B">WH-B</option>
+                <option value="WH-C">WH-C</option>
               </select></div>
             <div class="col-md-4"><label class="erp-form-label">Reorder Level</label><input class="erp-form-control"
-                type="number" placeholder="10" /></div>
+                type="number" name="reorder_level" id="reorder_level" placeholder="10" /></div>
             <div class="col-md-4"><label class="erp-form-label">Valuation Method</label><select
-                class="erp-form-control">
-                <option>FIFO</option>
-                <option>LIFO</option>
-                <option>Average Cost</option>
+                class="erp-form-control" name="valuation_method" id="valuation_method">
+                <option value="FIFO">FIFO</option>
+                <option value="LIFO">LIFO</option>
+                <option value="Average Cost">Average Cost</option>
               </select></div>
-            <div class="col-md-12"><label class="erp-form-label">Description</label><textarea class="erp-form-control"
-                rows="2" placeholder="Product description…"></textarea></div>
+            <div class="col-md-6"><label class="erp-form-label">Status</label><select class="erp-form-control" name="status" id="status">
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+              </select></div>
+            <div class="col-md-6"><label class="erp-form-label">Description</label><textarea class="erp-form-control"
+                name="description" id="description" rows="2" placeholder="Product description…"></textarea></div>
           </div>
-        </div>
-        <div class="modal-footer" style="border-color:var(--border)">
-          <button type="button" class="btn-erp btn-outline" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn-erp btn-primary btn-modal-save">
-            <i class="bi bi-check2"></i> Save Product
-          </button>
-        </div>
+        </form>
+      </div>
+      <div class="modal-footer" style="border-color:var(--border)">
+        <button type="button" class="btn-erp btn-outline" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn-erp btn-primary btn-modal-save" id="btn-save">
+          <i class="bi bi-check2"></i> Save Product
+        </button>
+      </div>
       </div>
     </div>
   </div>
@@ -157,4 +178,134 @@
       </div>
     </div>
   </div>
+
+  @push('scripts')
+    <script>
+      $(function () {
+        var routes = {
+          store: '{{ route("product_catalog.store") }}',
+          update: '{{ route("product_catalog.update", ":id") }}',
+          destroy: '{{ route("product_catalog.destroy", ":id") }}'
+        };
+
+        var $modal = $('#modalProduct');
+        var $form = $('#form-product');
+        var $btnSave = $('#btn-save');
+        var productId = null;
+        var isEdit = false;
+
+        $('#btn-add-product').on('click', function () {
+          resetForm();
+          isEdit = false;
+          $('#modal-title').text('Add Product');
+        });
+
+        $modal.on('shown.bs.modal', function () {
+          if (!isEdit) {
+            resetForm();
+            $('#modal-title').text('Add Product');
+          }
+        });
+
+        $(document).on('click', '.btn-edit', function () {
+          resetForm();
+          isEdit = true;
+          productId = $(this).data('id');
+          $('#modal-title').text('Edit Product');
+
+          $('#product-id').val(productId);
+          $('#product_name').val($(this).data('product_name'));
+          $('#sku').val($(this).data('sku'));
+          $('#category').val($(this).data('category'));
+          $('#unit_price').val($(this).data('unit_price'));
+          $('#cost_price').val($(this).data('cost_price'));
+          $('#warehouse_id').val($(this).data('warehouse_id'));
+          $('#reorder_level').val($(this).data('reorder_level'));
+          $('#valuation_method').val($(this).data('valuation_method'));
+          $('#description').val($(this).data('description'));
+          $('#status').val($(this).data('status'));
+        });
+
+        $(document).on('click', '.btn-delete', function () {
+          productId = $(this).data('id');
+          var product_name = $(this).data('product_name');
+          $('#delete-target').text(product_name || 'this product');
+        });
+
+        $('#btn-confirm-delete').on('click', function () {
+          $.ajax({
+            url: routes.destroy.replace(':id', productId),
+            method: 'DELETE',
+            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+            success: function (res) {
+              if (res.success) {
+                showToast(res.message || 'Product deleted', 'success');
+                $('#modalDelete').modal('hide');
+                setTimeout(() => location.reload(), 1000);
+              }
+            },
+            error: function (xhr) {
+              showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
+            }
+          });
+        });
+
+        $btnSave.on('click', function () {
+          $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+
+          var url = isEdit ? routes.update.replace(':id', productId) : routes.store;
+          var method = isEdit ? 'PUT' : 'POST';
+
+          $.ajax({
+            url: url,
+            method: method,
+            data: $form.serialize(),
+            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+            success: function (res) {
+              if (res.success) {
+                showToast(res.message || (isEdit ? 'Product updated' : 'Product created'), 'success');
+                $modal.modal('hide');
+                setTimeout(() => location.reload(), 1000);
+              }
+            },
+            error: function (xhr) {
+              var res = xhr.responseJSON;
+              if (res && res.errors) {
+                $.each(res.errors, function (field, messages) {
+                  var $input = $form.find('[name="' + field + '"]');
+                  $input.addClass('is-invalid');
+                });
+                showToast('Please check the form for errors', 'error');
+              } else if (res && res.message) {
+                showToast(res.message, 'error');
+              } else {
+                showToast('An error occurred', 'error');
+              }
+            },
+            complete: function () {
+              $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Save Product');
+            }
+          });
+        });
+
+        function resetForm() {
+          productId = null;
+          isEdit = false;
+          $form[0].reset();
+          $form.find('.is-invalid').removeClass('is-invalid');
+        }
+
+        function showToast(msg, type) {
+          type = type || 'info';
+          var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
+          var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
+          var $t = $('<div class="erp-toast ' + type + '"></div>')
+            .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
+          $('#toast-container').append($t);
+          setTimeout(function () { $t.css('opacity', 0); }, 2500);
+          setTimeout(function () { $t.remove(); }, 2800);
+        }
+      });
+    </script>
+  @endpush
 @endsection

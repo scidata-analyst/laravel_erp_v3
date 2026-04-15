@@ -11,7 +11,7 @@
   </div>
   <div class="d-flex gap-2">
     <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-    <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalPO"><i class="bi bi-plus-lg"></i> New PO</button>
+    <button class="btn-erp btn-primary" id="btn-add-po"><i class="bi bi-plus-lg"></i> New PO</button>
   </div>
 </div>
 
@@ -27,7 +27,7 @@
     <table class="erp-table" id="tbl-main">
       <thead><tr><th>PO #</th><th>Supplier</th><th>Date</th><th>Items</th><th>Total</th><th>Status</th><th>Approved By</th><th>Actions</th></tr></thead>
       <tbody>
-        @foreach ($data as $po)
+        @forelse ($data as $po)
           <tr>
             <td>{{ $po->po_number }}</td>
             <td>{{ $po->supplier_id ?? 'N/A' }}</td>
@@ -46,15 +46,38 @@
               @endif
             </td>
             <td>—</td>
-            <td><div class="d-flex gap-1"><button class="btn-erp btn-success btn-xs btn-approve-po">Approve</button><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalPO" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="PO" title="Delete"><i class="bi bi-trash"></i></button></div></td>
+            <td><div class="d-flex gap-1">
+              <button class="btn-erp btn-outline btn-xs btn-icon btn-edit"
+                data-id="{{ $po->id }}"
+                data-po_number="{{ $po->po_number }}"
+                data-supplier_id="{{ $po->supplier_id }}"
+                data-order_date="{{ $po->order_date }}"
+                data-expected_delivery="{{ $po->expected_delivery }}"
+                data-warehouse="{{ $po->warehouse }}"
+                data-payment_terms="{{ $po->payment_terms }}"
+                data-status="{{ $po->status }}"
+                title="Edit">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button class="btn-erp btn-danger btn-xs btn-icon btn-delete"
+                data-id="{{ $po->id }}"
+                data-po_number="{{ $po->po_number }}"
+                title="Delete">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div></td>
           </tr>
-        @endforeach
+        @empty
+          <tr>
+            <td colspan="8" class="text-center text-muted">No purchase orders found.</td>
+          </tr>
+        @endforelse
       </tbody>
     </table>
   </div>
   <div class="d-flex justify-content-between align-items-center mt-5">
     <div>
-      Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+      Showing {{ $data->firstItem() ?? 0 }} to {{ $data->lastItem() ?? 0 }} of {{ $data->total() ?? 0 }}
     </div>
     <div>
       {{ $data->links('pagination::bootstrap-5') }}
@@ -66,39 +89,76 @@
   <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-active);border-radius:var(--radius)">
       <div class="modal-header" style="border-color:var(--border)">
-        <h5 class="modal-title" style="color:var(--text-primary);font-weight:600">Create Purchase Order</h5>
+        <h5 class="modal-title" style="color:var(--text-primary);font-weight:600" id="modal-title">Create Purchase Order</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body">
-
-      <div class="row g-3 mb-3">
-        <div class="col-md-6"><div class="col-md-12"><label class="erp-form-label">Supplier</label><select class="erp-form-control"><option>TechSource Ltd.</option><option>GlobalParts Inc.</option></select></div></div>
-        <div class="col-md-3"><div class="col-md-12"><label class="erp-form-label">Order Date</label><input class="erp-form-control" type="date" placeholder=""/></div></div>
-        <div class="col-md-3"><div class="col-md-12"><label class="erp-form-label">Expected Delivery</label><input class="erp-form-control" type="date" placeholder=""/></div></div>
-        <div class="col-md-6"><div class="col-md-12"><label class="erp-form-label">Warehouse</label><select class="erp-form-control"><option>WH-A</option><option>WH-B</option></select></div></div>
-        <div class="col-md-6"><div class="col-md-12"><label class="erp-form-label">Payment Terms</label><select class="erp-form-control"><option>Net 30</option><option>Net 60</option><option>Prepaid</option></select></div></div>
-      </div>
-      <label class="erp-form-label">Order Items</label>
-      <div class="erp-table-wrap"><table class="erp-table"><thead><tr><th>Product</th><th>Qty</th><th>Unit Cost</th><th>Total</th></tr></thead>
-      <tbody><tr>
-        <td><input class="erp-form-control" placeholder="Product name" style="min-width:160px"/></td>
-        <td><input class="erp-form-control" type="number" style="width:80px" placeholder="1"/></td>
-        <td><input class="erp-form-control" type="number" style="width:100px" placeholder="0.00"/></td>
-        <td style="color:var(--accent);font-family:'IBM Plex Mono',monospace">$0.00</td>
-      </tr></tbody></table></div>
-      <button class="btn-erp btn-outline btn-sm mt-2"><i class="bi bi-plus"></i> Add Line</button>
-      <div class="d-flex justify-content-end mt-3"><div class="text-end">
-        <div class="stat-row-label">Subtotal: <span class="stat-row-val">$0.00</span></div>
-        <div class="stat-row-label">Tax (10%): <span class="stat-row-val">$0.00</span></div>
-        <div style="font-size:15px;font-weight:700;color:var(--text-primary);margin-top:6px">Total: $0.00</div>
-      </div></div>
-      </div>
-      <div class="modal-footer" style="border-color:var(--border)">
-        <button type="button" class="btn-erp btn-outline" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn-erp btn-primary btn-modal-save">
-          <i class="bi bi-check2"></i> Submit PO
-        </button>
-      </div>
+      <form id="form-po">
+        <div class="modal-body">
+          <input type="hidden" name="id" id="po-id" value="" />
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="erp-form-label">Supplier</label>
+              <select class="erp-form-control" name="supplier_id" id="supplier-id">
+                <option value="">Select Supplier</option>
+                <option value="1">TechSource Ltd.</option>
+                <option value="2">GlobalParts Inc.</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="erp-form-label">Order Date</label>
+              <input class="erp-form-control" type="date" name="order_date" id="order-date" />
+            </div>
+            <div class="col-md-3">
+              <label class="erp-form-label">Expected Delivery</label>
+              <input class="erp-form-control" type="date" name="expected_delivery" id="expected-delivery" />
+            </div>
+            <div class="col-md-6">
+              <label class="erp-form-label">Warehouse</label>
+              <select class="erp-form-control" name="warehouse" id="warehouse">
+                <option value="WH-A">WH-A</option>
+                <option value="WH-B">WH-B</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="erp-form-label">Payment Terms</label>
+              <select class="erp-form-control" name="payment_terms" id="payment-terms">
+                <option value="Net 30">Net 30</option>
+                <option value="Net 60">Net 60</option>
+                <option value="Prepaid">Prepaid</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="erp-form-label">Status</label>
+              <select class="erp-form-control" name="status" id="status">
+                <option value="Draft">Draft</option>
+                <option value="Pending">Pending</option>
+                <option value="Approved">Approved</option>
+                <option value="Received">Received</option>
+              </select>
+            </div>
+          </div>
+          <label class="erp-form-label">Order Items</label>
+          <div class="erp-table-wrap"><table class="erp-table"><thead><tr><th>Product</th><th>Qty</th><th>Unit Cost</th><th>Total</th></tr></thead>
+          <tbody><tr>
+            <td><input class="erp-form-control" placeholder="Product name" style="min-width:160px"/></td>
+            <td><input class="erp-form-control" type="number" style="width:80px" placeholder="1"/></td>
+            <td><input class="erp-form-control" type="number" style="width:100px" placeholder="0.00"/></td>
+            <td style="color:var(--accent);font-family:'IBM Plex Mono',monospace">$0.00</td>
+          </tr></tbody></table></div>
+          <button class="btn-erp btn-outline btn-sm mt-2"><i class="bi bi-plus"></i> Add Line</button>
+          <div class="d-flex justify-content-end mt-3"><div class="text-end">
+            <div class="stat-row-label">Subtotal: <span class="stat-row-val">$0.00</span></div>
+            <div class="stat-row-label">Tax (10%): <span class="stat-row-val">$0.00</span></div>
+            <div style="font-size:15px;font-weight:700;color:var(--text-primary);margin-top:6px">Total: $0.00</div>
+          </div></div>
+        </div>
+        <div class="modal-footer" style="border-color:var(--border)">
+          <button type="button" class="btn-erp btn-outline" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn-erp btn-primary" id="btn-save">
+            <i class="bi bi-check2"></i> Submit PO
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
@@ -126,4 +186,127 @@
     </div>
   </div>
 </div>
+
+@push('scripts')
+<script>
+$(function() {
+  var routes = {
+    store: '{{ route("purchase_order.store") }}',
+    update: '{{ route("purchase_order.update", ":id") }}',
+    destroy: '{{ route("purchase_order.destroy", ":id") }}'
+  };
+
+  var $modal = $('#modalPO');
+  var $form = $('#form-po');
+  var $btnSave = $('#btn-save');
+  var poId = null;
+  var isEdit = false;
+
+  $('#btn-add-po').on('click', function() {
+    resetForm();
+    isEdit = false;
+    $('#modal-title').text('Create Purchase Order');
+    $modal.modal('show');
+  });
+
+  $(document).on('click', '.btn-edit', function() {
+    resetForm();
+    isEdit = true;
+    poId = $(this).data('id');
+    $('#modal-title').text('Edit Purchase Order');
+
+    $('#po-id').val(poId);
+    $('#supplier-id').val($(this).data('supplier_id'));
+    $('#order-date').val($(this).data('order_date'));
+    $('#expected-delivery').val($(this).data('expected_delivery'));
+    $('#warehouse').val($(this).data('warehouse') || 'WH-A');
+    $('#payment-terms').val($(this).data('payment_terms') || 'Net 30');
+    $('#status').val($(this).data('status') || 'Draft');
+
+    $modal.modal('show');
+  });
+
+  $(document).on('click', '.btn-delete', function() {
+    poId = $(this).data('id');
+    var po_number = $(this).data('po_number');
+    $('#delete-target').text(po_number || 'this PO');
+    $('#modalDelete').modal('show');
+  });
+
+  $('#btn-confirm-delete').on('click', function() {
+    $.ajax({
+      url: routes.destroy.replace(':id', poId),
+      method: 'DELETE',
+      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+      success: function(res) {
+        if (res.success) {
+          showToast(res.message || 'Purchase order deleted', 'success');
+          $('#modalDelete').modal('hide');
+          setTimeout(() => location.reload(), 1000);
+        }
+      },
+      error: function(xhr) {
+        showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
+      }
+    });
+  });
+
+  $form.on('submit', function(e) {
+    e.preventDefault();
+    $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+
+    var url = isEdit ? routes.update.replace(':id', poId) : routes.store;
+    var method = isEdit ? 'PUT' : 'POST';
+
+    $.ajax({
+      url: url,
+      method: method,
+      data: $form.serialize(),
+      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+      success: function(res) {
+        if (res.success) {
+          showToast(res.message || (isEdit ? 'Purchase order updated' : 'Purchase order created'), 'success');
+          $modal.modal('hide');
+          setTimeout(() => location.reload(), 1000);
+        }
+      },
+      error: function(xhr) {
+        var res = xhr.responseJSON;
+        if (res && res.errors) {
+          $.each(res.errors, function(field, messages) {
+            var $input = $form.find('[name="' + field + '"]');
+            $input.addClass('is-invalid');
+          });
+        } else if (res && res.message) {
+          showToast(res.message, 'error');
+        } else {
+          showToast('An error occurred', 'error');
+        }
+      },
+      complete: function() {
+        $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Submit PO');
+      }
+    });
+  });
+
+  function resetForm() {
+    poId = null;
+    isEdit = false;
+    $form[0].reset();
+    $form.find('.is-invalid').removeClass('is-invalid');
+  }
+
+  function showToast(msg, type) {
+    type = type || 'info';
+    var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
+    var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
+    var $t = $('<div class="erp-toast ' + type + '"></div>')
+      .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
+    $('#toast-container').append($t);
+    setTimeout(function() { $t.css('opacity', 0); }, 2500);
+    setTimeout(function() { $t.remove(); }, 2800);
+  }
+});
+</script>
+@endpush
 @endsection

@@ -2,80 +2,45 @@
 
 namespace App\Services\Inventory;
 
-use App\Models\Inventory\ProductCatalog;
+use App\Repositories\Inventory\ProductCatalogRepository;
 use App\Interfaces\Inventory\ProductCatalogInterface;
 
 class ProductCatalogService implements ProductCatalogInterface
 {
-    /**
-     * @var ProductCatalogService
-     */
-    protected $productCatalogService;
+    protected $repository;
 
-    /**
-     * ProductCatalogService constructor.
-     *
-     */
-    public function __construct()
+    public function __construct(ProductCatalogRepository $repository)
     {
-        
+        $this->repository = $repository;
     }
 
-    /**
-     * Display all ProductCatalog records without pagination.
-     *
-     */
     public function all()
     {
-        $data = $this->productCatalogService->all();
+        return $this->repository->all();
     }
 
-    /**
-     * Display a paginated listing of ProductCatalog resources.
-     *
-     */
-    public function index()
+    public function index($perPage = 15, $search = '', $filters = [])
     {
-        
+        return $this->repository->index($perPage, $search, $filters);
     }
 
-    /**
-     * Store a newly created ProductCatalog resource in storage.
-     *
-     */
     public function store(array $data)
     {
-        
+        return $this->repository->store($data);
     }
 
-    /**
-     * Display the specified ProductCatalog resource.
-     *
-     * @param int $id
-     */
     public function show($id)
     {
-        
+        return $this->repository->show($id);
     }
 
-    /**
-     * Update the specified ProductCatalog resource in storage.
-     *
-     * @param ProductCatalogRequest $request
-     * @param int $id
-     */
     public function update(array $data, $id)
     {
-        
+        return $this->repository->update($data, $id);
     }
 
-    /**
-     * Remove the specified ProductCatalog resource from storage.
-     *
-     * @param int $id
-     */
     public function destroy($id)
     {
-        
+        return $this->repository->destroy($id);
     }
 }

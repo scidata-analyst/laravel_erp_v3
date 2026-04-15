@@ -11,7 +11,7 @@
   </div>
   <div class="d-flex gap-2">
     <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-    <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalPromo"><i class="bi bi-plus-lg"></i> New Promotion</button>
+    <button class="btn-erp btn-primary" id="btn-add-promotion"><i class="bi bi-plus-lg"></i> New Promotion</button>
   </div>
 </div>
 
@@ -50,7 +50,7 @@
                 <span class="badge-status badge-inactive">Expired</span>
               @endif
             </td>
-            <td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalPromo" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Promotion" title="Delete"><i class="bi bi-trash"></i></button></div></td>
+            <td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon btn-edit" data-id="{{ $promo->id }}" data-promo_code="{{ $promo->promo_code }}" data-description="{{ $promo->description }}" data-discount_value="{{ $promo->discount_value }}" data-discount_type="{{ $promo->discount_type }}" data-min_order="{{ $promo->min_order }}" data-valid_from="{{ $promo->valid_from }}" data-valid_to="{{ $promo->valid_to }}" data-applicable_products="{{ $promo->applicable_products }}" data-status="{{ $promo->status }}" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon btn-delete" data-id="{{ $promo->id }}" data-promo_code="{{ $promo->promo_code }}" title="Delete"><i class="bi bi-trash"></i></button></div></td>
           </tr>
         @endforeach
       </tbody>
@@ -70,18 +70,66 @@
   <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-active);border-radius:var(--radius)">
       <div class="modal-header" style="border-color:var(--border)">
-        <h5 class="modal-title" style="color:var(--text-primary);font-weight:600">New Promotion</h5>
+        <h5 class="modal-title" style="color:var(--text-primary);font-weight:600" id="modal-title">New Promotion</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body">
-<div class="row g-3"><div class="col-md-6"><label class="erp-form-label">Promo Code</label><input class="erp-form-control" type="text" placeholder="PROMO2025"/></div><div class="col-md-6"><label class="erp-form-label">Description</label><input class="erp-form-control" type="text" placeholder=""/></div><div class="col-md-4"><label class="erp-form-label">Discount Value</label><input class="erp-form-control" type="number" placeholder=""/></div><div class="col-md-4"><label class="erp-form-label">Type</label><select class="erp-form-control"><option>Percentage</option><option>Fixed Amount</option><option>Free Shipping</option></select></div><div class="col-md-4"><label class="erp-form-label">Min. Order ($)</label><input class="erp-form-control" type="number" placeholder=""/></div><div class="col-md-6"><label class="erp-form-label">Valid From</label><input class="erp-form-control" type="date" placeholder=""/></div><div class="col-md-6"><label class="erp-form-label">Valid To</label><input class="erp-form-control" type="date" placeholder=""/></div><div class="col-md-12"><label class="erp-form-label">Applicable Products/Categories</label><input class="erp-form-control" type="text" placeholder="All or specify…"/></div></div>
-      </div>
-      <div class="modal-footer" style="border-color:var(--border)">
-        <button type="button" class="btn-erp btn-outline" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn-erp btn-primary btn-modal-save">
-          <i class="bi bi-check2"></i> Save Promotion
-        </button>
-      </div>
+      <form id="form-promotion">
+        <div class="modal-body">
+          <input type="hidden" name="id" id="promotion-id" value="" />
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="erp-form-label">Promo Code</label>
+              <input class="erp-form-control" type="text" name="promo_code" id="promo-code" placeholder="PROMO2025" />
+              <div class="invalid-feedback" id="error-promo_code"></div>
+            </div>
+            <div class="col-md-6">
+              <label class="erp-form-label">Description</label>
+              <input class="erp-form-control" type="text" name="description" id="description" placeholder="" />
+              <div class="invalid-feedback" id="error-description"></div>
+            </div>
+            <div class="col-md-4">
+              <label class="erp-form-label">Discount Value</label>
+              <input class="erp-form-control" type="number" name="discount_value" id="discount-value" placeholder="" />
+              <div class="invalid-feedback" id="error-discount_value"></div>
+            </div>
+            <div class="col-md-4">
+              <label class="erp-form-label">Type</label>
+              <select class="erp-form-control" name="discount_type" id="discount-type">
+                <option value="Percentage">Percentage</option>
+                <option value="Fixed Amount">Fixed Amount</option>
+                <option value="Free Shipping">Free Shipping</option>
+              </select>
+              <div class="invalid-feedback" id="error-discount_type"></div>
+            </div>
+            <div class="col-md-4">
+              <label class="erp-form-label">Min. Order ($)</label>
+              <input class="erp-form-control" type="number" name="min_order" id="min-order" placeholder="" />
+              <div class="invalid-feedback" id="error-min_order"></div>
+            </div>
+            <div class="col-md-6">
+              <label class="erp-form-label">Valid From</label>
+              <input class="erp-form-control" type="date" name="valid_from" id="valid-from" />
+              <div class="invalid-feedback" id="error-valid_from"></div>
+            </div>
+            <div class="col-md-6">
+              <label class="erp-form-label">Valid To</label>
+              <input class="erp-form-control" type="date" name="valid_to" id="valid-to" />
+              <div class="invalid-feedback" id="error-valid_to"></div>
+            </div>
+            <div class="col-md-12">
+              <label class="erp-form-label">Applicable Products/Categories</label>
+              <input class="erp-form-control" type="text" name="applicable_products" id="applicable-products" placeholder="All or specify…" />
+              <div class="invalid-feedback" id="error-applicable_products"></div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-color:var(--border)">
+          <button type="button" class="btn-erp btn-outline" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn-erp btn-primary" id="btn-save">
+            <i class="bi bi-check2"></i> Save Promotion
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
@@ -109,4 +157,131 @@
     </div>
   </div>
 </div>
+
+@push('scripts')
+<script>
+$(function () {
+  var routes = {
+    store: '{{ route("promotion.store") }}',
+    update: '{{ route("promotion.update", ":id") }}',
+    destroy: '{{ route("promotion.destroy", ":id") }}'
+  };
+
+  var $modal = $('#modalPromo');
+  var $form = $('#form-promotion');
+  var $btnSave = $('#btn-save');
+  var promotionId = null;
+  var isEdit = false;
+
+  $('#btn-add-promotion').on('click', function () {
+    resetForm();
+    isEdit = false;
+    $('#modal-title').text('New Promotion');
+    $modal.modal('show');
+  });
+
+  $(document).on('click', '.btn-edit', function () {
+    resetForm();
+    isEdit = true;
+    promotionId = $(this).data('id');
+    $('#modal-title').text('Edit Promotion');
+
+    $('#promotion-id').val(promotionId);
+    $('#promo-code').val($(this).data('promo_code'));
+    $('#description').val($(this).data('description'));
+    $('#discount-value').val($(this).data('discount_value'));
+    $('#discount-type').val($(this).data('discount_type'));
+    $('#min-order').val($(this).data('min_order'));
+    $('#valid-from').val($(this).data('valid_from'));
+    $('#valid-to').val($(this).data('valid_to'));
+    $('#applicable-products').val($(this).data('applicable_products'));
+
+    $modal.modal('show');
+  });
+
+  $(document).on('click', '.btn-delete', function () {
+    promotionId = $(this).data('id');
+    var promo_code = $(this).data('promo_code');
+    $('#delete-target').text(promo_code || 'this promotion');
+    $('#modalDelete').modal('show');
+  });
+
+  $('#btn-confirm-delete').on('click', function () {
+    $.ajax({
+      url: routes.destroy.replace(':id', promotionId),
+      method: 'DELETE',
+      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+      success: function (res) {
+        if (res.success) {
+          showToast(res.message || 'Promotion deleted', 'success');
+          $('#modalDelete').modal('hide');
+          setTimeout(() => location.reload(), 1000);
+        }
+      },
+      error: function (xhr) {
+        showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
+      }
+    });
+  });
+
+  $form.on('submit', function (e) {
+    e.preventDefault();
+    $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+
+    var url = isEdit ? routes.update.replace(':id', promotionId) : routes.store;
+    var method = isEdit ? 'PUT' : 'POST';
+
+    $.ajax({
+      url: url,
+      method: method,
+      data: $form.serialize(),
+      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+      success: function (res) {
+        if (res.success) {
+          showToast(res.message || (isEdit ? 'Promotion updated' : 'Promotion created'), 'success');
+          $modal.modal('hide');
+          setTimeout(() => location.reload(), 1000);
+        }
+      },
+      error: function (xhr) {
+        var res = xhr.responseJSON;
+        if (res && res.errors) {
+          $.each(res.errors, function (field, messages) {
+            var $input = $form.find('[name="' + field + '"]');
+            $input.addClass('is-invalid');
+            $('#error-' + field).text(messages[0]).show();
+          });
+        } else if (res && res.message) {
+          showToast(res.message, 'error');
+        } else {
+          showToast('An error occurred', 'error');
+        }
+      },
+      complete: function () {
+        $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Save Promotion');
+      }
+    });
+  });
+
+  function resetForm() {
+    promotionId = null;
+    isEdit = false;
+    $form[0].reset();
+    $form.find('.is-invalid').removeClass('is-invalid');
+    $form.find('.invalid-feedback').hide().text('');
+  }
+
+  function showToast(msg, type) {
+    type = type || 'info';
+    var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
+    var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
+    var $t = $('<div class="erp-toast ' + type + '"></div>')
+      .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
+    $('#toast-container').append($t);
+    setTimeout(function () { $t.css('opacity', 0); }, 2500);
+    setTimeout(function () { $t.remove(); }, 2800);
+  }
+});
+</script>
+@endpush
 @endsection

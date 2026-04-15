@@ -11,7 +11,7 @@
     </div>
     <div class="d-flex gap-2">
       <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-      <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalStockMove"><i
+      <button class="btn-erp btn-primary" id="btn-add-movement" data-bs-toggle="modal" data-bs-target="#modalStockMove"><i
           class="bi bi-plus-lg"></i> New Movement</button>
     </div>
   </div>
@@ -86,9 +86,16 @@
               <td>{{ $movement->reason ?? 'N/A' }}</td>
               <td>—</td>
               <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalStockMove" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon btn-edit" 
+                    data-id="{{ $movement->id }}"
+                    data-product_id="{{ $movement->product_id }}"
+                    data-movement_type="{{ $movement->movement_type }}"
+                    data-quantity="{{ $movement->quantity }}"
+                    data-from_warehouse_id="{{ $movement->from_warehouse_id ?? '' }}"
+                    data-to_warehouse_id="{{ $movement->to_warehouse_id ?? '' }}"
+                    data-reason="{{ $movement->reason ?? '' }}"
+                    data-bs-toggle="modal" data-bs-target="#modalStockMove" title="Edit"><i class="bi bi-pencil"></i></button><button
+                    class="btn-erp btn-danger btn-xs btn-icon btn-delete" data-id="{{ $movement->id }}" data-movement_type="{{ $movement->movement_type }}" data-bs-toggle="modal" data-bs-target="#modalDelete"
                     data-delete-label="Movement" title="Delete"><i class="bi bi-trash"></i></button></div>
               </td>
             </tr>
@@ -111,38 +118,42 @@
       <div class="modal-content"
         style="background:var(--bg-card);border:1px solid var(--border-active);border-radius:var(--radius)">
         <div class="modal-header" style="border-color:var(--border)">
-          <h5 class="modal-title" style="color:var(--text-primary);font-weight:600">New Stock Movement</h5>
+          <h5 class="modal-title" id="modal-title" style="color:var(--text-primary);font-weight:600">New Stock Movement</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <div class="row g-3">
-            <div class="col-md-6"><label class="erp-form-label">Product</label><select class="erp-form-control">
-                <option>HP ProBook 450</option>
-                <option>Office Chair Pro</option>
-              </select></div>
-            <div class="col-md-6"><label class="erp-form-label">Movement Type</label><select class="erp-form-control">
-                <option>Stock In</option>
-                <option>Stock Out</option>
-                <option>Transfer</option>
-              </select></div>
-            <div class="col-md-4"><label class="erp-form-label">Quantity</label><input class="erp-form-control"
-                type="number" placeholder="" /></div>
-            <div class="col-md-4"><label class="erp-form-label">From Warehouse</label><select class="erp-form-control">
-                <option>WH-A</option>
-                <option>WH-B</option>
-              </select></div>
-            <div class="col-md-4"><label class="erp-form-label">To Warehouse</label><select class="erp-form-control">
-                <option>—</option>
-                <option>WH-A</option>
-                <option>WH-B</option>
-              </select></div>
-            <div class="col-md-12"><label class="erp-form-label">Reason / Notes</label><textarea
-                class="erp-form-control" rows="2" placeholder=""></textarea></div>
-          </div>
+          <form id="form-stock-movement">
+            @csrf
+            <input type="hidden" name="id" id="movement-id">
+            <div class="row g-3">
+              <div class="col-md-6"><label class="erp-form-label">Product</label><select class="erp-form-control" name="product_id" id="product_id">
+                  <option value="">Select Product</option>
+                </select></div>
+              <div class="col-md-6"><label class="erp-form-label">Movement Type</label><select class="erp-form-control" name="movement_type" id="movement_type">
+                  <option value="Stock In">Stock In</option>
+                  <option value="Stock Out">Stock Out</option>
+                  <option value="Transfer">Transfer</option>
+                </select></div>
+              <div class="col-md-4"><label class="erp-form-label">Quantity</label><input class="erp-form-control"
+                  name="quantity" id="quantity" type="number" placeholder="" /></div>
+              <div class="col-md-4"><label class="erp-form-label">From Warehouse</label><select class="erp-form-control" name="from_warehouse_id" id="from_warehouse_id">
+                  <option value="">Select</option>
+                  <option value="WH-A">WH-A</option>
+                  <option value="WH-B">WH-B</option>
+                </select></div>
+              <div class="col-md-4"><label class="erp-form-label">To Warehouse</label><select class="erp-form-control" name="to_warehouse_id" id="to_warehouse_id">
+                  <option value="">Select</option>
+                  <option value="WH-A">WH-A</option>
+                  <option value="WH-B">WH-B</option>
+                </select></div>
+              <div class="col-md-12"><label class="erp-form-label">Reason / Notes</label><textarea
+                  class="erp-form-control" name="reason" id="reason" rows="2" placeholder=""></textarea></div>
+            </div>
+          </form>
         </div>
         <div class="modal-footer" style="border-color:var(--border)">
           <button type="button" class="btn-erp btn-outline" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn-erp btn-primary btn-modal-save">
+          <button type="button" class="btn-erp btn-primary btn-modal-save" id="btn-save">
             <i class="bi bi-check2"></i> Record Movement
           </button>
         </div>
@@ -175,4 +186,130 @@
       </div>
     </div>
   </div>
+
+  @push('scripts')
+    <script>
+      $(function () {
+        var routes = {
+          store: '{{ route("stock_movements.store") }}',
+          update: '{{ route("stock_movements.update", ":id") }}',
+          destroy: '{{ route("stock_movements.destroy", ":id") }}'
+        };
+
+        var $modal = $('#modalStockMove');
+        var $form = $('#form-stock-movement');
+        var $btnSave = $('#btn-save');
+        var movementId = null;
+        var isEdit = false;
+
+        $('#btn-add-movement').on('click', function () {
+          resetForm();
+          isEdit = false;
+          $('#modal-title').text('New Stock Movement');
+        });
+
+        $modal.on('shown.bs.modal', function () {
+          if (!isEdit) {
+            resetForm();
+            $('#modal-title').text('New Stock Movement');
+          }
+        });
+
+        $(document).on('click', '.btn-edit', function () {
+          resetForm();
+          isEdit = true;
+          movementId = $(this).data('id');
+          $('#modal-title').text('Edit Stock Movement');
+
+          $('#movement-id').val(movementId);
+          $('#product_id').val($(this).data('product_id'));
+          $('#movement_type').val($(this).data('movement_type'));
+          $('#quantity').val($(this).data('quantity'));
+          $('#from_warehouse_id').val($(this).data('from_warehouse_id'));
+          $('#to_warehouse_id').val($(this).data('to_warehouse_id'));
+          $('#reason').val($(this).data('reason'));
+        });
+
+        $(document).on('click', '.btn-delete', function () {
+          movementId = $(this).data('id');
+          var movement_type = $(this).data('movement_type');
+          $('#delete-target').text(movement_type || 'this movement');
+        });
+
+        $('#btn-confirm-delete').on('click', function () {
+          $.ajax({
+            url: routes.destroy.replace(':id', movementId),
+            method: 'DELETE',
+            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+            success: function (res) {
+              if (res.success) {
+                showToast(res.message || 'Movement deleted', 'success');
+                $('#modalDelete').modal('hide');
+                setTimeout(() => location.reload(), 1000);
+              }
+            },
+            error: function (xhr) {
+              showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
+            }
+          });
+        });
+
+        $btnSave.on('click', function () {
+          $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+
+          var url = isEdit ? routes.update.replace(':id', movementId) : routes.store;
+          var method = isEdit ? 'PUT' : 'POST';
+
+          $.ajax({
+            url: url,
+            method: method,
+            data: $form.serialize(),
+            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+            success: function (res) {
+              if (res.success) {
+                showToast(res.message || (isEdit ? 'Movement updated' : 'Movement recorded'), 'success');
+                $modal.modal('hide');
+                setTimeout(() => location.reload(), 1000);
+              }
+            },
+            error: function (xhr) {
+              var res = xhr.responseJSON;
+              if (res && res.errors) {
+                $.each(res.errors, function (field, messages) {
+                  var $input = $form.find('[name="' + field + '"]');
+                  $input.addClass('is-invalid');
+                });
+                showToast('Please check the form for errors', 'error');
+              } else if (res && res.message) {
+                showToast(res.message, 'error');
+              } else {
+                showToast('An error occurred', 'error');
+              }
+            },
+            complete: function () {
+              $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Record Movement');
+            }
+          });
+        });
+
+        function resetForm() {
+          movementId = null;
+          isEdit = false;
+          $form[0].reset();
+          $form.find('.is-invalid').removeClass('is-invalid');
+        }
+
+        function showToast(msg, type) {
+          type = type || 'info';
+          var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
+          var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
+          var $t = $('<div class="erp-toast ' + type + '"></div>')
+            .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
+          $('#toast-container').append($t);
+          setTimeout(function () { $t.css('opacity', 0); }, 2500);
+          setTimeout(function () { $t.remove(); }, 2800);
+        }
+      });
+    </script>
+  @endpush
 @endsection

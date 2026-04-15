@@ -11,8 +11,7 @@
     </div>
     <div class="d-flex gap-2">
       <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-      <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalBOM"><i
-          class="bi bi-plus-lg"></i> New BOM</button>
+      <button class="btn-erp btn-primary" id="btn-add-bom"><i class="bi bi-plus-lg"></i> New BOM</button>
     </div>
   </div>
 
@@ -62,10 +61,18 @@
                 @endif
               </td>
               <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalBOM" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="BOM" title="Delete"><i class="bi bi-trash"></i></button></div>
+                <div class="d-flex gap-1">
+                  <button class="btn-erp btn-outline btn-xs btn-icon btn-edit" 
+                    data-id="{{ $bom->id }}"
+                    data-finished_product_name="{{ $bom->finished_product_name }}"
+                    data-version="{{ $bom->version ?? 'v1.0' }}"
+                    data-lead_time_days="{{ $bom->lead_time_days ?? 0 }}"
+                    data-status="{{ $bom->status ?? 'Draft' }}"
+                    title="Edit"><i class="bi bi-pencil"></i></button>
+                  <button class="btn-erp btn-danger btn-xs btn-icon btn-delete" 
+                    data-id="{{ $bom->id }}"
+                    data-delete-label="BOM-{{ $bom->id }}" title="Delete"><i class="bi bi-trash"></i></button>
+                </div>
               </td>
             </tr>
           @endforeach
@@ -88,56 +95,46 @@
       <div class="modal-content"
         style="background:var(--bg-card);border:1px solid var(--border-active);border-radius:var(--radius)">
         <div class="modal-header" style="border-color:var(--border)">
-          <h5 class="modal-title" style="color:var(--text-primary);font-weight:600">New Bill of Materials</h5>
+          <h5 class="modal-title" style="color:var(--text-primary);font-weight:600" id="modal-title">New Bill of Materials</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
-        <div class="modal-body">
-          <div class="row g-3">
-            <div class="col-md-6"><label class="erp-form-label">Finished Product</label><input class="erp-form-control"
-                type="text" placeholder="Product name" /></div>
-            <div class="col-md-3"><label class="erp-form-label">Version</label><input class="erp-form-control"
-                type="text" placeholder="v1.0" /></div>
-            <div class="col-md-3"><label class="erp-form-label">Lead Time (days)</label><input class="erp-form-control"
-                type="number" placeholder="" /></div>
-            <div class="col-md-12"><label class="erp-form-label">Components
-                <div class="erp-table-wrap mt-1">
-                  <table class="erp-table">
-                    <thead>
-                      <tr>
-                        <th>Component</th>
-                        <th>Qty</th>
-                        <th>Unit</th>
-                        <th>Cost</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td><input class="erp-form-control" placeholder="Component name" /></td>
-                        <td><input class="erp-form-control" type="number" style="width:70px" /></td>
-                        <td><select class="erp-form-control">
-                            <option>pcs</option>
-                            <option>kg</option>
-                            <option>m</option>
-                          </select></td>
-                        <td><input class="erp-form-control" type="number" style="width:90px" placeholder="$0.00" /></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <button class="btn-erp btn-outline btn-sm mt-2"><i class="bi bi-plus"></i> Add Component</button>
-              </label></div>
+        <form id="form-bom">
+          <div class="modal-body">
+            <input type="hidden" name="id" id="bom-id" value="" />
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="erp-form-label">Finished Product</label>
+                <input class="erp-form-control" type="text" name="finished_product_name" id="finished_product_name" placeholder="Product name" />
+              </div>
+              <div class="col-md-3">
+                <label class="erp-form-label">Version</label>
+                <input class="erp-form-control" type="text" name="version" id="bom-version" placeholder="v1.0" />
+              </div>
+              <div class="col-md-3">
+                <label class="erp-form-label">Lead Time (days)</label>
+                <input class="erp-form-control" type="number" name="lead_time_days" id="lead_time_days" placeholder="" />
+              </div>
+              <div class="col-md-6">
+                <label class="erp-form-label">Status</label>
+                <select class="erp-form-control" name="status" id="bom-status">
+                  <option value="Draft">Draft</option>
+                  <option value="Active">Active</option>
+                  <option value="Archived">Archived</option>
+                </select>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="modal-footer" style="border-color:var(--border)">
-          <button type="button" class="btn-erp btn-outline" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn-erp btn-primary btn-modal-save">
-            <i class="bi bi-check2"></i> Save BOM
-          </button>
-        </div>
+          <div class="modal-footer" style="border-color:var(--border)">
+            <button type="button" class="btn-erp btn-outline" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn-erp btn-primary" id="btn-save">
+              <i class="bi bi-check2"></i> Save BOM
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
-  <!-- Delete Confirm Modal -->
+
   <div class="modal fade" id="modalDelete" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" style="max-width:400px">
       <div class="modal-content"
@@ -164,3 +161,124 @@
     </div>
   </div>
 @endsection
+
+@push('scripts')
+<script>
+$(function() {
+  var routes = {
+    store: '{{ route("bom.store") }}',
+    update: '{{ route("bom.update", ":id") }}',
+    destroy: '{{ route("bom.destroy", ":id") }}'
+  };
+
+  var $modal = $('#modalBOM');
+  var $form = $('#form-bom');
+  var $btnSave = $('#btn-save');
+  var bomId = null;
+  var isEdit = false;
+
+  function resetForm() {
+    $form[0].reset();
+    $form.find('.is-invalid').removeClass('is-invalid');
+    $form.find('.invalid-feedback').hide();
+    $('#bom-id').val('');
+  }
+
+  $('#btn-add-bom').on('click', function() {
+    resetForm();
+    isEdit = false;
+    $('#modal-title').text('New Bill of Materials');
+    $btnSave.html('<i class="bi bi-check2"></i> Save BOM');
+    $modal.modal('show');
+  });
+
+  $(document).on('click', '.btn-edit', function() {
+    resetForm();
+    isEdit = true;
+    bomId = $(this).data('id');
+    $('#modal-title').text('Edit Bill of Materials');
+    
+    $('#bom-id').val(bomId);
+    $('#finished_product_name').val($(this).data('finished_product_name'));
+    $('#bom-version').val($(this).data('version'));
+    $('#lead_time_days').val($(this).data('lead_time_days'));
+    $('#bom-status').val($(this).data('status') || 'Draft');
+    
+    $btnSave.html('<i class="bi bi-check2"></i> Update BOM');
+    $modal.modal('show');
+  });
+
+  $(document).on('click', '.btn-delete', function() {
+    bomId = $(this).data('id');
+    var id_display = $(this).data('delete-label') || 'this BOM';
+    $('#delete-target').text(id_display);
+    $('#modalDelete').modal('show');
+  });
+
+  $('#btn-confirm-delete').on('click', function() {
+    $.ajax({
+      url: routes.destroy.replace(':id', bomId),
+      method: 'DELETE',
+      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+      success: function(res) {
+        if (res.success) {
+          showToast(res.message || 'BOM deleted', 'success');
+          $('#modalDelete').modal('hide');
+          setTimeout(() => location.reload(), 1000);
+        }
+      },
+      error: function(xhr) {
+        showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
+      }
+    });
+  });
+
+  $form.on('submit', function(e) {
+    e.preventDefault();
+    $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+
+    var url = isEdit ? routes.update.replace(':id', bomId) : routes.store;
+    var method = isEdit ? 'PUT' : 'POST';
+
+    $.ajax({
+      url: url,
+      method: method,
+      data: $form.serialize(),
+      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+      success: function(res) {
+        if (res.success) {
+          showToast(res.message || (isEdit ? 'BOM updated' : 'BOM created'), 'success');
+          $modal.modal('hide');
+          setTimeout(() => location.reload(), 1000);
+        }
+      },
+      error: function(xhr) {
+        var res = xhr.responseJSON;
+        if (res && res.errors) {
+          $.each(res.errors, function(field, messages) {
+            var $input = $form.find('[name="' + field + '"]');
+            $input.addClass('is-invalid');
+            $('<div class="invalid-feedback" style="display:block">' + messages[0] + '</div>').insertAfter($input);
+          });
+        } else if (res && res.message) {
+          showToast(res.message, 'error');
+        } else {
+          showToast('An error occurred', 'error');
+        }
+      },
+      complete: function() {
+        $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Save BOM');
+      }
+    });
+  });
+
+  function showToast(msg, type) {
+    var $t = $('<div class="erp-toast ' + type + '"></div>')
+      .html('<span class="toast-icon">' + (type === 'success' ? '✓' : '✕') + '</span><span class="toast-message">' + msg + '</span>');
+    $('#toast-container').append($t);
+    setTimeout(function() { $t.addClass('show'); }, 10);
+    setTimeout(function() { $t.remove(); }, 4000);
+  }
+});
+</script>
+@endpush

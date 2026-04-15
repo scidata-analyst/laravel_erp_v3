@@ -49,4 +49,7 @@ Route::prefix('api/v1/ecommerce/inv-sync')->group(function () {
     Route::delete('/{id}', [InvSyncController::class, 'destroy'])
         ->name('inv_sync.destroy');
 
+    Route::post('/force-sync', [InvSyncController::class, 'forceSync'])
+        ->name('inv_sync.forceSync');
+
 });

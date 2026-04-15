@@ -11,7 +11,7 @@
     </div>
     <div class="d-flex gap-2">
       <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-      <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalFinReport"><i
+      <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalFinReport" data-mode="create"><i
           class="bi bi-plus-lg"></i> Generate Report</button>
     </div>
   </div>
@@ -44,7 +44,7 @@
         </thead>
         <tbody>
           @foreach ($data as $report)
-            <tr>
+            <tr data-id="{{ $report->id }}">
               <td>{{ $report->type ?? 'N/A' }} {{ $report->period ?? '' }}</td>
               <td>{{ $report->type ?? 'N/A' }}</td>
               <td>{{ $report->period ?? 'N/A' }}</td>
@@ -52,12 +52,14 @@
               <td>—</td>
               <td>{{ $report->format ?? 'PDF' }}</td>
               <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-success btn-xs btn-icon btn-export"
-                    title="Download"><i class="bi bi-download"></i></button><button
-                    class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalFinReport"
-                    title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon"
-                    data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Generate Report"
-                    title="Delete"><i class="bi bi-trash"></i></button></div>
+                <div class="d-flex gap-1">
+                  <button class="btn-erp btn-success btn-xs btn-icon btn-export"
+                    title="Download"><i class="bi bi-download"></i></button>
+                  <button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalFinReport"
+                    data-mode="edit" data-id="{{ $report->id }}" title="Edit"><i class="bi bi-pencil"></i></button>
+                  <button class="btn-erp btn-danger btn-xs btn-icon"
+                    data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Report" data-delete-id="{{ $report->id }}" data-delete-url="{{ route('fin_reports.destroy', $report->id) }}" title="Delete"><i class="bi bi-trash"></i></button>
+                </div>
               </td>
             </tr>
           @endforeach
@@ -82,36 +84,52 @@
           <h5 class="modal-title" style="color:var(--text-primary);font-weight:600">Generate Report</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
-        <div class="modal-body">
-          <div class="row g-3">
-            <div class="col-md-6"><label class="erp-form-label">Report Type</label><select class="erp-form-control">
-                <option>Profit & Loss</option>
-                <option>Balance Sheet</option>
-                <option>Cash Flow</option>
-                <option>Trial Balance</option>
-              </select></div>
-            <div class="col-md-6"><label class="erp-form-label">Period</label><select class="erp-form-control">
-                <option>This Month</option>
-                <option>Last Month</option>
-                <option>This Quarter</option>
-                <option>Custom</option>
-              </select></div>
-            <div class="col-md-6"><label class="erp-form-label">From Date</label><input class="erp-form-control"
-                type="date" placeholder="" /></div>
-            <div class="col-md-6"><label class="erp-form-label">To Date</label><input class="erp-form-control"
-                type="date" placeholder="" /></div>
-            <div class="col-md-4"><label class="erp-form-label">Format</label><select class="erp-form-control">
-                <option>PDF</option>
-                <option>Excel</option>
-              </select></div>
+        <form id="formFinReport" data-route-store="{{ route('fin_reports.store') }}">
+          <div class="modal-body">
+            <input type="hidden" name="id" id="report_id">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="erp-form-label">Report Type</label>
+                <select class="erp-form-control" name="type">
+                  <option value="Profit & Loss">Profit & Loss</option>
+                  <option value="Balance Sheet">Balance Sheet</option>
+                  <option value="Cash Flow">Cash Flow</option>
+                  <option value="Trial Balance">Trial Balance</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="erp-form-label">Period</label>
+                <select class="erp-form-control" name="period">
+                  <option value="This Month">This Month</option>
+                  <option value="Last Month">Last Month</option>
+                  <option value="This Quarter">This Quarter</option>
+                  <option value="Custom">Custom</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="erp-form-label">From Date</label>
+                <input class="erp-form-control" type="date" name="from_date" placeholder="" />
+              </div>
+              <div class="col-md-6">
+                <label class="erp-form-label">To Date</label>
+                <input class="erp-form-control" type="date" name="to_date" placeholder="" />
+              </div>
+              <div class="col-md-4">
+                <label class="erp-form-label">Format</label>
+                <select class="erp-form-control" name="format">
+                  <option value="PDF">PDF</option>
+                  <option value="Excel">Excel</option>
+                </select>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="modal-footer" style="border-color:var(--border)">
-          <button type="button" class="btn-erp btn-outline" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn-erp btn-primary btn-modal-save">
-            <i class="bi bi-check2"></i> Generate
-          </button>
-        </div>
+          <div class="modal-footer" style="border-color:var(--border)">
+            <button type="button" class="btn-erp btn-outline" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn-erp btn-primary btn-modal-save">
+              <i class="bi bi-check2"></i> Generate
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -142,3 +160,94 @@
     </div>
   </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const modalFinReport = document.getElementById('modalFinReport');
+  const formFinReport = document.getElementById('formFinReport');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
+
+  let deleteUrl = null;
+
+  modalFinReport.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = modalFinReport.querySelector('.modal-title');
+
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Report';
+      formFinReport.dataset.routeUpdate = '{{ route("fin_reports.update", ":id") }}'.replace(':id', id);
+      fetch('{{ route("fin_reports.show", ":id") }}'.replace(':id', id))
+        .then(r => r.json())
+        .then(data => {
+          document.getElementById('report_id').value = data.id;
+          formFinReport.querySelector('[name="type"]').value = data.type || 'Profit & Loss';
+          formFinReport.querySelector('[name="period"]').value = data.period || 'This Month';
+          formFinReport.querySelector('[name="from_date"]').value = data.from_date || '';
+          formFinReport.querySelector('[name="to_date"]').value = data.to_date || '';
+          formFinReport.querySelector('[name="format"]').value = data.format || 'PDF';
+        });
+    } else {
+      modalTitle.textContent = 'Generate Report';
+      formFinReport.reset();
+      document.getElementById('report_id').value = '';
+      formFinReport.dataset.routeUpdate = '';
+    }
+  });
+
+  formFinReport.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const id = document.getElementById('report_id').value;
+    const url = id ? formFinReport.dataset.routeUpdate : formFinReport.dataset.routeStore;
+    const method = id ? 'PUT' : 'POST';
+
+    const formData = new FormData(formFinReport);
+    if (id) formData.append('_method', 'PUT');
+
+    fetch(url, {
+      method: 'POST',
+      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+      body: formData
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        bootstrap.Modal.getInstance(modalFinReport).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(() => showToast('An error occurred', 'error'));
+  });
+
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteUrl = button.dataset.deleteUrl;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
+  });
+
+  btnConfirmDelete.addEventListener('click', function() {
+    fetch(deleteUrl, {
+      method: 'DELETE',
+      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(() => showToast('An error occurred', 'error'));
+  });
+});
+</script>
+@endpush

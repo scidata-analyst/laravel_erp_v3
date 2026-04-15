@@ -11,7 +11,7 @@
   </div>
   <div class="d-flex gap-2">
     <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-    <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalGRN"><i class="bi bi-plus-lg"></i> New GRN</button>
+    <button class="btn-erp btn-primary" id="btn-add-grn"><i class="bi bi-plus-lg"></i> New GRN</button>
   </div>
 </div>
 
@@ -27,7 +27,7 @@
     <table class="erp-table" id="tbl-main">
       <thead><tr><th>GRN #</th><th>PO Reference</th><th>Supplier</th><th>Received Date</th><th>Items</th><th>Total Value</th><th>Status</th><th>Actions</th></tr></thead>
       <tbody>
-        @foreach ($data as $grn)
+        @forelse ($data as $grn)
           <tr>
             <td>{{ $grn->grn_number }}</td>
             <td>{{ $grn->purchase_order_id ?? 'N/A' }}</td>
@@ -44,15 +44,38 @@
                 <span class="badge-status badge-info">Draft</span>
               @endif
             </td>
-            <td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalGRN" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="GRN" title="Delete"><i class="bi bi-trash"></i></button></div></td>
+            <td><div class="d-flex gap-1">
+              <button class="btn-erp btn-outline btn-xs btn-icon btn-edit"
+                data-id="{{ $grn->id }}"
+                data-grn_number="{{ $grn->grn_number }}"
+                data-purchase_order_id="{{ $grn->purchase_order_id }}"
+                data-supplier_name="{{ $grn->supplier_name }}"
+                data-receipt_date="{{ $grn->receipt_date }}"
+                data-warehouse="{{ $grn->warehouse }}"
+                data-notes="{{ $grn->notes }}"
+                data-status="{{ $grn->status }}"
+                title="Edit">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button class="btn-erp btn-danger btn-xs btn-icon btn-delete"
+                data-id="{{ $grn->id }}"
+                data-grn_number="{{ $grn->grn_number }}"
+                title="Delete">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div></td>
           </tr>
-        @endforeach
+        @empty
+          <tr>
+            <td colspan="8" class="text-center text-muted">No GRN records found.</td>
+          </tr>
+        @endforelse
       </tbody>
     </table>
   </div>
   <div class="d-flex justify-content-between align-items-center mt-5">
     <div>
-      Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+      Showing {{ $data->firstItem() ?? 0 }} to {{ $data->lastItem() ?? 0 }} of {{ $data->total() ?? 0 }}
     </div>
     <div>
       {{ $data->links('pagination::bootstrap-5') }}
@@ -61,21 +84,60 @@
 </div>
 
 <div class="modal fade" id="modalGRN" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-active);border-radius:var(--radius)">
       <div class="modal-header" style="border-color:var(--border)">
-        <h5 class="modal-title" style="color:var(--text-primary);font-weight:600">New Goods Receipt Note</h5>
+        <h5 class="modal-title" style="color:var(--text-primary);font-weight:600" id="modal-title">New Goods Receipt Note</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body">
-<div class="row g-3"><div class="col-md-6"><label class="erp-form-label">Purchase Order</label><select class="erp-form-control"><option>PO-2025-0091</option><option>PO-2025-0089</option></select></div><div class="col-md-6"><label class="erp-form-label">Supplier</label><input class="erp-form-control" type="text" placeholder="TechSource Ltd."/></div><div class="col-md-6"><label class="erp-form-label">Receipt Date</label><input class="erp-form-control" type="date" placeholder=""/></div><div class="col-md-6"><label class="erp-form-label">Warehouse</label><select class="erp-form-control"><option>WH-A</option><option>WH-B</option></select></div><div class="col-md-12"><label class="erp-form-label">Notes</label><textarea class="erp-form-control" rows="2" placeholder=""></textarea></div></div>
-      </div>
-      <div class="modal-footer" style="border-color:var(--border)">
-        <button type="button" class="btn-erp btn-outline" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn-erp btn-primary btn-modal-save">
-          <i class="bi bi-check2"></i> Save GRN
-        </button>
-      </div>
+      <form id="form-grn">
+        <div class="modal-body">
+          <input type="hidden" name="id" id="grn-id" value="" />
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="erp-form-label">Purchase Order</label>
+              <select class="erp-form-control" name="purchase_order_id" id="purchase-order-id">
+                <option value="">Select PO</option>
+                <option value="1">PO-2025-0091</option>
+                <option value="2">PO-2025-0089</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="erp-form-label">Supplier</label>
+              <input class="erp-form-control" type="text" name="supplier_name" id="supplier-name" placeholder="TechSource Ltd." />
+            </div>
+            <div class="col-md-6">
+              <label class="erp-form-label">Receipt Date</label>
+              <input class="erp-form-control" type="date" name="receipt_date" id="receipt-date" />
+            </div>
+            <div class="col-md-6">
+              <label class="erp-form-label">Warehouse</label>
+              <select class="erp-form-control" name="warehouse" id="warehouse">
+                <option value="WH-A">WH-A</option>
+                <option value="WH-B">WH-B</option>
+              </select>
+            </div>
+            <div class="col-md-12">
+              <label class="erp-form-label">Notes</label>
+              <textarea class="erp-form-control" name="notes" id="notes" rows="2" placeholder=""></textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="erp-form-label">Status</label>
+              <select class="erp-form-control" name="status" id="status">
+                <option value="Draft">Draft</option>
+                <option value="Partial">Partial</option>
+                <option value="Received">Received</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-color:var(--border)">
+          <button type="button" class="btn-erp btn-outline" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn-erp btn-primary" id="btn-save">
+            <i class="bi bi-check2"></i> Save GRN
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
@@ -103,4 +165,127 @@
     </div>
   </div>
 </div>
+
+@push('scripts')
+<script>
+$(function() {
+  var routes = {
+    store: '{{ route("grn.store") }}',
+    update: '{{ route("grn.update", ":id") }}',
+    destroy: '{{ route("grn.destroy", ":id") }}'
+  };
+
+  var $modal = $('#modalGRN');
+  var $form = $('#form-grn');
+  var $btnSave = $('#btn-save');
+  var grnId = null;
+  var isEdit = false;
+
+  $('#btn-add-grn').on('click', function() {
+    resetForm();
+    isEdit = false;
+    $('#modal-title').text('New Goods Receipt Note');
+    $modal.modal('show');
+  });
+
+  $(document).on('click', '.btn-edit', function() {
+    resetForm();
+    isEdit = true;
+    grnId = $(this).data('id');
+    $('#modal-title').text('Edit Goods Receipt Note');
+
+    $('#grn-id').val(grnId);
+    $('#purchase-order-id').val($(this).data('purchase_order_id'));
+    $('#supplier-name').val($(this).data('supplier_name'));
+    $('#receipt-date').val($(this).data('receipt_date'));
+    $('#warehouse').val($(this).data('warehouse') || 'WH-A');
+    $('#notes').val($(this).data('notes'));
+    $('#status').val($(this).data('status') || 'Draft');
+
+    $modal.modal('show');
+  });
+
+  $(document).on('click', '.btn-delete', function() {
+    grnId = $(this).data('id');
+    var grn_number = $(this).data('grn_number');
+    $('#delete-target').text(grn_number || 'this GRN');
+    $('#modalDelete').modal('show');
+  });
+
+  $('#btn-confirm-delete').on('click', function() {
+    $.ajax({
+      url: routes.destroy.replace(':id', grnId),
+      method: 'DELETE',
+      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+      success: function(res) {
+        if (res.success) {
+          showToast(res.message || 'GRN deleted', 'success');
+          $('#modalDelete').modal('hide');
+          setTimeout(() => location.reload(), 1000);
+        }
+      },
+      error: function(xhr) {
+        showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
+      }
+    });
+  });
+
+  $form.on('submit', function(e) {
+    e.preventDefault();
+    $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+
+    var url = isEdit ? routes.update.replace(':id', grnId) : routes.store;
+    var method = isEdit ? 'PUT' : 'POST';
+
+    $.ajax({
+      url: url,
+      method: method,
+      data: $form.serialize(),
+      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+      success: function(res) {
+        if (res.success) {
+          showToast(res.message || (isEdit ? 'GRN updated' : 'GRN created'), 'success');
+          $modal.modal('hide');
+          setTimeout(() => location.reload(), 1000);
+        }
+      },
+      error: function(xhr) {
+        var res = xhr.responseJSON;
+        if (res && res.errors) {
+          $.each(res.errors, function(field, messages) {
+            var $input = $form.find('[name="' + field + '"]');
+            $input.addClass('is-invalid');
+          });
+        } else if (res && res.message) {
+          showToast(res.message, 'error');
+        } else {
+          showToast('An error occurred', 'error');
+        }
+      },
+      complete: function() {
+        $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Save GRN');
+      }
+    });
+  });
+
+  function resetForm() {
+    grnId = null;
+    isEdit = false;
+    $form[0].reset();
+    $form.find('.is-invalid').removeClass('is-invalid');
+  }
+
+  function showToast(msg, type) {
+    type = type || 'info';
+    var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
+    var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
+    var $t = $('<div class="erp-toast ' + type + '"></div>')
+      .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
+    $('#toast-container').append($t);
+    setTimeout(function() { $t.css('opacity', 0); }, 2500);
+    setTimeout(function() { $t.remove(); }, 2800);
+  }
+});
+</script>
+@endpush
 @endsection

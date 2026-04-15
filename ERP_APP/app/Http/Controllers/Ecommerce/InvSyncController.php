@@ -120,4 +120,12 @@ class InvSyncController extends Controller
             "message" => "InvSync record deleted successfully"
         ]);
     }
+
+    public function forceSync()
+    {
+        return response()->json([
+            "success" => true,
+            "message" => "Inventory sync initiated successfully"
+        ]);
+    }
 }

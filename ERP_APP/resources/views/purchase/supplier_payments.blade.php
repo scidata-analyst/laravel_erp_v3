@@ -11,7 +11,7 @@
   </div>
   <div class="d-flex gap-2">
     <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-    <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalSupplierPay"><i class="bi bi-plus-lg"></i> New Payment</button>
+    <button class="btn-erp btn-primary" id="btn-add-payment"><i class="bi bi-plus-lg"></i> New Payment</button>
   </div>
 </div>
 
@@ -27,7 +27,7 @@
     <table class="erp-table" id="tbl-main">
       <thead><tr><th>Payment #</th><th>Supplier</th><th>Invoice Ref</th><th>Amount</th><th>Payment Date</th><th>Method</th><th>Status</th><th>Actions</th></tr></thead>
       <tbody>
-        @foreach ($data as $payment)
+        @forelse ($data as $payment)
           <tr>
             <td>{{ $payment->payment_number }}</td>
             <td>{{ $payment->supplier_id ?? 'N/A' }}</td>
@@ -44,15 +44,38 @@
                 <span class="badge-status badge-inactive">Overdue</span>
               @endif
             </td>
-            <td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalSupplierPay" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Payment" title="Delete"><i class="bi bi-trash"></i></button></div></td>
+            <td><div class="d-flex gap-1">
+              <button class="btn-erp btn-outline btn-xs btn-icon btn-edit"
+                data-id="{{ $payment->id }}"
+                data-payment_number="{{ $payment->payment_number }}"
+                data-supplier_id="{{ $payment->supplier_id }}"
+                data-invoice_reference="{{ $payment->invoice_reference }}"
+                data-amount="{{ $payment->amount }}"
+                data-payment_date="{{ $payment->payment_date }}"
+                data-payment_method="{{ $payment->payment_method }}"
+                data-status="{{ $payment->status }}"
+                title="Edit">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button class="btn-erp btn-danger btn-xs btn-icon btn-delete"
+                data-id="{{ $payment->id }}"
+                data-payment_number="{{ $payment->payment_number }}"
+                title="Delete">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div></td>
           </tr>
-        @endforeach
+        @empty
+          <tr>
+            <td colspan="8" class="text-center text-muted">No payments found.</td>
+          </tr>
+        @endforelse
       </tbody>
     </table>
   </div>
   <div class="d-flex justify-content-between align-items-center mt-5">
     <div>
-      Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }}
+      Showing {{ $data->firstItem() ?? 0 }} to {{ $data->lastItem() ?? 0 }} of {{ $data->total() ?? 0 }}
     </div>
     <div>
       {{ $data->links('pagination::bootstrap-5') }}
@@ -61,21 +84,61 @@
 </div>
 
 <div class="modal fade" id="modalSupplierPay" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-active);border-radius:var(--radius)">
       <div class="modal-header" style="border-color:var(--border)">
-        <h5 class="modal-title" style="color:var(--text-primary);font-weight:600">New Supplier Payment</h5>
+        <h5 class="modal-title" style="color:var(--text-primary);font-weight:600" id="modal-title">New Supplier Payment</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body">
-<div class="row g-3"><div class="col-md-6"><label class="erp-form-label">Supplier</label><select class="erp-form-control"><option>TechSource Ltd.</option><option>GlobalParts Inc.</option></select></div><div class="col-md-6"><label class="erp-form-label">Invoice Reference</label><input class="erp-form-control" type="text" placeholder="INV-SUP-XXX"/></div><div class="col-md-4"><label class="erp-form-label">Amount ($)</label><input class="erp-form-control" type="number" placeholder=""/></div><div class="col-md-4"><label class="erp-form-label">Payment Date</label><input class="erp-form-control" type="date" placeholder=""/></div><div class="col-md-4"><label class="erp-form-label">Method</label><select class="erp-form-control"><option>Bank Transfer</option><option>Cheque</option><option>Cash</option></select></div></div>
-      </div>
-      <div class="modal-footer" style="border-color:var(--border)">
-        <button type="button" class="btn-erp btn-outline" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn-erp btn-primary btn-modal-save">
-          <i class="bi bi-check2"></i> Record Payment
-        </button>
-      </div>
+      <form id="form-payment">
+        <div class="modal-body">
+          <input type="hidden" name="id" id="payment-id" value="" />
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="erp-form-label">Supplier</label>
+              <select class="erp-form-control" name="supplier_id" id="supplier-id">
+                <option value="">Select Supplier</option>
+                <option value="1">TechSource Ltd.</option>
+                <option value="2">GlobalParts Inc.</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="erp-form-label">Invoice Reference</label>
+              <input class="erp-form-control" type="text" name="invoice_reference" id="invoice-reference" placeholder="INV-SUP-XXX" />
+            </div>
+            <div class="col-md-4">
+              <label class="erp-form-label">Amount ($)</label>
+              <input class="erp-form-control" type="number" name="amount" id="amount" step="0.01" placeholder="" />
+            </div>
+            <div class="col-md-4">
+              <label class="erp-form-label">Payment Date</label>
+              <input class="erp-form-control" type="date" name="payment_date" id="payment-date" />
+            </div>
+            <div class="col-md-4">
+              <label class="erp-form-label">Method</label>
+              <select class="erp-form-control" name="payment_method" id="payment-method">
+                <option value="Bank Transfer">Bank Transfer</option>
+                <option value="Cheque">Cheque</option>
+                <option value="Cash">Cash</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="erp-form-label">Status</label>
+              <select class="erp-form-control" name="status" id="status">
+                <option value="Pending">Pending</option>
+                <option value="Paid">Paid</option>
+                <option value="Overdue">Overdue</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-color:var(--border)">
+          <button type="button" class="btn-erp btn-outline" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn-erp btn-primary" id="btn-save">
+            <i class="bi bi-check2"></i> Record Payment
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
@@ -103,4 +166,127 @@
     </div>
   </div>
 </div>
+
+@push('scripts')
+<script>
+$(function() {
+  var routes = {
+    store: '{{ route("supplier_payment.store") }}',
+    update: '{{ route("supplier_payment.update", ":id") }}',
+    destroy: '{{ route("supplier_payment.destroy", ":id") }}'
+  };
+
+  var $modal = $('#modalSupplierPay');
+  var $form = $('#form-payment');
+  var $btnSave = $('#btn-save');
+  var paymentId = null;
+  var isEdit = false;
+
+  $('#btn-add-payment').on('click', function() {
+    resetForm();
+    isEdit = false;
+    $('#modal-title').text('New Supplier Payment');
+    $modal.modal('show');
+  });
+
+  $(document).on('click', '.btn-edit', function() {
+    resetForm();
+    isEdit = true;
+    paymentId = $(this).data('id');
+    $('#modal-title').text('Edit Supplier Payment');
+
+    $('#payment-id').val(paymentId);
+    $('#supplier-id').val($(this).data('supplier_id'));
+    $('#invoice-reference').val($(this).data('invoice_reference'));
+    $('#amount').val($(this).data('amount'));
+    $('#payment-date').val($(this).data('payment_date'));
+    $('#payment-method').val($(this).data('payment_method') || 'Bank Transfer');
+    $('#status').val($(this).data('status') || 'Pending');
+
+    $modal.modal('show');
+  });
+
+  $(document).on('click', '.btn-delete', function() {
+    paymentId = $(this).data('id');
+    var payment_number = $(this).data('payment_number');
+    $('#delete-target').text(payment_number || 'this payment');
+    $('#modalDelete').modal('show');
+  });
+
+  $('#btn-confirm-delete').on('click', function() {
+    $.ajax({
+      url: routes.destroy.replace(':id', paymentId),
+      method: 'DELETE',
+      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+      success: function(res) {
+        if (res.success) {
+          showToast(res.message || 'Payment deleted', 'success');
+          $('#modalDelete').modal('hide');
+          setTimeout(() => location.reload(), 1000);
+        }
+      },
+      error: function(xhr) {
+        showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
+      }
+    });
+  });
+
+  $form.on('submit', function(e) {
+    e.preventDefault();
+    $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+
+    var url = isEdit ? routes.update.replace(':id', paymentId) : routes.store;
+    var method = isEdit ? 'PUT' : 'POST';
+
+    $.ajax({
+      url: url,
+      method: method,
+      data: $form.serialize(),
+      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+      success: function(res) {
+        if (res.success) {
+          showToast(res.message || (isEdit ? 'Payment updated' : 'Payment created'), 'success');
+          $modal.modal('hide');
+          setTimeout(() => location.reload(), 1000);
+        }
+      },
+      error: function(xhr) {
+        var res = xhr.responseJSON;
+        if (res && res.errors) {
+          $.each(res.errors, function(field, messages) {
+            var $input = $form.find('[name="' + field + '"]');
+            $input.addClass('is-invalid');
+          });
+        } else if (res && res.message) {
+          showToast(res.message, 'error');
+        } else {
+          showToast('An error occurred', 'error');
+        }
+      },
+      complete: function() {
+        $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Record Payment');
+      }
+    });
+  });
+
+  function resetForm() {
+    paymentId = null;
+    isEdit = false;
+    $form[0].reset();
+    $form.find('.is-invalid').removeClass('is-invalid');
+  }
+
+  function showToast(msg, type) {
+    type = type || 'info';
+    var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
+    var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
+    var $t = $('<div class="erp-toast ' + type + '"></div>')
+      .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
+    $('#toast-container').append($t);
+    setTimeout(function() { $t.css('opacity', 0); }, 2500);
+    setTimeout(function() { $t.remove(); }, 2800);
+  }
+});
+</script>
+@endpush
 @endsection

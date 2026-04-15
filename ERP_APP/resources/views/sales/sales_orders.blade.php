@@ -11,7 +11,7 @@
   </div>
   <div class="d-flex gap-2">
     <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-    <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalSO"><i class="bi bi-plus-lg"></i> New Order</button>
+    <button class="btn-erp btn-primary" id="btn-add-salesorder"><i class="bi bi-plus-lg"></i> New Order</button>
   </div>
 </div>
 
@@ -46,7 +46,7 @@
                 <span class="badge-status badge-inactive">{{ $order->status }}</span>
               @endif
             </td>
-            <td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalSO" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Order" title="Delete"><i class="bi bi-trash"></i></button></div></td>
+            <td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon btn-edit" data-id="{{ $order->id }}" data-order_number="{{ $order->order_number }}" data-customer_id="{{ $order->customer_id }}" data-order_date="{{ $order->order_date }}" data-delivery_date="{{ $order->delivery_date }}" data-payment_terms="{{ $order->payment_terms }}" data-discount_percent="{{ $order->discount_percent }}" data-status="{{ $order->status }}" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon btn-delete" data-id="{{ $order->id }}" data-order_number="{{ $order->order_number }}" title="Delete"><i class="bi bi-trash"></i></button></div></td>
           </tr>
         @endforeach
       </tbody>
@@ -66,34 +66,63 @@
   <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-active);border-radius:var(--radius)">
       <div class="modal-header" style="border-color:var(--border)">
-        <h5 class="modal-title" style="color:var(--text-primary);font-weight:600">New Sales Order</h5>
+        <h5 class="modal-title" style="color:var(--text-primary);font-weight:600" id="modal-title">New Sales Order</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body">
-
-      <div class="row g-3 mb-3">
-        <div class="col-md-6"><div class="col-md-12"><label class="erp-form-label">Customer</label><select class="erp-form-control"><option>Acme Corporation</option><option>Delta Retailers</option></select></div></div>
-        <div class="col-md-3"><div class="col-md-12"><label class="erp-form-label">Order Date</label><input class="erp-form-control" type="date" placeholder=""/></div></div>
-        <div class="col-md-3"><div class="col-md-12"><label class="erp-form-label">Delivery Date</label><input class="erp-form-control" type="date" placeholder=""/></div></div>
-        <div class="col-md-6"><div class="col-md-12"><label class="erp-form-label">Payment Terms</label><select class="erp-form-control"><option>Net 30</option><option>Due on Receipt</option></select></div></div>
-        <div class="col-md-6"><div class="col-md-12"><label class="erp-form-label">Discount (%)</label><input class="erp-form-control" type="number" placeholder="0"/></div></div>
-      </div>
-      <label class="erp-form-label">Order Items</label>
-      <div class="erp-table-wrap"><table class="erp-table"><thead><tr><th>Product</th><th>Qty</th><th>Unit Price</th><th>Discount</th><th>Total</th></tr></thead>
-      <tbody><tr>
-        <td><select class="erp-form-control"><option>HP ProBook 450</option><option>Logitech MX Master</option></select></td>
-        <td><input class="erp-form-control" type="number" style="width:70px" value="1"/></td>
-        <td style="font-family:'IBM Plex Mono',monospace">$849.00</td>
-        <td><input class="erp-form-control" type="number" style="width:70px" placeholder="0%"/></td>
-        <td style="color:var(--accent-2);font-family:'IBM Plex Mono',monospace">$849.00</td>
-      </tr></tbody></table></div>
-      </div>
-      <div class="modal-footer" style="border-color:var(--border)">
-        <button type="button" class="btn-erp btn-outline" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn-erp btn-primary btn-modal-save">
-          <i class="bi bi-check2"></i> Confirm Order
-        </button>
-      </div>
+      <form id="form-salesorder">
+        <div class="modal-body">
+          <input type="hidden" name="id" id="salesorder-id" value="" />
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="erp-form-label">Customer</label>
+              <select class="erp-form-control" name="customer_id" id="customer-id">
+                <option value="">Select Customer</option>
+                <option value="Acme Corporation">Acme Corporation</option>
+                <option value="Delta Retailers">Delta Retailers</option>
+              </select>
+              <div class="invalid-feedback" id="error-customer_id"></div>
+            </div>
+            <div class="col-md-3">
+              <label class="erp-form-label">Order Date</label>
+              <input class="erp-form-control" type="date" name="order_date" id="order-date" />
+              <div class="invalid-feedback" id="error-order_date"></div>
+            </div>
+            <div class="col-md-3">
+              <label class="erp-form-label">Delivery Date</label>
+              <input class="erp-form-control" type="date" name="delivery_date" id="delivery-date" />
+              <div class="invalid-feedback" id="error-delivery_date"></div>
+            </div>
+            <div class="col-md-6">
+              <label class="erp-form-label">Payment Terms</label>
+              <select class="erp-form-control" name="payment_terms" id="payment-terms">
+                <option value="Net 30">Net 30</option>
+                <option value="Due on Receipt">Due on Receipt</option>
+              </select>
+              <div class="invalid-feedback" id="error-payment_terms"></div>
+            </div>
+            <div class="col-md-6">
+              <label class="erp-form-label">Discount (%)</label>
+              <input class="erp-form-control" type="number" name="discount_percent" id="discount-percent" value="0" />
+              <div class="invalid-feedback" id="error-discount_percent"></div>
+            </div>
+          </div>
+          <label class="erp-form-label">Order Items</label>
+          <div class="erp-table-wrap"><table class="erp-table"><thead><tr><th>Product</th><th>Qty</th><th>Unit Price</th><th>Discount</th><th>Total</th></tr></thead>
+          <tbody><tr>
+            <td><select class="erp-form-control" name="product_id" id="product-id"><option value="">Select Product</option><option value="HP ProBook 450">HP ProBook 450</option><option value="Logitech MX Master">Logitech MX Master</option></select></td>
+            <td><input class="erp-form-control" type="number" name="quantity" id="quantity" style="width:70px" value="1"/></td>
+            <td style="font-family:'IBM Plex Mono',monospace">$849.00</td>
+            <td><input class="erp-form-control" type="number" name="item_discount" style="width:70px" placeholder="0%"/></td>
+            <td style="color:var(--accent-2);font-family:'IBM Plex Mono',monospace">$849.00</td>
+          </tr></tbody></table></div>
+        </div>
+        <div class="modal-footer" style="border-color:var(--border)">
+          <button type="button" class="btn-erp btn-outline" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn-erp btn-primary" id="btn-save">
+            <i class="bi bi-check2"></i> Confirm Order
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
@@ -121,4 +150,128 @@
     </div>
   </div>
 </div>
+
+@push('scripts')
+<script>
+$(function () {
+  var routes = {
+    store: '{{ route("salesorder.store") }}',
+    update: '{{ route("salesorder.update", ":id") }}',
+    destroy: '{{ route("salesorder.destroy", ":id") }}'
+  };
+
+  var $modal = $('#modalSO');
+  var $form = $('#form-salesorder');
+  var $btnSave = $('#btn-save');
+  var salesorderId = null;
+  var isEdit = false;
+
+  $('#btn-add-salesorder').on('click', function () {
+    resetForm();
+    isEdit = false;
+    $('#modal-title').text('New Sales Order');
+    $modal.modal('show');
+  });
+
+  $(document).on('click', '.btn-edit', function () {
+    resetForm();
+    isEdit = true;
+    salesorderId = $(this).data('id');
+    $('#modal-title').text('Edit Sales Order');
+
+    $('#salesorder-id').val(salesorderId);
+    $('#customer-id').val($(this).data('customer_id'));
+    $('#order-date').val($(this).data('order_date'));
+    $('#delivery-date').val($(this).data('delivery_date'));
+    $('#payment-terms').val($(this).data('payment_terms'));
+    $('#discount-percent').val($(this).data('discount_percent'));
+
+    $modal.modal('show');
+  });
+
+  $(document).on('click', '.btn-delete', function () {
+    salesorderId = $(this).data('id');
+    var order_number = $(this).data('order_number');
+    $('#delete-target').text(order_number || 'this order');
+    $('#modalDelete').modal('show');
+  });
+
+  $('#btn-confirm-delete').on('click', function () {
+    $.ajax({
+      url: routes.destroy.replace(':id', salesorderId),
+      method: 'DELETE',
+      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+      success: function (res) {
+        if (res.success) {
+          showToast(res.message || 'Order deleted', 'success');
+          $('#modalDelete').modal('hide');
+          setTimeout(() => location.reload(), 1000);
+        }
+      },
+      error: function (xhr) {
+        showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
+      }
+    });
+  });
+
+  $form.on('submit', function (e) {
+    e.preventDefault();
+    $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+
+    var url = isEdit ? routes.update.replace(':id', salesorderId) : routes.store;
+    var method = isEdit ? 'PUT' : 'POST';
+
+    $.ajax({
+      url: url,
+      method: method,
+      data: $form.serialize(),
+      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+      success: function (res) {
+        if (res.success) {
+          showToast(res.message || (isEdit ? 'Order updated' : 'Order created'), 'success');
+          $modal.modal('hide');
+          setTimeout(() => location.reload(), 1000);
+        }
+      },
+      error: function (xhr) {
+        var res = xhr.responseJSON;
+        if (res && res.errors) {
+          $.each(res.errors, function (field, messages) {
+            var $input = $form.find('[name="' + field + '"]');
+            $input.addClass('is-invalid');
+            $('#error-' + field).text(messages[0]).show();
+          });
+        } else if (res && res.message) {
+          showToast(res.message, 'error');
+        } else {
+          showToast('An error occurred', 'error');
+        }
+      },
+      complete: function () {
+        $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Confirm Order');
+      }
+    });
+  });
+
+  function resetForm() {
+    salesorderId = null;
+    isEdit = false;
+    $form[0].reset();
+    $form.find('.is-invalid').removeClass('is-invalid');
+    $form.find('.invalid-feedback').hide().text('');
+  }
+
+  function showToast(msg, type) {
+    type = type || 'info';
+    var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
+    var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
+    var $t = $('<div class="erp-toast ' + type + '"></div>')
+      .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
+    $('#toast-container').append($t);
+    setTimeout(function () { $t.css('opacity', 0); }, 2500);
+    setTimeout(function () { $t.remove(); }, 2800);
+  }
+});
+</script>
+@endpush
 @endsection

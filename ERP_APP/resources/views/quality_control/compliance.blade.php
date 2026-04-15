@@ -11,7 +11,7 @@
   </div>
   <div class="d-flex gap-2">
     <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-    <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalCompliance"><i class="bi bi-plus-lg"></i> New Report</button>
+    <button class="btn-erp btn-primary" id="btn-add-compliance"><i class="bi bi-plus-lg"></i> New Report</button>
   </div>
 </div>
 
@@ -48,8 +48,18 @@
           </td>
           <td>
             <div class="d-flex gap-1">
-              <button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalCompliance" title="Edit"><i class="bi bi-pencil"></i></button>
-              <button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Report" title="Delete"><i class="bi bi-trash"></i></button>
+              <button class="btn-erp btn-outline btn-xs btn-icon btn-edit" 
+                data-id="{{ $compliance->id }}"
+                data-standard_regulation="{{ $compliance->standard_regulation }}"
+                data-scope="{{ $compliance->scope }}"
+                data-audit_date="{{ $compliance->audit_date }}"
+                data-next_audit_date="{{ $compliance->next_audit_date }}"
+                data-auditor="{{ $compliance->auditor }}"
+                data-findings_notes="{{ $compliance->findings_notes }}"
+                title="Edit"><i class="bi bi-pencil"></i></button>
+              <button class="btn-erp btn-danger btn-xs btn-icon btn-delete" 
+                data-id="{{ $compliance->id }}"
+                data-label="Report" title="Delete"><i class="bi bi-trash"></i></button>
             </div>
           </td>
         </tr>
@@ -68,15 +78,43 @@
   <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-active);border-radius:var(--radius)">
       <div class="modal-header" style="border-color:var(--border)">
-        <h5 class="modal-title" style="color:var(--text-primary);font-weight:600">New Compliance Report</h5>
+        <h5 class="modal-title" id="modal-title" style="color:var(--text-primary);font-weight:600">New Compliance Report</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
-<div class="row g-3"><div class="col-md-6"><label class="erp-form-label">Standard / Regulation</label><input class="erp-form-control" type="text" placeholder="e.g. ISO 9001:2015"/></div><div class="col-md-6"><label class="erp-form-label">Scope</label><input class="erp-form-control" type="text" placeholder=""/></div><div class="col-md-4"><label class="erp-form-label">Audit Date</label><input class="erp-form-control" type="date" placeholder=""/></div><div class="col-md-4"><label class="erp-form-label">Next Audit</label><input class="erp-form-control" type="date" placeholder=""/></div><div class="col-md-4"><label class="erp-form-label">Auditor</label><input class="erp-form-control" type="text" placeholder=""/></div><div class="col-md-12"><label class="erp-form-label">Findings / Notes</label><textarea class="erp-form-control" rows="2" placeholder=""></textarea></div></div>
+        <form id="form-compliance">
+          <input type="hidden" name="id" id="compliance-id">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="erp-form-label">Standard / Regulation</label>
+              <input class="erp-form-control" type="text" name="standard_regulation" placeholder="e.g. ISO 9001:2015"/>
+            </div>
+            <div class="col-md-6">
+              <label class="erp-form-label">Scope</label>
+              <input class="erp-form-control" type="text" name="scope" placeholder=""/>
+            </div>
+            <div class="col-md-4">
+              <label class="erp-form-label">Audit Date</label>
+              <input class="erp-form-control" type="date" name="audit_date"/>
+            </div>
+            <div class="col-md-4">
+              <label class="erp-form-label">Next Audit</label>
+              <input class="erp-form-control" type="date" name="next_audit_date"/>
+            </div>
+            <div class="col-md-4">
+              <label class="erp-form-label">Auditor</label>
+              <input class="erp-form-control" type="text" name="auditor" placeholder=""/>
+            </div>
+            <div class="col-md-12">
+              <label class="erp-form-label">Findings / Notes</label>
+              <textarea class="erp-form-control" name="findings_notes" rows="2" placeholder=""></textarea>
+            </div>
+          </div>
+        </form>
       </div>
       <div class="modal-footer" style="border-color:var(--border)">
         <button type="button" class="btn-erp btn-outline" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn-erp btn-primary btn-modal-save">
+        <button type="button" class="btn-erp btn-primary" id="btn-save">
           <i class="bi bi-check2"></i> Save
         </button>
       </div>
@@ -108,3 +146,101 @@
   </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+$(function () {
+  var routes = {
+    store: '{{ route("compliance.store") }}',
+    update: '{{ route("compliance.update", ":id") }}',
+    destroy: '{{ route("compliance.destroy", ":id") }}'
+  };
+
+  var $modal = $('#modalCompliance');
+  var $form = $('#form-compliance');
+  var $btnSave = $('#btn-save');
+  var complianceId = null;
+  var isEdit = false;
+
+  function resetForm() {
+    $form[0].reset();
+    $('#compliance-id').val('');
+    isEdit = false;
+    complianceId = null;
+  }
+
+  $('#btn-add-compliance').on('click', function () {
+    resetForm();
+    $('#modal-title').text('New Compliance Report');
+    $modal.modal('show');
+  });
+
+  $(document).on('click', '.btn-edit', function () {
+    resetForm();
+    isEdit = true;
+    complianceId = $(this).data('id');
+    $('#modal-title').text('Edit Compliance Report');
+    $('#compliance-id').val(complianceId);
+    $('[name="standard_regulation"]').val($(this).data('standard_regulation'));
+    $('[name="scope"]').val($(this).data('scope'));
+    $('[name="audit_date"]').val($(this).data('audit_date'));
+    $('[name="next_audit_date"]').val($(this).data('next_audit_date'));
+    $('[name="auditor"]').val($(this).data('auditor'));
+    $('[name="findings_notes"]').val($(this).data('findings_notes'));
+    $modal.modal('show');
+  });
+
+  $(document).on('click', '.btn-delete', function () {
+    complianceId = $(this).data('id');
+    var label = $(this).data('label') || 'record';
+    $('#delete-target').text(label);
+    $('#modalDelete').modal('show');
+  });
+
+  $('#btn-confirm-delete').on('click', function () {
+    $.ajax({
+      url: routes.destroy.replace(':id', complianceId),
+      method: 'DELETE',
+      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+      success: function (res) {
+        if (res.success) {
+          showToast(res.message || 'Report deleted', 'success');
+          $('#modalDelete').modal('hide');
+          setTimeout(() => location.reload(), 1000);
+        }
+      },
+      error: function (xhr) {
+        showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
+      }
+    });
+  });
+
+  $btnSave.on('click', function () {
+    $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+
+    var url = isEdit ? routes.update.replace(':id', complianceId) : routes.store;
+    var method = isEdit ? 'PUT' : 'POST';
+
+    $.ajax({
+      url: url,
+      method: method,
+      data: $form.serialize(),
+      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+      success: function (res) {
+        if (res.success) {
+          showToast(res.message || (isEdit ? 'Report updated' : 'Report created'), 'success');
+          $modal.modal('hide');
+          setTimeout(() => location.reload(), 1000);
+        }
+      },
+      error: function (xhr) {
+        showToast(xhr.responseJSON?.message || 'Operation failed', 'error');
+      },
+      complete: function () {
+        $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Save');
+      }
+    });
+  });
+});
+</script>
+@endpush

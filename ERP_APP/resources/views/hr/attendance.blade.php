@@ -46,7 +46,7 @@
         </thead>
         <tbody>
           @foreach ($data as $attendance)
-            <tr>
+            <tr data-id="{{ $attendance->id }}">
               <td>{{ $attendance->employee_id ?? 'N/A' }}</td>
               <td>{{ $attendance->attendance_date ? \Carbon\Carbon::parse($attendance->attendance_date)->format('Y-m-d') : 'N/A' }}</td>
               <td>{{ $attendance->check_in_time ?? '—' }}</td>
@@ -65,10 +65,25 @@
                 @endif
               </td>
               <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalAttendance" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Attendance" title="Delete"><i class="bi bi-trash"></i></button></div>
+                <div class="d-flex gap-1">
+                  <button class="btn-erp btn-outline btn-xs btn-icon btn-edit" 
+                    data-id="{{ $attendance->id }}"
+                    data-url="{{ route('attendance.show', $attendance->id) }}"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalAttendance"
+                    title="Edit">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button class="btn-erp btn-danger btn-xs btn-icon btn-delete" 
+                    data-id="{{ $attendance->id }}"
+                    data-url="{{ route('attendance.destroy', $attendance->id) }}"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalDelete"
+                    data-delete-label="Attendance"
+                    title="Delete">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
               </td>
             </tr>
           @endforeach
@@ -93,40 +108,60 @@
           <h5 class="modal-title" style="color:var(--text-primary);font-weight:600">Log Attendance</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
-        <div class="modal-body">
-          <div class="row g-3">
-            <div class="col-md-6"><label class="erp-form-label">Employee</label><select class="erp-form-control">
-                <option>Adam Khan</option>
-                <option>Sara Lee</option>
-                <option>James R.</option>
-              </select></div>
-            <div class="col-md-6"><label class="erp-form-label">Date</label><input class="erp-form-control" type="date"
-                placeholder="" /></div>
-            <div class="col-md-3"><label class="erp-form-label">Check In</label><input class="erp-form-control"
-                type="time" placeholder="" /></div>
-            <div class="col-md-3"><label class="erp-form-label">Check Out</label><input class="erp-form-control"
-                type="time" placeholder="" /></div>
-            <div class="col-md-6"><label class="erp-form-label">Status</label><select class="erp-form-control">
-                <option>Present</option>
-                <option>Absent</option>
-                <option>Leave</option>
-                <option>Half Day</option>
-              </select></div>
-            <div class="col-md-12"><label class="erp-form-label">Leave Type (if applicable)</label><select
-                class="erp-form-control">
-                <option>—</option>
-                <option>Annual Leave</option>
-                <option>Sick Leave</option>
-                <option>Maternity</option>
-              </select></div>
+        <form id="form-attendance" method="POST">
+          @csrf
+          <input type="hidden" name="_method" value="POST" id="form-method">
+          <input type="hidden" name="id" id="attendance_id">
+          <div class="modal-body">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="erp-form-label">Employee</label>
+                <select class="erp-form-control" name="employee_id" required>
+                  <option value="">Select Employee</option>
+                  <option>Adam Khan</option>
+                  <option>Sara Lee</option>
+                  <option>James R.</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="erp-form-label">Date</label>
+                <input class="erp-form-control" type="date" name="attendance_date" placeholder="" required />
+              </div>
+              <div class="col-md-3">
+                <label class="erp-form-label">Check In</label>
+                <input class="erp-form-control" type="time" name="check_in_time" placeholder="" />
+              </div>
+              <div class="col-md-3">
+                <label class="erp-form-label">Check Out</label>
+                <input class="erp-form-control" type="time" name="check_out_time" placeholder="" />
+              </div>
+              <div class="col-md-6">
+                <label class="erp-form-label">Status</label>
+                <select class="erp-form-control" name="status" required>
+                  <option value="Present">Present</option>
+                  <option value="Absent">Absent</option>
+                  <option value="Leave">Leave</option>
+                  <option value="Half Day">Half Day</option>
+                </select>
+              </div>
+              <div class="col-md-12">
+                <label class="erp-form-label">Leave Type (if applicable)</label>
+                <select class="erp-form-control" name="leave_type">
+                  <option value="">—</option>
+                  <option value="Annual Leave">Annual Leave</option>
+                  <option value="Sick Leave">Sick Leave</option>
+                  <option value="Maternity">Maternity</option>
+                </select>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="modal-footer" style="border-color:var(--border)">
-          <button type="button" class="btn-erp btn-outline" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn-erp btn-primary btn-modal-save">
-            <i class="bi bi-check2"></i> Save
-          </button>
-        </div>
+          <div class="modal-footer" style="border-color:var(--border)">
+            <button type="button" class="btn-erp btn-outline" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn-erp btn-primary btn-modal-save">
+              <i class="bi bi-check2"></i> Save
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -156,3 +191,96 @@
     </div>
   </div>
 @endsection
+
+@push('scripts')
+<script>
+(function() {
+  const ROUTE_STORE = '{{ route("attendance.store") }}';
+  const ROUTE_UPDATE = '{{ route("attendance.update", ["id" => "__ID__"]) }}';
+  const ROUTE_DESTROY = '{{ route("attendance.destroy", ["id" => "__ID__"]) }}';
+  let deleteUrl = null;
+
+  function showToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.className = `toast-notification toast-${type}`;
+    toast.innerHTML = `<i class="bi bi-${type === 'success' ? 'check-circle' : 'x-circle'}"></i> ${message}`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+  }
+
+  function resetForm() {
+    $('#form-attendance')[0].reset();
+    $('#form-method').val('POST');
+    $('#attendance_id').val('');
+    $('#modalAttendance .modal-title').text('Log Attendance');
+  }
+
+  $('#modalAttendance').on('show.bs.modal', function(e) {
+    const btn = e.relatedTarget;
+    if (btn.classList.contains('btn-edit')) {
+      const id = btn.dataset.id;
+      $.ajax({
+        url: btn.dataset.url,
+        method: 'GET',
+        success: function(data) {
+          $('#form-method').val('PUT');
+          $('#attendance_id').val(data.id);
+          $('#modalAttendance .modal-title').text('Edit Attendance');
+          $('#form-attendance select[name="employee_id"]').val(data.employee_id);
+          $('#form-attendance input[name="attendance_date"]').val(data.attendance_date);
+          $('#form-attendance input[name="check_in_time"]').val(data.check_in_time);
+          $('#form-attendance input[name="check_out_time"]').val(data.check_out_time);
+          $('#form-attendance select[name="status"]').val(data.status);
+          $('#form-attendance select[name="leave_type"]').val(data.leave_type || '');
+        }
+      });
+    } else {
+      resetForm();
+    }
+  });
+
+  $('#form-attendance').on('submit', function(e) {
+    e.preventDefault();
+    const id = $('#attendance_id').val();
+    const url = id ? ROUTE_UPDATE.replace('__ID__', id) : ROUTE_STORE;
+    const method = id ? 'PUT' : 'POST';
+
+    $.ajax({
+      url: url,
+      method: method,
+      data: $(this).serialize(),
+      success: function() {
+        $('#modalAttendance').modal('hide');
+        showToast(id ? 'Attendance updated successfully' : 'Attendance logged successfully');
+        setTimeout(() => location.reload(), 500);
+      },
+      error: function(xhr) {
+        showToast(xhr.responseJSON?.message || 'Operation failed', 'error');
+      }
+    });
+  });
+
+  $('#modalDelete').on('show.bs.modal', function(e) {
+    const btn = e.relatedTarget;
+    deleteUrl = btn.dataset.url;
+    $('#delete-target').text(btn.dataset.deleteLabel || 'record');
+  });
+
+  $('#btn-confirm-delete').on('click', function() {
+    $.ajax({
+      url: deleteUrl,
+      method: 'DELETE',
+      data: { _token: '{{ csrf_token() }}' },
+      success: function() {
+        $('#modalDelete').modal('hide');
+        showToast('Record deleted successfully');
+        setTimeout(() => location.reload(), 500);
+      },
+      error: function(xhr) {
+        showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
+      }
+    });
+  });
+})();
+</script>
+@endpush

@@ -42,7 +42,7 @@
         </thead>
         <tbody>
           @foreach ($data as $employee)
-            <tr>
+            <tr data-id="{{ $employee->id }}">
               <td>{{ $employee->employee_id }}</td>
               <td>
                 <div class="d-flex align-items-center gap-2">
@@ -62,10 +62,25 @@
                 @endif
               </td>
               <td>
-                <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalEmployee" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Employee" title="Delete"><i class="bi bi-trash"></i></button></div>
+                <div class="d-flex gap-1">
+                  <button class="btn-erp btn-outline btn-xs btn-icon btn-edit" 
+                    data-id="{{ $employee->id }}"
+                    data-url="{{ route('employees.show', $employee->id) }}"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalEmployee"
+                    title="Edit">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button class="btn-erp btn-danger btn-xs btn-icon btn-delete" 
+                    data-id="{{ $employee->id }}"
+                    data-url="{{ route('employees.destroy', $employee->id) }}"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalDelete"
+                    data-delete-label="Employee"
+                    title="Delete">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
               </td>
             </tr>
           @endforeach
@@ -90,42 +105,68 @@
           <h5 class="modal-title" style="color:var(--text-primary);font-weight:600">Add / Edit Employee</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
-        <div class="modal-body">
-          <div class="row g-3">
-            <div class="col-md-6"><label class="erp-form-label">Full Name</label><input class="erp-form-control"
-                type="text" placeholder="" /></div>
-            <div class="col-md-6"><label class="erp-form-label">Employee ID</label><input class="erp-form-control"
-                type="text" placeholder="EMP-XXX" /></div>
-            <div class="col-md-6"><label class="erp-form-label">Position / Designation</label><input
-                class="erp-form-control" type="text" placeholder="" /></div>
-            <div class="col-md-6"><label class="erp-form-label">Department</label><select class="erp-form-control">
-                <option>IT</option>
-                <option>Sales</option>
-                <option>HR</option>
-                <option>Finance</option>
-                <option>Warehouse</option>
-              </select></div>
-            <div class="col-md-4"><label class="erp-form-label">Basic Salary ($)</label><input class="erp-form-control"
-                type="number" placeholder="" /></div>
-            <div class="col-md-4"><label class="erp-form-label">Join Date</label><input class="erp-form-control"
-                type="date" placeholder="" /></div>
-            <div class="col-md-4"><label class="erp-form-label">Contract Type</label><select class="erp-form-control">
-                <option>Permanent</option>
-                <option>Contract</option>
-                <option>Intern</option>
-              </select></div>
-            <div class="col-md-6"><label class="erp-form-label">Email</label><input class="erp-form-control"
-                type="email" placeholder="" /></div>
-            <div class="col-md-6"><label class="erp-form-label">Phone</label><input class="erp-form-control" type="text"
-                placeholder="" /></div>
+        <form id="form-employee" method="POST">
+          @csrf
+          <input type="hidden" name="_method" value="POST" id="form-method">
+          <input type="hidden" name="id" id="employee_id">
+          <div class="modal-body">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="erp-form-label">Full Name</label>
+                <input class="erp-form-control" type="text" name="full_name" placeholder="" required />
+              </div>
+              <div class="col-md-6">
+                <label class="erp-form-label">Employee ID</label>
+                <input class="erp-form-control" type="text" name="employee_id" placeholder="EMP-XXX" required />
+              </div>
+              <div class="col-md-6">
+                <label class="erp-form-label">Position / Designation</label>
+                <input class="erp-form-control" type="text" name="designation" placeholder="" required />
+              </div>
+              <div class="col-md-6">
+                <label class="erp-form-label">Department</label>
+                <select class="erp-form-control" name="department" required>
+                  <option value="">Select Department</option>
+                  <option>IT</option>
+                  <option>Sales</option>
+                  <option>HR</option>
+                  <option>Finance</option>
+                  <option>Warehouse</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="erp-form-label">Basic Salary ($)</label>
+                <input class="erp-form-control" type="number" name="basic_salary" placeholder="" required />
+              </div>
+              <div class="col-md-4">
+                <label class="erp-form-label">Join Date</label>
+                <input class="erp-form-control" type="date" name="join_date" placeholder="" required />
+              </div>
+              <div class="col-md-4">
+                <label class="erp-form-label">Contract Type</label>
+                <select class="erp-form-control" name="contract_type" required>
+                  <option value="Permanent">Permanent</option>
+                  <option value="Contract">Contract</option>
+                  <option value="Intern">Intern</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="erp-form-label">Email</label>
+                <input class="erp-form-control" type="email" name="email" placeholder="" required />
+              </div>
+              <div class="col-md-6">
+                <label class="erp-form-label">Phone</label>
+                <input class="erp-form-control" type="text" name="phone" placeholder="" required />
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="modal-footer" style="border-color:var(--border)">
-          <button type="button" class="btn-erp btn-outline" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn-erp btn-primary btn-modal-save">
-            <i class="bi bi-check2"></i> Save Employee
-          </button>
-        </div>
+          <div class="modal-footer" style="border-color:var(--border)">
+            <button type="button" class="btn-erp btn-outline" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn-erp btn-primary btn-modal-save">
+              <i class="bi bi-check2"></i> Save Employee
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -155,3 +196,99 @@
     </div>
   </div>
 @endsection
+
+@push('scripts')
+<script>
+(function() {
+  const ROUTE_STORE = '{{ route("employees.store") }}';
+  const ROUTE_UPDATE = '{{ route("employees.update", ["id" => "__ID__"]) }}';
+  const ROUTE_DESTROY = '{{ route("employees.destroy", ["id" => "__ID__"]) }}';
+  let deleteUrl = null;
+
+  function showToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.className = `toast-notification toast-${type}`;
+    toast.innerHTML = `<i class="bi bi-${type === 'success' ? 'check-circle' : 'x-circle'}"></i> ${message}`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+  }
+
+  function resetForm() {
+    $('#form-employee')[0].reset();
+    $('#form-method').val('POST');
+    $('#employee_id').val('');
+    $('#modalEmployee .modal-title').text('Add / Edit Employee');
+  }
+
+  $('#modalEmployee').on('show.bs.modal', function(e) {
+    const btn = e.relatedTarget;
+    if (btn.classList.contains('btn-edit')) {
+      const id = btn.dataset.id;
+      $.ajax({
+        url: btn.dataset.url,
+        method: 'GET',
+        success: function(data) {
+          $('#form-method').val('PUT');
+          $('#employee_id').val(data.id);
+          $('#modalEmployee .modal-title').text('Edit Employee');
+          $('#form-employee input[name="full_name"]').val(data.full_name);
+          $('#form-employee input[name="employee_id"]').val(data.employee_id);
+          $('#form-employee input[name="designation"]').val(data.designation);
+          $('#form-employee select[name="department"]').val(data.department);
+          $('#form-employee input[name="basic_salary"]').val(data.basic_salary);
+          $('#form-employee input[name="join_date"]').val(data.join_date);
+          $('#form-employee select[name="contract_type"]').val(data.contract_type || 'Permanent');
+          $('#form-employee input[name="email"]').val(data.email);
+          $('#form-employee input[name="phone"]').val(data.phone);
+        }
+      });
+    } else {
+      resetForm();
+    }
+  });
+
+  $('#form-employee').on('submit', function(e) {
+    e.preventDefault();
+    const id = $('#employee_id').val();
+    const url = id ? ROUTE_UPDATE.replace('__ID__', id) : ROUTE_STORE;
+    const method = id ? 'PUT' : 'POST';
+
+    $.ajax({
+      url: url,
+      method: method,
+      data: $(this).serialize(),
+      success: function() {
+        $('#modalEmployee').modal('hide');
+        showToast(id ? 'Employee updated successfully' : 'Employee created successfully');
+        setTimeout(() => location.reload(), 500);
+      },
+      error: function(xhr) {
+        showToast(xhr.responseJSON?.message || 'Operation failed', 'error');
+      }
+    });
+  });
+
+  $('#modalDelete').on('show.bs.modal', function(e) {
+    const btn = e.relatedTarget;
+    deleteUrl = btn.dataset.url;
+    $('#delete-target').text(btn.dataset.deleteLabel || 'record');
+  });
+
+  $('#btn-confirm-delete').on('click', function() {
+    $.ajax({
+      url: deleteUrl,
+      method: 'DELETE',
+      data: { _token: '{{ csrf_token() }}' },
+      success: function() {
+        $('#modalDelete').modal('hide');
+        showToast('Record deleted successfully');
+        setTimeout(() => location.reload(), 500);
+      },
+      error: function(xhr) {
+        showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
+      }
+    });
+  });
+})();
+</script>
+@endpush
