@@ -155,9 +155,9 @@
 <script>
 $(function () {
   var routes = {
-    store: '{{ route("salesorder.store") }}',
-    update: '{{ route("salesorder.update", ":id") }}',
-    destroy: '{{ route("salesorder.destroy", ":id") }}'
+    store: '{{ route("sales_orders.store") }}',
+    update: '{{ route("sales_orders.update", ":id") }}',
+    destroy: '{{ route("sales_orders.destroy", ":id") }}'
   };
 
   var $modal = $('#modalSO');

@@ -180,9 +180,9 @@
 <script>
 $(function() {
   var routes = {
-    store: '{{ route("delivery-route.store") }}',
-    update: '{{ route("delivery-route.update", ":id") }}',
-    destroy: '{{ route("delivery-route.destroy", ":id") }}'
+    store: '{{ route("routes.store") }}',
+    update: '{{ route("routes.update", ":id") }}',
+    destroy: '{{ route("routes.destroy", ":id") }}'
   };
 
   var $modal = $('#modalRoute');

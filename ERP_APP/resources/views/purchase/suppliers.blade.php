@@ -165,9 +165,9 @@
 <script>
 $(function() {
   var routes = {
-    store: '{{ route("supplier.store") }}',
-    update: '{{ route("supplier.update", ":id") }}',
-    destroy: '{{ route("supplier.destroy", ":id") }}'
+    store: '{{ route("suppliers.store") }}',
+    update: '{{ route("suppliers.update", ":id") }}',
+    destroy: '{{ route("suppliers.destroy", ":id") }}'
   };
 
   var $modal = $('#modalSupplier');

@@ -171,9 +171,9 @@
 <script>
 $(function() {
   var routes = {
-    store: '{{ route("supplier_payment.store") }}',
-    update: '{{ route("supplier_payment.update", ":id") }}',
-    destroy: '{{ route("supplier_payment.destroy", ":id") }}'
+    store: '{{ route("supplier_payments.store") }}',
+    update: '{{ route("supplier_payments.update", ":id") }}',
+    destroy: '{{ route("supplier_payments.destroy", ":id") }}'
   };
 
   var $modal = $('#modalSupplierPay');

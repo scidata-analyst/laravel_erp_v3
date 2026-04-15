@@ -189,9 +189,9 @@
 <script>
 $(function() {
   var routes = {
-    store: '{{ route("shipment.store") }}',
-    update: '{{ route("shipment.update", ":id") }}',
-    destroy: '{{ route("shipment.destroy", ":id") }}'
+    store: '{{ route("shipments.store") }}',
+    update: '{{ route("shipments.update", ":id") }}',
+    destroy: '{{ route("shipments.destroy", ":id") }}'
   };
 
   var $modal = $('#modalShipment');

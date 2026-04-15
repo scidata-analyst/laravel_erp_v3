@@ -247,7 +247,7 @@
   document.getElementById('formProjectCost').addEventListener('submit', function(e) {
     e.preventDefault();
     const id = document.getElementById('cost_id').value;
-    const url = id ? '{{ route("project_cost.update", ["project_cost" => ":id"]) }}'.replace(':id', id) : '{{ route("project_cost.store") }}';
+    const url = id ? '{{ route("project_cost.update", ["id" => ":id"]) }}'.replace(':id', id) : '{{ route("project_cost.store") }}';
     const method = id ? 'PUT' : 'POST';
 
     const formData = {
@@ -279,7 +279,7 @@
 
   document.getElementById('btn-confirm-delete').addEventListener('click', function() {
     if (!deleteId) return;
-    fetch('{{ route("project_cost.destroy", ["project_cost" => ":id"]) }}'.replace(':id', deleteId), {
+    fetch('{{ route("project_cost.destroy", ["id" => ":id"]) }}'.replace(':id', deleteId), {
       method: 'DELETE',
       headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
     })

@@ -306,7 +306,7 @@
   document.getElementById('formTask').addEventListener('submit', function(e) {
     e.preventDefault();
     const id = document.getElementById('task_id').value;
-    const url = id ? '{{ route("tasks.update", ["task" => ":id"]) }}'.replace(':id', id) : '{{ route("tasks.store") }}';
+    const url = id ? '{{ route("tasks.update", ["id" => ":id"]) }}'.replace(':id', id) : '{{ route("tasks.store") }}';
     const method = id ? 'PUT' : 'POST';
 
     const formData = {
@@ -339,7 +339,7 @@
 
   document.getElementById('btn-confirm-delete').addEventListener('click', function() {
     if (!deleteId) return;
-    fetch('{{ route("tasks.destroy", ["task" => ":id"]) }}'.replace(':id', deleteId), {
+    fetch('{{ route("tasks.destroy", ["id" => ":id"]) }}'.replace(':id', deleteId), {
       method: 'DELETE',
       headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
     })

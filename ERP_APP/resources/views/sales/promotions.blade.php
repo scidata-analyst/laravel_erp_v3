@@ -162,9 +162,9 @@
 <script>
 $(function () {
   var routes = {
-    store: '{{ route("promotion.store") }}',
-    update: '{{ route("promotion.update", ":id") }}',
-    destroy: '{{ route("promotion.destroy", ":id") }}'
+    store: '{{ route("promotions.store") }}',
+    update: '{{ route("promotions.update", ":id") }}',
+    destroy: '{{ route("promotions.destroy", ":id") }}'
   };
 
   var $modal = $('#modalPromo');

@@ -234,7 +234,7 @@
   document.getElementById('formBI').addEventListener('submit', function(e) {
     e.preventDefault();
     const id = document.getElementById('bi_widget_id').value;
-    const url = id ? '{{ route("bi_dashboards.update", ["bi_dashboard" => ":id"]) }}'.replace(':id', id) : '{{ route("bi_dashboards.store") }}';
+    const url = id ? '{{ route("bi_dashboards.update", ["id" => ":id"]) }}'.replace(':id', id) : '{{ route("bi_dashboards.store") }}';
     const method = id ? 'PUT' : 'POST';
 
     const formData = {
@@ -265,7 +265,7 @@
 
   document.getElementById('btn-confirm-delete').addEventListener('click', function() {
     if (!deleteId) return;
-    fetch('{{ route("bi_dashboards.destroy", ["bi_dashboard" => ":id"]) }}'.replace(':id', deleteId), {
+    fetch('{{ route("bi_dashboards.destroy", ["id" => ":id"]) }}'.replace(':id', deleteId), {
       method: 'DELETE',
       headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
     })

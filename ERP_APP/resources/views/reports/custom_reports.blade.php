@@ -243,7 +243,7 @@
   document.getElementById('formCustomReport').addEventListener('submit', function(e) {
     e.preventDefault();
     const id = document.getElementById('custom_report_id').value;
-    const url = id ? '{{ route("custom_reports.update", ["custom_report" => ":id"]) }}'.replace(':id', id) : '{{ route("custom_reports.store") }}';
+    const url = id ? '{{ route("custom_reports.update", ["id" => ":id"]) }}'.replace(':id', id) : '{{ route("custom_reports.store") }}';
     const method = id ? 'PUT' : 'POST';
 
     const formData = {
@@ -275,7 +275,7 @@
 
   document.getElementById('btn-confirm-delete').addEventListener('click', function() {
     if (!deleteId) return;
-    fetch('{{ route("custom_reports.destroy", ["custom_report" => ":id"]) }}'.replace(':id', deleteId), {
+    fetch('{{ route("custom_reports.destroy", ["id" => ":id"]) }}'.replace(':id', deleteId), {
       method: 'DELETE',
       headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
     })

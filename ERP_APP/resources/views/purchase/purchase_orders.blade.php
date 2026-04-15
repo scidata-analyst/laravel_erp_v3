@@ -191,9 +191,9 @@
 <script>
 $(function() {
   var routes = {
-    store: '{{ route("purchase_order.store") }}',
-    update: '{{ route("purchase_order.update", ":id") }}',
-    destroy: '{{ route("purchase_order.destroy", ":id") }}'
+    store: '{{ route("purchase_orders.store") }}',
+    update: '{{ route("purchase_orders.update", ":id") }}',
+    destroy: '{{ route("purchase_orders.destroy", ":id") }}'
   };
 
   var $modal = $('#modalPO');

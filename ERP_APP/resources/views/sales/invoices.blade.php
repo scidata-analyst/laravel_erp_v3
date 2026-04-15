@@ -152,9 +152,9 @@
 <script>
 $(function () {
   var routes = {
-    store: '{{ route("invoice.store") }}',
-    update: '{{ route("invoice.update", ":id") }}',
-    destroy: '{{ route("invoice.destroy", ":id") }}'
+    store: '{{ route("invoices.store") }}',
+    update: '{{ route("invoices.update", ":id") }}',
+    destroy: '{{ route("invoices.destroy", ":id") }}'
   };
 
   var $modal = $('#modalInvoice');

@@ -225,7 +225,7 @@
   document.getElementById('formForecast').addEventListener('submit', function(e) {
     e.preventDefault();
     const id = document.getElementById('forecast_id').value;
-    const url = id ? '{{ route("forecasting.update", ["forecasting" => ":id"]) }}'.replace(':id', id) : '{{ route("forecasting.store") }}';
+    const url = id ? '{{ route("forecasting.update", ["id" => ":id"]) }}'.replace(':id', id) : '{{ route("forecasting.store") }}';
     const method = id ? 'PUT' : 'POST';
 
     const formData = {
@@ -256,7 +256,7 @@
 
   document.getElementById('btn-confirm-delete').addEventListener('click', function() {
     if (!deleteId) return;
-    fetch('{{ route("forecasting.destroy", ["forecasting" => ":id"]) }}'.replace(':id', deleteId), {
+    fetch('{{ route("forecasting.destroy", ["id" => ":id"]) }}'.replace(':id', deleteId), {
       method: 'DELETE',
       headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
     })
