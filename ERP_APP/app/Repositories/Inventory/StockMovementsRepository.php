@@ -48,10 +48,15 @@ class StockMovementsRepository implements StockMovementsInterface
      */
     public function index($perPage = 15, $search = '', $filters = [])
     {
-        $query = $this->model->query();
+        $query = $this->model->query()->with(['product', 'fromWarehouse', 'toWarehouse']);
 
         if ($search) {
-            $query->where('reference', 'like', "%{$search}%");
+            $query->whereHas('product', function ($q) use ($search) {
+                $q->where('product_name', 'like', "%{$search}%")
+                  ->orWhere('sku', 'like', "%{$search}%");
+            })
+            ->orWhere('movement_type', 'like', "%{$search}%")
+            ->orWhere('reason', 'like', "%{$search}%");
         }
 
         return $query->paginate($perPage);

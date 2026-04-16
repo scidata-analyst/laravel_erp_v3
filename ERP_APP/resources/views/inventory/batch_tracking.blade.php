@@ -48,7 +48,7 @@
             <tr>
               <td>{{ $batch->batch_lot_number }}</td>
               <td>{{ $batch->serial_number ?? 'N/A' }}</td>
-              <td>{{ $batch->product_id ?? 'N/A' }}</td>
+               <td>{{ $batch->product->product_name ?? 'N/A' }}</td>
               <td>{{ $batch->quantity }}</td>
               <td>{{ $batch->manufacture_date ? \Carbon\Carbon::parse($batch->manufacture_date)->format('Y-m-d') : 'N/A' }}</td>
               <td>{{ $batch->expiry_date ? \Carbon\Carbon::parse($batch->expiry_date)->format('Y-m-d') : 'N/A' }}</td>
@@ -100,19 +100,38 @@
             @csrf
             <input type="hidden" name="id" id="batch-id">
             <div class="row g-3">
-              <div class="col-md-6"><label class="erp-form-label">Product</label><select class="erp-form-control" name="product_id" id="product_id">
+              <div class="col-md-6">
+                <label class="erp-form-label">Product</label>
+                <select class="erp-form-control" name="product_id" id="product_id" required>
                   <option value="">Select Product</option>
-                </select></div>
-              <div class="col-md-6"><label class="erp-form-label">Batch / Lot #</label><input class="erp-form-control"
-                  name="batch_lot_number" id="batch_lot_number" type="text" placeholder="LOT-XXXX-XXX" /></div>
-              <div class="col-md-6"><label class="erp-form-label">Serial Number</label><input class="erp-form-control"
-                  name="serial_number" id="serial_number" type="text" placeholder="SN-XXXXX" /></div>
-              <div class="col-md-6"><label class="erp-form-label">Quantity</label><input class="erp-form-control"
-                  name="quantity" id="quantity" type="number" placeholder="" /></div>
-              <div class="col-md-6"><label class="erp-form-label">Manufacturing Date</label><input
-                  class="erp-form-control" name="manufacture_date" id="manufacture_date" type="date" placeholder="" /></div>
-              <div class="col-md-6"><label class="erp-form-label">Expiry Date</label><input class="erp-form-control"
-                  name="expiry_date" id="expiry_date" type="date" placeholder="" /></div>
+                </select>
+                <div class="invalid-feedback" id="error-product_id"></div>
+              </div>
+              <div class="col-md-6">
+                <label class="erp-form-label">Batch / Lot #</label>
+                <input class="erp-form-control" name="batch_lot_number" id="batch_lot_number" type="text" placeholder="LOT-XXXX-XXX" required />
+                <div class="invalid-feedback" id="error-batch_lot_number"></div>
+              </div>
+              <div class="col-md-6">
+                <label class="erp-form-label">Serial Number</label>
+                <input class="erp-form-control" name="serial_number" id="serial_number" type="text" placeholder="SN-XXXXX" />
+                <div class="invalid-feedback" id="error-serial_number"></div>
+              </div>
+              <div class="col-md-6">
+                <label class="erp-form-label">Quantity</label>
+                <input class="erp-form-control" name="quantity" id="quantity" type="number" placeholder="" required min="1" />
+                <div class="invalid-feedback" id="error-quantity"></div>
+              </div>
+              <div class="col-md-6">
+                <label class="erp-form-label">Manufacturing Date</label>
+                <input class="erp-form-control" name="manufacture_date" id="manufacture_date" type="date" placeholder="" />
+                <div class="invalid-feedback" id="error-manufacture_date"></div>
+              </div>
+              <div class="col-md-6">
+                <label class="erp-form-label">Expiry Date</label>
+                <input class="erp-form-control" name="expiry_date" id="expiry_date" type="date" placeholder="" />
+                <div class="invalid-feedback" id="error-expiry_date"></div>
+              </div>
             </div>
           </form>
         </div>
@@ -152,129 +171,167 @@
     </div>
   </div>
 
-  @push('scripts')
-    <script>
-      $(function () {
-        var routes = {
-          store: '{{ route("batch_tracking.store") }}',
-          update: '{{ route("batch_tracking.update", ":id") }}',
-          destroy: '{{ route("batch_tracking.destroy", ":id") }}'
-        };
+   @push('scripts')
+     <script>
+       $(function () {
+         var routes = {
+           store: '{{ route("batch_tracking.store") }}',
+           update: '{{ route("batch_tracking.update", ":id") }}',
+           destroy: '{{ route("batch_tracking.destroy", ":id") }}',
+           productsAll: '{{ route("product_catalog.all") }}'
+         };
 
-        var $modal = $('#modalBatch');
-        var $form = $('#form-batch');
-        var $btnSave = $('#btn-save');
-        var batchId = null;
-        var isEdit = false;
+         var $modal = $('#modalBatch');
+         var $form = $('#form-batch');
+         var $btnSave = $('#btn-save');
+         var batchId = null;
+         var isEdit = false;
 
-        $('#btn-add-batch').on('click', function () {
-          resetForm();
-          isEdit = false;
-          $('#modal-title').text('Add Batch / Serial');
-        });
+         // Load products dropdown via AJAX
+         function loadProducts() {
+           $.ajax({
+             url: routes.productsAll,
+             method: 'GET',
+             success: function(res) {
+               if (res.success && res.data) {
+                 var $prod = $('#product_id');
+                 $prod.empty().append('<option value="">Select Product</option>');
+                 $.each(res.data, function(i, p) {
+                   $prod.append('<option value="' + p.id + '">' + p.product_name + ' (' + p.sku + ')</option>');
+                 });
+               }
+             },
+             error: function(xhr) {
+               console.warn('Failed to load products');
+             }
+           });
+         }
 
-        $modal.on('shown.bs.modal', function () {
-          if (!isEdit) {
-            resetForm();
-            $('#modal-title').text('Add Batch / Serial');
-          }
-        });
+         // Load products on page ready
+         loadProducts();
 
-        $(document).on('click', '.btn-edit', function () {
-          resetForm();
-          isEdit = true;
-          batchId = $(this).data('id');
-          $('#modal-title').text('Edit Batch / Serial');
+         $('#btn-add-batch').on('click', function () {
+           resetForm();
+           isEdit = false;
+           $('#modal-title').text('Add Batch / Serial');
+         });
 
-          $('#batch-id').val(batchId);
-          $('#product_id').val($(this).data('product_id'));
-          $('#batch_lot_number').val($(this).data('batch_lot_number'));
-          $('#serial_number').val($(this).data('serial_number'));
-          $('#quantity').val($(this).data('quantity'));
-          $('#manufacture_date').val($(this).data('manufacture_date'));
-          $('#expiry_date').val($(this).data('expiry_date'));
-        });
+         $modal.on('shown.bs.modal', function () {
+           if (!isEdit) {
+             resetForm();
+             $('#modal-title').text('Add Batch / Serial');
+           }
+         });
 
-        $(document).on('click', '.btn-delete', function () {
-          batchId = $(this).data('id');
-          var batch_lot_number = $(this).data('batch_lot_number');
-          $('#delete-target').text(batch_lot_number || 'this batch');
-        });
+         $(document).on('click', '.btn-edit', function () {
+           resetForm();
+           isEdit = true;
+           batchId = $(this).data('id');
+           $('#modal-title').text('Edit Batch / Serial');
 
-        $('#btn-confirm-delete').on('click', function () {
-          $.ajax({
-            url: routes.destroy.replace(':id', batchId),
-            method: 'DELETE',
-            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-            success: function (res) {
-              if (res.success) {
-                showToast(res.message || 'Batch deleted', 'success');
-                $('#modalDelete').modal('hide');
-                setTimeout(() => location.reload(), 1000);
-              }
-            },
-            error: function (xhr) {
-              showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
-            }
-          });
-        });
+           $('#batch-id').val(batchId);
+           $('#product_id').val($(this).data('product_id'));
+           $('#batch_lot_number').val($(this).data('batch_lot_number'));
+           $('#serial_number').val($(this).data('serial_number'));
+           $('#quantity').val($(this).data('quantity'));
+           $('#manufacture_date').val($(this).data('manufacture_date'));
+           $('#expiry_date').val($(this).data('expiry_date'));
+         });
 
-        $btnSave.on('click', function () {
-          $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+         $(document).on('click', '.btn-delete', function () {
+           batchId = $(this).data('id');
+           var batch_lot_number = $(this).data('batch_lot_number');
+           $('#delete-target').text(batch_lot_number || 'this batch');
+         });
 
-          var url = isEdit ? routes.update.replace(':id', batchId) : routes.store;
-          var method = isEdit ? 'PUT' : 'POST';
+         $('#btn-confirm-delete').on('click', function () {
+           $.ajax({
+             url: routes.destroy.replace(':id', batchId),
+             method: 'DELETE',
+             headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+             success: function (res) {
+               if (res.success) {
+                 showToast(res.message || 'Batch deleted', 'success');
+                 $('#modalDelete').modal('hide');
+                 setTimeout(() => location.reload(), 1000);
+               }
+             },
+             error: function (xhr) {
+               showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
+             }
+           });
+         });
 
-          $.ajax({
-            url: url,
-            method: method,
-            data: $form.serialize(),
-            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-            success: function (res) {
-              if (res.success) {
-                showToast(res.message || (isEdit ? 'Batch updated' : 'Batch created'), 'success');
-                $modal.modal('hide');
-                setTimeout(() => location.reload(), 1000);
-              }
-            },
-            error: function (xhr) {
-              var res = xhr.responseJSON;
-              if (res && res.errors) {
-                $.each(res.errors, function (field, messages) {
-                  var $input = $form.find('[name="' + field + '"]');
-                  $input.addClass('is-invalid');
-                });
-                showToast('Please check the form for errors', 'error');
-              } else if (res && res.message) {
-                showToast(res.message, 'error');
-              } else {
-                showToast('An error occurred', 'error');
-              }
-            },
-            complete: function () {
-              $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Save Batch');
-            }
-          });
-        });
+         $btnSave.on('click', function () {
+           $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
 
-        function resetForm() {
-          batchId = null;
-          isEdit = false;
-          $form[0].reset();
-          $form.find('.is-invalid').removeClass('is-invalid');
-        }
+           var url = isEdit ? routes.update.replace(':id', batchId) : routes.store;
+           var method = isEdit ? 'PUT' : 'POST';
 
-        function showToast(msg, type) {
-          type = type || 'info';
-          var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
-          var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
-          var $t = $('<div class="erp-toast ' + type + '"></div>')
-            .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
-          $('#toast-container').append($t);
-          setTimeout(function () { $t.css('opacity', 0); }, 2500);
-          setTimeout(function () { $t.remove(); }, 2800);
-        }
-      });
-    </script>
-  @endpush
+           $.ajax({
+             url: url,
+             method: method,
+             data: $form.serialize(),
+             headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+             success: function (res) {
+               if (res.success) {
+                 showToast(res.message || (isEdit ? 'Batch updated' : 'Batch created'), 'success');
+                 $modal.modal('hide');
+                 setTimeout(() => location.reload(), 1000);
+               }
+             },
+             error: function (xhr) {
+               var res = xhr.responseJSON;
+               if (res && res.errors) {
+                 // Clear previous errors
+                 $form.find('.is-invalid').removeClass('is-invalid');
+                 $form.find('.invalid-feedback').hide().text('');
+                 
+                 // Show each field error
+                 var firstError = null;
+                 $.each(res.errors, function (field, messages) {
+                   var $input = $form.find('[name="' + field + '"]');
+                   $input.addClass('is-invalid');
+                   $('#error-' + field).text(messages[0]).show();
+                   if (!firstError) firstError = messages[0];
+                 });
+                 
+                 if (firstError) {
+                   showToast(firstError, 'error');
+                 } else {
+                   showToast('Please correct the errors in the form', 'error');
+                 }
+               } else if (res && res.message) {
+                 showToast(res.message, 'error');
+               } else {
+                 showToast('An error occurred', 'error');
+               }
+             },
+             complete: function () {
+               $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Save Batch');
+             }
+           });
+         });
+
+         function resetForm() {
+           batchId = null;
+           isEdit = false;
+           $form[0].reset();
+           $form.find('.is-invalid').removeClass('is-invalid');
+           $form.find('.invalid-feedback').hide().text('');
+         }
+
+         function showToast(msg, type) {
+           type = type || 'info';
+           var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
+           var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
+           var $t = $('<div class="erp-toast ' + type + '"></div>')
+             .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
+           $('#toast-container').append($t);
+           setTimeout(function () { $t.css('opacity', 0); }, 2500);
+           setTimeout(function () { $t.remove(); }, 2800);
+         }
+       });
+     </script>
+   @endpush
 @endsection

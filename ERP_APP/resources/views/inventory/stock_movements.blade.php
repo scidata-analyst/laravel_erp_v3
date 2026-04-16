@@ -71,7 +71,7 @@
             <tr>
               <td>MV-{{ $movement->id }}</td>
               <td>{{ $movement->created_at ? \Carbon\Carbon::parse($movement->created_at)->format('Y-m-d') : 'N/A' }}</td>
-              <td>{{ $movement->product_id ?? 'N/A' }}</td>
+               <td>{{ $movement->product->product_name ?? 'N/A' }}</td>
               <td>
                 @if ($movement->movement_type == 'Stock In')
                   <span class="badge-status badge-info">Stock In</span>
@@ -82,7 +82,7 @@
                 @endif
               </td>
               <td>{{ $movement->quantity }}</td>
-              <td>{{ $movement->from_warehouse_id ?? 'N/A' }} → {{ $movement->to_warehouse_id ?? 'N/A' }}</td>
+               <td>{{ $movement->fromWarehouse->warehouse_name ?? 'N/A' }} → {{ $movement->toWarehouse->warehouse_name ?? 'N/A' }}</td>
               <td>{{ $movement->reason ?? 'N/A' }}</td>
               <td>—</td>
               <td>
@@ -126,28 +126,46 @@
             @csrf
             <input type="hidden" name="id" id="movement-id">
             <div class="row g-3">
-              <div class="col-md-6"><label class="erp-form-label">Product</label><select class="erp-form-control" name="product_id" id="product_id">
+              <div class="col-md-6">
+                <label class="erp-form-label">Product</label>
+                <select class="erp-form-control" name="product_id" id="product_id" required>
                   <option value="">Select Product</option>
-                </select></div>
-              <div class="col-md-6"><label class="erp-form-label">Movement Type</label><select class="erp-form-control" name="movement_type" id="movement_type">
+                </select>
+                <div class="invalid-feedback" id="error-product_id"></div>
+              </div>
+              <div class="col-md-6">
+                <label class="erp-form-label">Movement Type</label>
+                <select class="erp-form-control" name="movement_type" id="movement_type" required>
                   <option value="Stock In">Stock In</option>
                   <option value="Stock Out">Stock Out</option>
                   <option value="Transfer">Transfer</option>
-                </select></div>
-              <div class="col-md-4"><label class="erp-form-label">Quantity</label><input class="erp-form-control"
-                  name="quantity" id="quantity" type="number" placeholder="" /></div>
-              <div class="col-md-4"><label class="erp-form-label">From Warehouse</label><select class="erp-form-control" name="from_warehouse_id" id="from_warehouse_id">
+                </select>
+                <div class="invalid-feedback" id="error-movement_type"></div>
+              </div>
+              <div class="col-md-4">
+                <label class="erp-form-label">Quantity</label>
+                <input class="erp-form-control" name="quantity" id="quantity" type="number" placeholder="" required min="1" />
+                <div class="invalid-feedback" id="error-quantity"></div>
+              </div>
+              <div class="col-md-4">
+                <label class="erp-form-label">From Warehouse</label>
+                <select class="erp-form-control" name="from_warehouse_id" id="from_warehouse_id">
                   <option value="">Select</option>
-                  <option value="WH-A">WH-A</option>
-                  <option value="WH-B">WH-B</option>
-                </select></div>
-              <div class="col-md-4"><label class="erp-form-label">To Warehouse</label><select class="erp-form-control" name="to_warehouse_id" id="to_warehouse_id">
+                </select>
+                <div class="invalid-feedback" id="error-from_warehouse_id"></div>
+              </div>
+              <div class="col-md-4">
+                <label class="erp-form-label">To Warehouse</label>
+                <select class="erp-form-control" name="to_warehouse_id" id="to_warehouse_id">
                   <option value="">Select</option>
-                  <option value="WH-A">WH-A</option>
-                  <option value="WH-B">WH-B</option>
-                </select></div>
-              <div class="col-md-12"><label class="erp-form-label">Reason / Notes</label><textarea
-                  class="erp-form-control" name="reason" id="reason" rows="2" placeholder=""></textarea></div>
+                </select>
+                <div class="invalid-feedback" id="error-to_warehouse_id"></div>
+              </div>
+              <div class="col-md-12">
+                <label class="erp-form-label">Reason / Notes</label>
+                <textarea class="erp-form-control" name="reason" id="reason" rows="2" placeholder=""></textarea>
+                <div class="invalid-feedback" id="error-reason"></div>
+              </div>
             </div>
           </form>
         </div>
@@ -187,129 +205,219 @@
     </div>
   </div>
 
-  @push('scripts')
-    <script>
-      $(function () {
-        var routes = {
-          store: '{{ route("stock_movements.store") }}',
-          update: '{{ route("stock_movements.update", ":id") }}',
-          destroy: '{{ route("stock_movements.destroy", ":id") }}'
-        };
+   @push('scripts')
+     <script>
+       $(function () {
+         var routes = {
+           store: '{{ route("stock_movements.store") }}',
+           update: '{{ route("stock_movements.update", ":id") }}',
+           destroy: '{{ route("stock_movements.destroy", ":id") }}',
+           productsAll: '{{ route("product_catalog.all") }}',
+           warehousesAll: '{{ route("warehouses.all") }}'
+         };
 
-        var $modal = $('#modalStockMove');
-        var $form = $('#form-stock-movement');
-        var $btnSave = $('#btn-save');
-        var movementId = null;
-        var isEdit = false;
+         var $modal = $('#modalStockMove');
+         var $form = $('#form-stock-movement');
+         var $btnSave = $('#btn-save');
+         var movementId = null;
+         var isEdit = false;
 
-        $('#btn-add-movement').on('click', function () {
-          resetForm();
-          isEdit = false;
-          $('#modal-title').text('New Stock Movement');
-        });
+         // Load products dropdown via AJAX
+         function loadProducts() {
+           $.ajax({
+             url: routes.productsAll,
+             method: 'GET',
+             success: function(res) {
+               if (res.success && res.data) {
+                 var $prod = $('#product_id');
+                 $prod.empty().append('<option value="">Select Product</option>');
+                 $.each(res.data, function(i, p) {
+                   $prod.append('<option value="' + p.id + '">' + p.product_name + ' (' + p.sku + ')</option>');
+                 });
+               }
+             },
+             error: function(xhr) {
+               console.warn('Failed to load products');
+             }
+           });
+         }
 
-        $modal.on('shown.bs.modal', function () {
-          if (!isEdit) {
-            resetForm();
-            $('#modal-title').text('New Stock Movement');
-          }
-        });
+         // Load warehouses dropdown via AJAX
+         function loadWarehouses() {
+           $.ajax({
+             url: routes.warehousesAll,
+             method: 'GET',
+             success: function(res) {
+               if (res.success && res.data) {
+                 var $from = $('#from_warehouse_id');
+                 var $to = $('#to_warehouse_id');
+                 $from.empty().append('<option value="">Select</option>');
+                 $to.empty().append('<option value="">Select</option>');
+                 $.each(res.data, function(i, w) {
+                   var opt = '<option value="' + w.id + '">' + w.warehouse_name + ' (' + w.warehouse_code + ')</option>';
+                   $from.append(opt);
+                   $to.append(opt);
+                 });
+               }
+             },
+             error: function(xhr) {
+               console.warn('Failed to load warehouses');
+             }
+           });
+         }
 
-        $(document).on('click', '.btn-edit', function () {
-          resetForm();
-          isEdit = true;
-          movementId = $(this).data('id');
-          $('#modal-title').text('Edit Stock Movement');
+         // Toggle warehouse fields based on movement type
+         function toggleWarehouseFields() {
+           var type = $('#movement_type').val();
+           if (type === 'Transfer') {
+             $('#from_warehouse_id').closest('.col-md-4').show();
+             $('#to_warehouse_id').closest('.col-md-4').show();
+           } else if (type === 'Stock In') {
+             $('#from_warehouse_id').closest('.col-md-4').hide();
+             $('#to_warehouse_id').closest('.col-md-4').show();
+             $('#from_warehouse_id').val('');
+           } else if (type === 'Stock Out') {
+             $('#from_warehouse_id').closest('.col-md-4').show();
+             $('#to_warehouse_id').closest('.col-md-4').hide();
+             $('#to_warehouse_id').val('');
+           }
+         }
 
-          $('#movement-id').val(movementId);
-          $('#product_id').val($(this).data('product_id'));
-          $('#movement_type').val($(this).data('movement_type'));
-          $('#quantity').val($(this).data('quantity'));
-          $('#from_warehouse_id').val($(this).data('from_warehouse_id'));
-          $('#to_warehouse_id').val($(this).data('to_warehouse_id'));
-          $('#reason').val($(this).data('reason'));
-        });
+         // Load data on page ready
+         loadProducts();
+         loadWarehouses();
 
-        $(document).on('click', '.btn-delete', function () {
-          movementId = $(this).data('id');
-          var movement_type = $(this).data('movement_type');
-          $('#delete-target').text(movement_type || 'this movement');
-        });
+         $('#btn-add-movement').on('click', function () {
+           resetForm();
+           isEdit = false;
+           $('#modal-title').text('New Stock Movement');
+         });
 
-        $('#btn-confirm-delete').on('click', function () {
-          $.ajax({
-            url: routes.destroy.replace(':id', movementId),
-            method: 'DELETE',
-            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-            success: function (res) {
-              if (res.success) {
-                showToast(res.message || 'Movement deleted', 'success');
-                $('#modalDelete').modal('hide');
-                setTimeout(() => location.reload(), 1000);
-              }
-            },
-            error: function (xhr) {
-              showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
-            }
-          });
-        });
+         $modal.on('shown.bs.modal', function () {
+           if (!isEdit) {
+             resetForm();
+             $('#modal-title').text('New Stock Movement');
+           }
+         });
 
-        $btnSave.on('click', function () {
-          $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+         $(document).on('click', '.btn-edit', function () {
+           resetForm();
+           isEdit = true;
+           movementId = $(this).data('id');
+           $('#modal-title').text('Edit Stock Movement');
 
-          var url = isEdit ? routes.update.replace(':id', movementId) : routes.store;
-          var method = isEdit ? 'PUT' : 'POST';
+           $('#movement-id').val(movementId);
+           $('#product_id').val($(this).data('product_id'));
+           $('#movement_type').val($(this).data('movement_type'));
+           $('#quantity').val($(this).data('quantity'));
+           $('#from_warehouse_id').val($(this).data('from_warehouse_id'));
+           $('#to_warehouse_id').val($(this).data('to_warehouse_id'));
+           $('#reason').val($(this).data('reason'));
 
-          $.ajax({
-            url: url,
-            method: method,
-            data: $form.serialize(),
-            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-            success: function (res) {
-              if (res.success) {
-                showToast(res.message || (isEdit ? 'Movement updated' : 'Movement recorded'), 'success');
-                $modal.modal('hide');
-                setTimeout(() => location.reload(), 1000);
-              }
-            },
-            error: function (xhr) {
-              var res = xhr.responseJSON;
-              if (res && res.errors) {
-                $.each(res.errors, function (field, messages) {
-                  var $input = $form.find('[name="' + field + '"]');
-                  $input.addClass('is-invalid');
-                });
-                showToast('Please check the form for errors', 'error');
-              } else if (res && res.message) {
-                showToast(res.message, 'error');
-              } else {
-                showToast('An error occurred', 'error');
-              }
-            },
-            complete: function () {
-              $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Record Movement');
-            }
-          });
-        });
+           // Trigger toggle after setting values
+           toggleWarehouseFields();
+         });
 
-        function resetForm() {
-          movementId = null;
-          isEdit = false;
-          $form[0].reset();
-          $form.find('.is-invalid').removeClass('is-invalid');
-        }
+         // Toggle warehouse fields when movement type changes
+         $('#movement_type').on('change', toggleWarehouseFields);
 
-        function showToast(msg, type) {
-          type = type || 'info';
-          var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
-          var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
-          var $t = $('<div class="erp-toast ' + type + '"></div>')
-            .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
-          $('#toast-container').append($t);
-          setTimeout(function () { $t.css('opacity', 0); }, 2500);
-          setTimeout(function () { $t.remove(); }, 2800);
-        }
-      });
-    </script>
-  @endpush
+         $(document).on('click', '.btn-delete', function () {
+           movementId = $(this).data('id');
+           var movement_type = $(this).data('movement_type');
+           $('#delete-target').text(movement_type || 'this movement');
+         });
+
+         $('#btn-confirm-delete').on('click', function () {
+           $.ajax({
+             url: routes.destroy.replace(':id', movementId),
+             method: 'DELETE',
+             headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+             success: function (res) {
+               if (res.success) {
+                 showToast(res.message || 'Movement deleted', 'success');
+                 $('#modalDelete').modal('hide');
+                 setTimeout(() => location.reload(), 1000);
+               }
+             },
+             error: function (xhr) {
+               showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
+             }
+           });
+         });
+
+         $btnSave.on('click', function () {
+           $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+
+           var url = isEdit ? routes.update.replace(':id', movementId) : routes.store;
+           var method = isEdit ? 'PUT' : 'POST';
+
+           $.ajax({
+             url: url,
+             method: method,
+             data: $form.serialize(),
+             headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+             success: function (res) {
+               if (res.success) {
+                 showToast(res.message || (isEdit ? 'Movement updated' : 'Movement recorded'), 'success');
+                 $modal.modal('hide');
+                 setTimeout(() => location.reload(), 1000);
+               }
+             },
+             error: function (xhr) {
+               var res = xhr.responseJSON;
+               if (res && res.errors) {
+                 // Clear previous errors
+                 $form.find('.is-invalid').removeClass('is-invalid');
+                 $form.find('.invalid-feedback').hide().text('');
+                 
+                 // Show each field error
+                 var firstError = null;
+                 $.each(res.errors, function (field, messages) {
+                   var $input = $form.find('[name="' + field + '"]');
+                   $input.addClass('is-invalid');
+                   $('#error-' + field).text(messages[0]).show();
+                   if (!firstError) firstError = messages[0];
+                 });
+                 
+                 if (firstError) {
+                   showToast(firstError, 'error');
+                 } else {
+                   showToast('Please correct the errors in the form', 'error');
+                 }
+               } else if (res && res.message) {
+                 showToast(res.message, 'error');
+               } else {
+                 showToast('An error occurred', 'error');
+               }
+             },
+             complete: function () {
+               $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Record Movement');
+             }
+           });
+         });
+
+         function resetForm() {
+           movementId = null;
+           isEdit = false;
+           $form[0].reset();
+           $form.find('.is-invalid').removeClass('is-invalid');
+           $form.find('.invalid-feedback').hide().text('');
+           // Reset warehouse visibility
+           $('#from_warehouse_id').closest('.col-md-4').show();
+           $('#to_warehouse_id').closest('.col-md-4').show();
+         }
+
+         function showToast(msg, type) {
+           type = type || 'info';
+           var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
+           var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
+           var $t = $('<div class="erp-toast ' + type + '"></div>')
+             .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
+           $('#toast-container').append($t);
+           setTimeout(function () { $t.css('opacity', 0); }, 2500);
+           setTimeout(function () { $t.remove(); }, 2800);
+         }
+       });
+     </script>
+   @endpush
 @endsection
