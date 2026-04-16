@@ -59,14 +59,14 @@
       </thead>
       <tbody>
         @forelse ($data as $valuation)
-        <tr>
-          <td>{{ $valuation->product_id ?? 'N/A' }}</td>
-          <td>—</td>
-          <td>{{ $valuation->quantity_on_hand ?? 0 }}</td>
-          <td>{{ $valuation->valuation_method ?? 'FIFO' }}</td>
-          <td>${{ number_format($valuation->unit_cost ?? 0, 2) }}</td>
-          <td>${{ number_format($valuation->total_value ?? 0, 2) }}</td>
-          <td>{{ $valuation->updated_at ? \Carbon\Carbon::parse($valuation->updated_at)->format('Y-m-d') : 'N/A' }}</td>
+         <tr>
+           <td>{{ $valuation->product->product_name ?? 'N/A' }}</td>
+           <td>{{ $valuation->product->sku ?? '—' }}</td>
+           <td>{{ $valuation->quantity_on_hand ?? 0 }}</td>
+           <td>{{ $valuation->valuation_method ?? 'FIFO' }}</td>
+           <td>${{ number_format($valuation->unit_cost ?? 0, 2) }}</td>
+           <td>${{ number_format($valuation->total_value ?? 0, 2) }}</td>
+           <td>{{ $valuation->updated_at ? \Carbon\Carbon::parse($valuation->updated_at)->format('Y-m-d') : 'N/A' }}</td>
           <td>
             <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon btn-edit" 
               data-id="{{ $valuation->id }}"
@@ -95,24 +95,40 @@
         <h5 class="modal-title" id="modal-title" style="color:var(--text-primary);font-weight:600">Add Stock Valuation</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body">
-        <form id="form-stock-valuation">
-          @csrf
-          <input type="hidden" name="id" id="valuation-id">
-          <div class="row g-3">
-            <div class="col-md-6"><label class="erp-form-label">Product</label><select class="erp-form-control" name="product_id" id="product_id">
-              <option value="">Select Product</option>
-            </select></div>
-            <div class="col-md-6"><label class="erp-form-label">Valuation Method</label><select class="erp-form-control" name="valuation_method" id="valuation_method">
-              <option value="FIFO">FIFO</option>
-              <option value="LIFO">LIFO</option>
-              <option value="Average Cost">Average Cost</option>
-            </select></div>
-            <div class="col-md-6"><label class="erp-form-label">Quantity on Hand</label><input class="erp-form-control" name="quantity_on_hand" id="quantity_on_hand" type="number" placeholder="" /></div>
-            <div class="col-md-6"><label class="erp-form-label">Unit Cost ($)</label><input class="erp-form-control" name="unit_cost" id="unit_cost" type="number" placeholder="0.00" step="0.01" /></div>
-          </div>
-        </form>
-      </div>
+        <div class="modal-body">
+          <form id="form-stock-valuation">
+            @csrf
+            <input type="hidden" name="id" id="valuation-id">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="erp-form-label">Product</label>
+                <select class="erp-form-control" name="product_id" id="product_id" required>
+                  <option value="">Select Product</option>
+                </select>
+                <div class="invalid-feedback" id="error-product_id"></div>
+              </div>
+              <div class="col-md-6">
+                <label class="erp-form-label">Valuation Method</label>
+                <select class="erp-form-control" name="valuation_method" id="valuation_method" required>
+                  <option value="FIFO">FIFO</option>
+                  <option value="LIFO">LIFO</option>
+                  <option value="Average Cost">Average Cost</option>
+                </select>
+                <div class="invalid-feedback" id="error-valuation_method"></div>
+              </div>
+              <div class="col-md-6">
+                <label class="erp-form-label">Quantity on Hand</label>
+                <input class="erp-form-control" name="quantity_on_hand" id="quantity_on_hand" type="number" placeholder="" required min="0" />
+                <div class="invalid-feedback" id="error-quantity_on_hand"></div>
+              </div>
+              <div class="col-md-6">
+                <label class="erp-form-label">Unit Cost ($)</label>
+                <input class="erp-form-control" name="unit_cost" id="unit_cost" type="number" placeholder="0.00" step="0.01" required min="0" />
+                <div class="invalid-feedback" id="error-unit_cost"></div>
+              </div>
+            </div>
+          </form>
+        </div>
       <div class="modal-footer" style="border-color:var(--border)">
         <button type="button" class="btn-erp btn-outline" data-bs-dismiss="modal">Cancel</button>
         <button type="button" class="btn-erp btn-primary" id="btn-save">
@@ -147,127 +163,165 @@
   </div>
 </div>
 
-@push('scripts')
-  <script>
-    $(function () {
-      var routes = {
-        store: '{{ route("stock_valuation.store") }}',
-        update: '{{ route("stock_valuation.update", ":id") }}',
-        destroy: '{{ route("stock_valuation.destroy", ":id") }}'
-      };
+ @push('scripts')
+   <script>
+     $(function () {
+       var routes = {
+         store: '{{ route("stock_valuation.store") }}',
+         update: '{{ route("stock_valuation.update", ":id") }}',
+         destroy: '{{ route("stock_valuation.destroy", ":id") }}',
+         productsAll: '{{ route("product_catalog.all") }}'
+       };
 
-      var $modal = $('#modalStockValuation');
-      var $form = $('#form-stock-valuation');
-      var $btnSave = $('#btn-save');
-      var valuationId = null;
-      var isEdit = false;
+       var $modal = $('#modalStockValuation');
+       var $form = $('#form-stock-valuation');
+       var $btnSave = $('#btn-save');
+       var valuationId = null;
+       var isEdit = false;
 
-      $('#btn-add-valuation').on('click', function () {
-        resetForm();
-        isEdit = false;
-        $('#modal-title').text('Add Stock Valuation');
-      });
+       // Load products dropdown via AJAX
+       function loadProducts() {
+         $.ajax({
+           url: routes.productsAll,
+           method: 'GET',
+           success: function(res) {
+             if (res.success && res.data) {
+               var $prod = $('#product_id');
+               $prod.empty().append('<option value="">Select Product</option>');
+               $.each(res.data, function(i, p) {
+                 $prod.append('<option value="' + p.id + '">' + p.product_name + ' (' + p.sku + ')</option>');
+               });
+             }
+           },
+           error: function(xhr) {
+             console.warn('Failed to load products');
+           }
+         });
+       }
 
-      $modal.on('shown.bs.modal', function () {
-        if (!isEdit) {
-          resetForm();
-          $('#modal-title').text('Add Stock Valuation');
-        }
-      });
+       // Load products on page ready
+       loadProducts();
 
-      $(document).on('click', '.btn-edit', function () {
-        resetForm();
-        isEdit = true;
-        valuationId = $(this).data('id');
-        $('#modal-title').text('Edit Stock Valuation');
+       $('#btn-add-valuation').on('click', function () {
+         resetForm();
+         isEdit = false;
+         $('#modal-title').text('Add Stock Valuation');
+       });
 
-        $('#valuation-id').val(valuationId);
-        $('#product_id').val($(this).data('product_id'));
-        $('#quantity_on_hand').val($(this).data('quantity_on_hand'));
-        $('#valuation_method').val($(this).data('valuation_method'));
-        $('#unit_cost').val($(this).data('unit_cost'));
-      });
+       $modal.on('shown.bs.modal', function () {
+         if (!isEdit) {
+           resetForm();
+           $('#modal-title').text('Add Stock Valuation');
+         }
+       });
 
-      $(document).on('click', '.btn-delete', function () {
-        valuationId = $(this).data('id');
-        var product_id = $(this).data('product_id');
-        $('#delete-target').text(product_id || 'this valuation');
-      });
+       $(document).on('click', '.btn-edit', function () {
+         resetForm();
+         isEdit = true;
+         valuationId = $(this).data('id');
+         $('#modal-title').text('Edit Stock Valuation');
 
-      $('#btn-confirm-delete').on('click', function () {
-        $.ajax({
-          url: routes.destroy.replace(':id', valuationId),
-          method: 'DELETE',
-          headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-          success: function (res) {
-            if (res.success) {
-              showToast(res.message || 'Valuation deleted', 'success');
-              $('#modalDelete').modal('hide');
-              setTimeout(() => location.reload(), 1000);
-            }
-          },
-          error: function (xhr) {
-            showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
-          }
-        });
-      });
+         $('#valuation-id').val(valuationId);
+         $('#product_id').val($(this).data('product_id'));
+         $('#quantity_on_hand').val($(this).data('quantity_on_hand'));
+         $('#valuation_method').val($(this).data('valuation_method'));
+         $('#unit_cost').val($(this).data('unit_cost'));
+       });
 
-      $btnSave.on('click', function () {
-        $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+       $(document).on('click', '.btn-delete', function () {
+         valuationId = $(this).data('id');
+         var product_id = $(this).data('product_id');
+         $('#delete-target').text(product_id || 'this valuation');
+       });
 
-        var url = isEdit ? routes.update.replace(':id', valuationId) : routes.store;
-        var method = isEdit ? 'PUT' : 'POST';
+       $('#btn-confirm-delete').on('click', function () {
+         $.ajax({
+           url: routes.destroy.replace(':id', valuationId),
+           method: 'DELETE',
+           headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+           success: function (res) {
+             if (res.success) {
+               showToast(res.message || 'Valuation deleted', 'success');
+               $('#modalDelete').modal('hide');
+               setTimeout(() => location.reload(), 1000);
+             }
+           },
+           error: function (xhr) {
+             showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
+           }
+         });
+       });
 
-        $.ajax({
-          url: url,
-          method: method,
-          data: $form.serialize(),
-          headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-          success: function (res) {
-            if (res.success) {
-              showToast(res.message || (isEdit ? 'Valuation updated' : 'Valuation created'), 'success');
-              $modal.modal('hide');
-              setTimeout(() => location.reload(), 1000);
-            }
-          },
-          error: function (xhr) {
-            var res = xhr.responseJSON;
-            if (res && res.errors) {
-              $.each(res.errors, function (field, messages) {
-                var $input = $form.find('[name="' + field + '"]');
-                $input.addClass('is-invalid');
-              });
-              showToast('Please check the form for errors', 'error');
-            } else if (res && res.message) {
-              showToast(res.message, 'error');
-            } else {
-              showToast('An error occurred', 'error');
-            }
-          },
-          complete: function () {
-            $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Save Valuation');
-          }
-        });
-      });
+       $btnSave.on('click', function () {
+         $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
 
-      function resetForm() {
-        valuationId = null;
-        isEdit = false;
-        $form[0].reset();
-        $form.find('.is-invalid').removeClass('is-invalid');
-      }
+         var url = isEdit ? routes.update.replace(':id', valuationId) : routes.store;
+         var method = isEdit ? 'PUT' : 'POST';
 
-      function showToast(msg, type) {
-        type = type || 'info';
-        var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
-        var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
-        var $t = $('<div class="erp-toast ' + type + '"></div>')
-          .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
-        $('#toast-container').append($t);
-        setTimeout(function () { $t.css('opacity', 0); }, 2500);
-        setTimeout(function () { $t.remove(); }, 2800);
-      }
-    });
-  </script>
-@endpush
+         $.ajax({
+           url: url,
+           method: method,
+           data: $form.serialize(),
+           headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+           success: function (res) {
+             if (res.success) {
+               showToast(res.message || (isEdit ? 'Valuation updated' : 'Valuation created'), 'success');
+               $modal.modal('hide');
+               setTimeout(() => location.reload(), 1000);
+             }
+           },
+           error: function (xhr) {
+             var res = xhr.responseJSON;
+             if (res && res.errors) {
+               // Clear previous errors
+               $form.find('.is-invalid').removeClass('is-invalid');
+               $form.find('.invalid-feedback').hide().text('');
+               
+               // Show each field error
+               var firstError = null;
+               $.each(res.errors, function (field, messages) {
+                 var $input = $form.find('[name="' + field + '"]');
+                 $input.addClass('is-invalid');
+                 $('#error-' + field).text(messages[0]).show();
+                 if (!firstError) firstError = messages[0];
+               });
+               
+               if (firstError) {
+                 showToast(firstError, 'error');
+               } else {
+                 showToast('Please correct the errors in the form', 'error');
+               }
+             } else if (res && res.message) {
+               showToast(res.message, 'error');
+             } else {
+               showToast('An error occurred', 'error');
+             }
+           },
+           complete: function () {
+             $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Save Valuation');
+           }
+         });
+       });
+
+       function resetForm() {
+         valuationId = null;
+         isEdit = false;
+         $form[0].reset();
+         $form.find('.is-invalid').removeClass('is-invalid');
+         $form.find('.invalid-feedback').hide().text('');
+       }
+
+       function showToast(msg, type) {
+         type = type || 'info';
+         var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
+         var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
+         var $t = $('<div class="erp-toast ' + type + '"></div>')
+           .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
+         $('#toast-container').append($t);
+         setTimeout(function () { $t.css('opacity', 0); }, 2500);
+         setTimeout(function () { $t.remove(); }, 2800);
+       }
+     });
+   </script>
+ @endpush
 @endsection

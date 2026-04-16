@@ -26,6 +26,8 @@ class StockValuationService implements StockValuationInterface
 
     public function store(array $data)
     {
+        // Calculate total_value automatically
+        $data['total_value'] = ($data['quantity_on_hand'] ?? 0) * ($data['unit_cost'] ?? 0);
         return $this->repository->store($data);
     }
 
@@ -36,6 +38,13 @@ class StockValuationService implements StockValuationInterface
 
     public function update(array $data, $id)
     {
+        // Recalculate total_value if quantity or unit_cost changed
+        if (isset($data['quantity_on_hand']) || isset($data['unit_cost'])) {
+            $record = $this->repository->show($id);
+            $quantity = $data['quantity_on_hand'] ?? $record->quantity_on_hand;
+            $unitCost = $data['unit_cost'] ?? $record->unit_cost;
+            $data['total_value'] = $quantity * $unitCost;
+        }
         return $this->repository->update($data, $id);
     }
 

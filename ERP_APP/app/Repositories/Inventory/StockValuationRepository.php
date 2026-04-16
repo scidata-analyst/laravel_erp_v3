@@ -48,10 +48,13 @@ class StockValuationRepository implements StockValuationInterface
      */
     public function index($perPage = 15, $search = '', $filters = [])
     {
-        $query = $this->model->query();
+        $query = $this->model->query()->with(['product']);
 
         if ($search) {
-            $query->where('product_name', 'like', "%{$search}%");
+            $query->whereHas('product', function ($q) use ($search) {
+                $q->where('product_name', 'like', "%{$search}%")
+                  ->orWhere('sku', 'like', "%{$search}%");
+            });
         }
 
         return $query->paginate($perPage);

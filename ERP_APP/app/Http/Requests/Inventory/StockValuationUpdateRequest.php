@@ -16,12 +16,12 @@ class StockValuationUpdateRequest extends FormRequest
 
     public function rules(): array
     {
+        $valuationId = $this->input('id') ?? $this->route('id');
         return [
             'product_id' => ['sometimes', 'integer', 'exists:products,id'],
             'valuation_method' => ['sometimes', 'string', 'max:50'],
             'unit_cost' => ['sometimes', 'numeric', 'min:0'],
             'quantity_on_hand' => ['sometimes', 'integer', 'min:0'],
-            'total_value' => ['sometimes', 'numeric', 'min:0'],
         ];
     }
 

@@ -21,7 +21,6 @@ class StockValuationStoreRequest extends FormRequest
             'valuation_method' => ['required', 'string', 'max:50'],
             'unit_cost' => ['required', 'numeric', 'min:0'],
             'quantity_on_hand' => ['required', 'integer', 'min:0'],
-            'total_value' => ['required', 'numeric', 'min:0'],
         ];
     }
 
@@ -35,7 +34,6 @@ class StockValuationStoreRequest extends FormRequest
             'unit_cost.numeric' => 'Unit cost must be a numeric value.',
             'quantity_on_hand.required' => 'The quantity is required.',
             'quantity_on_hand.integer' => 'Quantity must be an integer.',
-            'total_value.required' => 'The total value is required.',
         ];
     }
 }
