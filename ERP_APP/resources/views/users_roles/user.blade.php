@@ -72,7 +72,7 @@
                 <div class="d-flex gap-1">
                   <button class="btn-erp btn-outline btn-xs btn-icon btn-edit" data-id="{{ $user->id }}"
                     data-user_name="{{ $user->user_name ?? $user->name ?? '' }}" data-email="{{ $user->email }}"
-                    data-role="{{ $user->role_name ?? '' }}"
+                    data-role="{{ $user->role_name ?? '' }}" data-department="{{ $user->department ?? '' }}"
                     data-status="{{ ($user->is_active ?? $user->status) == 'Active' || ($user->is_active ?? 1) == 1 ? 'Active' : 'Inactive' }}"
                     title="Edit">
                     <i class="bi bi-pencil"></i>
@@ -237,6 +237,7 @@
           $('#user-email').val($(this).data('email'));
           $('#user-role').val($(this).data('role') === 'Admin' ? 1 : $(this).data('role') === 'Manager' ? 2 : $(this).data('role') === 'Staff' ? 3 : 4);
           $('#user-status').val($(this).data('status'));
+          $('#user-department').val($(this).data('department'));
 
           $modal.modal('show');
         });

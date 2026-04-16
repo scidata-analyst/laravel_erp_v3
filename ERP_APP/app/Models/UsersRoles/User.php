@@ -33,6 +33,7 @@ class User extends Model
         'password',
         'role_id',
         'is_active',
+        'department',
     ];
 
     /**

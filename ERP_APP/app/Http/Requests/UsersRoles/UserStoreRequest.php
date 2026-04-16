@@ -21,6 +21,7 @@ class UserStoreRequest extends FormRequest
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8'],
             'role_id' => ['required', 'integer', 'exists:roles,id'],
+            'department' => ['nullable', 'string', 'max:100'],
             'status' => ['nullable', 'string', 'max:50'],
         ];
     }
