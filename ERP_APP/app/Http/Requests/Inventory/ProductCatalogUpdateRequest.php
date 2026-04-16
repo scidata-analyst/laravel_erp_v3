@@ -16,10 +16,10 @@ class ProductCatalogUpdateRequest extends FormRequest
 
     public function rules(): array
     {
-        $productId = $this->route('product_catalog');
+        $productId = $this->input('id') ?? $this->route('id');
         return [
             'product_name' => ['sometimes', 'string', 'max:255'],
-            'sku' => ['sometimes', 'string', 'max:100', 'unique:products,sku,' . $productId],
+            'sku' => ['sometimes', 'string', 'max:100', 'unique:products,sku,' . $productId . ',id'],
             'category' => ['sometimes', 'string', 'max:100'],
             'unit_price' => ['sometimes', 'numeric', 'min:0'],
             'cost_price' => ['sometimes', 'numeric', 'min:0'],

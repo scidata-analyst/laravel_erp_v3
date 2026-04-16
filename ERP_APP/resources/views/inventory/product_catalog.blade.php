@@ -105,43 +105,76 @@
             @csrf
             <input type="hidden" name="id" id="product-id">
             <div class="row g-3">
-            <div class="col-md-8"><label class="erp-form-label">Product Name</label><input class="erp-form-control"
-                type="text" name="product_name" id="product_name" placeholder="Product name" /></div>
-            <div class="col-md-4"><label class="erp-form-label">SKU</label><input class="erp-form-control" type="text"
-                name="sku" id="sku" placeholder="SKU-XXXX" /></div>
-            <div class="col-md-6"><label class="erp-form-label">Category</label><select class="erp-form-control" name="category" id="category">
-                <option value="">Select Category</option>
-                <option value="Electronics">Electronics</option>
-                <option value="Hardware">Hardware</option>
-                <option value="Apparel">Apparel</option>
-                <option value="Furniture">Furniture</option>
-              </select></div>
-            <div class="col-md-3"><label class="erp-form-label">Unit Price ($)</label><input class="erp-form-control"
-                type="number" name="unit_price" id="unit_price" placeholder="0.00" step="0.01" /></div>
-            <div class="col-md-3"><label class="erp-form-label">Cost Price ($)</label><input class="erp-form-control"
-                type="number" name="cost_price" id="cost_price" placeholder="0.00" step="0.01" /></div>
-            <div class="col-md-6"><label class="erp-form-label">Warehouse</label><select class="erp-form-control" name="warehouse_id" id="warehouse_id">
-                <option value="">Select Warehouse</option>
-                <option value="WH-A">WH-A</option>
-                <option value="WH-B">WH-B</option>
-                <option value="WH-C">WH-C</option>
-              </select></div>
-            <div class="col-md-4"><label class="erp-form-label">Reorder Level</label><input class="erp-form-control"
-                type="number" name="reorder_level" id="reorder_level" placeholder="10" /></div>
-            <div class="col-md-4"><label class="erp-form-label">Valuation Method</label><select
-                class="erp-form-control" name="valuation_method" id="valuation_method">
-                <option value="FIFO">FIFO</option>
-                <option value="LIFO">LIFO</option>
-                <option value="Average Cost">Average Cost</option>
-              </select></div>
-            <div class="col-md-6"><label class="erp-form-label">Status</label><select class="erp-form-control" name="status" id="status">
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-              </select></div>
-            <div class="col-md-6"><label class="erp-form-label">Description</label><textarea class="erp-form-control"
-                name="description" id="description" rows="2" placeholder="Product description…"></textarea></div>
-          </div>
-        </form>
+              <div class="col-md-8">
+                <label class="erp-form-label">Product Name</label>
+                <input class="erp-form-control" type="text" name="product_name" id="product_name" placeholder="Product name" required />
+                <div class="invalid-feedback" id="error-product_name"></div>
+              </div>
+              <div class="col-md-4">
+                <label class="erp-form-label">SKU</label>
+                <input class="erp-form-control" type="text" name="sku" id="sku" placeholder="SKU-XXXX" required />
+                <div class="invalid-feedback" id="error-sku"></div>
+              </div>
+              <div class="col-md-6">
+                <label class="erp-form-label">Category</label>
+                <select class="erp-form-control" name="category" id="category" required>
+                  <option value="">Select Category</option>
+                  <option value="Electronics">Electronics</option>
+                  <option value="Hardware">Hardware</option>
+                  <option value="Apparel">Apparel</option>
+                  <option value="Furniture">Furniture</option>
+                </select>
+                <div class="invalid-feedback" id="error-category"></div>
+              </div>
+              <div class="col-md-3">
+                <label class="erp-form-label">Unit Price ($)</label>
+                <input class="erp-form-control" type="number" name="unit_price" id="unit_price" placeholder="0.00" step="0.01" required />
+                <div class="invalid-feedback" id="error-unit_price"></div>
+              </div>
+              <div class="col-md-3">
+                <label class="erp-form-label">Cost Price ($)</label>
+                <input class="erp-form-control" type="number" name="cost_price" id="cost_price" placeholder="0.00" step="0.01" required />
+                <div class="invalid-feedback" id="error-cost_price"></div>
+              </div>
+              <div class="col-md-6">
+                <label class="erp-form-label">Warehouse</label>
+                <select class="erp-form-control" name="warehouse_id" id="warehouse_id" required>
+                  <option value="">Select Warehouse</option>
+                  <option value="WH-A">WH-A</option>
+                  <option value="WH-B">WH-B</option>
+                  <option value="WH-C">WH-C</option>
+                </select>
+                <div class="invalid-feedback" id="error-warehouse_id"></div>
+              </div>
+              <div class="col-md-4">
+                <label class="erp-form-label">Reorder Level</label>
+                <input class="erp-form-control" type="number" name="reorder_level" id="reorder_level" placeholder="10" />
+                <div class="invalid-feedback" id="error-reorder_level"></div>
+              </div>
+              <div class="col-md-4">
+                <label class="erp-form-label">Valuation Method</label>
+                <select class="erp-form-control" name="valuation_method" id="valuation_method">
+                  <option value="FIFO">FIFO</option>
+                  <option value="LIFO">LIFO</option>
+                  <option value="Average Cost">Average Cost</option>
+                </select>
+                <div class="invalid-feedback" id="error-valuation_method"></div>
+              </div>
+              <div class="col-md-6">
+                <label class="erp-form-label">Status</label>
+                <select class="erp-form-control" name="status" id="status">
+                  <option value="Active">Active</option>
+                  <option value="Inactive">Inactive</option>
+                </select>
+                <div class="invalid-feedback" id="error-status"></div>
+              </div>
+              <div class="col-md-6">
+                <label class="erp-form-label">Description</label>
+                <textarea class="erp-form-control" name="description" id="description" rows="2" placeholder="Product description…"></textarea>
+                <div class="invalid-feedback" id="error-description"></div>
+              </div>
+            </div>
+          </form>
       </div>
       <div class="modal-footer" style="border-color:var(--border)">
         <button type="button" class="btn-erp btn-outline" data-bs-dismiss="modal">Cancel</button>
@@ -185,7 +218,8 @@
         var routes = {
           store: '{{ route("product_catalog.store") }}',
           update: '{{ route("product_catalog.update", ":id") }}',
-          destroy: '{{ route("product_catalog.destroy", ":id") }}'
+          destroy: '{{ route("product_catalog.destroy", ":id") }}',
+          warehousesAll: '{{ route("warehouses.all") }}'
         };
 
         var $modal = $('#modalProduct');
@@ -193,6 +227,29 @@
         var $btnSave = $('#btn-save');
         var productId = null;
         var isEdit = false;
+
+        // Load warehouses dropdown via AJAX
+        function loadWarehouses() {
+          $.ajax({
+            url: routes.warehousesAll,
+            method: 'GET',
+            success: function(res) {
+              if (res.success && res.data) {
+                var $wh = $('#warehouse_id');
+                $wh.empty().append('<option value="">Select Warehouse</option>');
+                $.each(res.data, function(i, w) {
+                  $wh.append('<option value="' + w.id + '">' + w.warehouse_name + ' (' + w.warehouse_code + ')</option>');
+                });
+              }
+            },
+            error: function(xhr) {
+              console.warn('Failed to load warehouses');
+            }
+          });
+        }
+
+        // Load warehouses on page ready
+        loadWarehouses();
 
         $('#btn-add-product').on('click', function () {
           resetForm();
@@ -250,49 +307,64 @@
           });
         });
 
-        $btnSave.on('click', function () {
-          $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+         $btnSave.on('click', function () {
+           $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
 
-          var url = isEdit ? routes.update.replace(':id', productId) : routes.store;
-          var method = isEdit ? 'PUT' : 'POST';
+           var url = isEdit ? routes.update.replace(':id', productId) : routes.store;
+           var method = isEdit ? 'PUT' : 'POST';
 
-          $.ajax({
-            url: url,
-            method: method,
-            data: $form.serialize(),
-            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-            success: function (res) {
-              if (res.success) {
-                showToast(res.message || (isEdit ? 'Product updated' : 'Product created'), 'success');
-                $modal.modal('hide');
-                setTimeout(() => location.reload(), 1000);
-              }
-            },
-            error: function (xhr) {
-              var res = xhr.responseJSON;
-              if (res && res.errors) {
-                $.each(res.errors, function (field, messages) {
-                  var $input = $form.find('[name="' + field + '"]');
-                  $input.addClass('is-invalid');
-                });
-                showToast('Please check the form for errors', 'error');
-              } else if (res && res.message) {
-                showToast(res.message, 'error');
-              } else {
-                showToast('An error occurred', 'error');
-              }
-            },
-            complete: function () {
-              $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Save Product');
-            }
-          });
-        });
+           $.ajax({
+             url: url,
+             method: method,
+             data: $form.serialize(),
+             headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+             success: function (res) {
+               if (res.success) {
+                 showToast(res.message || (isEdit ? 'Product updated' : 'Product created'), 'success');
+                 $modal.modal('hide');
+                 setTimeout(() => location.reload(), 1000);
+               }
+             },
+             error: function (xhr) {
+               var res = xhr.responseJSON;
+               if (res && res.errors) {
+                 // Clear previous errors
+                 $form.find('.is-invalid').removeClass('is-invalid');
+                 $form.find('.invalid-feedback').hide().text('');
+                 
+                 // Show each field error
+                 var firstError = null;
+                 $.each(res.errors, function (field, messages) {
+                   var $input = $form.find('[name="' + field + '"]');
+                   $input.addClass('is-invalid');
+                   $('#error-' + field).text(messages[0]).show();
+                   if (!firstError) firstError = messages[0];
+                 });
+                 
+                 // Show toast with first error
+                 if (firstError) {
+                   showToast(firstError, 'error');
+                 } else {
+                   showToast('Please correct the errors in the form', 'error');
+                 }
+               } else if (res && res.message) {
+                 showToast(res.message, 'error');
+               } else {
+                 showToast('An error occurred', 'error');
+               }
+             },
+             complete: function () {
+               $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Save Product');
+             }
+           });
+         });
 
         function resetForm() {
           productId = null;
           isEdit = false;
           $form[0].reset();
           $form.find('.is-invalid').removeClass('is-invalid');
+          $form.find('.invalid-feedback').hide().text('');
         }
 
         function showToast(msg, type) {
