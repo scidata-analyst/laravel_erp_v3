@@ -30,8 +30,8 @@
         @forelse ($data as $grn)
           <tr>
             <td>{{ $grn->grn_number }}</td>
-            <td>{{ $grn->purchase_order_id ?? 'N/A' }}</td>
-            <td>{{ $grn->supplier_name ?? 'N/A' }}</td>
+             <td>{{ $grn->purchaseOrder->po_number ?? 'N/A' }}</td>
+             <td>{{ $grn->supplier_name ?? 'N/A' }}</td>
             <td>{{ $grn->receipt_date ? \Carbon\Carbon::parse($grn->receipt_date)->format('Y-m-d') : 'N/A' }}</td>
             <td>1 items</td>
             <td>$0</td>
@@ -51,7 +51,7 @@
                 data-purchase_order_id="{{ $grn->purchase_order_id }}"
                 data-supplier_name="{{ $grn->supplier_name }}"
                 data-receipt_date="{{ $grn->receipt_date }}"
-                data-warehouse="{{ $grn->warehouse }}"
+                 data-warehouse_id="{{ $grn->warehouse_id }}"
                 data-notes="{{ $grn->notes }}"
                 data-status="{{ $grn->status }}"
                 title="Edit">
@@ -96,39 +96,47 @@
           <div class="row g-3">
             <div class="col-md-6">
               <label class="erp-form-label">Purchase Order</label>
-              <select class="erp-form-control" name="purchase_order_id" id="purchase-order-id">
+              <select class="erp-form-control" name="purchase_order_id" id="purchase-order-id" required>
                 <option value="">Select PO</option>
-                <option value="1">PO-2025-0091</option>
-                <option value="2">PO-2025-0089</option>
               </select>
+              <div class="invalid-feedback" id="error-purchase_order_id"></div>
             </div>
-            <div class="col-md-6">
-              <label class="erp-form-label">Supplier</label>
-              <input class="erp-form-control" type="text" name="supplier_name" id="supplier-name" placeholder="TechSource Ltd." />
-            </div>
-            <div class="col-md-6">
-              <label class="erp-form-label">Receipt Date</label>
-              <input class="erp-form-control" type="date" name="receipt_date" id="receipt-date" />
-            </div>
+             <div class="col-md-6">
+               <label class="erp-form-label">Supplier</label>
+               <input class="erp-form-control" type="text" name="supplier_name" id="supplier-name" placeholder="TechSource Ltd." required />
+               <div class="invalid-feedback" id="error-supplier_name"></div>
+             </div>
+             <div class="col-md-6">
+               <label class="erp-form-label">GRN Number</label>
+               <input class="erp-form-control" type="text" name="grn_number" id="grn-number" placeholder="GRN-XXX" required />
+               <div class="invalid-feedback" id="error-grn_number"></div>
+             </div>
+             <div class="col-md-6">
+               <label class="erp-form-label">Receipt Date</label>
+               <input class="erp-form-control" type="date" name="receipt_date" id="receipt-date" required />
+               <div class="invalid-feedback" id="error-receipt_date"></div>
+             </div>
             <div class="col-md-6">
               <label class="erp-form-label">Warehouse</label>
-              <select class="erp-form-control" name="warehouse" id="warehouse">
-                <option value="WH-A">WH-A</option>
-                <option value="WH-B">WH-B</option>
+              <select class="erp-form-control" name="warehouse_id" id="warehouse-id" required>
+                <option value="">Select Warehouse</option>
               </select>
+              <div class="invalid-feedback" id="error-warehouse_id"></div>
             </div>
             <div class="col-md-12">
               <label class="erp-form-label">Notes</label>
               <textarea class="erp-form-control" name="notes" id="notes" rows="2" placeholder=""></textarea>
+              <div class="invalid-feedback" id="error-notes"></div>
             </div>
-            <div class="col-md-6">
-              <label class="erp-form-label">Status</label>
-              <select class="erp-form-control" name="status" id="status">
-                <option value="Draft">Draft</option>
-                <option value="Partial">Partial</option>
-                <option value="Received">Received</option>
-              </select>
-            </div>
+             <div class="col-md-6">
+               <label class="erp-form-label">Status</label>
+               <select class="erp-form-control" name="status" id="status">
+                 <option value="Draft">Draft</option>
+                 <option value="Partial">Partial</option>
+                 <option value="Received">Received</option>
+               </select>
+               <div class="invalid-feedback" id="error-status"></div>
+             </div>
           </div>
         </div>
         <div class="modal-footer" style="border-color:var(--border)">
@@ -166,126 +174,188 @@
   </div>
 </div>
 
-@push('scripts')
-<script>
-$(function() {
-  var routes = {
-    store: '{{ route("grn.store") }}',
-    update: '{{ route("grn.update", ":id") }}',
-    destroy: '{{ route("grn.destroy", ":id") }}'
-  };
+ @push('scripts')
+ <script>
+ $(function() {
+   var routes = {
+     store: '{{ route("grn.store") }}',
+     update: '{{ route("grn.update", ":id") }}',
+     destroy: '{{ route("grn.destroy", ":id") }}',
+     purchaseOrdersAll: '{{ route("purchase_orders.all") }}',
+     warehousesAll: '{{ route("warehouses.all") }}'
+   };
 
-  var $modal = $('#modalGRN');
-  var $form = $('#form-grn');
-  var $btnSave = $('#btn-save');
-  var grnId = null;
-  var isEdit = false;
+   var $modal = $('#modalGRN');
+   var $form = $('#form-grn');
+   var $btnSave = $('#btn-save');
+   var grnId = null;
+   var isEdit = false;
 
-  $('#btn-add-grn').on('click', function() {
-    resetForm();
-    isEdit = false;
-    $('#modal-title').text('New Goods Receipt Note');
-    $modal.modal('show');
-  });
+   // Load purchase orders dropdown via AJAX
+   function loadPurchaseOrders() {
+     $.ajax({
+       url: routes.purchaseOrdersAll,
+       method: 'GET',
+       success: function(res) {
+         if (res.success && res.data) {
+           var $po = $('#purchase-order-id');
+           $po.empty().append('<option value="">Select PO</option>');
+           $.each(res.data, function(i, po) {
+             $po.append('<option value="' + po.id + '">' + po.po_number + '</option>');
+           });
+         }
+       },
+       error: function(xhr) {
+         console.warn('Failed to load purchase orders');
+       }
+     });
+   }
 
-  $(document).on('click', '.btn-edit', function() {
-    resetForm();
-    isEdit = true;
-    grnId = $(this).data('id');
-    $('#modal-title').text('Edit Goods Receipt Note');
+   // Load warehouses dropdown via AJAX
+   function loadWarehouses() {
+     $.ajax({
+       url: routes.warehousesAll,
+       method: 'GET',
+       success: function(res) {
+         if (res.success && res.data) {
+           var $wh = $('#warehouse-id');
+           $wh.empty().append('<option value="">Select Warehouse</option>');
+           $.each(res.data, function(i, w) {
+             $wh.append('<option value="' + w.id + '">' + w.warehouse_name + ' (' + w.warehouse_code + ')</option>');
+           });
+         }
+       },
+       error: function(xhr) {
+         console.warn('Failed to load warehouses');
+       }
+     });
+   }
 
-    $('#grn-id').val(grnId);
-    $('#purchase-order-id').val($(this).data('purchase_order_id'));
-    $('#supplier-name').val($(this).data('supplier_name'));
-    $('#receipt-date').val($(this).data('receipt_date'));
-    $('#warehouse').val($(this).data('warehouse') || 'WH-A');
-    $('#notes').val($(this).data('notes'));
-    $('#status').val($(this).data('status') || 'Draft');
+   // Load data on page ready
+   loadPurchaseOrders();
+   loadWarehouses();
 
-    $modal.modal('show');
-  });
+   $('#btn-add-grn').on('click', function() {
+     resetForm();
+     isEdit = false;
+     $('#modal-title').text('New Goods Receipt Note');
+     $modal.modal('show');
+   });
 
-  $(document).on('click', '.btn-delete', function() {
-    grnId = $(this).data('id');
-    var grn_number = $(this).data('grn_number');
-    $('#delete-target').text(grn_number || 'this GRN');
-    $('#modalDelete').modal('show');
-  });
+   $(document).on('click', '.btn-edit', function() {
+     resetForm();
+     isEdit = true;
+     grnId = $(this).data('id');
+     $('#modal-title').text('Edit Goods Receipt Note');
 
-  $('#btn-confirm-delete').on('click', function() {
-    $.ajax({
-      url: routes.destroy.replace(':id', grnId),
-      method: 'DELETE',
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function(res) {
-        if (res.success) {
-          showToast(res.message || 'GRN deleted', 'success');
-          $('#modalDelete').modal('hide');
-          setTimeout(() => location.reload(), 1000);
-        }
-      },
-      error: function(xhr) {
-        showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
-      }
-    });
-  });
+      $('#grn-id').val(grnId);
+      $('#grn-number').val($(this).data('grn_number'));
+      $('#purchase-order-id').val($(this).data('purchase_order_id'));
+      $('#supplier-name').val($(this).data('supplier_name'));
+      $('#receipt-date').val($(this).data('receipt_date'));
+      $('#warehouse-id').val($(this).data('warehouse_id'));
+      $('#notes').val($(this).data('notes'));
+      $('#status').val($(this).data('status') || 'Draft');
 
-  $form.on('submit', function(e) {
-    e.preventDefault();
-    $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+     $modal.modal('show');
+   });
 
-    var url = isEdit ? routes.update.replace(':id', grnId) : routes.store;
-    var method = isEdit ? 'PUT' : 'POST';
+   $(document).on('click', '.btn-delete', function() {
+     grnId = $(this).data('id');
+     var grn_number = $(this).data('grn_number');
+     $('#delete-target').text(grn_number || 'this GRN');
+     $('#modalDelete').modal('show');
+   });
 
-    $.ajax({
-      url: url,
-      method: method,
-      data: $form.serialize(),
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function(res) {
-        if (res.success) {
-          showToast(res.message || (isEdit ? 'GRN updated' : 'GRN created'), 'success');
-          $modal.modal('hide');
-          setTimeout(() => location.reload(), 1000);
-        }
-      },
-      error: function(xhr) {
-        var res = xhr.responseJSON;
-        if (res && res.errors) {
-          $.each(res.errors, function(field, messages) {
-            var $input = $form.find('[name="' + field + '"]');
-            $input.addClass('is-invalid');
-          });
-        } else if (res && res.message) {
-          showToast(res.message, 'error');
-        } else {
-          showToast('An error occurred', 'error');
-        }
-      },
-      complete: function() {
-        $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Save GRN');
-      }
-    });
-  });
+   $('#btn-confirm-delete').on('click', function() {
+     $.ajax({
+       url: routes.destroy.replace(':id', grnId),
+       method: 'DELETE',
+       headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+       success: function(res) {
+         if (res.success) {
+           showToast(res.message || 'GRN deleted', 'success');
+           $('#modalDelete').modal('hide');
+           setTimeout(() => location.reload(), 1000);
+         }
+       },
+       error: function(xhr) {
+         showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
+       }
+     });
+   });
 
-  function resetForm() {
-    grnId = null;
-    isEdit = false;
-    $form[0].reset();
-    $form.find('.is-invalid').removeClass('is-invalid');
-  }
+   $form.on('submit', function(e) {
+     e.preventDefault();
+     $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
 
-  function showToast(msg, type) {
-    type = type || 'info';
-    var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
-    var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
-    var $t = $('<div class="erp-toast ' + type + '"></div>')
-      .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
-    $('#toast-container').append($t);
-    setTimeout(function() { $t.css('opacity', 0); }, 2500);
-    setTimeout(function() { $t.remove(); }, 2800);
-  }
-});
-</script>
-@endpush
+     var url = isEdit ? routes.update.replace(':id', grnId) : routes.store;
+     var method = isEdit ? 'PUT' : 'POST';
+
+     $.ajax({
+       url: url,
+       method: method,
+       data: $form.serialize(),
+       headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+       success: function(res) {
+         if (res.success) {
+           showToast(res.message || (isEdit ? 'GRN updated' : 'GRN created'), 'success');
+           $modal.modal('hide');
+           setTimeout(() => location.reload(), 1000);
+         }
+       },
+       error: function(xhr) {
+         var res = xhr.responseJSON;
+         if (res && res.errors) {
+           // Clear previous errors
+           $form.find('.is-invalid').removeClass('is-invalid');
+           $form.find('.invalid-feedback').hide().text('');
+           
+           // Show each field error
+           var firstError = null;
+           $.each(res.errors, function(field, messages) {
+             var $input = $form.find('[name="' + field + '"]');
+             $input.addClass('is-invalid');
+             $('#error-' + field).text(messages[0]).show();
+             if (!firstError) firstError = messages[0];
+           });
+           
+           if (firstError) {
+             showToast(firstError, 'error');
+           } else {
+             showToast('Please correct the errors in the form', 'error');
+           }
+         } else if (res && res.message) {
+           showToast(res.message, 'error');
+         } else {
+           showToast('An error occurred', 'error');
+         }
+       },
+       complete: function() {
+         $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Save GRN');
+       }
+     });
+   });
+
+   function resetForm() {
+     grnId = null;
+     isEdit = false;
+     $form[0].reset();
+     $form.find('.is-invalid').removeClass('is-invalid');
+     $form.find('.invalid-feedback').hide().text('');
+   }
+
+   function showToast(msg, type) {
+     type = type || 'info';
+     var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
+     var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
+     var $t = $('<div class="erp-toast ' + type + '"></div>')
+       .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
+     $('#toast-container').append($t);
+     setTimeout(function() { $t.css('opacity', 0); }, 2500);
+     setTimeout(function() { $t.remove(); }, 2800);
+   }
+ });
+ </script>
+ @endpush
 @endsection

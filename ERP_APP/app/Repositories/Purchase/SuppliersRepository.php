@@ -51,7 +51,8 @@ class SuppliersRepository implements SuppliersInterface
         $query = $this->model->query();
 
         if ($search) {
-            $query->where('name', 'like', "%{$search}%");
+            $query->where('company_name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
         }
 
         return $query->paginate($perPage);

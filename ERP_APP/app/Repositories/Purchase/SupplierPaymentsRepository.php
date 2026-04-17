@@ -48,10 +48,14 @@ class SupplierPaymentsRepository implements SupplierPaymentsInterface
      */
     public function index($perPage = 15, $search = '', $filters = [])
     {
-        $query = $this->model->query();
+        $query = $this->model->query()->with(['supplier']);
 
         if ($search) {
-            $query->where('payment_number', 'like', "%{$search}%");
+            $query->where('payment_number', 'like', "%{$search}%")
+                  ->orWhere('invoice_reference', 'like', "%{$search}%")
+                  ->orWhereHas('supplier', function ($q) use ($search) {
+                      $q->where('company_name', 'like', "%{$search}%");
+                  });
         }
 
         return $query->paginate($perPage);

@@ -16,7 +16,7 @@ class PurchaseOrdersUpdateRequest extends FormRequest
 
     public function rules(): array
     {
-        $poId = $this->route('purchase_order');
+        $poId = $this->route('id') ?? $this->input('id');
         return [
             'supplier_id' => ['sometimes', 'integer', 'exists:suppliers,id'],
             'po_number' => ['sometimes', 'string', 'max:50', 'unique:purchase_orders,po_number,' . $poId],

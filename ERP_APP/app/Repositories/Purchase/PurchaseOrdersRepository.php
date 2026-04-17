@@ -48,10 +48,13 @@ class PurchaseOrdersRepository implements PurchaseOrdersInterface
      */
     public function index($perPage = 15, $search = '', $filters = [])
     {
-        $query = $this->model->query();
+        $query = $this->model->query()->with(['supplier', 'warehouse']);
 
         if ($search) {
-            $query->where('order_number', 'like', "%{$search}%");
+            $query->where('po_number', 'like', "%{$search}%")
+                  ->orWhereHas('supplier', function ($q) use ($search) {
+                      $q->where('company_name', 'like', "%{$search}%");
+                  });
         }
 
         return $query->paginate($perPage);

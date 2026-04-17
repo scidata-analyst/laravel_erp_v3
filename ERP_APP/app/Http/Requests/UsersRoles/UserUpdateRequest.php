@@ -23,7 +23,7 @@ class UserUpdateRequest extends FormRequest
             'password' => ['nullable', 'string', 'min:8'],
             'role_id' => ['sometimes', 'integer', 'exists:roles,id'],
             'department' => ['nullable', 'string', 'max:100'],
-            'status' => ['nullable', 'string', 'max:50'],
+            'is_active' => ['nullable', 'string', 'max:50'],
         ];
     }
 

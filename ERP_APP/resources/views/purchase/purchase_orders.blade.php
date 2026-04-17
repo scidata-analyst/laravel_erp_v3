@@ -30,9 +30,9 @@
         @forelse ($data as $po)
           <tr>
             <td>{{ $po->po_number }}</td>
-            <td>{{ $po->supplier_id ?? 'N/A' }}</td>
+             <td>{{ $po->supplier->company_name ?? 'N/A' }}</td>
             <td>{{ $po->order_date ? \Carbon\Carbon::parse($po->order_date)->format('Y-m-d') : 'N/A' }}</td>
-            <td>1</td>
+             <td>{{ $po->warehouse->warehouse_name ?? 'N/A' }}</td>
             <td>${{ number_format($po->total_amount, 2) }}</td>
             <td>
               @if ($po->status == 'Approved')
@@ -47,16 +47,17 @@
             </td>
             <td>—</td>
             <td><div class="d-flex gap-1">
-              <button class="btn-erp btn-outline btn-xs btn-icon btn-edit"
-                data-id="{{ $po->id }}"
-                data-po_number="{{ $po->po_number }}"
-                data-supplier_id="{{ $po->supplier_id }}"
-                data-order_date="{{ $po->order_date }}"
-                data-expected_delivery="{{ $po->expected_delivery }}"
-                data-warehouse="{{ $po->warehouse }}"
-                data-payment_terms="{{ $po->payment_terms }}"
-                data-status="{{ $po->status }}"
-                title="Edit">
+               <button class="btn-erp btn-outline btn-xs btn-icon btn-edit"
+                 data-id="{{ $po->id }}"
+                 data-po_number="{{ $po->po_number }}"
+                 data-supplier_id="{{ $po->supplier_id }}"
+                 data-order_date="{{ $po->order_date }}"
+                 data-expected_delivery_date="{{ $po->expected_delivery_date }}"
+                 data-warehouse_id="{{ $po->warehouse_id }}"
+                 data-payment_terms="{{ $po->payment_terms }}"
+                 data-total_amount="{{ $po->total_amount }}"
+                 data-status="{{ $po->status }}"
+                 title="Edit">
                 <i class="bi bi-pencil"></i>
               </button>
               <button class="btn-erp btn-danger btn-xs btn-icon btn-delete"
@@ -98,26 +99,27 @@
           <div class="row g-3 mb-3">
             <div class="col-md-6">
               <label class="erp-form-label">Supplier</label>
-              <select class="erp-form-control" name="supplier_id" id="supplier-id">
+              <select class="erp-form-control" name="supplier_id" id="supplier-id" required>
                 <option value="">Select Supplier</option>
-                <option value="1">TechSource Ltd.</option>
-                <option value="2">GlobalParts Inc.</option>
               </select>
+              <div class="invalid-feedback" id="error-supplier_id"></div>
             </div>
-            <div class="col-md-3">
-              <label class="erp-form-label">Order Date</label>
-              <input class="erp-form-control" type="date" name="order_date" id="order-date" />
-            </div>
-            <div class="col-md-3">
-              <label class="erp-form-label">Expected Delivery</label>
-              <input class="erp-form-control" type="date" name="expected_delivery" id="expected-delivery" />
-            </div>
+             <div class="col-md-3">
+               <label class="erp-form-label">Order Date</label>
+               <input class="erp-form-control" type="date" name="order_date" id="order-date" required />
+               <div class="invalid-feedback" id="error-order_date"></div>
+             </div>
+             <div class="col-md-3">
+               <label class="erp-form-label">Expected Delivery</label>
+               <input class="erp-form-control" type="date" name="expected_delivery_date" id="expected-delivery" />
+               <div class="invalid-feedback" id="error-expected_delivery_date"></div>
+             </div>
             <div class="col-md-6">
               <label class="erp-form-label">Warehouse</label>
-              <select class="erp-form-control" name="warehouse" id="warehouse">
-                <option value="WH-A">WH-A</option>
-                <option value="WH-B">WH-B</option>
+              <select class="erp-form-control" name="warehouse_id" id="warehouse-id" required>
+                <option value="">Select Warehouse</option>
               </select>
+              <div class="invalid-feedback" id="error-warehouse_id"></div>
             </div>
             <div class="col-md-6">
               <label class="erp-form-label">Payment Terms</label>
@@ -126,16 +128,28 @@
                 <option value="Net 60">Net 60</option>
                 <option value="Prepaid">Prepaid</option>
               </select>
+              <div class="invalid-feedback" id="error-payment_terms"></div>
             </div>
-            <div class="col-md-6">
-              <label class="erp-form-label">Status</label>
-              <select class="erp-form-control" name="status" id="status">
-                <option value="Draft">Draft</option>
-                <option value="Pending">Pending</option>
-                <option value="Approved">Approved</option>
-                <option value="Received">Received</option>
-              </select>
-            </div>
+             <div class="col-md-6">
+               <label class="erp-form-label">Status</label>
+               <select class="erp-form-control" name="status" id="status">
+                 <option value="Draft">Draft</option>
+                 <option value="Pending">Pending</option>
+                 <option value="Approved">Approved</option>
+                 <option value="Received">Received</option>
+               </select>
+               <div class="invalid-feedback" id="error-status"></div>
+             </div>
+             <div class="col-md-6">
+               <label class="erp-form-label">PO Number</label>
+               <input class="erp-form-control" type="text" name="po_number" id="po-number" placeholder="PO-XXX" required />
+               <div class="invalid-feedback" id="error-po_number"></div>
+             </div>
+             <div class="col-md-6">
+               <label class="erp-form-label">Total Amount ($)</label>
+               <input class="erp-form-control" type="number" name="total_amount" id="total-amount" step="0.01" required />
+               <div class="invalid-feedback" id="error-total_amount"></div>
+             </div>
           </div>
           <label class="erp-form-label">Order Items</label>
           <div class="erp-table-wrap"><table class="erp-table"><thead><tr><th>Product</th><th>Qty</th><th>Unit Cost</th><th>Total</th></tr></thead>
@@ -187,126 +201,189 @@
   </div>
 </div>
 
-@push('scripts')
-<script>
-$(function() {
-  var routes = {
-    store: '{{ route("purchase_orders.store") }}',
-    update: '{{ route("purchase_orders.update", ":id") }}',
-    destroy: '{{ route("purchase_orders.destroy", ":id") }}'
-  };
+ @push('scripts')
+ <script>
+ $(function() {
+   var routes = {
+     store: '{{ route("purchase_orders.store") }}',
+     update: '{{ route("purchase_orders.update", ":id") }}',
+     destroy: '{{ route("purchase_orders.destroy", ":id") }}',
+     suppliersAll: '{{ route("suppliers.all") }}',
+     warehousesAll: '{{ route("warehouses.all") }}'
+   };
 
-  var $modal = $('#modalPO');
-  var $form = $('#form-po');
-  var $btnSave = $('#btn-save');
-  var poId = null;
-  var isEdit = false;
+   var $modal = $('#modalPO');
+   var $form = $('#form-po');
+   var $btnSave = $('#btn-save');
+   var poId = null;
+   var isEdit = false;
 
-  $('#btn-add-po').on('click', function() {
-    resetForm();
-    isEdit = false;
-    $('#modal-title').text('Create Purchase Order');
-    $modal.modal('show');
-  });
+   // Load suppliers dropdown via AJAX
+   function loadSuppliers() {
+     $.ajax({
+       url: routes.suppliersAll,
+       method: 'GET',
+       success: function(res) {
+         if (res.success && res.data) {
+           var $sup = $('#supplier-id');
+           $sup.empty().append('<option value="">Select Supplier</option>');
+           $.each(res.data, function(i, s) {
+             $sup.append('<option value="' + s.id + '">' + s.company_name + '</option>');
+           });
+         }
+       },
+       error: function(xhr) {
+         console.warn('Failed to load suppliers');
+       }
+     });
+   }
 
-  $(document).on('click', '.btn-edit', function() {
-    resetForm();
-    isEdit = true;
-    poId = $(this).data('id');
-    $('#modal-title').text('Edit Purchase Order');
+   // Load warehouses dropdown via AJAX
+   function loadWarehouses() {
+     $.ajax({
+       url: routes.warehousesAll,
+       method: 'GET',
+       success: function(res) {
+         if (res.success && res.data) {
+           var $wh = $('#warehouse-id');
+           $wh.empty().append('<option value="">Select Warehouse</option>');
+           $.each(res.data, function(i, w) {
+             $wh.append('<option value="' + w.id + '">' + w.warehouse_name + ' (' + w.warehouse_code + ')</option>');
+           });
+         }
+       },
+       error: function(xhr) {
+         console.warn('Failed to load warehouses');
+       }
+     });
+   }
 
-    $('#po-id').val(poId);
-    $('#supplier-id').val($(this).data('supplier_id'));
-    $('#order-date').val($(this).data('order_date'));
-    $('#expected-delivery').val($(this).data('expected_delivery'));
-    $('#warehouse').val($(this).data('warehouse') || 'WH-A');
-    $('#payment-terms').val($(this).data('payment_terms') || 'Net 30');
-    $('#status').val($(this).data('status') || 'Draft');
+   // Load data on page ready
+   loadSuppliers();
+   loadWarehouses();
 
-    $modal.modal('show');
-  });
+   $('#btn-add-po').on('click', function() {
+     resetForm();
+     isEdit = false;
+     $('#modal-title').text('Create Purchase Order');
+     $modal.modal('show');
+   });
 
-  $(document).on('click', '.btn-delete', function() {
-    poId = $(this).data('id');
-    var po_number = $(this).data('po_number');
-    $('#delete-target').text(po_number || 'this PO');
-    $('#modalDelete').modal('show');
-  });
+   $(document).on('click', '.btn-edit', function() {
+     resetForm();
+     isEdit = true;
+     poId = $(this).data('id');
+     $('#modal-title').text('Edit Purchase Order');
 
-  $('#btn-confirm-delete').on('click', function() {
-    $.ajax({
-      url: routes.destroy.replace(':id', poId),
-      method: 'DELETE',
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function(res) {
-        if (res.success) {
-          showToast(res.message || 'Purchase order deleted', 'success');
-          $('#modalDelete').modal('hide');
-          setTimeout(() => location.reload(), 1000);
-        }
-      },
-      error: function(xhr) {
-        showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
-      }
-    });
-  });
+      $('#po-id').val(poId);
+      $('#po-number').val($(this).data('po_number'));
+      $('#supplier-id').val($(this).data('supplier_id'));
+      $('#order-date').val($(this).data('order_date'));
+      $('#expected-delivery').val($(this).data('expected_delivery_date'));
+      $('#warehouse-id').val($(this).data('warehouse_id'));
+      $('#payment-terms').val($(this).data('payment_terms') || 'Net 30');
+      $('#total-amount').val($(this).data('total_amount'));
+      $('#status').val($(this).data('status') || 'Draft');
 
-  $form.on('submit', function(e) {
-    e.preventDefault();
-    $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+     $modal.modal('show');
+   });
 
-    var url = isEdit ? routes.update.replace(':id', poId) : routes.store;
-    var method = isEdit ? 'PUT' : 'POST';
+   $(document).on('click', '.btn-delete', function() {
+     poId = $(this).data('id');
+     var po_number = $(this).data('po_number');
+     $('#delete-target').text(po_number || 'this PO');
+     $('#modalDelete').modal('show');
+   });
 
-    $.ajax({
-      url: url,
-      method: method,
-      data: $form.serialize(),
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function(res) {
-        if (res.success) {
-          showToast(res.message || (isEdit ? 'Purchase order updated' : 'Purchase order created'), 'success');
-          $modal.modal('hide');
-          setTimeout(() => location.reload(), 1000);
-        }
-      },
-      error: function(xhr) {
-        var res = xhr.responseJSON;
-        if (res && res.errors) {
-          $.each(res.errors, function(field, messages) {
-            var $input = $form.find('[name="' + field + '"]');
-            $input.addClass('is-invalid');
-          });
-        } else if (res && res.message) {
-          showToast(res.message, 'error');
-        } else {
-          showToast('An error occurred', 'error');
-        }
-      },
-      complete: function() {
-        $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Submit PO');
-      }
-    });
-  });
+   $('#btn-confirm-delete').on('click', function() {
+     $.ajax({
+       url: routes.destroy.replace(':id', poId),
+       method: 'DELETE',
+       headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+       success: function(res) {
+         if (res.success) {
+           showToast(res.message || 'Purchase order deleted', 'success');
+           $('#modalDelete').modal('hide');
+           setTimeout(() => location.reload(), 1000);
+         }
+       },
+       error: function(xhr) {
+         showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
+       }
+     });
+   });
 
-  function resetForm() {
-    poId = null;
-    isEdit = false;
-    $form[0].reset();
-    $form.find('.is-invalid').removeClass('is-invalid');
-  }
+   $form.on('submit', function(e) {
+     e.preventDefault();
+     $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
 
-  function showToast(msg, type) {
-    type = type || 'info';
-    var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
-    var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
-    var $t = $('<div class="erp-toast ' + type + '"></div>')
-      .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
-    $('#toast-container').append($t);
-    setTimeout(function() { $t.css('opacity', 0); }, 2500);
-    setTimeout(function() { $t.remove(); }, 2800);
-  }
-});
-</script>
-@endpush
+     var url = isEdit ? routes.update.replace(':id', poId) : routes.store;
+     var method = isEdit ? 'PUT' : 'POST';
+
+     $.ajax({
+       url: url,
+       method: method,
+       data: $form.serialize(),
+       headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+       success: function(res) {
+         if (res.success) {
+           showToast(res.message || (isEdit ? 'Purchase order updated' : 'Purchase order created'), 'success');
+           $modal.modal('hide');
+           setTimeout(() => location.reload(), 1000);
+         }
+       },
+       error: function(xhr) {
+         var res = xhr.responseJSON;
+         if (res && res.errors) {
+           // Clear previous errors
+           $form.find('.is-invalid').removeClass('is-invalid');
+           $form.find('.invalid-feedback').hide().text('');
+           
+           // Show each field error
+           var firstError = null;
+           $.each(res.errors, function(field, messages) {
+             var $input = $form.find('[name="' + field + '"]');
+             $input.addClass('is-invalid');
+             $('#error-' + field).text(messages[0]).show();
+             if (!firstError) firstError = messages[0];
+           });
+           
+           if (firstError) {
+             showToast(firstError, 'error');
+           } else {
+             showToast('Please correct the errors in the form', 'error');
+           }
+         } else if (res && res.message) {
+           showToast(res.message, 'error');
+         } else {
+           showToast('An error occurred', 'error');
+         }
+       },
+       complete: function() {
+         $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Submit PO');
+       }
+     });
+   });
+
+   function resetForm() {
+     poId = null;
+     isEdit = false;
+     $form[0].reset();
+     $form.find('.is-invalid').removeClass('is-invalid');
+     $form.find('.invalid-feedback').hide().text('');
+   }
+
+   function showToast(msg, type) {
+     type = type || 'info';
+     var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
+     var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
+     var $t = $('<div class="erp-toast ' + type + '"></div>')
+       .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
+     $('#toast-container').append($t);
+     setTimeout(function() { $t.css('opacity', 0); }, 2500);
+     setTimeout(function() { $t.remove(); }, 2800);
+   }
+ });
+ </script>
+ @endpush
 @endsection

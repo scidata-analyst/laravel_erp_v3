@@ -16,7 +16,7 @@ class GrnUpdateRequest extends FormRequest
 
     public function rules(): array
     {
-        $grnId = $this->route('grn');
+        $grnId = $this->route('id') ?? $this->input('id');
         return [
             'purchase_order_id' => ['sometimes', 'integer', 'exists:purchase_orders,id'],
             'supplier_name' => ['sometimes', 'string', 'max:255'],

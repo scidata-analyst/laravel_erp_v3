@@ -16,7 +16,7 @@ class SupplierPaymentsUpdateRequest extends FormRequest
 
     public function rules(): array
     {
-        $paymentId = $this->route('supplier_payment');
+        $paymentId = $this->route('id') ?? $this->input('id');
         return [
             'supplier_id' => ['sometimes', 'integer', 'exists:suppliers,id'],
             'payment_number' => ['sometimes', 'string', 'max:50', 'unique:supplier_payments,payment_number,' . $paymentId],

@@ -48,10 +48,11 @@ class GrnRepository implements GrnInterface
      */
     public function index($perPage = 15, $search = '', $filters = [])
     {
-        $query = $this->model->query();
+        $query = $this->model->query()->with(['purchaseOrder', 'warehouse']);
 
         if ($search) {
-            $query->where('grn_number', 'like', "%{$search}%");
+            $query->where('grn_number', 'like', "%{$search}%")
+                  ->orWhere('supplier_name', 'like', "%{$search}%");
         }
 
         return $query->paginate($perPage);

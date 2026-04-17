@@ -30,7 +30,7 @@
         @forelse ($data as $payment)
           <tr>
             <td>{{ $payment->payment_number }}</td>
-            <td>{{ $payment->supplier_id ?? 'N/A' }}</td>
+            <td>{{ $payment->supplier->company_name ?? 'N/A' }}</td>
             <td>{{ $payment->invoice_reference ?? 'N/A' }}</td>
             <td>${{ number_format($payment->amount, 2) }}</td>
             <td>{{ $payment->payment_date ? \Carbon\Carbon::parse($payment->payment_date)->format('Y-m-d') : 'N/A' }}</td>
@@ -95,40 +95,51 @@
           <input type="hidden" name="id" id="payment-id" value="" />
           <div class="row g-3">
             <div class="col-md-6">
+              <label class="erp-form-label">Payment Number</label>
+              <input class="erp-form-control" type="text" name="payment_number" id="payment-number" placeholder="PAY-XXX" required />
+              <div class="invalid-feedback" id="error-payment_number"></div>
+            </div>
+            <div class="col-md-6">
               <label class="erp-form-label">Supplier</label>
-              <select class="erp-form-control" name="supplier_id" id="supplier-id">
+              <select class="erp-form-control" name="supplier_id" id="supplier-id" required>
                 <option value="">Select Supplier</option>
-                <option value="1">TechSource Ltd.</option>
-                <option value="2">GlobalParts Inc.</option>
               </select>
+              <div class="invalid-feedback" id="error-supplier_id"></div>
             </div>
             <div class="col-md-6">
               <label class="erp-form-label">Invoice Reference</label>
               <input class="erp-form-control" type="text" name="invoice_reference" id="invoice-reference" placeholder="INV-SUP-XXX" />
+              <div class="invalid-feedback" id="error-invoice_reference"></div>
             </div>
             <div class="col-md-4">
               <label class="erp-form-label">Amount ($)</label>
-              <input class="erp-form-control" type="number" name="amount" id="amount" step="0.01" placeholder="" />
+              <input class="erp-form-control" type="number" name="amount" id="amount" step="0.01" placeholder="" required />
+              <div class="invalid-feedback" id="error-amount"></div>
             </div>
             <div class="col-md-4">
               <label class="erp-form-label">Payment Date</label>
-              <input class="erp-form-control" type="date" name="payment_date" id="payment-date" />
+              <input class="erp-form-control" type="date" name="payment_date" id="payment-date" required />
+              <div class="invalid-feedback" id="error-payment_date"></div>
             </div>
             <div class="col-md-4">
               <label class="erp-form-label">Method</label>
-              <select class="erp-form-control" name="payment_method" id="payment-method">
+              <select class="erp-form-control" name="payment_method" id="payment-method" required>
+                <option value="">Select Method</option>
                 <option value="Bank Transfer">Bank Transfer</option>
                 <option value="Cheque">Cheque</option>
                 <option value="Cash">Cash</option>
               </select>
+              <div class="invalid-feedback" id="error-payment_method"></div>
             </div>
             <div class="col-md-6">
               <label class="erp-form-label">Status</label>
               <select class="erp-form-control" name="status" id="status">
+                <option value="">Select Status</option>
                 <option value="Pending">Pending</option>
                 <option value="Paid">Paid</option>
                 <option value="Overdue">Overdue</option>
               </select>
+              <div class="invalid-feedback" id="error-status"></div>
             </div>
           </div>
         </div>
@@ -173,7 +184,8 @@ $(function() {
   var routes = {
     store: '{{ route("supplier_payments.store") }}',
     update: '{{ route("supplier_payments.update", ":id") }}',
-    destroy: '{{ route("supplier_payments.destroy", ":id") }}'
+    destroy: '{{ route("supplier_payments.destroy", ":id") }}',
+    suppliersAll: '{{ route("suppliers.all") }}'
   };
 
   var $modal = $('#modalSupplierPay');
@@ -182,10 +194,41 @@ $(function() {
   var paymentId = null;
   var isEdit = false;
 
+  // Load suppliers dropdown via AJAX
+  function loadSuppliers(selectedId = null) {
+    $.ajax({
+      url: routes.suppliersAll,
+      method: 'GET',
+      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+      success: function(res) {
+        var $supplierSelect = $('#supplier-id');
+        $supplierSelect.find('option:not(:first)').remove();
+        if (res.success && res.data) {
+          $.each(res.data, function(index, supplier) {
+            var option = $('<option>').val(supplier.id).text(supplier.company_name);
+            $supplierSelect.append(option);
+          });
+          if (selectedId) {
+            $supplierSelect.val(selectedId);
+          }
+        }
+      },
+      error: function() {
+        showToast('Failed to load suppliers', 'error');
+      }
+    });
+  }
+
+  // Load suppliers when modal opens
+  $modal.on('show.bs.modal', function() {
+    loadSuppliers();
+  });
+
   $('#btn-add-payment').on('click', function() {
     resetForm();
     isEdit = false;
     $('#modal-title').text('New Supplier Payment');
+    loadSuppliers();
     $modal.modal('show');
   });
 
@@ -196,12 +239,13 @@ $(function() {
     $('#modal-title').text('Edit Supplier Payment');
 
     $('#payment-id').val(paymentId);
-    $('#supplier-id').val($(this).data('supplier_id'));
+    $('#payment-number').val($(this).data('payment_number'));
+    loadSuppliers($(this).data('supplier_id'));
     $('#invoice-reference').val($(this).data('invoice_reference'));
     $('#amount').val($(this).data('amount'));
     $('#payment-date').val($(this).data('payment_date'));
-    $('#payment-method').val($(this).data('payment_method') || 'Bank Transfer');
-    $('#status').val($(this).data('status') || 'Pending');
+    $('#payment-method').val($(this).data('payment_method') || '');
+    $('#status').val($(this).data('status') || '');
 
     $modal.modal('show');
   });
@@ -235,6 +279,10 @@ $(function() {
     e.preventDefault();
     $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
 
+    // Clear previous inline errors
+    $form.find('.is-invalid').removeClass('is-invalid');
+    $form.find('.invalid-feedback').text('');
+
     var url = isEdit ? routes.update.replace(':id', paymentId) : routes.store;
     var method = isEdit ? 'PUT' : 'POST';
 
@@ -253,10 +301,18 @@ $(function() {
       error: function(xhr) {
         var res = xhr.responseJSON;
         if (res && res.errors) {
+          // Show inline errors for each field
           $.each(res.errors, function(field, messages) {
             var $input = $form.find('[name="' + field + '"]');
             $input.addClass('is-invalid');
+            var $feedback = $('#error-' + field);
+            if ($feedback.length) {
+              $feedback.text(messages[0]);
+            }
           });
+          // Show first error in toast
+          var firstField = Object.keys(res.errors)[0];
+          showToast(res.errors[firstField][0], 'error');
         } else if (res && res.message) {
           showToast(res.message, 'error');
         } else {
@@ -274,6 +330,7 @@ $(function() {
     isEdit = false;
     $form[0].reset();
     $form.find('.is-invalid').removeClass('is-invalid');
+    $form.find('.invalid-feedback').text('');
   }
 
   function showToast(msg, type) {

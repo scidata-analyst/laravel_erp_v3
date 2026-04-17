@@ -81,6 +81,7 @@
             <div class="col-md-6">
               <label class="erp-form-label">Contact Person</label>
               <input class="erp-form-control" type="text" name="contact_person" id="contact-person" placeholder="Contact name" />
+              <div class="invalid-feedback" id="error-contact_person"></div>
             </div>
             <div class="col-md-6">
               <label class="erp-form-label">Email</label>
@@ -88,8 +89,90 @@
               <div class="invalid-feedback" id="error-email"></div>
             </div>
             <div class="col-md-6">
+              <label class="erp-form-label">Contact Person</label>
+              <input class="erp-form-control" type="text" name="contact_person" id="contact-person" placeholder="Contact name" required />
+              <div class="invalid-feedback" id="error-contact_person"></div>
+            </div>
+            <div class="col-md-6">
               <label class="erp-form-label">Phone</label>
-              <input class="erp-form-control" type="text" name="phone" id="phone" placeholder="+1-555-0000" />
+              <input class="erp-form-control" type="text" name="phone" id="phone" placeholder="+1-555-0000" required />
+              <div class="invalid-feedback" id="error-phone"></div>
+            </div>
+            <div class="col-md-4">
+              <label class="erp-form-label">Country</label>
+              <input class="erp-form-control" type="text" name="country" id="country" placeholder="USA" required />
+              <div class="invalid-feedback" id="error-country"></div>
+            </div>
+            <div class="col-md-4">
+              <label class="erp-form-label">Payment Terms</label>
+              <select class="erp-form-control" name="payment_terms" id="payment-terms">
+                <option value="Net 30">Net 30</option>
+                <option value="Net 60">Net 60</option>
+                <option value="Net 90">Net 90</option>
+                <option value="Prepaid">Prepaid</option>
+              </select>
+              <div class="invalid-feedback" id="error-payment_terms"></div>
+            </div>
+            <div class="col-md-4">
+              <label class="erp-form-label">Currency</label>
+              <select class="erp-form-control" name="currency" id="currency">
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+                <option value="BDT">BDT</option>
+              </select>
+              <div class="invalid-feedback" id="error-currency"></div>
+            </div>
+            <div class="col-md-12">
+              <label class="erp-form-label">Address</label>
+              <textarea class="erp-form-control" name="address" id="address" rows="2" placeholder=""></textarea>
+              <div class="invalid-feedback" id="error-address"></div>
+            </div>
+            <div class="col-md-6">
+              <label class="erp-form-label">Status</label>
+              <select class="erp-form-control" name="status" id="status">
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+              </select>
+              <div class="invalid-feedback" id="error-status"></div>
+            </div>
+            <div class="col-md-4">
+              <label class="erp-form-label">Country</label>
+              <input class="erp-form-control" type="text" name="country" id="country" placeholder="USA" required />
+              <div class="invalid-feedback" id="error-country"></div>
+            </div>
+            <div class="col-md-4">
+              <label class="erp-form-label">Payment Terms</label>
+              <select class="erp-form-control" name="payment_terms" id="payment-terms">
+                <option value="Net 30">Net 30</option>
+                <option value="Net 60">Net 60</option>
+                <option value="Net 90">Net 90</option>
+                <option value="Prepaid">Prepaid</option>
+              </select>
+              <div class="invalid-feedback" id="error-payment_terms"></div>
+            </div>
+            <div class="col-md-4">
+              <label class="erp-form-label">Currency</label>
+              <select class="erp-form-control" name="currency" id="currency">
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+                <option value="BDT">BDT</option>
+              </select>
+              <div class="invalid-feedback" id="error-currency"></div>
+            </div>
+            <div class="col-md-12">
+              <label class="erp-form-label">Address</label>
+              <textarea class="erp-form-control" name="address" id="address" rows="2" placeholder=""></textarea>
+              <div class="invalid-feedback" id="error-address"></div>
+            </div>
+            <div class="col-md-6">
+              <label class="erp-form-label">Status</label>
+              <select class="erp-form-control" name="status" id="status">
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+              </select>
+              <div class="invalid-feedback" id="error-status"></div>
             </div>
             <div class="col-md-4">
               <label class="erp-form-label">Country</label>

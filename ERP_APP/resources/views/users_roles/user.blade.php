@@ -70,11 +70,11 @@
               <td>{{ $user->last_login ?? 'Never' }}</td>
               <td>
                 <div class="d-flex gap-1">
-                  <button class="btn-erp btn-outline btn-xs btn-icon btn-edit" data-id="{{ $user->id }}"
-                    data-user_name="{{ $user->user_name ?? $user->name ?? '' }}" data-email="{{ $user->email }}"
-                    data-role="{{ $user->role_name ?? '' }}" data-department="{{ $user->department ?? '' }}"
-                    data-status="{{ ($user->is_active ?? $user->status) == 'Active' || ($user->is_active ?? 1) == 1 ? 'Active' : 'Inactive' }}"
-                    title="Edit">
+                   <button class="btn-erp btn-outline btn-xs btn-icon btn-edit" data-id="{{ $user->id }}"
+                     data-user_name="{{ $user->user_name ?? $user->name ?? '' }}" data-email="{{ $user->email }}"
+                     data-role_id="{{ $user->role_id ?? '' }}" data-department="{{ $user->department ?? '' }}"
+                     data-is_active="{{ ($user->is_active ?? $user->status) == 'Active' || ($user->is_active ?? 1) == 1 ? 'Active' : 'Inactive' }}"
+                     title="Edit">
                     <i class="bi bi-pencil"></i>
                   </button>
                   <button class="btn-erp btn-danger btn-xs btn-icon btn-delete" data-id="{{ $user->id }}"
@@ -124,41 +124,39 @@
                   required />
                 <div class="invalid-feedback" id="error-email"></div>
               </div>
-              <div class="col-md-6">
-                <label class="erp-form-label">Role <span class="text-danger">*</span></label>
-                <select class="erp-form-control" name="role_id" id="user-role" required>
-                  <option value="">Select Role</option>
-                  <option value="1">Admin</option>
-                  <option value="2">Manager</option>
-                  <option value="3">Staff</option>
-                  <option value="4">Viewer</option>
-                </select>
-                <div class="invalid-feedback" id="error-role_id"></div>
-              </div>
-              <div class="col-md-6">
-                <label class="erp-form-label">Department</label>
-                <select class="erp-form-control" name="department" id="user-department">
-                  <option value="">Select Department</option>
-                  <option value="IT">IT</option>
-                  <option value="Sales">Sales</option>
-                  <option value="Finance">Finance</option>
-                  <option value="HR">HR</option>
-                  <option value="Warehouse">Warehouse</option>
-                </select>
-              </div>
+                <div class="col-md-6">
+                  <label class="erp-form-label">Role <span class="text-danger">*</span></label>
+                  <select class="erp-form-control" name="role_id" id="user-role" required>
+                    <option value="">Select Role</option>
+                  </select>
+                  <div class="invalid-feedback" id="error-role_id"></div>
+                </div>
+                <div class="col-md-6">
+                  <label class="erp-form-label">Department</label>
+                  <select class="erp-form-control" name="department" id="user-department">
+                    <option value="">Select Department</option>
+                    <option value="IT">IT</option>
+                    <option value="Sales">Sales</option>
+                    <option value="Finance">Finance</option>
+                    <option value="HR">HR</option>
+                    <option value="Warehouse">Warehouse</option>
+                  </select>
+                  <div class="invalid-feedback" id="error-department"></div>
+                </div>
               <div class="col-md-6" id="password-field">
                 <label class="erp-form-label">Password <span class="text-danger">*</span></label>
                 <input class="erp-form-control" type="password" name="password" id="user-password"
                   placeholder="Min 8 characters" />
                 <div class="invalid-feedback" id="error-password"></div>
               </div>
-              <div class="col-md-6">
-                <label class="erp-form-label">Status</label>
-                <select class="erp-form-control" name="status" id="user-status">
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Inactive</option>
-                </select>
-              </div>
+                <div class="col-md-6">
+                  <label class="erp-form-label">Status</label>
+                  <select class="erp-form-control" name="is_active" id="user-is_active">
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                  </select>
+                  <div class="invalid-feedback" id="error-is_active"></div>
+                </div>
             </div>
           </div>
           <div class="modal-footer" style="border-color:var(--border)">
@@ -204,7 +202,8 @@
         var routes = {
           store: '{{ route("user.store") }}',
           update: '{{ route("user.update", ":id") }}',
-          destroy: '{{ route("user.destroy", ":id") }}'
+          destroy: '{{ route("user.destroy", ":id") }}',
+          rolesAll: '{{ route("roles.all") }}'
         };
 
         var $modal = $('#modalUser');
@@ -213,6 +212,31 @@
         var userId = null;
         var isEdit = false;
 
+        // Load roles dropdown via AJAX
+        function loadRoles(selectedId = null) {
+          $.ajax({
+            url: routes.rolesAll,
+            method: 'GET',
+            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+            success: function(res) {
+              var $roleSelect = $('#user-role');
+              $roleSelect.find('option:not(:first)').remove();
+              if (res.success && res.data) {
+                $.each(res.data, function(index, role) {
+                  var option = $('<option>').val(role.id).text(role.role_name);
+                  $roleSelect.append(option);
+                });
+                if (selectedId) {
+                  $roleSelect.val(selectedId);
+                }
+              }
+            },
+            error: function() {
+              showToast('Failed to load roles', 'error');
+            }
+          });
+        }
+
         // Open modal for new user
         $('#btn-add-user').on('click', function () {
           resetForm();
@@ -220,6 +244,7 @@
           $('#modal-title').text('Add User');
           $('#password-field').show();
           $form.find('[name="password"]').prop('required', true);
+          loadRoles();
           $modal.modal('show');
         });
 
@@ -235,8 +260,8 @@
           $('#user-id').val(userId);
           $('#user-name').val($(this).data('user_name'));
           $('#user-email').val($(this).data('email'));
-          $('#user-role').val($(this).data('role') === 'Admin' ? 1 : $(this).data('role') === 'Manager' ? 2 : $(this).data('role') === 'Staff' ? 3 : 4);
-          $('#user-status').val($(this).data('status'));
+          loadRoles($(this).data('role_id'));
+          $('#user-is_active').val($(this).data('is_active'));
           $('#user-department').val($(this).data('department'));
 
           $modal.modal('show');
@@ -269,53 +294,60 @@
           });
         });
 
-        // Form submit
-        $form.on('submit', function (e) {
-          e.preventDefault();
-          $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+         // Form submit
+         $form.on('submit', function (e) {
+           e.preventDefault();
+           $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
 
-          var url = isEdit ? routes.update.replace(':id', userId) : routes.store;
-          var method = isEdit ? 'PUT' : 'POST';
+           // Clear previous inline errors
+           $form.find('.is-invalid').removeClass('is-invalid');
+           $form.find('.invalid-feedback').text('');
 
-          $.ajax({
-            url: url,
-            method: method,
-            data: $form.serialize(),
-            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-            success: function (res) {
-              if (res.success) {
-                showToast(res.message || (isEdit ? 'User updated' : 'User created'), 'success');
-                $modal.modal('hide');
-                setTimeout(() => location.reload(), 1000);
-              }
-            },
-            error: function (xhr) {
-              var res = xhr.responseJSON;
-              if (res && res.errors) {
-                $.each(res.errors, function (field, messages) {
-                  var $input = $form.find('[name="' + field + '"]');
-                  $input.addClass('is-invalid');
-                  $('#error-' + field).text(messages[0]).show();
-                });
-              } else if (res && res.message) {
-                showToast(res.message, 'error');
-              } else {
-                showToast('An error occurred', 'error');
-              }
-            },
-            complete: function () {
-              $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Save User');
-            }
-          });
-        });
+           var url = isEdit ? routes.update.replace(':id', userId) : routes.store;
+           var method = isEdit ? 'PUT' : 'POST';
 
-        function resetForm() {
-          userId = null;
-          isEdit = false;
-          $form[0].reset();
-          $form.find('.is-invalid').removeClass('is-invalid');
-          $form.find('.invalid-feedback').hide().text('');
-        }
+           $.ajax({
+             url: url,
+             method: method,
+             data: $form.serialize(),
+             headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+             success: function (res) {
+               if (res.success) {
+                 showToast(res.message || (isEdit ? 'User updated' : 'User created'), 'success');
+                 $modal.modal('hide');
+                 setTimeout(() => location.reload(), 1000);
+               }
+             },
+             error: function (xhr) {
+               var res = xhr.responseJSON;
+               if (res && res.errors) {
+                 $.each(res.errors, function (field, messages) {
+                   var $input = $form.find('[name="' + field + '"]');
+                   $input.addClass('is-invalid');
+                   $('#error-' + field).text(messages[0]);
+                 });
+                 // Show first error in toast
+                 var firstField = Object.keys(res.errors)[0];
+                 showToast(res.errors[firstField][0], 'error');
+               } else if (res && res.message) {
+                 showToast(res.message, 'error');
+               } else {
+                 showToast('An error occurred', 'error');
+               }
+             },
+             complete: function () {
+               $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Save User');
+             }
+           });
+         });
+
+         function resetForm() {
+           userId = null;
+           isEdit = false;
+           $form[0].reset();
+           $form.find('.is-invalid').removeClass('is-invalid');
+           $form.find('.invalid-feedback').text('');
+         }
 
         function showToast(msg, type) {
           type = type || 'info';
