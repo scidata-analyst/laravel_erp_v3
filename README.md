@@ -7,6 +7,28 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Docker Setup
+
+Run everything with one command:
+
+```bash
+docker compose up --build
+```
+
+Docker starts Nginx, PHP-FPM, and MySQL. On app startup it waits for MySQL, creates the database tables with migrations, and seeds the database when it is empty.
+
+The Laravel app will be available at `http://localhost:8083`.
+
+MySQL is available from your host machine on port `3309`:
+
+```text
+host: 127.0.0.1
+port: 3309
+database: erp_app
+username: erp_user
+password: erp_password
+```
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

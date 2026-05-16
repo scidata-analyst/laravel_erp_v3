@@ -1,0 +1,68 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: app
+    container_name: erp_app
+    restart: unless-stopped
+    environment:
+      APP_NAME: "${ERP_APP_NAME:-ERP}"
+      APP_KEY: "${ERP_APP_KEY:-}"
+      APP_ENV: "${ERP_APP_ENV:-local}"
+      APP_DEBUG: "${ERP_APP_DEBUG:-true}"
+      APP_URL: "${ERP_APP_URL:-http://localhost:8083}"
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_DATABASE: "${ERP_DB_DATABASE:-erp_app}"
+      DB_USERNAME: "${ERP_DB_USERNAME:-erp_user}"
+      DB_PASSWORD: "${ERP_DB_PASSWORD:-erp_password}"
+      CACHE_STORE: file
+      QUEUE_CONNECTION: sync
+      SESSION_DRIVER: file
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - app_storage:/var/www/html/storage
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: nginx
+    container_name: erp_nginx
+    restart: unless-stopped
+    ports:
+      - "${ERP_APP_PORT:-8083}:80"
+    depends_on:
+      - app
+    volumes:
+      - app_storage:/var/www/html/storage:ro
+
+  mysql:
+    image: mysql:8.4
+    container_name: erp_mysql
+    restart: unless-stopped
+    ports:
+      - "${ERP_MYSQL_PORT:-3309}:3306"
+    environment:
+      MYSQL_DATABASE: "${ERP_DB_DATABASE:-erp_app}"
+      MYSQL_USER: "${ERP_DB_USERNAME:-erp_user}"
+      MYSQL_PASSWORD: "${ERP_DB_PASSWORD:-erp_password}"
+      MYSQL_ROOT_PASSWORD: "${ERP_MYSQL_ROOT_PASSWORD:-erp_root_password}"
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p$${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  app_storage:
+  mysql_data:
