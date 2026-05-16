@@ -12,12 +12,12 @@ class WarehousesFactory extends Factory
     public function definition(): array
     {
         return [
-            'warehouse_name' => fake()->company().' Warehouse',
-            'warehouse_code' => fake()->unique()->bothify('WH-####'),
-            'warehouse_type' => fake()->randomElement(['main', 'distribution', 'fulfillment']),
-            'location_address' => fake()->address(),
+            'warehouse_name' => $this->faker->company().' Warehouse',
+            'warehouse_code' => $this->faker->unique()->bothify('WH-####'),
+            'warehouse_type' => $this->faker->randomElement(['main', 'distribution', 'fulfillment']),
+            'location_address' => $this->faker->address(),
             'manager_id' => null,
-            'capacity_units' => fake()->numberBetween(1000, 50000),
+            'capacity_units' => $this->faker->numberBetween(1000, 50000),
             'status' => 'active',
         ];
     }

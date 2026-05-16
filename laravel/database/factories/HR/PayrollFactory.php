@@ -19,12 +19,12 @@ class PayrollFactory extends Factory
     {
         return [
             'employee_id' => \App\Models\HR\Employees::factory(),
-            'payroll_period' => fake()->monthName() . ' ' . fake()->year(),
-            'basic_salary' => fake()->randomFloat(2, 15000, 100000),
-            'allowances' => fake()->randomFloat(2, 1000, 10000),
-            'deductions' => fake()->randomFloat(2, 500, 5000),
-            'net_pay' => fake()->randomFloat(2, 10000, 80000),
-            'status' => fake()->randomElement(['Pending', 'Processed', 'Paid']),
+            'payroll_period' => $this->faker->monthName() . ' ' . $this->faker->year(),
+            'basic_salary' => $this->faker->randomFloat(2, 15000, 100000),
+            'allowances' => $this->faker->randomFloat(2, 1000, 10000),
+            'deductions' => $this->faker->randomFloat(2, 500, 5000),
+            'net_pay' => $this->faker->randomFloat(2, 10000, 80000),
+            'status' => $this->faker->randomElement(['Pending', 'Processed', 'Paid']),
         ];
     }
 }

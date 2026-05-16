@@ -19,12 +19,12 @@ class SupplierPaymentsFactory extends Factory
     {
         return [
             'supplier_id' => \App\Models\Purchase\Suppliers::factory(),
-            'payment_number' => fake()->unique()->numerify('PAY-#####'),
-            'invoice_reference' => fake()->optional()->numerify('INV-#####'),
-            'amount' => fake()->randomFloat(2, 100, 20000),
-            'payment_date' => fake()->dateTimeBetween('-1 month', 'now'),
-            'payment_method' => fake()->randomElement(['Cash', 'Bank Transfer', 'Cheque', 'Credit']),
-            'status' => fake()->randomElement(['Pending', 'Completed', 'Failed']),
+            'payment_number' => $this->faker->unique()->numerify('PAY-#####'),
+            'invoice_reference' => $this->faker->optional()->numerify('INV-#####'),
+            'amount' => $this->faker->randomFloat(2, 100, 20000),
+            'payment_date' => $this->faker->dateTimeBetween('-1 month', 'now'),
+            'payment_method' => $this->faker->randomElement(['Cash', 'Bank Transfer', 'Cheque', 'Credit']),
+            'status' => $this->faker->randomElement(['Pending', 'Completed', 'Failed']),
         ];
     }
 }

@@ -18,13 +18,13 @@ class ForecastingFactory extends Factory
     public function definition(): array
     {
         return [
-            'forecast_name' => fake()->words(2, true) . ' Forecast',
-            'forecast_type' => fake()->randomElement(['Sales', 'Demand', 'Revenue', 'Inventory']),
-            'period_from' => fake()->dateTimeBetween('-3 months', 'now'),
-            'period_to' => fake()->dateTimeBetween('now', '+6 months'),
-            'model' => fake()->randomElement(['Linear Regression', 'Moving Average', 'Exponential Smoothing']),
-            'accuracy_percentage' => fake()->randomFloat(2, 60, 99),
-            'status' => fake()->randomElement(['Draft', 'Active', 'Archived']),
+            'forecast_name' => $this->faker->words(2, true) . ' Forecast',
+            'forecast_type' => $this->faker->randomElement(['Sales', 'Demand', 'Revenue', 'Inventory']),
+            'period_from' => $this->faker->dateTimeBetween('-3 months', 'now'),
+            'period_to' => $this->faker->dateTimeBetween('now', '+6 months'),
+            'model' => $this->faker->randomElement(['Linear Regression', 'Moving Average', 'Exponential Smoothing']),
+            'accuracy_percentage' => $this->faker->randomFloat(2, 60, 99),
+            'status' => $this->faker->randomElement(['Draft', 'Active', 'Archived']),
         ];
     }
 }

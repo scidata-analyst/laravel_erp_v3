@@ -19,12 +19,12 @@ class WorkOrdersFactory extends Factory
     {
         return [
             'bom_id' => \App\Models\Production\Bom::factory(),
-            'quantity_to_produce' => fake()->numberBetween(10, 1000),
-            'priority' => fake()->randomElement(['Low', 'Medium', 'High', 'Urgent']),
-            'start_date' => fake()->dateTimeBetween('-1 month', 'now'),
-            'end_date' => fake()->dateTimeBetween('now', '+2 months'),
-            'workshop_line' => fake()->randomElement(['Line A', 'Line B', 'Line C']),
-            'status' => fake()->randomElement(['Pending', 'In Progress', 'Completed', 'Cancelled']),
+            'quantity_to_produce' => $this->faker->numberBetween(10, 1000),
+            'priority' => $this->faker->randomElement(['Low', 'Medium', 'High', 'Urgent']),
+            'start_date' => $this->faker->dateTimeBetween('-1 month', 'now'),
+            'end_date' => $this->faker->dateTimeBetween('now', '+2 months'),
+            'workshop_line' => $this->faker->randomElement(['Line A', 'Line B', 'Line C']),
+            'status' => $this->faker->randomElement(['Pending', 'In Progress', 'Completed', 'Cancelled']),
         ];
     }
 }

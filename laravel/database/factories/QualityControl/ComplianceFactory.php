@@ -18,13 +18,13 @@ class ComplianceFactory extends Factory
     public function definition(): array
     {
         return [
-            'standard_regulation' => fake()->randomElement(['ISO 9001', 'ISO 14001', 'ISO 45001', 'GMP', 'CE']),
-            'scope' => fake()->sentence(),
-            'audit_date' => fake()->dateTimeBetween('-1 year', 'now'),
-            'next_audit_date' => fake()->dateTimeBetween('now', '+1 year'),
-            'auditor' => fake()->name(),
-            'findings_notes' => fake()->optional()->sentence(),
-            'status' => fake()->randomElement(['Compliant', 'Non-Compliant', 'Pending', 'Under Review']),
+            'standard_regulation' => $this->faker->randomElement(['ISO 9001', 'ISO 14001', 'ISO 45001', 'GMP', 'CE']),
+            'scope' => $this->faker->sentence(),
+            'audit_date' => $this->faker->dateTimeBetween('-1 year', 'now'),
+            'next_audit_date' => $this->faker->dateTimeBetween('now', '+1 year'),
+            'auditor' => $this->faker->name(),
+            'findings_notes' => $this->faker->optional()->sentence(),
+            'status' => $this->faker->randomElement(['Compliant', 'Non-Compliant', 'Pending', 'Under Review']),
         ];
     }
 }

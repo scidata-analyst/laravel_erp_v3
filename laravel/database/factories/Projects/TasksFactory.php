@@ -18,13 +18,13 @@ class TasksFactory extends Factory
     public function definition(): array
     {
         return [
-            'task_title' => fake()->sentence(3),
-            'project_name' => fake()->company() . ' Project',
+            'task_title' => $this->faker->sentence(3),
+            'project_name' => $this->faker->company() . ' Project',
             'assigned_user_id' => \App\Models\UsersRoles\User::factory(),
-            'priority' => fake()->randomElement(['Low', 'Medium', 'High', 'Critical']),
-            'due_date' => fake()->dateTimeBetween('now', '+2 weeks'),
-            'status' => fake()->randomElement(['To Do', 'In Progress', 'Review', 'Done']),
-            'description' => fake()->optional()->paragraph(),
+            'priority' => $this->faker->randomElement(['Low', 'Medium', 'High', 'Critical']),
+            'due_date' => $this->faker->dateTimeBetween('now', '+2 weeks'),
+            'status' => $this->faker->randomElement(['To Do', 'In Progress', 'Review', 'Done']),
+            'description' => $this->faker->optional()->paragraph(),
         ];
     }
 }

@@ -18,11 +18,11 @@ class FinReportsFactory extends Factory
     public function definition(): array
     {
         return [
-            'type' => fake()->randomElement(['Income Statement', 'Balance Sheet', 'Cash Flow', 'Trial Balance']),
-            'period' => fake()->randomElement(['Monthly', 'Quarterly', 'Annual']),
-            'start_date' => fake()->dateTimeBetween('-1 year', 'now'),
-            'end_date' => fake()->dateTimeBetween('now', '+1 year'),
-            'format' => fake()->randomElement(['PDF', 'Excel', 'CSV']),
+            'type' => $this->faker->randomElement(['Income Statement', 'Balance Sheet', 'Cash Flow', 'Trial Balance']),
+            'period' => $this->faker->randomElement(['Monthly', 'Quarterly', 'Annual']),
+            'start_date' => $this->faker->dateTimeBetween('-1 year', 'now'),
+            'end_date' => $this->faker->dateTimeBetween('now', '+1 year'),
+            'format' => $this->faker->randomElement(['PDF', 'Excel', 'CSV']),
         ];
     }
 }

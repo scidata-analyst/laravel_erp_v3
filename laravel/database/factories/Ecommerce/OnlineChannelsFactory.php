@@ -18,12 +18,12 @@ class OnlineChannelsFactory extends Factory
     public function definition(): array
     {
         return [
-            'channel_name' => fake()->company() . ' Store',
-            'platform' => fake()->randomElement(['Shopify', 'WooCommerce', 'Amazon', 'eBay', 'Magento']),
-            'api_store_url' => fake()->optional()->url(),
-            'api_key' => fake()->optional()->sha256(),
-            'sync_frequency' => fake()->randomElement(['Hourly', 'Daily', 'Weekly']),
-            'status' => fake()->randomElement(['Active', 'Inactive', 'Syncing']),
+            'channel_name' => $this->faker->company() . ' Store',
+            'platform' => $this->faker->randomElement(['Shopify', 'WooCommerce', 'Amazon', 'eBay', 'Magento']),
+            'api_store_url' => $this->faker->optional()->url(),
+            'api_key' => $this->faker->optional()->sha256(),
+            'sync_frequency' => $this->faker->randomElement(['Hourly', 'Daily', 'Weekly']),
+            'status' => $this->faker->randomElement(['Active', 'Inactive', 'Syncing']),
         ];
     }
 }

@@ -18,13 +18,13 @@ class RoutesFactory extends Factory
     public function definition(): array
     {
         return [
-            'route_name' => fake()->bothify('Route-###'),
-            'zone_area' => fake()->randomElement(['North', 'South', 'East', 'West', 'Central']),
-            'driver_name' => fake()->name(),
-            'vehicle_id' => fake()->optional()->numerify('VH-#####'),
-            'number_of_stops' => fake()->numberBetween(1, 20),
-            'route_description' => fake()->optional()->sentence(),
-            'status' => fake()->randomElement(['Active', 'Inactive', 'Under Maintenance']),
+            'route_name' => $this->faker->bothify('Route-###'),
+            'zone_area' => $this->faker->randomElement(['North', 'South', 'East', 'West', 'Central']),
+            'driver_name' => $this->faker->name(),
+            'vehicle_id' => $this->faker->optional()->numerify('VH-#####'),
+            'number_of_stops' => $this->faker->numberBetween(1, 20),
+            'route_description' => $this->faker->optional()->sentence(),
+            'status' => $this->faker->randomElement(['Active', 'Inactive', 'Under Maintenance']),
         ];
     }
 }

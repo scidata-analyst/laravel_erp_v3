@@ -19,12 +19,12 @@ class PerformanceFactory extends Factory
     {
         return [
             'employee_id' => \App\Models\HR\Employees::factory(),
-            'review_period' => fake()->year() . ' Q' . fake()->numberBetween(1, 4),
-            'kpi_score' => fake()->randomFloat(2, 50, 100),
-            'goal_achievement' => fake()->randomFloat(2, 0, 100),
-            'overall_rating' => fake()->randomElement(['Excellent', 'Good', 'Satisfactory', 'Needs Improvement', 'Poor']),
-            'reviewer_comments' => fake()->optional()->sentence(),
-            'status' => fake()->randomElement(['Draft', 'Submitted', 'Reviewed']),
+            'review_period' => $this->faker->year() . ' Q' . $this->faker->numberBetween(1, 4),
+            'kpi_score' => $this->faker->randomFloat(2, 50, 100),
+            'goal_achievement' => $this->faker->randomFloat(2, 0, 100),
+            'overall_rating' => $this->faker->randomElement(['Excellent', 'Good', 'Satisfactory', 'Needs Improvement', 'Poor']),
+            'reviewer_comments' => $this->faker->optional()->sentence(),
+            'status' => $this->faker->randomElement(['Draft', 'Submitted', 'Reviewed']),
         ];
     }
 }

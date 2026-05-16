@@ -19,11 +19,11 @@ class ShipmentsFactory extends Factory
     {
         return [
             'sales_order_id' => \App\Models\Sales\SalesOrders::factory(),
-            'carrier' => fake()->randomElement(['DHL', 'FedEx', 'UPS', 'USPS', 'Local Courier']),
-            'tracking_number' => fake()->unique()->bothify('TRK-####-????'),
-            'estimated_delivery_date' => fake()->dateTimeBetween('now', '+2 weeks'),
-            'shipping_address' => fake()->address(),
-            'status' => fake()->randomElement(['Pending', 'Picked Up', 'In Transit', 'Out for Delivery', 'Delivered', 'Failed']),
+            'carrier' => $this->faker->randomElement(['DHL', 'FedEx', 'UPS', 'USPS', 'Local Courier']),
+            'tracking_number' => $this->faker->unique()->bothify('TRK-####-????'),
+            'estimated_delivery_date' => $this->faker->dateTimeBetween('now', '+2 weeks'),
+            'shipping_address' => $this->faker->address(),
+            'status' => $this->faker->randomElement(['Pending', 'Picked Up', 'In Transit', 'Out for Delivery', 'Delivered', 'Failed']),
         ];
     }
 }

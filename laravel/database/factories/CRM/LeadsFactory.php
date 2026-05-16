@@ -18,14 +18,14 @@ class LeadsFactory extends Factory
     public function definition(): array
     {
         return [
-            'lead_name' => fake()->name(),
-            'company' => fake()->company(),
-            'email' => fake()->unique()->email(),
-            'phone' => fake()->phoneNumber(),
-            'deal_value' => fake()->randomFloat(2, 1000, 100000),
-            'stage' => fake()->randomElement(['New', 'Contacted', 'Qualified', 'Proposal', 'Negotiation', 'Won', 'Lost']),
+            'lead_name' => $this->faker->name(),
+            'company' => $this->faker->company(),
+            'email' => $this->faker->unique()->email(),
+            'phone' => $this->faker->phoneNumber(),
+            'deal_value' => $this->faker->randomFloat(2, 1000, 100000),
+            'stage' => $this->faker->randomElement(['New', 'Contacted', 'Qualified', 'Proposal', 'Negotiation', 'Won', 'Lost']),
             'assigned_user_id' => \App\Models\UsersRoles\User::factory(),
-            'notes' => fake()->optional()->sentence(),
+            'notes' => $this->faker->optional()->sentence(),
         ];
     }
 }

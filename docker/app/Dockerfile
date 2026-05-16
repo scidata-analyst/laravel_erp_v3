@@ -6,14 +6,13 @@ WORKDIR /app
 
 COPY laravel/composer.json laravel/composer.lock ./
 RUN composer install \
-    --no-dev \
     --prefer-dist \
     --no-interaction \
     --no-progress \
     --no-scripts
 
 COPY laravel ./
-RUN composer dump-autoload --optimize --no-dev
+RUN composer dump-autoload --optimize
 
 
 FROM node:22-bookworm-slim AS assets

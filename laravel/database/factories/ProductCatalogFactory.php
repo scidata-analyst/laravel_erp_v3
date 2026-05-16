@@ -12,15 +12,15 @@ class ProductCatalogFactory extends Factory
     public function definition(): array
     {
         return [
-            'product_name' => fake()->unique()->words(3, true),
-            'sku' => fake()->unique()->bothify('SKU-####'),
-            'category' => fake()->randomElement(['Electronics', 'Furniture', 'Clothing', 'Food', 'Equipment']),
-            'unit_price' => fake()->randomFloat(2, 10, 1000),
-            'cost_price' => fake()->randomFloat(2, 5, 500),
+            'product_name' => $this->faker->unique()->words(3, true),
+            'sku' => $this->faker->unique()->bothify('SKU-####'),
+            'category' => $this->faker->randomElement(['Electronics', 'Furniture', 'Clothing', 'Food', 'Equipment']),
+            'unit_price' => $this->faker->randomFloat(2, 10, 1000),
+            'cost_price' => $this->faker->randomFloat(2, 5, 500),
             'warehouse_id' => null,
-            'reorder_level' => fake()->numberBetween(10, 100),
+            'reorder_level' => $this->faker->numberBetween(10, 100),
             'valuation_method' => 'fifo',
-            'description' => fake()->sentence(),
+            'description' => $this->faker->sentence(),
             'status' => 'active',
         ];
     }

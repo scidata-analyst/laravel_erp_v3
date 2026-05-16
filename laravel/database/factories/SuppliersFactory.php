@@ -12,11 +12,11 @@ class SuppliersFactory extends Factory
     public function definition(): array
     {
         return [
-            'supplier_name' => fake()->company(),
-            'contact_person' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'phone' => fake()->phoneNumber(),
-            'address' => fake()->address(),
+            'supplier_name' => $this->faker->company(),
+            'contact_person' => $this->faker->name(),
+            'email' => $this->faker->unique()->safeEmail(),
+            'phone' => $this->faker->phoneNumber(),
+            'address' => $this->faker->address(),
             'status' => 'active',
         ];
     }

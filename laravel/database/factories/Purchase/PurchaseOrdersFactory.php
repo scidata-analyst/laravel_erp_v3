@@ -19,13 +19,13 @@ class PurchaseOrdersFactory extends Factory
     {
         return [
             'supplier_id' => \App\Models\Purchase\Suppliers::factory(),
-            'po_number' => fake()->unique()->numerify('PO-#####'),
-            'order_date' => fake()->dateTimeBetween('-1 year', 'now'),
-            'expected_delivery_date' => fake()->dateTimeBetween('now', '+2 months'),
+            'po_number' => $this->faker->unique()->numerify('PO-#####'),
+            'order_date' => $this->faker->dateTimeBetween('-1 year', 'now'),
+            'expected_delivery_date' => $this->faker->dateTimeBetween('now', '+2 months'),
             'warehouse_id' => \App\Models\Logistics\Warehouses::factory(),
-            'payment_terms' => fake()->randomElement(['Net 30', 'Net 60', 'Net 90', 'Prepayment']),
-            'total_amount' => fake()->randomFloat(2, 100, 50000),
-            'status' => fake()->randomElement(['Pending', 'Approved', 'Ordered', 'Received', 'Cancelled']),
+            'payment_terms' => $this->faker->randomElement(['Net 30', 'Net 60', 'Net 90', 'Prepayment']),
+            'total_amount' => $this->faker->randomFloat(2, 100, 50000),
+            'status' => $this->faker->randomElement(['Pending', 'Approved', 'Ordered', 'Received', 'Cancelled']),
         ];
     }
 }

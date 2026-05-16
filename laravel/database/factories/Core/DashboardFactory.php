@@ -18,8 +18,8 @@ class DashboardFactory extends Factory
     public function definition(): array
     {
         return [
-            'total_revenue' => fake()->randomFloat(2, 10000, 1000000),
-            'sales_orders' => fake()->numberBetween(10, 500),
+            'total_revenue' => $this->faker->randomFloat(2, 10000, 1000000),
+            'sales_orders' => $this->faker->numberBetween(10, 500),
         ];
     }
 }

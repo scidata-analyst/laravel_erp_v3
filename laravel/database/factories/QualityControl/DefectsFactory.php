@@ -19,12 +19,12 @@ class DefectsFactory extends Factory
     {
         return [
             'product_id' => \App\Models\Inventory\ProductCatalog::factory(),
-            'batch_lot_number' => fake()->bothify('BATCH-####'),
-            'defect_type' => fake()->randomElement(['Manufacturing', 'Material', 'Design', 'Packaging', 'Other']),
-            'severity' => fake()->randomElement(['Critical', 'Major', 'Minor']),
-            'quantity_affected' => fake()->numberBetween(1, 100),
-            'description_root_cause' => fake()->sentence(),
-            'status' => fake()->randomElement(['Open', 'Investigating', 'Resolved', 'Closed']),
+            'batch_lot_number' => $this->faker->bothify('BATCH-####'),
+            'defect_type' => $this->faker->randomElement(['Manufacturing', 'Material', 'Design', 'Packaging', 'Other']),
+            'severity' => $this->faker->randomElement(['Critical', 'Major', 'Minor']),
+            'quantity_affected' => $this->faker->numberBetween(1, 100),
+            'description_root_cause' => $this->faker->sentence(),
+            'status' => $this->faker->randomElement(['Open', 'Investigating', 'Resolved', 'Closed']),
         ];
     }
 }

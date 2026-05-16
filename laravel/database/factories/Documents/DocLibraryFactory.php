@@ -18,13 +18,13 @@ class DocLibraryFactory extends Factory
     public function definition(): array
     {
         return [
-            'document_name' => fake()->words(3, true) . '.pdf',
-            'document_type' => fake()->randomElement(['Contract', 'Invoice', 'Policy', 'Manual', 'Report', 'Certificate']),
-            'related_to' => fake()->randomElement(['Sales', 'Purchase', 'HR', 'Finance', 'Operations']),
-            'version' => 'v' . fake()->numerify('#.#'),
-            'access_level' => fake()->randomElement(['Public', 'Internal', 'Confidential', 'Restricted']),
-            'file_path' => '/documents/' . fake()->uuid() . '.pdf',
-            'notes' => fake()->optional()->sentence(),
+            'document_name' => $this->faker->words(3, true) . '.pdf',
+            'document_type' => $this->faker->randomElement(['Contract', 'Invoice', 'Policy', 'Manual', 'Report', 'Certificate']),
+            'related_to' => $this->faker->randomElement(['Sales', 'Purchase', 'HR', 'Finance', 'Operations']),
+            'version' => 'v' . $this->faker->numerify('#.#'),
+            'access_level' => $this->faker->randomElement(['Public', 'Internal', 'Confidential', 'Restricted']),
+            'file_path' => '/documents/' . $this->faker->uuid() . '.pdf',
+            'notes' => $this->faker->optional()->sentence(),
             'uploaded_by_user_id' => \App\Models\UsersRoles\User::factory(),
         ];
     }

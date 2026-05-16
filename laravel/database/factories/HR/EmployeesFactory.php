@@ -18,16 +18,16 @@ class EmployeesFactory extends Factory
     public function definition(): array
     {
         return [
-            'full_name' => fake()->name(),
-            'employee_id' => fake()->unique()->numerify('EMP-#####'),
-            'designation' => fake()->randomElement(['Manager', 'Senior Developer', 'Developer', 'Designer', 'Analyst', 'Coordinator']),
-            'department' => fake()->randomElement(['IT', 'HR', 'Finance', 'Marketing', 'Operations', 'Sales']),
-            'basic_salary' => fake()->randomFloat(2, 15000, 150000),
-            'join_date' => fake()->dateTimeBetween('-5 years', 'now'),
-            'contract_type' => fake()->randomElement(['Full-time', 'Part-time', 'Contract', 'Intern']),
-            'email' => fake()->unique()->safeEmail(),
-            'phone' => fake()->phoneNumber(),
-            'status' => fake()->randomElement(['Active', 'On Leave', 'Terminated']),
+            'full_name' => $this->faker->name(),
+            'employee_id' => $this->faker->unique()->numerify('EMP-#####'),
+            'designation' => $this->faker->randomElement(['Manager', 'Senior Developer', 'Developer', 'Designer', 'Analyst', 'Coordinator']),
+            'department' => $this->faker->randomElement(['IT', 'HR', 'Finance', 'Marketing', 'Operations', 'Sales']),
+            'basic_salary' => $this->faker->randomFloat(2, 15000, 150000),
+            'join_date' => $this->faker->dateTimeBetween('-5 years', 'now'),
+            'contract_type' => $this->faker->randomElement(['Full-time', 'Part-time', 'Contract', 'Intern']),
+            'email' => $this->faker->unique()->safeEmail(),
+            'phone' => $this->faker->phoneNumber(),
+            'status' => $this->faker->randomElement(['Active', 'On Leave', 'Terminated']),
         ];
     }
 }

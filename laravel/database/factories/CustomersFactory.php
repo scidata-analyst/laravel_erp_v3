@@ -12,13 +12,13 @@ class CustomersFactory extends Factory
     public function definition(): array
     {
         return [
-            'company_name' => fake()->company(),
-            'contact_person' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'phone' => fake()->phoneNumber(),
-            'credit_limit' => fake()->numberBetween(5000, 100000),
+            'company_name' => $this->faker->company(),
+            'contact_person' => $this->faker->name(),
+            'email' => $this->faker->unique()->safeEmail(),
+            'phone' => $this->faker->phoneNumber(),
+            'credit_limit' => $this->faker->numberBetween(5000, 100000),
             'sales_rep_id' => null,
-            'billing_address' => fake()->address(),
+            'billing_address' => $this->faker->address(),
         ];
     }
 }

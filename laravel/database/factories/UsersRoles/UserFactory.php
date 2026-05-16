@@ -18,11 +18,11 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
+            'user_name' => $this->faker->name(),
+            'email' => $this->faker->unique()->safeEmail(),
             'password' => bcrypt('password'),
             'role_id' => \App\Models\UsersRoles\Roles::factory(),
-            'is_active' => fake()->randomElement([true, false]),
+            'is_active' => $this->faker->randomElement([true, false]),
         ];
     }
 }

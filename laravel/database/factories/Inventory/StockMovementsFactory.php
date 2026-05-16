@@ -19,11 +19,11 @@ class StockMovementsFactory extends Factory
     {
         return [
             'product_id' => \App\Models\Inventory\ProductCatalog::factory(),
-            'movement_type' => fake()->randomElement(['Purchase', 'Sale', 'Transfer', 'Return', 'Adjustment']),
-            'quantity' => fake()->numberBetween(1, 1000),
+            'movement_type' => $this->faker->randomElement(['Purchase', 'Sale', 'Transfer', 'Return', 'Adjustment']),
+            'quantity' => $this->faker->numberBetween(1, 1000),
             'from_warehouse_id' => \App\Models\Logistics\Warehouses::factory(),
-            'to_warehouse_id' => fake()->optional()->randomElement([\App\Models\Logistics\Warehouses::factory(), null]),
-            'reason' => fake()->optional()->sentence(),
+            'to_warehouse_id' => $this->faker->optional()->randomElement([\App\Models\Logistics\Warehouses::factory(), null]),
+            'reason' => $this->faker->optional()->sentence(),
         ];
     }
 }

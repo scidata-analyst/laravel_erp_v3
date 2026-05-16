@@ -18,16 +18,16 @@ class ProductCatalogFactory extends Factory
     public function definition(): array
     {
         return [
-            'product_name' => fake()->words(3, true),
-            'sku' => fake()->unique()->bothify('SKU-####-??'),
-            'category' => fake()->randomElement(['Electronics', 'Furniture', 'Clothing', 'Food', 'Tools', 'Office']),
-            'unit_price' => fake()->randomFloat(2, 10, 5000),
-            'cost_price' => fake()->randomFloat(2, 5, 2500),
+            'product_name' => $this->faker->words(3, true),
+            'sku' => $this->faker->unique()->bothify('SKU-####-??'),
+            'category' => $this->faker->randomElement(['Electronics', 'Furniture', 'Clothing', 'Food', 'Tools', 'Office']),
+            'unit_price' => $this->faker->randomFloat(2, 10, 5000),
+            'cost_price' => $this->faker->randomFloat(2, 5, 2500),
             'warehouse_id' => \App\Models\Logistics\Warehouses::factory(),
-            'reorder_level' => fake()->numberBetween(10, 100),
-            'valuation_method' => fake()->randomElement(['FIFO', 'LIFO', 'Weighted Average']),
-            'description' => fake()->optional()->sentence(),
-            'status' => fake()->randomElement(['Active', 'Inactive', 'Discontinued']),
+            'reorder_level' => $this->faker->numberBetween(10, 100),
+            'valuation_method' => $this->faker->randomElement(['FIFO', 'LIFO', 'Weighted Average']),
+            'description' => $this->faker->optional()->sentence(),
+            'status' => $this->faker->randomElement(['Active', 'Inactive', 'Discontinued']),
         ];
     }
 }

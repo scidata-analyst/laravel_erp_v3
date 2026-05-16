@@ -19,10 +19,10 @@ class InvSyncFactory extends Factory
     {
         return [
             'channel_id' => \App\Models\Ecommerce\OnlineChannels::factory(),
-            'last_sync_time' => fake()->dateTimeBetween('-1 day', 'now'),
-            'total_synced_items' => fake()->numberBetween(10, 1000),
-            'sync_errors' => fake()->numberBetween(0, 10),
-            'status' => fake()->randomElement(['Success', 'Failed', 'Partial']),
+            'last_sync_time' => $this->faker->dateTimeBetween('-1 day', 'now'),
+            'total_synced_items' => $this->faker->numberBetween(10, 1000),
+            'sync_errors' => $this->faker->numberBetween(0, 10),
+            'status' => $this->faker->randomElement(['Success', 'Failed', 'Partial']),
         ];
     }
 }

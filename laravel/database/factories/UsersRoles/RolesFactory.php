@@ -18,9 +18,9 @@ class RolesFactory extends Factory
     public function definition(): array
     {
         return [
-            'role_name' => fake()->randomElement(['Admin', 'Manager', 'Sales', 'HR', 'Accountant', 'Warehouse Staff']),
-            'description' => fake()->sentence(),
-            'status' => fake()->randomElement(['Active', 'Inactive']),
+            'role_name' => $this->faker->randomElement(['Admin', 'Manager', 'Sales', 'HR', 'Accountant', 'Warehouse Staff']),
+            'description' => $this->faker->sentence(),
+            'status' => $this->faker->randomElement(['Active', 'Inactive']),
         ];
     }
 }

@@ -19,12 +19,12 @@ class GrnFactory extends Factory
     {
         return [
             'purchase_order_id' => \App\Models\Purchase\PurchaseOrders::factory(),
-            'supplier_name' => fake()->company(),
-            'grn_number' => fake()->unique()->numerify('GRN-#####'),
-            'receipt_date' => fake()->dateTimeBetween('-1 month', 'now'),
+            'supplier_name' => $this->faker->company(),
+            'grn_number' => $this->faker->unique()->numerify('GRN-#####'),
+            'receipt_date' => $this->faker->dateTimeBetween('-1 month', 'now'),
             'warehouse_id' => \App\Models\Logistics\Warehouses::factory(),
-            'notes' => fake()->optional()->sentence(),
-            'status' => fake()->randomElement(['Pending', 'Received', 'Verified', 'Cancelled']),
+            'notes' => $this->faker->optional()->sentence(),
+            'status' => $this->faker->randomElement(['Pending', 'Received', 'Verified', 'Cancelled']),
         ];
     }
 }

@@ -19,11 +19,11 @@ class ResourcesFactory extends Factory
     {
         return [
             'employee_id' => \App\Models\HR\Employees::factory(),
-            'project_name' => fake()->company() . ' Project',
-            'allocation_percentage' => fake()->numberBetween(10, 100),
-            'from_date' => fake()->dateTimeBetween('-3 months', 'now'),
-            'to_date' => fake()->dateTimeBetween('now', '+6 months'),
-            'role_on_project' => fake()->randomElement(['Developer', 'Designer', 'Manager', 'Analyst', 'Tester']),
+            'project_name' => $this->faker->company() . ' Project',
+            'allocation_percentage' => $this->faker->numberBetween(10, 100),
+            'from_date' => $this->faker->dateTimeBetween('-3 months', 'now'),
+            'to_date' => $this->faker->dateTimeBetween('now', '+6 months'),
+            'role_on_project' => $this->faker->randomElement(['Developer', 'Designer', 'Manager', 'Analyst', 'Tester']),
         ];
     }
 }
