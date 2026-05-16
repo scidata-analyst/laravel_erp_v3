@@ -58,9 +58,13 @@ FROM nginx:1.27-alpine AS nginx
 
 WORKDIR /var/www/html
 
+RUN apk add --no-cache netcat-openbsd
+
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY docker/nginx/wait-for-php-fpm.sh /docker-entrypoint.d/40-wait-for-php-fpm.sh
 COPY laravel/public ./public
 COPY --from=assets /app/public/build ./public/build
-RUN ln -s /var/www/html/storage/app/public /var/www/html/public/storage
+RUN chmod +x /docker-entrypoint.d/40-wait-for-php-fpm.sh \
+    && ln -s /var/www/html/storage/app/public /var/www/html/public/storage
 
 EXPOSE 80
