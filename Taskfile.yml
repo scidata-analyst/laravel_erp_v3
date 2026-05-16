@@ -1,0 +1,54 @@
+version: '3'
+
+tasks:
+  up:
+    desc: Build and start the full ERP stack.
+    cmds:
+      - docker compose up --build
+
+  start:
+    desc: Start the ERP stack in the background.
+    cmds:
+      - docker compose up --build -d
+
+  stop:
+    desc: Stop and remove ERP containers.
+    cmds:
+      - docker compose down
+
+  restart:
+    desc: Rebuild and restart the ERP stack.
+    cmds:
+      - docker compose down
+      - docker compose up --build
+
+  logs:
+    desc: Follow logs for all services.
+    cmds:
+      - docker compose logs -f
+
+  worker-logs:
+    desc: Follow the PHP-FPM app container logs, including Supervisor and queue worker output.
+    cmds:
+      - docker compose logs -f app
+
+  shell:
+    desc: Open a shell in the PHP-FPM app container.
+    cmds:
+      - docker compose exec app bash
+
+  migrate:
+    desc: Run Laravel migrations.
+    cmds:
+      - docker compose exec app php artisan migrate --force
+
+  seed:
+    desc: Run Laravel database seeders.
+    cmds:
+      - docker compose exec app php artisan db:seed --force
+
+  fresh:
+    desc: Recreate containers, database volume, migrations, and seed data.
+    cmds:
+      - docker compose down -v
+      - docker compose up --build

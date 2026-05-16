@@ -4,7 +4,7 @@ FROM composer:2 AS vendor
 
 WORKDIR /app
 
-COPY composer.json composer.lock ./
+COPY laravel/composer.json laravel/composer.lock ./
 RUN composer install \
     --no-dev \
     --prefer-dist \
@@ -12,7 +12,7 @@ RUN composer install \
     --no-progress \
     --no-scripts
 
-COPY . .
+COPY laravel ./
 RUN composer dump-autoload --optimize --no-dev
 
 
@@ -20,11 +20,11 @@ FROM node:22-bookworm-slim AS assets
 
 WORKDIR /app
 
-COPY package.json package-lock.json vite.config.js postcss.config.js tailwind.config.js ./
+COPY laravel/package.json laravel/package-lock.json laravel/vite.config.js laravel/postcss.config.js laravel/tailwind.config.js ./
 RUN npm ci
 
-COPY resources ./resources
-COPY public ./public
+COPY laravel/resources ./resources
+COPY laravel/public ./public
 RUN npm run build
 
 
@@ -33,13 +33,14 @@ FROM php:8.3-fpm-bookworm AS app
 WORKDIR /var/www/html
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends libzip-dev unzip \
+    && apt-get install -y --no-install-recommends libzip-dev supervisor unzip \
     && docker-php-ext-install pdo_mysql zip opcache \
     && rm -rf /var/lib/apt/lists/*
 
-COPY docker/entrypoint.sh /usr/local/bin/erp-entrypoint
+COPY docker/app/entrypoint.sh /usr/local/bin/erp-entrypoint
+COPY docker/app/supervisord.conf /etc/supervisor/conf.d/erp.conf
 
-COPY --chown=www-data:www-data . .
+COPY --chown=www-data:www-data laravel ./
 COPY --from=vendor --chown=www-data:www-data /app/vendor ./vendor
 COPY --from=assets --chown=www-data:www-data /app/public/build ./public/build
 
@@ -51,7 +52,7 @@ RUN chmod +x /usr/local/bin/erp-entrypoint \
 EXPOSE 9000
 
 ENTRYPOINT ["erp-entrypoint"]
-CMD ["php-fpm"]
+CMD ["supervisord", "-c", "/etc/supervisor/conf.d/erp.conf"]
 
 
 FROM nginx:1.27-alpine AS nginx
@@ -59,7 +60,7 @@ FROM nginx:1.27-alpine AS nginx
 WORKDIR /var/www/html
 
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
-COPY public ./public
+COPY laravel/public ./public
 COPY --from=assets /app/public/build ./public/build
 RUN ln -s /var/www/html/storage/app/public /var/www/html/public/storage
 

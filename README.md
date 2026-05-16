@@ -9,13 +9,33 @@
 
 ## Docker Setup
 
+Project layout:
+
+```text
+laravel/        Laravel application code
+docker/         Dockerfile, entrypoint, and Nginx config
+Taskfile.yml    Task runner commands
+```
+
 Run everything with one command:
 
 ```bash
 docker compose up --build
 ```
 
-Docker starts Nginx, PHP-FPM, and MySQL. On app startup it waits for MySQL, creates the database tables with migrations, and seeds the database when it is empty.
+If you use [Task](https://taskfile.dev), run:
+
+```bash
+task up
+```
+
+Worker logs:
+
+```bash
+task worker-logs
+```
+
+Docker starts Nginx, PHP-FPM, a supervised Laravel queue worker, and MySQL. On app startup it waits for MySQL, creates the database tables with migrations, and seeds the database when it is empty.
 
 The Laravel app will be available at `http://localhost:8083`.
 

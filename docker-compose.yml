@@ -2,7 +2,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: docker/app/Dockerfile
       target: app
     container_name: erp_app
     restart: unless-stopped
@@ -19,7 +19,7 @@ services:
       DB_USERNAME: "${ERP_DB_USERNAME:-erp_user}"
       DB_PASSWORD: "${ERP_DB_PASSWORD:-erp_password}"
       CACHE_STORE: file
-      QUEUE_CONNECTION: sync
+      QUEUE_CONNECTION: database
       SESSION_DRIVER: file
     depends_on:
       mysql:
@@ -30,7 +30,7 @@ services:
   nginx:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: docker/app/Dockerfile
       target: nginx
     container_name: erp_nginx
     restart: unless-stopped
