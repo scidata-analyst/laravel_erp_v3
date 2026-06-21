@@ -58,7 +58,7 @@
                   <button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
                     data-bs-target="#modalGL" data-mode="edit" data-id="{{ $gl->id }}" title="Edit"><i class="bi bi-pencil"></i></button>
                   <button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Entry" data-delete-id="{{ $gl->id }}" data-delete-url="{{ route('gl.destroy', $gl->id) }}" title="Delete"><i class="bi bi-trash"></i></button>
+                    data-delete-label="Entry" data-delete-id="{{ $gl->id }}" title="Delete"><i class="bi bi-trash"></i></button>
                 </div>
               </td>
             </tr>
@@ -84,7 +84,7 @@
           <h5 class="modal-title" style="color:var(--text-primary);font-weight:600">New Journal Entry</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
-        <form id="formGL" data-route-store="{{ route('gl.store') }}">
+        <form id="formGL">
           <div class="modal-body">
             <input type="hidden" name="id" id="gl_id">
             <div class="row g-3">
@@ -166,9 +166,15 @@ document.addEventListener('DOMContentLoaded', function() {
   const modalDelete = document.getElementById('modalDelete');
   const btnConfirmDelete = document.getElementById('btn-confirm-delete');
 
-  let deleteUrl = null;
+  let deleteId = null;
 
+  /**
+   * Handle show event for the GL Modal
+   * Initializes the modal for either creating a new journal entry or editing an existing one
+   * @param {Event} e - The bootstrap modal show event
+   */
   modalGL.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formGL);
     const button = e.relatedTarget;
     const mode = button?.dataset.mode || 'create';
     const modalTitle = modalGL.querySelector('.modal-title');
@@ -176,43 +182,48 @@ document.addEventListener('DOMContentLoaded', function() {
     if (mode === 'edit') {
       const id = button.dataset.id;
       modalTitle.textContent = 'Edit Journal Entry';
-      formGL.dataset.routeUpdate = '{{ route("gl.update", ":id") }}'.replace(':id', id);
-      fetch('{{ route("gl.show", ":id") }}'.replace(':id', id))
-        .then(r => r.json())
+      
+      apiClient.show(API_ENDPOINTS.ACCOUNTING.GL.SHOW, id)
         .then(data => {
-          document.getElementById('gl_id').value = data.id;
-          formGL.querySelector('[name="code"]').value = data.code || '';
-          formGL.querySelector('[name="name"]').value = data.name || '';
-          formGL.querySelector('[name="type"]').value = data.type || 'Asset';
-          formGL.querySelector('[name="debit"]').value = data.debit || '';
-          formGL.querySelector('[name="credit"]').value = data.credit || '';
-          formGL.querySelector('[name="narration"]').value = data.narration || '';
-        });
+          const item = data.data || data;
+          document.getElementById('gl_id').value = item.id;
+          formGL.querySelector('[name="code"]').value = item.code || '';
+          formGL.querySelector('[name="name"]').value = item.name || '';
+          formGL.querySelector('[name="type"]').value = item.type || 'Asset';
+          formGL.querySelector('[name="debit"]').value = item.debit || '';
+          formGL.querySelector('[name="credit"]').value = item.credit || '';
+          formGL.querySelector('[name="narration"]').value = item.narration || '';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
     } else {
       modalTitle.textContent = 'New Journal Entry';
       formGL.reset();
       document.getElementById('gl_id').value = '';
-      formGL.dataset.routeUpdate = '';
     }
   });
 
+  /**
+   * Handle submission of the GL Form
+   * Validates and saves the form data via APIClient
+   * @param {Event} e - The form submit event
+   */
   formGL.addEventListener('submit', function(e) {
     e.preventDefault();
     const id = document.getElementById('gl_id').value;
-    const url = id ? formGL.dataset.routeUpdate : formGL.dataset.routeStore;
-    const method = id ? 'PUT' : 'POST';
-
+    
     const formData = new FormData(formGL);
-    if (id) formData.append('_method', 'PUT');
+    const payload = Object.fromEntries(formData.entries());
 
-    fetch(url, {
-      method: 'POST',
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      body: formData
-    })
-    .then(r => r.json())
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.ACCOUNTING.GL.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.ACCOUNTING.GL.STORE, payload);
+    }
+
+    request
     .then(data => {
-      if (data.success) {
+      if (data.success || data.id) {
         bootstrap.Modal.getInstance(modalGL).hide();
         showToast(data.message || 'Success', 'success');
         setTimeout(() => location.reload(), 1000);
@@ -220,23 +231,36 @@ document.addEventListener('DOMContentLoaded', function() {
         showToast(data.message || 'Error', 'error');
       }
     })
-    .catch(() => showToast('An error occurred', 'error'));
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formGL, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
+      }
+    });
   });
 
+  /**
+   * Handle the Delete Modal show event
+   * Sets up the record ID to be deleted
+   * @param {Event} e - The bootstrap modal show event
+   */
   modalDelete.addEventListener('show.bs.modal', function(e) {
     const button = e.relatedTarget;
-    deleteUrl = button.dataset.deleteUrl;
+    deleteId = button.dataset.deleteId;
     document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
   });
 
+  /**
+   * Handle confirmation of record deletion
+   * Deletes the record via APIClient and reloads the page
+   */
   btnConfirmDelete.addEventListener('click', function() {
-    fetch(deleteUrl, {
-      method: 'DELETE',
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
-    })
-    .then(r => r.json())
+    if (!deleteId) return;
+
+    apiClient.destroy(API_ENDPOINTS.ACCOUNTING.GL.DESTROY, deleteId)
     .then(data => {
-      if (data.success) {
+      if (data.success || !data.error) {
         bootstrap.Modal.getInstance(modalDelete).hide();
         showToast(data.message || 'Deleted successfully', 'success');
         setTimeout(() => location.reload(), 1000);
@@ -244,7 +268,7 @@ document.addEventListener('DOMContentLoaded', function() {
         showToast(data.message || 'Error', 'error');
       }
     })
-    .catch(() => showToast('An error occurred', 'error'));
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
   });
 });
 </script>

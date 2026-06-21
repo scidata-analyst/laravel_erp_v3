@@ -64,7 +64,7 @@
                   <button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
                     data-bs-target="#modalTax" data-mode="edit" data-id="{{ $tax->id }}" title="Edit"><i class="bi bi-pencil"></i></button>
                   <button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-delete-label="Tax Rule" data-delete-id="{{ $tax->id }}" data-delete-url="{{ route('tax.destroy', $tax->id) }}" title="Delete"><i class="bi bi-trash"></i></button>
+                    data-delete-label="Tax Rule" data-delete-id="{{ $tax->id }}" title="Delete"><i class="bi bi-trash"></i></button>
                 </div>
               </td>
             </tr>
@@ -90,7 +90,7 @@
           <h5 class="modal-title" style="color:var(--text-primary);font-weight:600">New Tax Rule</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
-        <form id="formTax" data-route-store="{{ route('tax.store') }}">
+        <form id="formTax">
           <div class="modal-body">
             <input type="hidden" name="id" id="tax_id">
             <div class="row g-3">
@@ -174,9 +174,15 @@ document.addEventListener('DOMContentLoaded', function() {
   const modalDelete = document.getElementById('modalDelete');
   const btnConfirmDelete = document.getElementById('btn-confirm-delete');
 
-  let deleteUrl = null;
+  let deleteId = null;
 
+  /**
+   * Handle show event for the Tax Modal
+   * Initializes the modal for either creating a new tax rule or editing an existing one
+   * @param {Event} e - The bootstrap modal show event
+   */
   modalTax.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formTax);
     const button = e.relatedTarget;
     const mode = button?.dataset.mode || 'create';
     const modalTitle = modalTax.querySelector('.modal-title');
@@ -184,42 +190,47 @@ document.addEventListener('DOMContentLoaded', function() {
     if (mode === 'edit') {
       const id = button.dataset.id;
       modalTitle.textContent = 'Edit Tax Rule';
-      formTax.dataset.routeUpdate = '{{ route("tax.update", ":id") }}'.replace(':id', id);
-      fetch('{{ route("tax.show", ":id") }}'.replace(':id', id))
-        .then(r => r.json())
+      
+      apiClient.show(API_ENDPOINTS.ACCOUNTING.TAX.SHOW, id)
         .then(data => {
-          document.getElementById('tax_id').value = data.id;
-          formTax.querySelector('[name="tax_name"]').value = data.tax_name || '';
-          formTax.querySelector('[name="tax_type"]').value = data.tax_type || 'VAT';
-          formTax.querySelector('[name="rate"]').value = data.rate || '';
-          formTax.querySelector('[name="filing_period"]').value = data.filing_period || 'Monthly';
-          formTax.querySelector('[name="applicable_on"]').value = data.applicable_on || 'Sales';
-        });
+          const item = data.data || data;
+          document.getElementById('tax_id').value = item.id;
+          formTax.querySelector('[name="tax_name"]').value = item.tax_name || '';
+          formTax.querySelector('[name="tax_type"]').value = item.tax_type || 'VAT';
+          formTax.querySelector('[name="rate"]').value = item.rate || '';
+          formTax.querySelector('[name="filing_period"]').value = item.filing_period || 'Monthly';
+          formTax.querySelector('[name="applicable_on"]').value = item.applicable_on || 'Sales';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
     } else {
       modalTitle.textContent = 'New Tax Rule';
       formTax.reset();
       document.getElementById('tax_id').value = '';
-      formTax.dataset.routeUpdate = '';
     }
   });
 
+  /**
+   * Handle submission of the Tax Form
+   * Validates and saves the form data via APIClient
+   * @param {Event} e - The form submit event
+   */
   formTax.addEventListener('submit', function(e) {
     e.preventDefault();
     const id = document.getElementById('tax_id').value;
-    const url = id ? formTax.dataset.routeUpdate : formTax.dataset.routeStore;
-    const method = id ? 'PUT' : 'POST';
-
+    
     const formData = new FormData(formTax);
-    if (id) formData.append('_method', 'PUT');
+    const payload = Object.fromEntries(formData.entries());
 
-    fetch(url, {
-      method: 'POST',
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      body: formData
-    })
-    .then(r => r.json())
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.ACCOUNTING.TAX.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.ACCOUNTING.TAX.STORE, payload);
+    }
+
+    request
     .then(data => {
-      if (data.success) {
+      if (data.success || data.id) {
         bootstrap.Modal.getInstance(modalTax).hide();
         showToast(data.message || 'Success', 'success');
         setTimeout(() => location.reload(), 1000);
@@ -227,23 +238,36 @@ document.addEventListener('DOMContentLoaded', function() {
         showToast(data.message || 'Error', 'error');
       }
     })
-    .catch(() => showToast('An error occurred', 'error'));
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formTax, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
+      }
+    });
   });
 
+  /**
+   * Handle the Delete Modal show event
+   * Sets up the record ID to be deleted
+   * @param {Event} e - The bootstrap modal show event
+   */
   modalDelete.addEventListener('show.bs.modal', function(e) {
     const button = e.relatedTarget;
-    deleteUrl = button.dataset.deleteUrl;
+    deleteId = button.dataset.deleteId;
     document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
   });
 
+  /**
+   * Handle confirmation of record deletion
+   * Deletes the record via APIClient and reloads the page
+   */
   btnConfirmDelete.addEventListener('click', function() {
-    fetch(deleteUrl, {
-      method: 'DELETE',
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
-    })
-    .then(r => r.json())
+    if (!deleteId) return;
+
+    apiClient.destroy(API_ENDPOINTS.ACCOUNTING.TAX.DESTROY, deleteId)
     .then(data => {
-      if (data.success) {
+      if (data.success || !data.error) {
         bootstrap.Modal.getInstance(modalDelete).hide();
         showToast(data.message || 'Deleted successfully', 'success');
         setTimeout(() => location.reload(), 1000);
@@ -251,7 +275,7 @@ document.addEventListener('DOMContentLoaded', function() {
         showToast(data.message || 'Error', 'error');
       }
     })
-    .catch(() => showToast('An error occurred', 'error'));
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
   });
 });
 </script>

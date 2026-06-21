@@ -10,6 +10,23 @@
   <link rel="stylesheet" href="{{ asset("erp-styles.css") }}"/>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="{{ asset('constants.js') }}?v={{ time() }}"></script>
+  <script src="{{ asset('APIClient.js') }}?v={{ time() }}"></script>
+  <style>
+    .erp-form-control.is-invalid, .erp-form-select.is-invalid {
+        border-color: var(--accent-3) !important;
+    }
+    .invalid-feedback {
+        display: none;
+        width: 100%;
+        margin-top: .25rem;
+        font-size: .875em;
+        color: var(--accent-3);
+    }
+    .is-invalid ~ .invalid-feedback {
+        display: block;
+    }
+  </style>
   @stack('head')
 </head>
 <body>
@@ -262,12 +279,6 @@ $(function () {
     $(this).addClass('active');
   });
 
-  $(document).on('click', '.btn-modal-save', function () {
-    var $modal = $(this).closest('.modal');
-    bootstrap.Modal.getInstance($modal[0]).hide();
-    showToast('Record saved successfully', 'success');
-  });
-
   $('#modalDelete').on('show.bs.modal', function (e) {
     var label = $(e.relatedTarget).data('delete-label') || 'record';
     $(this).find('#delete-target').text(label);
@@ -300,6 +311,40 @@ function showToast(msg, type) {
   setTimeout(function () { $t.css('opacity', 0); }, 2500);
   setTimeout(function () { $t.remove(); }, 2800);
 }
+
+/* ── Form validation helpers ── */
+function clearFormErrors(form) {
+  $(form).find('.is-invalid').removeClass('is-invalid');
+  $(form).find('.invalid-feedback').remove();
+}
+
+function handleFormErrors(form, errors) {
+  clearFormErrors(form);
+  if (!errors || typeof errors !== 'object') return;
+  
+  let hasFieldErrors = false;
+  for (const [field, messages] of Object.entries(errors)) {
+    const input = $(form).find(`[name="${field}"]`);
+    if (input.length) {
+      hasFieldErrors = true;
+      input.addClass('is-invalid');
+      const msgText = Array.isArray(messages) ? messages[0] : messages;
+      input.after(`<div class="invalid-feedback d-block" style="display:block; margin-top:0.25rem;">${msgText}</div>`);
+    }
+  }
+
+  // Fallback toast if we couldn't attach any error to a field
+  if (!hasFieldErrors) {
+      const firstError = Object.values(errors)[0];
+      const msg = Array.isArray(firstError) ? firstError[0] : firstError;
+      if (msg) showToast(msg, 'error');
+  }
+}
+</script>
+<script>
+  // Global APIClient Initialization
+  const apiClient = new APIClient(API_CONFIG);
+  apiClient.headers['X-CSRF-TOKEN'] = '{{ csrf_token() }}';
 </script>
 @stack('scripts')
 </body>

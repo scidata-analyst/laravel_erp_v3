@@ -58,7 +58,7 @@
                   <button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalFinReport"
                     data-mode="edit" data-id="{{ $report->id }}" title="Edit"><i class="bi bi-pencil"></i></button>
                   <button class="btn-erp btn-danger btn-xs btn-icon"
-                    data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Report" data-delete-id="{{ $report->id }}" data-delete-url="{{ route('fin_reports.destroy', $report->id) }}" title="Delete"><i class="bi bi-trash"></i></button>
+                    data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-label="Report" data-delete-id="{{ $report->id }}" title="Delete"><i class="bi bi-trash"></i></button>
                 </div>
               </td>
             </tr>
@@ -84,7 +84,7 @@
           <h5 class="modal-title" style="color:var(--text-primary);font-weight:600">Generate Report</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
-        <form id="formFinReport" data-route-store="{{ route('fin_reports.store') }}">
+        <form id="formFinReport">
           <div class="modal-body">
             <input type="hidden" name="id" id="report_id">
             <div class="row g-3">
@@ -169,9 +169,15 @@ document.addEventListener('DOMContentLoaded', function() {
   const modalDelete = document.getElementById('modalDelete');
   const btnConfirmDelete = document.getElementById('btn-confirm-delete');
 
-  let deleteUrl = null;
+  let deleteId = null;
 
+  /**
+   * Handle show event for the Financial Report Modal
+   * Initializes the modal for either generating a new report or editing an existing one
+   * @param {Event} e - The bootstrap modal show event
+   */
   modalFinReport.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formFinReport);
     const button = e.relatedTarget;
     const mode = button?.dataset.mode || 'create';
     const modalTitle = modalFinReport.querySelector('.modal-title');
@@ -179,42 +185,47 @@ document.addEventListener('DOMContentLoaded', function() {
     if (mode === 'edit') {
       const id = button.dataset.id;
       modalTitle.textContent = 'Edit Report';
-      formFinReport.dataset.routeUpdate = '{{ route("fin_reports.update", ":id") }}'.replace(':id', id);
-      fetch('{{ route("fin_reports.show", ":id") }}'.replace(':id', id))
-        .then(r => r.json())
+      
+      apiClient.show(API_ENDPOINTS.ACCOUNTING.FIN_REPORTS.SHOW, id)
         .then(data => {
-          document.getElementById('report_id').value = data.id;
-          formFinReport.querySelector('[name="type"]').value = data.type || 'Profit & Loss';
-          formFinReport.querySelector('[name="period"]').value = data.period || 'This Month';
-          formFinReport.querySelector('[name="from_date"]').value = data.from_date || '';
-          formFinReport.querySelector('[name="to_date"]').value = data.to_date || '';
-          formFinReport.querySelector('[name="format"]').value = data.format || 'PDF';
-        });
+          const item = data.data || data;
+          document.getElementById('report_id').value = item.id;
+          formFinReport.querySelector('[name="type"]').value = item.type || 'Profit & Loss';
+          formFinReport.querySelector('[name="period"]').value = item.period || 'This Month';
+          formFinReport.querySelector('[name="from_date"]').value = item.from_date || '';
+          formFinReport.querySelector('[name="to_date"]').value = item.to_date || '';
+          formFinReport.querySelector('[name="format"]').value = item.format || 'PDF';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
     } else {
       modalTitle.textContent = 'Generate Report';
       formFinReport.reset();
       document.getElementById('report_id').value = '';
-      formFinReport.dataset.routeUpdate = '';
     }
   });
 
+  /**
+   * Handle submission of the Financial Report Form
+   * Validates and saves the form data via APIClient
+   * @param {Event} e - The form submit event
+   */
   formFinReport.addEventListener('submit', function(e) {
     e.preventDefault();
     const id = document.getElementById('report_id').value;
-    const url = id ? formFinReport.dataset.routeUpdate : formFinReport.dataset.routeStore;
-    const method = id ? 'PUT' : 'POST';
-
+    
     const formData = new FormData(formFinReport);
-    if (id) formData.append('_method', 'PUT');
+    const payload = Object.fromEntries(formData.entries());
 
-    fetch(url, {
-      method: 'POST',
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      body: formData
-    })
-    .then(r => r.json())
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.ACCOUNTING.FIN_REPORTS.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.ACCOUNTING.FIN_REPORTS.STORE, payload);
+    }
+
+    request
     .then(data => {
-      if (data.success) {
+      if (data.success || data.id) {
         bootstrap.Modal.getInstance(modalFinReport).hide();
         showToast(data.message || 'Success', 'success');
         setTimeout(() => location.reload(), 1000);
@@ -222,23 +233,36 @@ document.addEventListener('DOMContentLoaded', function() {
         showToast(data.message || 'Error', 'error');
       }
     })
-    .catch(() => showToast('An error occurred', 'error'));
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formFinReport, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
+      }
+    });
   });
 
+  /**
+   * Handle the Delete Modal show event
+   * Sets up the record ID to be deleted
+   * @param {Event} e - The bootstrap modal show event
+   */
   modalDelete.addEventListener('show.bs.modal', function(e) {
     const button = e.relatedTarget;
-    deleteUrl = button.dataset.deleteUrl;
+    deleteId = button.dataset.deleteId;
     document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
   });
 
+  /**
+   * Handle confirmation of record deletion
+   * Deletes the record via APIClient and reloads the page
+   */
   btnConfirmDelete.addEventListener('click', function() {
-    fetch(deleteUrl, {
-      method: 'DELETE',
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
-    })
-    .then(r => r.json())
+    if (!deleteId) return;
+
+    apiClient.destroy(API_ENDPOINTS.ACCOUNTING.FIN_REPORTS.DESTROY, deleteId)
     .then(data => {
-      if (data.success) {
+      if (data.success || !data.error) {
         bootstrap.Modal.getInstance(modalDelete).hide();
         showToast(data.message || 'Deleted successfully', 'success');
         setTimeout(() => location.reload(), 1000);
@@ -246,7 +270,7 @@ document.addEventListener('DOMContentLoaded', function() {
         showToast(data.message || 'Error', 'error');
       }
     })
-    .catch(() => showToast('An error occurred', 'error'));
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
   });
 });
 </script>

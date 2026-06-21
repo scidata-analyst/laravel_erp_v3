@@ -72,8 +72,15 @@ class APIClient {
             if (!response.ok) {
                 const contentType = response.headers.get('content-type') || '';
                 if (contentType.includes('application/json')) {
-                    const error = await response.json().catch(() => ({}));
-                    throw new Error(error.message || error.error || `HTTP ${response.status}`);
+                    const errorObj = await response.json().catch(() => ({}));
+                    let message = errorObj.message || `HTTP ${response.status}`;
+                    if (typeof errorObj.error === 'string') message = errorObj.error;
+                    
+                    const err = new Error(message);
+                    // Support standard Laravel validation format, or custom formats
+                    err.errors = errorObj.errors || (typeof errorObj.error === 'object' ? errorObj.error : null);
+                    err.status = response.status;
+                    throw err;
                 }
                 const text = await response.text().catch(() => '');
                 throw new Error(text || `HTTP ${response.status}`);

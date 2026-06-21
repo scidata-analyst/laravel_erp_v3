@@ -10,6 +10,8 @@
   <link rel="stylesheet" href="{{ asset("erp-styles.css") }}"/>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="{{ asset('constants.js') }}?v={{ time() }}"></script>
+  <script src="{{ asset('APIClient.js') }}?v={{ time() }}"></script>
 </head>
 <body>
 
@@ -235,17 +237,17 @@
 
 <div class="page-header">
   <div><div class="page-title">System Settings</div><div class="page-subtitle">System configuration, preferences and integrations</div></div>
-  <button class="btn-erp btn-primary btn-modal-save"><i class="bi bi-check2"></i> Save All Settings</button>
+  <button type="submit" form="formSettings" class="btn-erp btn-primary" id="btn-save-settings"><i class="bi bi-check2"></i> Save All Settings</button>
 </div>
-<div class="row g-3">
+<form id="formSettings" class="row g-3">
   <div class="col-md-6">
     <div class="erp-card">
       <div class="card-header-bar"><div class="card-title">General</div></div>
       <div class="row g-3">
-        <div class="col-12"><label class="erp-form-label">Company Name</label><input class="erp-form-control" value="NEXUS ERP Corp."/></div>
-        <div class="col-md-6"><label class="erp-form-label">Base Currency</label><select class="erp-form-control"><option>USD ($)</option><option>EUR (€)</option><option>BDT (৳)</option></select></div>
-        <div class="col-md-6"><label class="erp-form-label">Fiscal Year Start</label><input class="erp-form-control" type="month" value="2025-01"/></div>
-        <div class="col-12"><label class="erp-form-label">Company Address</label><textarea class="erp-form-control" rows="2">123 Business Ave, Dhaka, Bangladesh</textarea></div>
+        <div class="col-12"><label class="erp-form-label">Company Name</label><input class="erp-form-control" name="company_name" value="NEXUS ERP Corp."/></div>
+        <div class="col-md-6"><label class="erp-form-label">Base Currency</label><select class="erp-form-control" name="base_currency"><option>USD ($)</option><option>EUR (€)</option><option>BDT (৳)</option></select></div>
+        <div class="col-md-6"><label class="erp-form-label">Fiscal Year Start</label><input class="erp-form-control" type="month" name="fiscal_year_start" value="2025-01"/></div>
+        <div class="col-12"><label class="erp-form-label">Company Address</label><textarea class="erp-form-control" name="company_address" rows="2">123 Business Ave, Dhaka, Bangladesh</textarea></div>
       </div>
     </div>
   </div>
@@ -253,10 +255,10 @@
     <div class="erp-card">
       <div class="card-header-bar"><div class="card-title">Security</div></div>
       <div class="row g-3">
-        <div class="col-md-6"><label class="erp-form-label">Session Timeout</label><select class="erp-form-control"><option>30 minutes</option><option>1 hour</option><option>4 hours</option></select></div>
-        <div class="col-md-6"><label class="erp-form-label">Two-Factor Auth</label><select class="erp-form-control"><option>Enabled</option><option>Disabled</option></select></div>
-        <div class="col-12"><label class="erp-form-label">Password Policy</label><select class="erp-form-control"><option>Strong (min 8, special chars)</option><option>Medium (min 6)</option></select></div>
-        <div class="col-12"><label class="erp-form-label">IP Whitelist</label><input class="erp-form-control" placeholder="192.168.1.0/24, 10.0.0.0/8"/></div>
+        <div class="col-md-6"><label class="erp-form-label">Session Timeout</label><select class="erp-form-control" name="session_timeout"><option>30 minutes</option><option>1 hour</option><option>4 hours</option></select></div>
+        <div class="col-md-6"><label class="erp-form-label">Two-Factor Auth</label><select class="erp-form-control" name="two_factor_auth"><option>Enabled</option><option>Disabled</option></select></div>
+        <div class="col-12"><label class="erp-form-label">Password Policy</label><select class="erp-form-control" name="password_policy"><option>Strong (min 8, special chars)</option><option>Medium (min 6)</option></select></div>
+        <div class="col-12"><label class="erp-form-label">IP Whitelist</label><input class="erp-form-control" name="ip_whitelist" placeholder="192.168.1.0/24, 10.0.0.0/8"/></div>
       </div>
     </div>
   </div>
@@ -264,9 +266,9 @@
     <div class="erp-card">
       <div class="card-header-bar"><div class="card-title">Notifications</div></div>
       <div class="row g-3">
-        <div class="col-12"><label class="erp-form-label">Email Notifications</label><select class="erp-form-control"><option>Enabled</option><option>Disabled</option></select></div>
-        <div class="col-12"><label class="erp-form-label">Low Stock Threshold</label><input class="erp-form-control" type="number" value="10"/></div>
-        <div class="col-12"><label class="erp-form-label">Alert Recipients</label><input class="erp-form-control" placeholder="admin@nexus.com, ops@nexus.com"/></div>
+        <div class="col-12"><label class="erp-form-label">Email Notifications</label><select class="erp-form-control" name="email_notifications"><option>Enabled</option><option>Disabled</option></select></div>
+        <div class="col-12"><label class="erp-form-label">Low Stock Threshold</label><input class="erp-form-control" type="number" name="low_stock_threshold" value="10"/></div>
+        <div class="col-12"><label class="erp-form-label">Alert Recipients</label><input class="erp-form-control" name="alert_recipients" placeholder="admin@nexus.com, ops@nexus.com"/></div>
       </div>
     </div>
   </div>
@@ -274,13 +276,13 @@
     <div class="erp-card">
       <div class="card-header-bar"><div class="card-title">Inventory</div></div>
       <div class="row g-3">
-        <div class="col-md-6"><label class="erp-form-label">Default Valuation</label><select class="erp-form-control"><option>FIFO</option><option>LIFO</option><option>Average Cost</option></select></div>
-        <div class="col-md-6"><label class="erp-form-label">Auto Reorder</label><select class="erp-form-control"><option>Enabled</option><option>Disabled</option></select></div>
-        <div class="col-12"><label class="erp-form-label">Default Warehouse</label><select class="erp-form-control"><option>WH-A – Main Warehouse</option><option>WH-B – Secondary Depot</option></select></div>
+        <div class="col-md-6"><label class="erp-form-label">Default Valuation</label><select class="erp-form-control" name="default_valuation"><option>FIFO</option><option>LIFO</option><option>Average Cost</option></select></div>
+        <div class="col-md-6"><label class="erp-form-label">Auto Reorder</label><select class="erp-form-control" name="auto_reorder"><option>Enabled</option><option>Disabled</option></select></div>
+        <div class="col-12"><label class="erp-form-label">Default Warehouse</label><select class="erp-form-control" name="default_warehouse"><option>WH-A – Main Warehouse</option><option>WH-B – Secondary Depot</option></select></div>
       </div>
     </div>
   </div>
-</div>
+</form>
 </main>
 
 
@@ -312,6 +314,10 @@
 <!-- Toast Container -->
 <div class="toast-container" id="toast-container"></div>
 <script>
+  // Global APIClient Initialization
+  const apiClient = new APIClient(API_CONFIG);
+  apiClient.headers['X-CSRF-TOKEN'] = '{{ csrf_token() }}';
+
 $(function () {
 
   /* ── Sidebar toggle (mobile & collapse) ── */
@@ -357,12 +363,29 @@ $(function () {
     $(this).addClass('active');
   });
 
-  /* ── Save button inside any BS5 modal ── */
-  $(document).on('click', '.btn-modal-save', function () {
-    var $modal = $(this).closest('.modal');
-    bootstrap.Modal.getInstance($modal[0]).hide();
-    showToast('Record saved successfully', 'success');
-  });
+  /**
+   * Handle submission of the Settings Form
+   * Validates and saves the settings via APIClient
+   * @param {Event} e - The form submit event
+   */
+  const formSettings = document.getElementById('formSettings');
+  if (formSettings) {
+    formSettings.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const formData = new FormData(formSettings);
+      const payload = Object.fromEntries(formData.entries());
+
+      apiClient.store(API_ENDPOINTS.CORE.SETTINGS.STORE, payload)
+        .then(data => {
+          if (data.success || data.id) {
+            showToast(data.message || 'Settings saved successfully', 'success');
+          } else {
+            showToast(data.message || 'Error saving settings', 'error');
+          }
+        })
+        .catch(error => showToast(error.message || 'An error occurred', 'error'));
+    });
+  }
 
   /* ── Delete confirm modal: set target label ── */
   $('#modalDelete').on('show.bs.modal', function (e) {
