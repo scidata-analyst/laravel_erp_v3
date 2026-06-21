@@ -1,6 +1,8 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 
+const vitePort = Number(process.env.VITE_PORT || 5173);
+
 export default defineConfig({
     plugins: [
         laravel({
@@ -8,4 +10,16 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    server: {
+        host: '0.0.0.0',
+        port: vitePort,
+        strictPort: true,
+        hmr: {
+            host: process.env.VITE_HMR_HOST || 'localhost',
+            port: vitePort,
+        },
+        watch: {
+            usePolling: process.env.VITE_USE_POLLING === 'true',
+        },
+    },
 });

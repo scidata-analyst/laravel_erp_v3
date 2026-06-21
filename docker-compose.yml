@@ -22,8 +22,16 @@ services:
       QUEUE_CONNECTION: database
       SESSION_DRIVER: file
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     volumes:
+      - ./laravel/app:/var/www/html/app
+      - ./laravel/bootstrap:/var/www/html/bootstrap
+      - ./laravel/config:/var/www/html/config
+      - ./laravel/database:/var/www/html/database
+      - ./laravel/public:/var/www/html/public
+      - ./laravel/resources:/var/www/html/resources
+      - ./laravel/routes:/var/www/html/routes
       - app_storage:/var/www/html/storage
 
   nginx:
@@ -38,7 +46,26 @@ services:
     depends_on:
       - app
     volumes:
+      - ./laravel/public:/var/www/html/public:ro
       - app_storage:/var/www/html/storage:ro
+
+  vite:
+    image: node:22-bookworm-slim
+    container_name: erp_vite
+    restart: unless-stopped
+    working_dir: /var/www/html
+    command: sh -c "npm ci && npm run dev -- --host 0.0.0.0"
+    environment:
+      VITE_HMR_HOST: "${ERP_VITE_HMR_HOST:-localhost}"
+      VITE_PORT: "${ERP_VITE_PORT:-5173}"
+      VITE_USE_POLLING: "${ERP_VITE_USE_POLLING:-true}"
+    ports:
+      - "${ERP_VITE_PORT:-5173}:5173"
+    volumes:
+      - ./laravel:/var/www/html
+      - vite_node_modules:/var/www/html/node_modules
+    depends_on:
+      - app
 
   mysql:
     image: mysql:8.4
@@ -54,9 +81,16 @@ services:
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p$${MYSQL_ROOT_PASSWORD} --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
     volumes:
       - mysql_data:/var/lib/mysql
 
 volumes:
   app_storage:
   mysql_data:
+  vite_node_modules:

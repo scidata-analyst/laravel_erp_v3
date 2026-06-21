@@ -23,6 +23,8 @@ Run everything with one command:
 docker compose up --build
 ```
 
+This also starts Vite hot reload on `http://localhost:5173`. PHP, Blade, route, config, database, public, CSS, and JS changes are mounted into the containers for local development.
+
 If you use [Task](https://taskfile.dev), run:
 
 ```bash
@@ -35,7 +37,9 @@ Worker logs:
 task worker-logs
 ```
 
-Docker starts Nginx, PHP-FPM, a supervised Laravel queue worker, and MySQL. On app startup it waits for MySQL, creates the database tables with migrations, and seeds the database when it is empty.
+Docker starts Nginx, PHP-FPM, Vite, a supervised Laravel queue worker, and MySQL. On app startup it waits for MySQL, creates the database tables with migrations, and seeds the database when it is empty.
+
+Migrations run when the `app` container starts. Use `docker compose up --build` after building so the database is available before migrations run.
 
 The Laravel app will be available at `http://localhost:8083`.
 
