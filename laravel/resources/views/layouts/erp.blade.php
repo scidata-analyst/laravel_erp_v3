@@ -30,8 +30,8 @@
         <span class="nav-arrow"><i class="bi bi-chevron-right"></i></span>
       </button>
       <div class="nav-submenu">
-        <a class="nav-submenu-link" href="{{ route('user.index') }}" data-page="users"><span>Users</span></a>
-        <a class="nav-submenu-link" href="{{ route('roles.index') }}" data-page="roles"><span>Roles &amp; Permissions</span></a>
+        <a class="nav-submenu-link" href="{{ route('user') }}" data-page="users"><span>Users</span></a>
+        <a class="nav-submenu-link" href="{{ route('roles') }}" data-page="roles"><span>Roles &amp; Permissions</span></a>
       </div>
     </div>
 
@@ -41,10 +41,10 @@
         <span class="nav-arrow"><i class="bi bi-chevron-right"></i></span>
       </button>
       <div class="nav-submenu">
-        <a class="nav-submenu-link" href="{{ route('product_catalog.index') }}" data-page="products"><span>Product Catalog</span></a>
-        <a class="nav-submenu-link" href="{{ route('stock_movements.index') }}" data-page="stock-movements"><span>Stock In/Out</span></a>
-        <a class="nav-submenu-link" href="{{ route('batch_tracking.index') }}" data-page="batch-tracking"><span>Batch / Expiry</span></a>
-        <a class="nav-submenu-link" href="{{ route('stock_valuation.index') }}" data-page="stock-valuation"><span>Stock Valuation</span></a>
+        <a class="nav-submenu-link" href="{{ route('product_catalog') }}" data-page="products"><span>Product Catalog</span></a>
+        <a class="nav-submenu-link" href="{{ route('stock_movements') }}" data-page="stock-movements"><span>Stock In/Out</span></a>
+        <a class="nav-submenu-link" href="{{ route('batch_tracking') }}" data-page="batch-tracking"><span>Batch / Expiry</span></a>
+        <a class="nav-submenu-link" href="{{ route('stock_valuation') }}" data-page="stock-valuation"><span>Stock Valuation</span></a>
       </div>
     </div>
 
@@ -54,10 +54,10 @@
         <span class="nav-arrow"><i class="bi bi-chevron-right"></i></span>
       </button>
       <div class="nav-submenu">
-        <a class="nav-submenu-link" href="{{ route('suppliers.index') }}" data-page="suppliers"><span>Suppliers</span></a>
-        <a class="nav-submenu-link" href="{{ route('purchase_orders.index') }}" data-page="purchase-orders"><span>Purchase Orders</span></a>
-        <a class="nav-submenu-link" href="{{ route('grn.index') }}" data-page="grn"><span>GRN</span></a>
-        <a class="nav-submenu-link" href="{{ route('supplier_payments.index') }}" data-page="supplier-payments"><span>Payments</span></a>
+        <a class="nav-submenu-link" href="{{ route('suppliers') }}" data-page="suppliers"><span>Suppliers</span></a>
+        <a class="nav-submenu-link" href="{{ route('purchase_orders') }}" data-page="purchase-orders"><span>Purchase Orders</span></a>
+        <a class="nav-submenu-link" href="{{ route('grn') }}" data-page="grn"><span>GRN</span></a>
+        <a class="nav-submenu-link" href="{{ route('supplier_payments') }}" data-page="supplier-payments"><span>Payments</span></a>
       </div>
     </div>
 
@@ -67,10 +67,10 @@
         <span class="nav-arrow"><i class="bi bi-chevron-right"></i></span>
       </button>
       <div class="nav-submenu">
-        <a class="nav-submenu-link" href="{{ route('customers.index') }}" data-page="customers"><span>Customers</span></a>
-        <a class="nav-submenu-link" href="{{ route('sales_orders.index') }}" data-page="sales-orders"><span>Sales Orders</span></a>
-        <a class="nav-submenu-link" href="{{ route('invoices.index') }}" data-page="invoices"><span>Invoices</span></a>
-        <a class="nav-submenu-link" href="{{ route('promotions.index') }}" data-page="promotions"><span>Discounts &amp; Promos</span></a>
+        <a class="nav-submenu-link" href="{{ route('customers') }}" data-page="customers"><span>Customers</span></a>
+        <a class="nav-submenu-link" href="{{ route('sales_orders') }}" data-page="sales-orders"><span>Sales Orders</span></a>
+        <a class="nav-submenu-link" href="{{ route('invoices') }}" data-page="invoices"><span>Invoices</span></a>
+        <a class="nav-submenu-link" href="{{ route('promotions') }}" data-page="promotions"><span>Discounts &amp; Promos</span></a>
       </div>
     </div>
 
@@ -80,10 +80,10 @@
         <span class="nav-arrow"><i class="bi bi-chevron-right"></i></span>
       </button>
       <div class="nav-submenu">
-        <a class="nav-submenu-link" href="{{ route('gl.index') }}" data-page="gl"><span>General Ledger</span></a>
-        <a class="nav-submenu-link" href="{{ route('ap_ar.index') }}" data-page="ap-ar"><span>AP / AR</span></a>
-        <a class="nav-submenu-link" href="{{ route('tax.index') }}" data-page="tax"><span>Tax &amp; Compliance</span></a>
-        <a class="nav-submenu-link" href="{{ route('fin_reports.index') }}" data-page="fin-reports"><span>Financial Reports</span></a>
+        <a class="nav-submenu-link" href="{{ route('gl') }}" data-page="gl"><span>General Ledger</span></a>
+        <a class="nav-submenu-link" href="{{ route('ap_ar') }}" data-page="ap-ar"><span>AP / AR</span></a>
+        <a class="nav-submenu-link" href="{{ route('tax') }}" data-page="tax"><span>Tax &amp; Compliance</span></a>
+        <a class="nav-submenu-link" href="{{ route('fin_reports') }}" data-page="fin-reports"><span>Financial Reports</span></a>
       </div>
     </div>
 
@@ -93,10 +93,10 @@
         <span class="nav-arrow"><i class="bi bi-chevron-right"></i></span>
       </button>
       <div class="nav-submenu">
-        <a class="nav-submenu-link" href="{{ route('employees.index') }}" data-page="employees"><span>Employees</span></a>
-        <a class="nav-submenu-link" href="{{ route('attendance.index') }}" data-page="attendance"><span>Attendance &amp; Leave</span></a>
-        <a class="nav-submenu-link" href="{{ route('payroll.index') }}" data-page="payroll"><span>Payroll</span></a>
-        <a class="nav-submenu-link" href="{{ route('performance.index') }}" data-page="performance"><span>Performance</span></a>
+        <a class="nav-submenu-link" href="{{ route('employees') }}" data-page="employees"><span>Employees</span></a>
+        <a class="nav-submenu-link" href="{{ route('attendance') }}" data-page="attendance"><span>Attendance &amp; Leave</span></a>
+        <a class="nav-submenu-link" href="{{ route('payroll') }}" data-page="payroll"><span>Payroll</span></a>
+        <a class="nav-submenu-link" href="{{ route('performance') }}" data-page="performance"><span>Performance</span></a>
       </div>
     </div>
 
@@ -108,9 +108,9 @@
         <span class="nav-arrow"><i class="bi bi-chevron-right"></i></span>
       </button>
       <div class="nav-submenu">
-        <a class="nav-submenu-link" href="{{ route('bom.index') }}" data-page="bom"><span>Bill of Materials</span></a>
-        <a class="nav-submenu-link" href="{{ route('work_orders.index') }}" data-page="work-orders"><span>Work Orders</span></a>
-        <a class="nav-submenu-link" href="{{ route('machine_labor.index') }}" data-page="machine-labor"><span>Machine &amp; Labor</span></a>
+        <a class="nav-submenu-link" href="{{ route('bom') }}" data-page="bom"><span>Bill of Materials</span></a>
+        <a class="nav-submenu-link" href="{{ route('work_orders') }}" data-page="work-orders"><span>Work Orders</span></a>
+        <a class="nav-submenu-link" href="{{ route('machine_labor') }}" data-page="machine-labor"><span>Machine &amp; Labor</span></a>
       </div>
     </div>
 
@@ -120,9 +120,9 @@
         <span class="nav-arrow"><i class="bi bi-chevron-right"></i></span>
       </button>
       <div class="nav-submenu">
-        <a class="nav-submenu-link" href="{{ route('leads.index') }}" data-page="leads"><span>Leads &amp; Opportunities</span></a>
-        <a class="nav-submenu-link" href="{{ route('support.index') }}" data-page="support"><span>Customer Support</span></a>
-        <a class="nav-submenu-link" href="{{ route('interactions.index') }}" data-page="interactions"><span>Interactions</span></a>
+        <a class="nav-submenu-link" href="{{ route('leads') }}" data-page="leads"><span>Leads &amp; Opportunities</span></a>
+        <a class="nav-submenu-link" href="{{ route('support') }}" data-page="support"><span>Customer Support</span></a>
+        <a class="nav-submenu-link" href="{{ route('interactions') }}" data-page="interactions"><span>Interactions</span></a>
       </div>
     </div>
 
@@ -132,9 +132,9 @@
         <span class="nav-arrow"><i class="bi bi-chevron-right"></i></span>
       </button>
       <div class="nav-submenu">
-        <a class="nav-submenu-link" href="{{ route('tasks.index') }}" data-page="tasks"><span>Tasks &amp; Milestones</span></a>
-        <a class="nav-submenu-link" href="{{ route('resources.index') }}" data-page="resources"><span>Resource Allocation</span></a>
-        <a class="nav-submenu-link" href="{{ route('project_cost.index') }}" data-page="project-cost"><span>Cost Tracking</span></a>
+        <a class="nav-submenu-link" href="{{ route('tasks') }}" data-page="tasks"><span>Tasks &amp; Milestones</span></a>
+        <a class="nav-submenu-link" href="{{ route('resources') }}" data-page="resources"><span>Resource Allocation</span></a>
+        <a class="nav-submenu-link" href="{{ route('project_cost') }}" data-page="project-cost"><span>Cost Tracking</span></a>
       </div>
     </div>
 
@@ -144,9 +144,9 @@
         <span class="nav-arrow"><i class="bi bi-chevron-right"></i></span>
       </button>
       <div class="nav-submenu">
-        <a class="nav-submenu-link" href="{{ route('warehouses.index') }}" data-page="warehouses"><span>Multi-Warehouse</span></a>
-        <a class="nav-submenu-link" href="{{ route('shipments.index') }}" data-page="shipments"><span>Shipments</span></a>
-        <a class="nav-submenu-link" href="{{ route('routes.index') }}" data-page="routes"><span>Routes &amp; Delivery</span></a>
+        <a class="nav-submenu-link" href="{{ route('warehouses') }}" data-page="warehouses"><span>Multi-Warehouse</span></a>
+        <a class="nav-submenu-link" href="{{ route('shipments') }}" data-page="shipments"><span>Shipments</span></a>
+        <a class="nav-submenu-link" href="{{ route('routes') }}" data-page="routes"><span>Routes &amp; Delivery</span></a>
       </div>
     </div>
 
@@ -156,9 +156,9 @@
         <span class="nav-arrow"><i class="bi bi-chevron-right"></i></span>
       </button>
       <div class="nav-submenu">
-        <a class="nav-submenu-link" href="{{ route('qc_checklists.index') }}" data-page="qc-checklists"><span>QC Checklists</span></a>
-        <a class="nav-submenu-link" href="{{ route('defects.index') }}" data-page="defects"><span>Defect Tracking</span></a>
-        <a class="nav-submenu-link" href="{{ route('compliance.index') }}" data-page="compliance"><span>Compliance Reports</span></a>
+        <a class="nav-submenu-link" href="{{ route('qc_checklists') }}" data-page="qc-checklists"><span>QC Checklists</span></a>
+        <a class="nav-submenu-link" href="{{ route('defects') }}" data-page="defects"><span>Defect Tracking</span></a>
+        <a class="nav-submenu-link" href="{{ route('compliance') }}" data-page="compliance"><span>Compliance Reports</span></a>
       </div>
     </div>
 
@@ -168,9 +168,9 @@
         <span class="nav-arrow"><i class="bi bi-chevron-right"></i></span>
       </button>
       <div class="nav-submenu">
-        <a class="nav-submenu-link" href="{{ route('online_channels.index') }}" data-page="online-channels"><span>Sales Channels</span></a>
-        <a class="nav-submenu-link" href="{{ route('pos.index') }}" data-page="pos"><span>POS Terminals</span></a>
-        <a class="nav-submenu-link" href="{{ route('inv_sync.index') }}" data-page="inv-sync"><span>Inventory Sync</span></a>
+        <a class="nav-submenu-link" href="{{ route('online_channels') }}" data-page="online-channels"><span>Sales Channels</span></a>
+        <a class="nav-submenu-link" href="{{ route('pos') }}" data-page="pos"><span>POS Terminals</span></a>
+        <a class="nav-submenu-link" href="{{ route('inv_sync') }}" data-page="inv-sync"><span>Inventory Sync</span></a>
       </div>
     </div>
 
@@ -180,9 +180,9 @@
         <span class="nav-arrow"><i class="bi bi-chevron-right"></i></span>
       </button>
       <div class="nav-submenu">
-        <a class="nav-submenu-link" href="{{ route('custom_reports.index') }}" data-page="custom-reports"><span>Custom Reports</span></a>
-        <a class="nav-submenu-link" href="{{ route('forecasting.index') }}" data-page="forecasting"><span>Forecasting</span></a>
-        <a class="nav-submenu-link" href="{{ route('bi_dashboards.index') }}" data-page="bi-dashboards"><span>BI Dashboards</span></a>
+        <a class="nav-submenu-link" href="{{ route('custom_reports') }}" data-page="custom-reports"><span>Custom Reports</span></a>
+        <a class="nav-submenu-link" href="{{ route('forecasting') }}" data-page="forecasting"><span>Forecasting</span></a>
+        <a class="nav-submenu-link" href="{{ route('bi_dashboards') }}" data-page="bi-dashboards"><span>BI Dashboards</span></a>
       </div>
     </div>
 
@@ -192,13 +192,13 @@
         <span class="nav-arrow"><i class="bi bi-chevron-right"></i></span>
       </button>
       <div class="nav-submenu">
-        <a class="nav-submenu-link" href="{{ route('doc_library.index') }}" data-page="doc-library"><span>Document Library</span></a>
-        <a class="nav-submenu-link" href="{{ route('doc_versions.index') }}" data-page="doc-versions"><span>Version Control</span></a>
+        <a class="nav-submenu-link" href="{{ route('doc_library') }}" data-page="doc-library"><span>Document Library</span></a>
+        <a class="nav-submenu-link" href="{{ route('doc_versions') }}" data-page="doc-versions"><span>Version Control</span></a>
       </div>
     </div>
 
     <div class="nav-item">
-      <a class="nav-link" href="{{ route('settings.index') }}" data-page="settings">
+      <a class="nav-link" href="{{ route('settings') }}" data-page="settings">
         <span class="nav-icon"><i class="bi bi-sliders"></i></span><span>Settings</span>
       </a>
     </div>
@@ -224,7 +224,7 @@
       <i class="bi bi-bell"></i>
       <span class="notif-badge">5</span>
     </button>
-    <a class="header-btn" href="{{ route('settings.index') }}" title="Settings">
+    <a class="header-btn" href="{{ route('settings') }}" title="Settings">
       <i class="bi bi-sliders"></i>
     </a>
     <div class="user-avatar" title="Admin User">AD</div>

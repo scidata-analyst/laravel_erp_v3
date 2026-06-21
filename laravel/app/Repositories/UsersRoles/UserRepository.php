@@ -51,7 +51,7 @@ class UserRepository implements UserInterface
         $query = $this->model->query();
 
         if ($search) {
-            $query->where('name', 'like', "%{$search}%");
+            $query->where('user_name', 'like', "%{$search}%");
         }
 
         $query->with('role');
