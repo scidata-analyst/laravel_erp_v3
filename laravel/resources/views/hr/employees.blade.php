@@ -9,7 +9,7 @@
       <div class="page-title">Employee Management</div>
       <div class="page-subtitle">Staff directory, departments and contracts</div>
     </div>
-    <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalEmployee"><i
+    <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalEmployee" data-mode="create"><i
         class="bi bi-plus-lg"></i> Add Employee</button>
   </div>
   <div class="erp-card">
@@ -65,15 +65,14 @@
                 <div class="d-flex gap-1">
                   <button class="btn-erp btn-outline btn-xs btn-icon btn-edit" 
                     data-id="{{ $employee->id }}"
-                    data-url="{{ route('employees.show', $employee->id) }}"
+                    data-mode="edit"
                     data-bs-toggle="modal"
                     data-bs-target="#modalEmployee"
                     title="Edit">
                     <i class="bi bi-pencil"></i>
                   </button>
                   <button class="btn-erp btn-danger btn-xs btn-icon btn-delete" 
-                    data-id="{{ $employee->id }}"
-                    data-url="{{ route('employees.destroy', $employee->id) }}"
+                    data-delete-id="{{ $employee->id }}"
                     data-bs-toggle="modal"
                     data-bs-target="#modalDelete"
                     data-delete-label="Employee"
@@ -105,9 +104,7 @@
           <h5 class="modal-title" style="color:var(--text-primary);font-weight:600">Add / Edit Employee</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
-        <form id="form-employee" method="POST">
-          @csrf
-          <input type="hidden" name="_method" value="POST" id="form-method">
+        <form id="form-employee">
           <input type="hidden" name="id" id="employee_id">
           <div class="modal-body">
             <div class="row g-3">
@@ -199,96 +196,100 @@
 
 @push('scripts')
 <script>
-(function() {
-  const ROUTE_STORE = '{{ route("employees.store") }}';
-  const ROUTE_UPDATE = '{{ route("employees.update", ["id" => "__ID__"]) }}';
-  const ROUTE_DESTROY = '{{ route("employees.destroy", ["id" => "__ID__"]) }}';
-  let deleteUrl = null;
+document.addEventListener('DOMContentLoaded', function() {
+  const modalEmployee = document.getElementById('modalEmployee');
+  const formEmployee = document.getElementById('form-employee');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
 
-  function showToast(message, type = 'success') {
-    const toast = document.createElement('div');
-    toast.className = `toast-notification toast-${type}`;
-    toast.innerHTML = `<i class="bi bi-${type === 'success' ? 'check-circle' : 'x-circle'}"></i> ${message}`;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 3000);
-  }
+  let deleteId = null;
 
-  function resetForm() {
-    $('#form-employee')[0].reset();
-    $('#form-method').val('POST');
-    $('#employee_id').val('');
-    $('#modalEmployee .modal-title').text('Add / Edit Employee');
-  }
+  modalEmployee.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formEmployee);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = modalEmployee.querySelector('.modal-title');
 
-  $('#modalEmployee').on('show.bs.modal', function(e) {
-    const btn = e.relatedTarget;
-    if (btn.classList.contains('btn-edit')) {
-      const id = btn.dataset.id;
-      $.ajax({
-        url: btn.dataset.url,
-        method: 'GET',
-        success: function(data) {
-          $('#form-method').val('PUT');
-          $('#employee_id').val(data.id);
-          $('#modalEmployee .modal-title').text('Edit Employee');
-          $('#form-employee input[name="full_name"]').val(data.full_name);
-          $('#form-employee input[name="employee_id"]').val(data.employee_id);
-          $('#form-employee input[name="designation"]').val(data.designation);
-          $('#form-employee select[name="department"]').val(data.department);
-          $('#form-employee input[name="basic_salary"]').val(data.basic_salary);
-          $('#form-employee input[name="join_date"]').val(data.join_date);
-          $('#form-employee select[name="contract_type"]').val(data.contract_type || 'Permanent');
-          $('#form-employee input[name="email"]').val(data.email);
-          $('#form-employee input[name="phone"]').val(data.phone);
-        }
-      });
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Employee';
+
+      apiClient.show(API_ENDPOINTS.HR.EMPLOYEES.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('employee_id').value = item.id;
+          formEmployee.querySelector('[name="full_name"]').value = item.full_name || '';
+          formEmployee.querySelector('[name="employee_id"]').value = item.employee_id || '';
+          formEmployee.querySelector('[name="designation"]').value = item.designation || '';
+          formEmployee.querySelector('[name="department"]').value = item.department || '';
+          formEmployee.querySelector('[name="basic_salary"]').value = item.basic_salary || '';
+          formEmployee.querySelector('[name="join_date"]').value = item.join_date || '';
+          formEmployee.querySelector('[name="contract_type"]').value = item.contract_type || 'Permanent';
+          formEmployee.querySelector('[name="email"]').value = item.email || '';
+          formEmployee.querySelector('[name="phone"]').value = item.phone || '';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
     } else {
-      resetForm();
+      modalTitle.textContent = 'Add Employee';
+      formEmployee.reset();
+      document.getElementById('employee_id').value = '';
     }
   });
 
-  $('#form-employee').on('submit', function(e) {
+  formEmployee.addEventListener('submit', function(e) {
     e.preventDefault();
-    const id = $('#employee_id').val();
-    const url = id ? ROUTE_UPDATE.replace('__ID__', id) : ROUTE_STORE;
-    const method = id ? 'PUT' : 'POST';
+    const id = document.getElementById('employee_id').value;
 
-    $.ajax({
-      url: url,
-      method: method,
-      data: $(this).serialize(),
-      success: function() {
-        $('#modalEmployee').modal('hide');
-        showToast(id ? 'Employee updated successfully' : 'Employee created successfully');
-        setTimeout(() => location.reload(), 500);
-      },
-      error: function(xhr) {
-        showToast(xhr.responseJSON?.message || 'Operation failed', 'error');
+    const formData = new FormData(formEmployee);
+    const payload = Object.fromEntries(formData.entries());
+
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.HR.EMPLOYEES.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.HR.EMPLOYEES.STORE, payload);
+    }
+
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalEmployee).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formEmployee, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
       }
     });
   });
 
-  $('#modalDelete').on('show.bs.modal', function(e) {
-    const btn = e.relatedTarget;
-    deleteUrl = btn.dataset.url;
-    $('#delete-target').text(btn.dataset.deleteLabel || 'record');
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
   });
 
-  $('#btn-confirm-delete').on('click', function() {
-    $.ajax({
-      url: deleteUrl,
-      method: 'DELETE',
-      data: { _token: '{{ csrf_token() }}' },
-      success: function() {
-        $('#modalDelete').modal('hide');
-        showToast('Record deleted successfully');
-        setTimeout(() => location.reload(), 500);
-      },
-      error: function(xhr) {
-        showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
+  btnConfirmDelete.addEventListener('click', function() {
+    if (!deleteId) return;
+
+    apiClient.destroy(API_ENDPOINTS.HR.EMPLOYEES.DESTROY, deleteId)
+    .then(data => {
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
       }
-    });
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
   });
-})();
+});
 </script>
 @endpush

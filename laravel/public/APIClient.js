@@ -58,12 +58,24 @@ class APIClient {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), this.timeout);
 
+        const isFormData = data instanceof FormData;
+        const requestHeaders = { ...this.headers };
+        
+        if (isFormData) {
+            delete requestHeaders['Content-Type'];
+        }
+
         const options = {
             method,
-            headers: this.headers,
+            headers: requestHeaders,
             signal: controller.signal,
-            ...(data && { body: JSON.stringify(data) })
         };
+
+        if (isFormData) {
+            options.body = data;
+        } else if (data) {
+            options.body = JSON.stringify(data);
+        }
 
         try {
             const response = await fetch(url, options);

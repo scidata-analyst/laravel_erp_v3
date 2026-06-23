@@ -49,24 +49,16 @@
           <td>
             <div class="d-flex gap-1">
               <button class="btn-erp btn-outline btn-xs btn-icon btn-edit"
-                      data-bs-toggle="modal"
-                      data-bs-target="#modalCustomReport"
-                      data-mode="edit"
                       data-id="{{ $report->id }}"
-                      data-name="{{ $report->report_name }}"
-                      data-module="{{ $report->module }}"
-                      data-fields="{{ $report->selected_fields }}"
-                      data-filter="{{ $report->filter_by }}"
-                      data-schedule="{{ $report->schedule }}"
-                      data-format="{{ $report->output_format }}"
+                      data-mode="edit"
+                      data-bs-toggle="modal" data-bs-target="#modalCustomReport"
                       title="Edit">
                 <i class="bi bi-pencil"></i>
               </button>
               <button class="btn-erp btn-danger btn-xs btn-icon btn-delete"
-                      data-bs-toggle="modal"
-                      data-bs-target="#modalDelete"
-                      data-id="{{ $report->id }}"
-                      data-label="Custom Report"
+                      data-delete-id="{{ $report->id }}"
+                      data-delete-label="Custom Report"
+                      data-bs-toggle="modal" data-bs-target="#modalDelete"
                       title="Delete">
                 <i class="bi bi-trash"></i>
               </button>
@@ -188,137 +180,97 @@
 
 @push('scripts')
 <script>
-(function() {
+document.addEventListener('DOMContentLoaded', function() {
+  const modalCustomReport = document.getElementById('modalCustomReport');
+  const formCustomReport = document.getElementById('formCustomReport');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
+
   let deleteId = null;
 
-  function showToast(message, type = 'success') {
-    const toast = document.createElement('div');
-    toast.className = `toast-notification toast-${type}`;
-    toast.innerHTML = `<i class="bi bi-${type === 'success' ? 'check-circle-fill' : 'exclamation-circle-fill'}"></i> ${message}`;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.classList.add('show'), 10);
-    setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
-  }
+  modalCustomReport.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formCustomReport);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = document.getElementById('modalCustomReportTitle');
 
-  function reloadTable() {
-    fetch('{{ route("custom_reports.index") }}')
-      .then(res => res.text())
-      .then(html => {
-        const tbody = document.querySelector('#custom-reports-tbody');
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        const newTbody = doc.querySelector('#custom-reports-tbody');
-        if (tbody && newTbody) tbody.innerHTML = newTbody.innerHTML;
-      });
-  }
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Custom Report';
 
-  document.querySelectorAll('[data-bs-target="#modalCustomReport"]').forEach(btn => {
-    btn.addEventListener('click', function() {
-      const mode = this.dataset.mode || 'create';
-      const form = document.getElementById('formCustomReport');
-      form.reset();
+      apiClient.show(API_ENDPOINTS.REPORTS.CUSTOM_REPORTS.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('custom_report_id').value = item.id;
+          formCustomReport.querySelector('[name="report_name"]').value = item.report_name || '';
+          formCustomReport.querySelector('[name="module"]').value = item.module || '';
+          formCustomReport.querySelector('[name="selected_fields"]').value = item.selected_fields || '';
+          formCustomReport.querySelector('[name="filter_by"]').value = item.filter_by || '';
+          formCustomReport.querySelector('[name="schedule"]').value = item.schedule || '';
+          formCustomReport.querySelector('[name="output_format"]').value = item.output_format || '';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
+    } else {
+      modalTitle.textContent = 'Build Custom Report';
+      formCustomReport.reset();
       document.getElementById('custom_report_id').value = '';
-      document.getElementById('modalCustomReportTitle').textContent = mode === 'edit' ? 'Edit Custom Report' : 'Build Custom Report';
+    }
+  });
+
+  formCustomReport.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const id = document.getElementById('custom_report_id').value;
+
+    const formData = new FormData(formCustomReport);
+    const payload = Object.fromEntries(formData.entries());
+
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.REPORTS.CUSTOM_REPORTS.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.REPORTS.CUSTOM_REPORTS.STORE, payload);
+    }
+
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalCustomReport).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formCustomReport, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
+      }
     });
   });
 
-  document.querySelector('#tbl-custom-reports').addEventListener('click', function(e) {
-    const btn = e.target.closest('.btn-edit');
-    if (btn) {
-      document.getElementById('modalCustomReportTitle').textContent = 'Edit Custom Report';
-      document.getElementById('custom_report_id').value = btn.dataset.id;
-      document.getElementById('custom_report_name').value = btn.dataset.name || '';
-      document.getElementById('custom_report_module').value = btn.dataset.module || '';
-      document.getElementById('custom_report_fields').value = btn.dataset.fields || '';
-      document.getElementById('custom_report_filter').value = btn.dataset.filter || '';
-      document.getElementById('custom_report_schedule').value = btn.dataset.schedule || '';
-      document.getElementById('custom_report_format').value = btn.dataset.format || '';
-    }
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
   });
 
-  document.querySelector('#tbl-custom-reports').addEventListener('click', function(e) {
-    const btn = e.target.closest('.btn-delete');
-    if (btn) {
-      deleteId = btn.dataset.id;
-      document.getElementById('delete_id').value = deleteId;
-      document.getElementById('delete-target').textContent = btn.dataset.label || 'record';
-    }
-  });
-
-  document.getElementById('formCustomReport').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const id = document.getElementById('custom_report_id').value;
-    const url = id ? '{{ route("custom_reports.update", ["id" => ":id"]) }}'.replace(':id', id) : '{{ route("custom_reports.store") }}';
-    const method = id ? 'PUT' : 'POST';
-
-    const formData = {
-      report_name: document.getElementById('custom_report_name').value,
-      module: document.getElementById('custom_report_module').value,
-      selected_fields: document.getElementById('custom_report_fields').value,
-      filter_by: document.getElementById('custom_report_filter').value,
-      schedule: document.getElementById('custom_report_schedule').value,
-      output_format: document.getElementById('custom_report_format').value,
-    };
-
-    fetch(url, {
-      method: method,
-      headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      body: JSON.stringify(formData)
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        showToast(id ? 'Custom report updated successfully' : 'Custom report created successfully');
-        bootstrap.Modal.getInstance(document.getElementById('modalCustomReport')).hide();
-        reloadTable();
-      } else {
-        showToast(data.message || 'Error saving custom report', 'error');
-      }
-    })
-    .catch(() => showToast('Error saving custom report', 'error'));
-  });
-
-  document.getElementById('btn-confirm-delete').addEventListener('click', function() {
+  btnConfirmDelete.addEventListener('click', function() {
     if (!deleteId) return;
-    fetch('{{ route("custom_reports.destroy", ["id" => ":id"]) }}'.replace(':id', deleteId), {
-      method: 'DELETE',
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
-    })
-    .then(res => res.json())
+
+    apiClient.destroy(API_ENDPOINTS.REPORTS.CUSTOM_REPORTS.DESTROY, deleteId)
     .then(data => {
-      if (data.success) {
-        showToast('Custom report deleted successfully');
-        bootstrap.Modal.getInstance(document.getElementById('modalDelete')).hide();
-        reloadTable();
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
       } else {
-        showToast(data.message || 'Error deleting custom report', 'error');
+        showToast(data.message || 'Error', 'error');
       }
     })
-    .catch(() => showToast('Error deleting custom report', 'error'));
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
   });
-})();
+});
 </script>
-<style>
-.toast-notification {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 12px 20px;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--text-primary);
-  font-size: 14px;
-  z-index: 9999;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.toast-notification.show { opacity: 1; transform: translateY(0); }
-.toast-success i { color: var(--accent-2); }
-.toast-error i { color: var(--accent-3); }
-</style>
 @endpush

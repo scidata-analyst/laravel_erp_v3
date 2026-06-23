@@ -11,7 +11,7 @@
   </div>
   <div class="d-flex gap-2">
     <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-    <button class="btn-erp btn-primary" id="btn-add-defect"><i class="bi bi-plus-lg"></i> Log Defect</button>
+    <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalDefect" data-mode="create"><i class="bi bi-plus-lg"></i> Log Defect</button>
   </div>
 </div>
 
@@ -72,16 +72,14 @@
               <div class="d-flex gap-1">
                 <button class="btn-erp btn-outline btn-xs btn-icon btn-edit" 
                   data-id="{{ $defect->id }}"
-                  data-product_id="{{ $defect->product_id }}"
-                  data-batch_lot_number="{{ $defect->batch_lot_number }}"
-                  data-defect_type="{{ $defect->defect_type }}"
-                  data-severity="{{ $defect->severity }}"
-                  data-qty_affected="{{ $defect->qty_affected }}"
-                  data-description="{{ $defect->description }}"
+                  data-mode="edit"
+                  data-bs-toggle="modal" data-bs-target="#modalDefect"
                   title="Edit"><i class="bi bi-pencil"></i></button>
                 <button class="btn-erp btn-danger btn-xs btn-icon btn-delete" 
-                  data-id="{{ $defect->id }}"
-                  data-label="Defect" title="Delete"><i class="bi bi-trash"></i></button>
+                  data-delete-id="{{ $defect->id }}"
+                  data-delete-label="Defect" 
+                  data-bs-toggle="modal" data-bs-target="#modalDelete"
+                  title="Delete"><i class="bi bi-trash"></i></button>
               </div>
             </td>
           </tr>
@@ -188,97 +186,96 @@
 
 @push('scripts')
 <script>
-$(function () {
-  var routes = {
-    store: '{{ route("defects.store") }}',
-    update: '{{ route("defects.update", ":id") }}',
-    destroy: '{{ route("defects.destroy", ":id") }}'
-  };
+document.addEventListener('DOMContentLoaded', function() {
+  const modalDefect = document.getElementById('modalDefect');
+  const formDefect = document.getElementById('form-defect');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
 
-  var $modal = $('#modalDefect');
-  var $form = $('#form-defect');
-  var $btnSave = $('#btn-save');
-  var defectId = null;
-  var isEdit = false;
+  let deleteId = null;
 
-  function resetForm() {
-    $form[0].reset();
-    $('#defect-id').val('');
-    isEdit = false;
-    defectId = null;
-  }
+  modalDefect.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formDefect);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = document.getElementById('modal-title');
 
-  $('#btn-add-defect').on('click', function () {
-    resetForm();
-    $('#modal-title').text('Log Defect');
-    $modal.modal('show');
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Defect';
+
+      apiClient.show(API_ENDPOINTS.QUALITY_CONTROL.DEFECTS.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('defect-id').value = item.id;
+          formDefect.querySelector('[name="product_id"]').value = item.product_id || '';
+          formDefect.querySelector('[name="batch_lot_number"]').value = item.batch_lot_number || '';
+          formDefect.querySelector('[name="defect_type"]').value = item.defect_type || '';
+          formDefect.querySelector('[name="severity"]').value = item.severity || '';
+          formDefect.querySelector('[name="qty_affected"]').value = item.qty_affected || '';
+          formDefect.querySelector('[name="description"]').value = item.description || '';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
+    } else {
+      modalTitle.textContent = 'Log Defect';
+      formDefect.reset();
+      document.getElementById('defect-id').value = '';
+    }
   });
 
-  $(document).on('click', '.btn-edit', function () {
-    resetForm();
-    isEdit = true;
-    defectId = $(this).data('id');
-    $('#modal-title').text('Edit Defect');
-    $('#defect-id').val(defectId);
-    $('[name="product_id"]').val($(this).data('product_id'));
-    $('[name="batch_lot_number"]').val($(this).data('batch_lot_number'));
-    $('[name="defect_type"]').val($(this).data('defect_type'));
-    $('[name="severity"]').val($(this).data('severity'));
-    $('[name="qty_affected"]').val($(this).data('qty_affected'));
-    $('[name="description"]').val($(this).data('description'));
-    $modal.modal('show');
-  });
+  formDefect.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const id = document.getElementById('defect-id').value;
 
-  $(document).on('click', '.btn-delete', function () {
-    defectId = $(this).data('id');
-    var label = $(this).data('label') || 'record';
-    $('#delete-target').text(label);
-    $('#modalDelete').modal('show');
-  });
+    const formData = new FormData(formDefect);
+    const payload = Object.fromEntries(formData.entries());
 
-  $('#btn-confirm-delete').on('click', function () {
-    $.ajax({
-      url: routes.destroy.replace(':id', defectId),
-      method: 'DELETE',
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function (res) {
-        if (res.success) {
-          showToast(res.message || 'Defect deleted', 'success');
-          $('#modalDelete').modal('hide');
-          setTimeout(() => location.reload(), 1000);
-        }
-      },
-      error: function (xhr) {
-        showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.QUALITY_CONTROL.DEFECTS.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.QUALITY_CONTROL.DEFECTS.STORE, payload);
+    }
+
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalDefect).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formDefect, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
       }
     });
   });
 
-  $btnSave.on('click', function () {
-    $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
+  });
 
-    var url = isEdit ? routes.update.replace(':id', defectId) : routes.store;
-    var method = isEdit ? 'PUT' : 'POST';
+  btnConfirmDelete.addEventListener('click', function() {
+    if (!deleteId) return;
 
-    $.ajax({
-      url: url,
-      method: method,
-      data: $form.serialize(),
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function (res) {
-        if (res.success) {
-          showToast(res.message || (isEdit ? 'Defect updated' : 'Defect logged'), 'success');
-          $modal.modal('hide');
-          setTimeout(() => location.reload(), 1000);
-        }
-      },
-      error: function (xhr) {
-        showToast(xhr.responseJSON?.message || 'Operation failed', 'error');
-      },
-      complete: function () {
-        $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Log Defect');
+    apiClient.destroy(API_ENDPOINTS.QUALITY_CONTROL.DEFECTS.DESTROY, deleteId)
+    .then(data => {
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
       }
-    });
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
   });
 });
 </script>

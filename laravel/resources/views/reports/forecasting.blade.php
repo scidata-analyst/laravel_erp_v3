@@ -49,23 +49,16 @@
           <td>
             <div class="d-flex gap-1">
               <button class="btn-erp btn-outline btn-xs btn-icon btn-edit"
-                      data-bs-toggle="modal"
-                      data-bs-target="#modalForecast"
-                      data-mode="edit"
                       data-id="{{ $forecast->id }}"
-                      data-name="{{ $forecast->forecast_name }}"
-                      data-type="{{ $forecast->forecast_type }}"
-                      data-from="{{ $forecast->period_from }}"
-                      data-to="{{ $forecast->period_to }}"
-                      data-model="{{ $forecast->model }}"
+                      data-mode="edit"
+                      data-bs-toggle="modal" data-bs-target="#modalForecast"
                       title="Edit">
                 <i class="bi bi-pencil"></i>
               </button>
               <button class="btn-erp btn-danger btn-xs btn-icon btn-delete"
-                      data-bs-toggle="modal"
-                      data-bs-target="#modalDelete"
-                      data-id="{{ $forecast->id }}"
-                      data-label="Forecast"
+                      data-delete-id="{{ $forecast->id }}"
+                      data-delete-label="Forecast"
+                      data-bs-toggle="modal" data-bs-target="#modalDelete"
                       title="Delete">
                 <i class="bi bi-trash"></i>
               </button>
@@ -171,135 +164,96 @@
 
 @push('scripts')
 <script>
-(function() {
+document.addEventListener('DOMContentLoaded', function() {
+  const modalForecast = document.getElementById('modalForecast');
+  const formForecast = document.getElementById('formForecast');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
+
   let deleteId = null;
 
-  function showToast(message, type = 'success') {
-    const toast = document.createElement('div');
-    toast.className = `toast-notification toast-${type}`;
-    toast.innerHTML = `<i class="bi bi-${type === 'success' ? 'check-circle-fill' : 'exclamation-circle-fill'}"></i> ${message}`;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.classList.add('show'), 10);
-    setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
-  }
+  modalForecast.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formForecast);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = document.getElementById('modalForecastTitle');
 
-  function reloadTable() {
-    fetch('{{ route("forecasting.index") }}')
-      .then(res => res.text())
-      .then(html => {
-        const tbody = document.querySelector('#forecasting-tbody');
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        const newTbody = doc.querySelector('#forecasting-tbody');
-        if (tbody && newTbody) tbody.innerHTML = newTbody.innerHTML;
-      });
-  }
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Forecast';
 
-  document.querySelectorAll('[data-bs-target="#modalForecast"]').forEach(btn => {
-    btn.addEventListener('click', function() {
-      const mode = this.dataset.mode || 'create';
-      const form = document.getElementById('formForecast');
-      form.reset();
+      apiClient.show(API_ENDPOINTS.REPORTS.FORECASTING.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('forecast_id').value = item.id;
+          formForecast.querySelector('[name="forecast_name"]').value = item.forecast_name || '';
+          formForecast.querySelector('[name="forecast_type"]').value = item.forecast_type || '';
+          formForecast.querySelector('[name="period_from"]').value = item.period_from ? item.period_from.split('T')[0] : '';
+          formForecast.querySelector('[name="period_to"]').value = item.period_to ? item.period_to.split('T')[0] : '';
+          formForecast.querySelector('[name="model"]').value = item.model || '';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
+    } else {
+      modalTitle.textContent = 'New Forecast';
+      formForecast.reset();
       document.getElementById('forecast_id').value = '';
-      document.getElementById('modalForecastTitle').textContent = mode === 'edit' ? 'Edit Forecast' : 'New Forecast';
+    }
+  });
+
+  formForecast.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const id = document.getElementById('forecast_id').value;
+
+    const formData = new FormData(formForecast);
+    const payload = Object.fromEntries(formData.entries());
+
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.REPORTS.FORECASTING.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.REPORTS.FORECASTING.STORE, payload);
+    }
+
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalForecast).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formForecast, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
+      }
     });
   });
 
-  document.querySelector('#tbl-forecasting').addEventListener('click', function(e) {
-    const btn = e.target.closest('.btn-edit');
-    if (btn) {
-      document.getElementById('modalForecastTitle').textContent = 'Edit Forecast';
-      document.getElementById('forecast_id').value = btn.dataset.id;
-      document.getElementById('forecast_name').value = btn.dataset.name || '';
-      document.getElementById('forecast_type').value = btn.dataset.type || '';
-      document.getElementById('forecast_period_from').value = btn.dataset.from || '';
-      document.getElementById('forecast_period_to').value = btn.dataset.to || '';
-      document.getElementById('forecast_model').value = btn.dataset.model || '';
-    }
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
   });
 
-  document.querySelector('#tbl-forecasting').addEventListener('click', function(e) {
-    const btn = e.target.closest('.btn-delete');
-    if (btn) {
-      deleteId = btn.dataset.id;
-      document.getElementById('delete_id').value = deleteId;
-      document.getElementById('delete-target').textContent = btn.dataset.label || 'record';
-    }
-  });
-
-  document.getElementById('formForecast').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const id = document.getElementById('forecast_id').value;
-    const url = id ? '{{ route("forecasting.update", ["id" => ":id"]) }}'.replace(':id', id) : '{{ route("forecasting.store") }}';
-    const method = id ? 'PUT' : 'POST';
-
-    const formData = {
-      forecast_name: document.getElementById('forecast_name').value,
-      forecast_type: document.getElementById('forecast_type').value,
-      period_from: document.getElementById('forecast_period_from').value,
-      period_to: document.getElementById('forecast_period_to').value,
-      model: document.getElementById('forecast_model').value,
-    };
-
-    fetch(url, {
-      method: method,
-      headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      body: JSON.stringify(formData)
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        showToast(id ? 'Forecast updated successfully' : 'Forecast generated successfully');
-        bootstrap.Modal.getInstance(document.getElementById('modalForecast')).hide();
-        reloadTable();
-      } else {
-        showToast(data.message || 'Error saving forecast', 'error');
-      }
-    })
-    .catch(() => showToast('Error saving forecast', 'error'));
-  });
-
-  document.getElementById('btn-confirm-delete').addEventListener('click', function() {
+  btnConfirmDelete.addEventListener('click', function() {
     if (!deleteId) return;
-    fetch('{{ route("forecasting.destroy", ["id" => ":id"]) }}'.replace(':id', deleteId), {
-      method: 'DELETE',
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
-    })
-    .then(res => res.json())
+
+    apiClient.destroy(API_ENDPOINTS.REPORTS.FORECASTING.DESTROY, deleteId)
     .then(data => {
-      if (data.success) {
-        showToast('Forecast deleted successfully');
-        bootstrap.Modal.getInstance(document.getElementById('modalDelete')).hide();
-        reloadTable();
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
       } else {
-        showToast(data.message || 'Error deleting forecast', 'error');
+        showToast(data.message || 'Error', 'error');
       }
     })
-    .catch(() => showToast('Error deleting forecast', 'error'));
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
   });
-})();
+});
 </script>
-<style>
-.toast-notification {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 12px 20px;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--text-primary);
-  font-size: 14px;
-  z-index: 9999;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.toast-notification.show { opacity: 1; transform: translateY(0); }
-.toast-success i { color: var(--accent-2); }
-.toast-error i { color: var(--accent-3); }
-</style>
 @endpush

@@ -11,8 +11,7 @@
     </div>
     <div class="d-flex gap-2">
       <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-      <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalLead"
-        data-route="{{ route('leads.store') }}" data-mode="create"><i
+      <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalLead" data-mode="create"><i
           class="bi bi-plus-lg"></i> New Lead</button>
     </div>
   </div>
@@ -98,14 +97,11 @@
               <td>
                 <div class="d-flex gap-1">
                   <button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalLead" title="Edit"
-                    data-route="{{ route('leads.update', $lead->id) }}"
-                    data-mode="edit"
-                    data-lead='@json($lead)'><i class="bi bi-pencil"></i></button>
+                    data-bs-target="#modalLead" data-mode="edit" data-id="{{ $lead->id }}"
+                    title="Edit"><i class="bi bi-pencil"></i></button>
                   <button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalDelete" title="Delete"
-                    data-route="{{ route('leads.destroy', $lead->id) }}"
-                    data-label="Lead"><i class="bi bi-trash"></i></button>
+                    data-bs-target="#modalDelete" data-delete-id="{{ $lead->id }}"
+                    data-delete-label="Lead" title="Delete"><i class="bi bi-trash"></i></button>
                 </div>
               </td>
             </tr>
@@ -133,6 +129,7 @@
         </div>
         <form id="form-lead">
           <div class="modal-body">
+            <input type="hidden" name="id" id="lead_id">
             <div class="row g-3">
               <div class="col-md-6">
                 <label class="erp-form-label">Lead Name</label>
@@ -217,132 +214,100 @@
 
 @push('scripts')
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const modalLead = document.getElementById('modalLead');
-    const modalDelete = document.getElementById('modalDelete');
-    const formLead = document.getElementById('form-lead');
-    let deleteUrl = null;
+document.addEventListener('DOMContentLoaded', function() {
+  const modalLead = document.getElementById('modalLead');
+  const formLead = document.getElementById('form-lead');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
 
-    modalLead.addEventListener('show.bs.modal', function(e) {
-      const btn = e.relatedTarget;
-      const mode = btn?.dataset.mode || 'create';
-      const route = btn?.dataset.route || '{{ route("leads.store") }}';
-      
-      formLead.action = route;
-      formLead.method = mode === 'create' ? 'POST' : 'PUT';
-      
-      const title = modalLead.querySelector('.modal-title');
-      const submitBtn = modalLead.querySelector('.btn-modal-save');
-      
-      if (mode === 'edit') {
-        title.textContent = 'Edit Lead / Opportunity';
-        submitBtn.innerHTML = '<i class="bi bi-check2"></i> Update Lead';
-        
-        const lead = JSON.parse(btn.dataset.lead);
-        formLead.querySelector('[name="lead_name"]').value = lead.lead_name || '';
-        formLead.querySelector('[name="company"]').value = lead.company || '';
-        formLead.querySelector('[name="email"]').value = lead.email || '';
-        formLead.querySelector('[name="phone"]').value = lead.phone || '';
-        formLead.querySelector('[name="deal_value"]').value = lead.deal_value || '';
-        formLead.querySelector('[name="stage"]').value = lead.stage || 'New';
-        formLead.querySelector('[name="assigned_user_id"]').value = lead.assigned_user_id || '';
-        formLead.querySelector('[name="notes"]').value = lead.notes || '';
-      } else {
-        title.textContent = 'Add Lead / Opportunity';
-        submitBtn.innerHTML = '<i class="bi bi-check2"></i> Save Lead';
-        formLead.reset();
-      }
-    });
+  let deleteId = null;
 
-    formLead.addEventListener('submit', async function(e) {
-      e.preventDefault();
-      const submitBtn = formLead.querySelector('button[type="submit"]');
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Saving...';
+  modalLead.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formLead);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = modalLead.querySelector('.modal-title');
 
-      try {
-        const formData = new FormData(formLead);
-        const method = formLead.method;
-        const url = formLead.action;
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Lead / Opportunity';
 
-        const response = await fetch(url, {
-          method: method,
-          headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Accept': 'application/json'
-          },
-          body: method === 'PUT' ? new URLSearchParams(formData) : formData
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-          bootstrap.Modal.getInstance(modalLead)?.hide();
-          showToast(result.message || 'Lead saved successfully', 'success');
-          setTimeout(() => window.location.reload(), 1000);
-        } else {
-          showToast(result.message || 'Failed to save lead', 'error');
-        }
-      } catch (error) {
-        showToast('An error occurred while saving', 'error');
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="bi bi-check2"></i> Save Lead';
-      }
-    });
-
-    modalDelete.addEventListener('show.bs.modal', function(e) {
-      const btn = e.relatedTarget;
-      deleteUrl = btn?.dataset.route;
-      const label = btn?.dataset.label || 'record';
-      document.getElementById('delete-target').textContent = label;
-    });
-
-    document.getElementById('btn-confirm-delete').addEventListener('click', async function() {
-      if (!deleteUrl) return;
-      
-      this.disabled = true;
-      this.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Deleting...';
-
-      try {
-        const response = await fetch(deleteUrl, {
-          method: 'DELETE',
-          headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Accept': 'application/json'
-          }
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-          bootstrap.Modal.getInstance(modalDelete)?.hide();
-          showToast(result.message || 'Deleted successfully', 'success');
-          setTimeout(() => window.location.reload(), 1000);
-        } else {
-          showToast(result.message || 'Failed to delete', 'error');
-        }
-      } catch (error) {
-        showToast('An error occurred while deleting', 'error');
-      } finally {
-        this.disabled = false;
-        this.innerHTML = '<i class="bi bi-trash"></i> Delete';
-      }
-    });
-
-    function showToast(message, type = 'success') {
-      const toast = document.createElement('div');
-      toast.className = `toast-notification toast-${type}`;
-      toast.innerHTML = `
-        <div class="toast-content">
-          <i class="bi bi-${type === 'success' ? 'check-circle-fill' : 'exclamation-circle-fill'}"></i>
-          <span>${message}</span>
-        </div>
-      `;
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 3000);
+      apiClient.show(API_ENDPOINTS.CRM.LEADS.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('lead_id').value = item.id;
+          formLead.querySelector('[name="lead_name"]').value = item.lead_name || '';
+          formLead.querySelector('[name="company"]').value = item.company || '';
+          formLead.querySelector('[name="email"]').value = item.email || '';
+          formLead.querySelector('[name="phone"]').value = item.phone || '';
+          formLead.querySelector('[name="deal_value"]').value = item.deal_value || '';
+          formLead.querySelector('[name="stage"]').value = item.stage || 'New';
+          formLead.querySelector('[name="assigned_user_id"]').value = item.assigned_user_id || '';
+          formLead.querySelector('[name="notes"]').value = item.notes || '';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
+    } else {
+      modalTitle.textContent = 'Add Lead / Opportunity';
+      formLead.reset();
+      document.getElementById('lead_id').value = '';
     }
   });
+
+  formLead.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const id = document.getElementById('lead_id').value;
+
+    const formData = new FormData(formLead);
+    const payload = Object.fromEntries(formData.entries());
+
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.CRM.LEADS.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.CRM.LEADS.STORE, payload);
+    }
+
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalLead).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formLead, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
+      }
+    });
+  });
+
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
+  });
+
+  btnConfirmDelete.addEventListener('click', function() {
+    if (!deleteId) return;
+
+    apiClient.destroy(API_ENDPOINTS.CRM.LEADS.DESTROY, deleteId)
+    .then(data => {
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
+  });
+});
 </script>
 <style>
   .toast-notification {

@@ -4,9 +4,6 @@
 @section('breadcrumb', 'Document Library')
 
 @section('content')
-<form id="form-document" method="POST" action="{{ route('doc_library.store') }}">
-  @csrf
-  <input type="hidden" name="_method" value="POST" />
 <div class="page-header">
   <div>
     <div class="page-title">Document Library</div>
@@ -14,7 +11,7 @@
   </div>
   <div class="d-flex gap-2">
     <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-    <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalDocument" data-mode="create" data-route="{{ route('doc_library.store') }}"><i
+    <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalDocument" data-mode="create"><i
         class="bi bi-plus-lg"></i> Upload Document</button>
   </div>
 </div>
@@ -61,8 +58,8 @@
               <div class="d-flex gap-1"><button class="btn-erp btn-success btn-xs btn-icon btn-download"
                   title="Download" data-route="{{ route('doc_library.show', $doc->id) }}"><i class="bi bi-download"></i></button><button
                   class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDocument"
-                  title="Edit" data-mode="edit" data-route="{{ route('doc_library.update', $doc->id) }}" data-document="{{ json_encode($doc) }}"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon"
-                  data-bs-toggle="modal" data-bs-target="#modalDelete" data-route="{{ route('doc_library.destroy', $doc->id) }}" data-label="Upload Document"
+                  title="Edit" data-mode="edit" data-id="{{ $doc->id }}"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon"
+                  data-bs-toggle="modal" data-bs-target="#modalDelete" data-delete-id="{{ $doc->id }}" data-delete-label="Upload Document"
                   title="Delete"><i class="bi bi-trash"></i></button></div>
             </td>
           </tr>
@@ -88,40 +85,43 @@
         <h5 class="modal-title" style="color:var(--text-primary);font-weight:600">Upload Document</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body">
-        <div class="row g-3">
-          <div class="col-md-6"><label class="erp-form-label">Document Name</label><input class="erp-form-control"
-              type="text" name="document_name" placeholder="" /></div>
-          <div class="col-md-6"><label class="erp-form-label">Document Type</label><select class="erp-form-control"
-              name="document_type">
-              <option value="Contract">Contract</option>
-              <option value="Invoice">Invoice</option>
-              <option value="Purchase Order">Purchase Order</option>
-              <option value="Report">Report</option>
-              <option value="Certificate">Certificate</option>
-            </select></div>
-          <div class="col-md-6"><label class="erp-form-label">Related To</label><input class="erp-form-control"
-              type="text" name="related_to" placeholder="Supplier, Customer, Project…" /></div>
-          <div class="col-md-3"><label class="erp-form-label">Version</label><input class="erp-form-control"
-              type="text" name="version" placeholder="v1.0" /></div>
-          <div class="col-md-3"><label class="erp-form-label">Access Level</label><select class="erp-form-control"
-              name="access_level">
-              <option value="Public">Public</option>
-              <option value="Private">Private</option>
-              <option value="Restricted">Restricted</option>
-            </select></div>
-          <div class="col-md-12"><label class="erp-form-label">Upload File</label><input class="erp-form-control"
-              type="file" name="file_path" placeholder="" /></div>
-          <div class="col-md-12"><label class="erp-form-label">Notes</label><textarea class="erp-form-control"
-              name="notes" rows="2" placeholder=""></textarea></div>
+      <form id="form-document">
+        <div class="modal-body">
+          <input type="hidden" name="id" id="document_id">
+          <div class="row g-3">
+            <div class="col-md-6"><label class="erp-form-label">Document Name</label><input class="erp-form-control"
+                type="text" name="document_name" placeholder="" /></div>
+            <div class="col-md-6"><label class="erp-form-label">Document Type</label><select class="erp-form-control"
+                name="document_type">
+                <option value="Contract">Contract</option>
+                <option value="Invoice">Invoice</option>
+                <option value="Purchase Order">Purchase Order</option>
+                <option value="Report">Report</option>
+                <option value="Certificate">Certificate</option>
+              </select></div>
+            <div class="col-md-6"><label class="erp-form-label">Related To</label><input class="erp-form-control"
+                type="text" name="related_to" placeholder="Supplier, Customer, Project…" /></div>
+            <div class="col-md-3"><label class="erp-form-label">Version</label><input class="erp-form-control"
+                type="text" name="version" placeholder="v1.0" /></div>
+            <div class="col-md-3"><label class="erp-form-label">Access Level</label><select class="erp-form-control"
+                name="access_level">
+                <option value="Public">Public</option>
+                <option value="Private">Private</option>
+                <option value="Restricted">Restricted</option>
+              </select></div>
+            <div class="col-md-12"><label class="erp-form-label">Upload File</label><input class="erp-form-control"
+                type="file" name="file_path" placeholder="" /></div>
+            <div class="col-md-12"><label class="erp-form-label">Notes</label><textarea class="erp-form-control"
+                name="notes" rows="2" placeholder=""></textarea></div>
+          </div>
         </div>
-      </div>
-      <div class="modal-footer" style="border-color:var(--border)">
-        <button type="button" class="btn-erp btn-outline" data-bs-dismiss="modal">Cancel</button>
-        <button type="submit" form="form-document" class="btn-erp btn-primary btn-modal-save">
-          <i class="bi bi-check2"></i> Upload
-        </button>
-      </div>
+        <div class="modal-footer" style="border-color:var(--border)">
+          <button type="button" class="btn-erp btn-outline" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn-erp btn-primary btn-modal-save">
+            <i class="bi bi-check2"></i> Upload
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
@@ -151,134 +151,101 @@
     </div>
   </div>
 </div>
-</form>
 @endsection
 
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   const modalDocument = document.getElementById('modalDocument');
-  const modalDelete = document.getElementById('modalDelete');
   const formDocument = document.getElementById('form-document');
-  let deleteUrl = null;
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
+
+  let deleteId = null;
 
   modalDocument.addEventListener('show.bs.modal', function(e) {
-    const btn = e.relatedTarget;
-    const mode = btn?.dataset.mode || 'create';
-    const route = btn?.dataset.route || '{{ route("doc_library.store") }}';
-    
-    formDocument.action = route;
-    formDocument.querySelector('input[name="_method"]').value = mode === 'create' ? 'POST' : 'PUT';
-    
-    const title = modalDocument.querySelector('.modal-title');
-    const submitBtn = modalDocument.querySelector('.btn-modal-save');
-    
+    clearFormErrors(formDocument);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = modalDocument.querySelector('.modal-title');
+
     if (mode === 'edit') {
-      title.textContent = 'Edit Document';
-      submitBtn.innerHTML = '<i class="bi bi-check2"></i> Update Document';
-      
-      const doc = JSON.parse(btn.dataset.document);
-      formDocument.querySelector('[name="document_name"]').value = doc.document_name || '';
-      formDocument.querySelector('[name="document_type"]').value = doc.document_type || '';
-      formDocument.querySelector('[name="related_to"]').value = doc.related_to || '';
-      formDocument.querySelector('[name="version"]').value = doc.version || '';
-      formDocument.querySelector('[name="access_level"]').value = doc.access_level || 'Private';
-      formDocument.querySelector('[name="notes"]').value = doc.notes || '';
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Document';
+
+      apiClient.show(API_ENDPOINTS.DOCUMENTS.DOC_LIBRARY.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('document_id').value = item.id;
+          formDocument.querySelector('[name="document_name"]').value = item.document_name || '';
+          formDocument.querySelector('[name="document_type"]').value = item.document_type || '';
+          formDocument.querySelector('[name="related_to"]').value = item.related_to || '';
+          formDocument.querySelector('[name="version"]').value = item.version || '';
+          formDocument.querySelector('[name="access_level"]').value = item.access_level || 'Private';
+          formDocument.querySelector('[name="notes"]').value = item.notes || '';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
     } else {
-      title.textContent = 'Upload Document';
-      submitBtn.innerHTML = '<i class="bi bi-check2"></i> Upload Document';
+      modalTitle.textContent = 'Upload Document';
       formDocument.reset();
+      document.getElementById('document_id').value = '';
     }
   });
 
-  formDocument.addEventListener('submit', async function(e) {
+  formDocument.addEventListener('submit', function(e) {
     e.preventDefault();
-    const submitBtn = formDocument.querySelector('button[type="submit"]');
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Saving...';
+    const id = document.getElementById('document_id').value;
 
-    try {
-      const formData = new FormData(formDocument);
-      const method = formDocument.querySelector('input[name="_method"]').value;
-      const url = formDocument.action;
+    const formData = new FormData(formDocument);
 
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'X-CSRF-TOKEN': '{{ csrf_token() }}',
-          'Accept': 'application/json'
-        },
-        body: method === 'PUT' ? new URLSearchParams(formData) : formData
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        bootstrap.Modal.getInstance(modalDocument)?.hide();
-        showToast(result.message || 'Document saved successfully', 'success');
-        setTimeout(() => window.location.reload(), 1000);
-      } else {
-        showToast(result.message || 'Failed to save document', 'error');
-      }
-    } catch (error) {
-      showToast('An error occurred while saving', 'error');
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = '<i class="bi bi-check2"></i> Upload Document';
+    let request;
+    if (id) {
+      const payload = Object.fromEntries(formData.entries());
+      request = apiClient.update(API_ENDPOINTS.DOCUMENTS.DOC_LIBRARY.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.DOCUMENTS.DOC_LIBRARY.STORE, formData);
     }
+
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalDocument).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formDocument, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
+      }
+    });
   });
 
   modalDelete.addEventListener('show.bs.modal', function(e) {
-    const btn = e.relatedTarget;
-    deleteUrl = btn?.dataset.route;
-    const label = btn?.dataset.label || 'record';
-    document.getElementById('delete-target').textContent = label;
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
   });
 
-  document.getElementById('btn-confirm-delete').addEventListener('click', async function() {
-    if (!deleteUrl) return;
-    
-    this.disabled = true;
-    this.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Deleting...';
+  btnConfirmDelete.addEventListener('click', function() {
+    if (!deleteId) return;
 
-    try {
-      const response = await fetch(deleteUrl, {
-        method: 'DELETE',
-        headers: {
-          'X-CSRF-TOKEN': '{{ csrf_token() }}',
-          'Accept': 'application/json'
-        }
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        bootstrap.Modal.getInstance(modalDelete)?.hide();
-        showToast(result.message || 'Deleted successfully', 'success');
-        setTimeout(() => window.location.reload(), 1000);
+    apiClient.destroy(API_ENDPOINTS.DOCUMENTS.DOC_LIBRARY.DESTROY, deleteId)
+    .then(data => {
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
       } else {
-        showToast(result.message || 'Failed to delete', 'error');
+        showToast(data.message || 'Error', 'error');
       }
-    } catch (error) {
-      showToast('An error occurred while deleting', 'error');
-    } finally {
-      this.disabled = false;
-      this.innerHTML = '<i class="bi bi-trash"></i> Delete';
-    }
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
   });
-
-  function showToast(message, type = 'success') {
-    const toast = document.createElement('div');
-    toast.className = `toast-notification toast-${type}`;
-    toast.innerHTML = `
-      <div class="toast-content">
-        <i class="bi bi-${type === 'success' ? 'check-circle-fill' : 'exclamation-circle-fill'}"></i>
-        <span>${message}</span>
-      </div>
-    `;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 3000);
-  }
 });
 </script>
 <style>

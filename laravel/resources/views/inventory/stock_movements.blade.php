@@ -11,7 +11,7 @@
     </div>
     <div class="d-flex gap-2">
       <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-      <button class="btn-erp btn-primary" id="btn-add-movement" data-bs-toggle="modal" data-bs-target="#modalStockMove"><i
+      <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalStockMove" data-mode="create"><i
           class="bi bi-plus-lg"></i> New Movement</button>
     </div>
   </div>
@@ -88,14 +88,9 @@
               <td>
                 <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon btn-edit" 
                     data-id="{{ $movement->id }}"
-                    data-product_id="{{ $movement->product_id }}"
-                    data-movement_type="{{ $movement->movement_type }}"
-                    data-quantity="{{ $movement->quantity }}"
-                    data-from_warehouse_id="{{ $movement->from_warehouse_id ?? '' }}"
-                    data-to_warehouse_id="{{ $movement->to_warehouse_id ?? '' }}"
-                    data-reason="{{ $movement->reason ?? '' }}"
+                    data-mode="edit"
                     data-bs-toggle="modal" data-bs-target="#modalStockMove" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon btn-delete" data-id="{{ $movement->id }}" data-movement_type="{{ $movement->movement_type }}" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                    class="btn-erp btn-danger btn-xs btn-icon btn-delete" data-delete-id="{{ $movement->id }}" data-bs-toggle="modal" data-bs-target="#modalDelete"
                     data-delete-label="Movement" title="Delete"><i class="bi bi-trash"></i></button></div>
               </td>
             </tr>
@@ -171,7 +166,7 @@
         </div>
         <div class="modal-footer" style="border-color:var(--border)">
           <button type="button" class="btn-erp btn-outline" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn-erp btn-primary btn-modal-save" id="btn-save">
+          <button type="submit" form="form-stock-movement" class="btn-erp btn-primary btn-modal-save" id="btn-save">
             <i class="bi bi-check2"></i> Record Movement
           </button>
         </div>
@@ -203,221 +198,148 @@
         </div>
       </div>
     </div>
-  </div>
+  </    <script>
+document.addEventListener('DOMContentLoaded', function() {
+  const modalStockMove = document.getElementById('modalStockMove');
+  const formStockMove = document.getElementById('form-stock-movement');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
+  const productSelect = document.getElementById('product_id');
+  const fromWarehouseSelect = document.getElementById('from_warehouse_id');
+  const toWarehouseSelect = document.getElementById('to_warehouse_id');
+  const movementTypeSelect = document.getElementById('movement_type');
 
-   @push('scripts')
-     <script>
-       $(function () {
-         var routes = {
-           store: '{{ route("stock_movements.store") }}',
-           update: '{{ route("stock_movements.update", ":id") }}',
-           destroy: '{{ route("stock_movements.destroy", ":id") }}',
-           productsAll: '{{ route("product_catalog.all") }}',
-           warehousesAll: '{{ route("warehouses.all") }}'
-         };
+  let deleteId = null;
 
-         var $modal = $('#modalStockMove');
-         var $form = $('#form-stock-movement');
-         var $btnSave = $('#btn-save');
-         var movementId = null;
-         var isEdit = false;
+  apiClient.get(API_ENDPOINTS.INVENTORY.PRODUCT_CATALOG.ALL)
+    .then(data => {
+      if (data.success && data.data) {
+        productSelect.innerHTML = '<option value="">Select Product</option>';
+        data.data.forEach(p => {
+          productSelect.innerHTML += `<option value="${p.id}">${p.product_name} (${p.sku})</option>`;
+        });
+      }
+    })
+    .catch(() => console.warn('Failed to load products'));
 
-         // Load products dropdown via AJAX
-         function loadProducts() {
-           $.ajax({
-             url: routes.productsAll,
-             method: 'GET',
-             success: function(res) {
-               if (res.success && res.data) {
-                 var $prod = $('#product_id');
-                 $prod.empty().append('<option value="">Select Product</option>');
-                 $.each(res.data, function(i, p) {
-                   $prod.append('<option value="' + p.id + '">' + p.product_name + ' (' + p.sku + ')</option>');
-                 });
-               }
-             },
-             error: function(xhr) {
-               console.warn('Failed to load products');
-             }
-           });
-         }
+  apiClient.get('{{ route("warehouses.all") }}')
+    .then(data => {
+      if (data.success && data.data) {
+        fromWarehouseSelect.innerHTML = '<option value="">Select</option>';
+        toWarehouseSelect.innerHTML = '<option value="">Select</option>';
+        data.data.forEach(w => {
+          const opt = `<option value="${w.id}">${w.warehouse_name} (${w.warehouse_code})</option>`;
+          fromWarehouseSelect.innerHTML += opt;
+          toWarehouseSelect.innerHTML += opt;
+        });
+      }
+    })
+    .catch(() => console.warn('Failed to load warehouses'));
 
-         // Load warehouses dropdown via AJAX
-         function loadWarehouses() {
-           $.ajax({
-             url: routes.warehousesAll,
-             method: 'GET',
-             success: function(res) {
-               if (res.success && res.data) {
-                 var $from = $('#from_warehouse_id');
-                 var $to = $('#to_warehouse_id');
-                 $from.empty().append('<option value="">Select</option>');
-                 $to.empty().append('<option value="">Select</option>');
-                 $.each(res.data, function(i, w) {
-                   var opt = '<option value="' + w.id + '">' + w.warehouse_name + ' (' + w.warehouse_code + ')</option>';
-                   $from.append(opt);
-                   $to.append(opt);
-                 });
-               }
-             },
-             error: function(xhr) {
-               console.warn('Failed to load warehouses');
-             }
-           });
-         }
+  function toggleWarehouseFields() {
+    const type = movementTypeSelect.value;
+    if (type === 'Transfer') {
+      fromWarehouseSelect.closest('.col-md-4').style.display = 'block';
+      toWarehouseSelect.closest('.col-md-4').style.display = 'block';
+    } else if (type === 'Stock In') {
+      fromWarehouseSelect.closest('.col-md-4').style.display = 'none';
+      fromWarehouseSelect.value = '';
+      toWarehouseSelect.closest('.col-md-4').style.display = 'block';
+    } else if (type === 'Stock Out') {
+      fromWarehouseSelect.closest('.col-md-4').style.display = 'block';
+      toWarehouseSelect.closest('.col-md-4').style.display = 'none';
+      toWarehouseSelect.value = '';
+    }
+  }
 
-         // Toggle warehouse fields based on movement type
-         function toggleWarehouseFields() {
-           var type = $('#movement_type').val();
-           if (type === 'Transfer') {
-             $('#from_warehouse_id').closest('.col-md-4').show();
-             $('#to_warehouse_id').closest('.col-md-4').show();
-           } else if (type === 'Stock In') {
-             $('#from_warehouse_id').closest('.col-md-4').hide();
-             $('#to_warehouse_id').closest('.col-md-4').show();
-             $('#from_warehouse_id').val('');
-           } else if (type === 'Stock Out') {
-             $('#from_warehouse_id').closest('.col-md-4').show();
-             $('#to_warehouse_id').closest('.col-md-4').hide();
-             $('#to_warehouse_id').val('');
-           }
-         }
+  movementTypeSelect.addEventListener('change', toggleWarehouseFields);
 
-         // Load data on page ready
-         loadProducts();
-         loadWarehouses();
+  modalStockMove.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formStockMove);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = document.getElementById('modal-title');
 
-         $('#btn-add-movement').on('click', function () {
-           resetForm();
-           isEdit = false;
-           $('#modal-title').text('New Stock Movement');
-         });
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Stock Movement';
 
-         $modal.on('shown.bs.modal', function () {
-           if (!isEdit) {
-             resetForm();
-             $('#modal-title').text('New Stock Movement');
-           }
-         });
+      apiClient.show(API_ENDPOINTS.INVENTORY.STOCK_MOVEMENTS.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('movement-id').value = item.id;
+          formStockMove.querySelector('[name="product_id"]').value = item.product_id || '';
+          formStockMove.querySelector('[name="movement_type"]').value = item.movement_type || '';
+          formStockMove.querySelector('[name="quantity"]').value = item.quantity || '';
+          formStockMove.querySelector('[name="from_warehouse_id"]').value = item.from_warehouse_id || '';
+          formStockMove.querySelector('[name="to_warehouse_id"]').value = item.to_warehouse_id || '';
+          formStockMove.querySelector('[name="reason"]').value = item.reason || '';
+          toggleWarehouseFields();
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
+    } else {
+      modalTitle.textContent = 'New Stock Movement';
+      formStockMove.reset();
+      document.getElementById('movement-id').value = '';
+      toggleWarehouseFields();
+    }
+  });
 
-         $(document).on('click', '.btn-edit', function () {
-           resetForm();
-           isEdit = true;
-           movementId = $(this).data('id');
-           $('#modal-title').text('Edit Stock Movement');
+  formStockMove.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const id = document.getElementById('movement-id').value;
 
-           $('#movement-id').val(movementId);
-           $('#product_id').val($(this).data('product_id'));
-           $('#movement_type').val($(this).data('movement_type'));
-           $('#quantity').val($(this).data('quantity'));
-           $('#from_warehouse_id').val($(this).data('from_warehouse_id'));
-           $('#to_warehouse_id').val($(this).data('to_warehouse_id'));
-           $('#reason').val($(this).data('reason'));
+    const formData = new FormData(formStockMove);
+    const payload = Object.fromEntries(formData.entries());
 
-           // Trigger toggle after setting values
-           toggleWarehouseFields();
-         });
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.INVENTORY.STOCK_MOVEMENTS.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.INVENTORY.STOCK_MOVEMENTS.STORE, payload);
+    }
 
-         // Toggle warehouse fields when movement type changes
-         $('#movement_type').on('change', toggleWarehouseFields);
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalStockMove).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formStockMove, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
+      }
+    });
+  });
 
-         $(document).on('click', '.btn-delete', function () {
-           movementId = $(this).data('id');
-           var movement_type = $(this).data('movement_type');
-           $('#delete-target').text(movement_type || 'this movement');
-         });
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
+  });
 
-         $('#btn-confirm-delete').on('click', function () {
-           $.ajax({
-             url: routes.destroy.replace(':id', movementId),
-             method: 'DELETE',
-             headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-             success: function (res) {
-               if (res.success) {
-                 showToast(res.message || 'Movement deleted', 'success');
-                 $('#modalDelete').modal('hide');
-                 setTimeout(() => location.reload(), 1000);
-               }
-             },
-             error: function (xhr) {
-               showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
-             }
-           });
-         });
+  btnConfirmDelete.addEventListener('click', function() {
+    if (!deleteId) return;
 
-         $btnSave.on('click', function () {
-           $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
-
-           var url = isEdit ? routes.update.replace(':id', movementId) : routes.store;
-           var method = isEdit ? 'PUT' : 'POST';
-
-           $.ajax({
-             url: url,
-             method: method,
-             data: $form.serialize(),
-             headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-             success: function (res) {
-               if (res.success) {
-                 showToast(res.message || (isEdit ? 'Movement updated' : 'Movement recorded'), 'success');
-                 $modal.modal('hide');
-                 setTimeout(() => location.reload(), 1000);
-               }
-             },
-             error: function (xhr) {
-               var res = xhr.responseJSON;
-               if (res && res.errors) {
-                 // Clear previous errors
-                 $form.find('.is-invalid').removeClass('is-invalid');
-                 $form.find('.invalid-feedback').hide().text('');
-                 
-                 // Show each field error
-                 var firstError = null;
-                 $.each(res.errors, function (field, messages) {
-                   var $input = $form.find('[name="' + field + '"]');
-                   $input.addClass('is-invalid');
-                   $('#error-' + field).text(messages[0]).show();
-                   if (!firstError) firstError = messages[0];
-                 });
-                 
-                 if (firstError) {
-                   showToast(firstError, 'error');
-                 } else {
-                   showToast('Please correct the errors in the form', 'error');
-                 }
-               } else if (res && res.message) {
-                 showToast(res.message, 'error');
-               } else {
-                 showToast('An error occurred', 'error');
-               }
-             },
-             complete: function () {
-               $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Record Movement');
-             }
-           });
-         });
-
-         function resetForm() {
-           movementId = null;
-           isEdit = false;
-           $form[0].reset();
-           $form.find('.is-invalid').removeClass('is-invalid');
-           $form.find('.invalid-feedback').hide().text('');
-           // Reset warehouse visibility
-           $('#from_warehouse_id').closest('.col-md-4').show();
-           $('#to_warehouse_id').closest('.col-md-4').show();
-         }
-
-         function showToast(msg, type) {
-           type = type || 'info';
-           var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
-           var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
-           var $t = $('<div class="erp-toast ' + type + '"></div>')
-             .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
-           $('#toast-container').append($t);
-           setTimeout(function () { $t.css('opacity', 0); }, 2500);
-           setTimeout(function () { $t.remove(); }, 2800);
-         }
-       });
-     </script>
+    apiClient.destroy(API_ENDPOINTS.INVENTORY.STOCK_MOVEMENTS.DESTROY, deleteId)
+    .then(data => {
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
+  });
+});
+    </script>
    @endpush
 @endsection

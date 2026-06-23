@@ -11,7 +11,7 @@
   </div>
   <div class="d-flex gap-2">
     <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-    <button class="btn-erp btn-primary" id="btn-add-customer"><i class="bi bi-plus-lg"></i> Add Customer</button>
+    <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalCustomer" data-mode="create"><i class="bi bi-plus-lg"></i> Add Customer</button>
   </div>
 </div>
 
@@ -36,7 +36,7 @@
             <td>$0</td>
             <td>{{ $customer->sales_rep_id ?? 'N/A' }}</td>
             <td><span class="badge-status badge-active">Active</span></td>
-            <td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon btn-edit" data-id="{{ $customer->id }}" data-company_name="{{ $customer->company_name }}" data-contact_person="{{ $customer->contact_person }}" data-email="{{ $customer->email }}" data-phone="{{ $customer->phone }}" data-credit_limit="{{ $customer->credit_limit }}" data-sales_rep_id="{{ $customer->sales_rep_id }}" data-billing_address="{{ $customer->billing_address }}" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon btn-delete" data-id="{{ $customer->id }}" data-company_name="{{ $customer->company_name }}" title="Delete"><i class="bi bi-trash"></i></button></div></td>
+            <td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon btn-edit" data-id="{{ $customer->id }}" data-mode="edit" data-bs-toggle="modal" data-bs-target="#modalCustomer" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon btn-delete" data-delete-id="{{ $customer->id }}" data-delete-label="{{ $customer->company_name }}" data-bs-toggle="modal" data-bs-target="#modalDelete" title="Delete"><i class="bi bi-trash"></i></button></div></td>
           </tr>
         @endforeach
       </tbody>
@@ -141,126 +141,98 @@
 
 @push('scripts')
 <script>
-$(function () {
-  var routes = {
-    store: '{{ route("customers.store") }}',
-    update: '{{ route("customers.update", ":id") }}',
-    destroy: '{{ route("customers.destroy", ":id") }}'
-  };
+document.addEventListener('DOMContentLoaded', function() {
+  const modalCustomer = document.getElementById('modalCustomer');
+  const formCustomer = document.getElementById('form-customer');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
 
-  var $modal = $('#modalCustomer');
-  var $form = $('#form-customer');
-  var $btnSave = $('#btn-save');
-  var customerId = null;
-  var isEdit = false;
+  let deleteId = null;
 
-  $('#btn-add-customer').on('click', function () {
-    resetForm();
-    isEdit = false;
-    $('#modal-title').text('Add Customer');
-    $modal.modal('show');
+  modalCustomer.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formCustomer);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = document.getElementById('modal-title');
+
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Customer';
+
+      apiClient.show(API_ENDPOINTS.SALES.CUSTOMERS.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('customer-id').value = item.id;
+          formCustomer.querySelector('[name="company_name"]').value = item.company_name || '';
+          formCustomer.querySelector('[name="contact_person"]').value = item.contact_person || '';
+          formCustomer.querySelector('[name="email"]').value = item.email || '';
+          formCustomer.querySelector('[name="phone"]').value = item.phone || '';
+          formCustomer.querySelector('[name="credit_limit"]').value = item.credit_limit || '';
+          formCustomer.querySelector('[name="sales_rep_id"]').value = item.sales_rep_id || '';
+          formCustomer.querySelector('[name="billing_address"]').value = item.billing_address || '';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
+    } else {
+      modalTitle.textContent = 'Add Customer';
+      formCustomer.reset();
+      document.getElementById('customer-id').value = '';
+    }
   });
 
-  $(document).on('click', '.btn-edit', function () {
-    resetForm();
-    isEdit = true;
-    customerId = $(this).data('id');
-    $('#modal-title').text('Edit Customer');
-
-    $('#customer-id').val(customerId);
-    $('#company-name').val($(this).data('company_name'));
-    $('#contact-person').val($(this).data('contact_person'));
-    $('#email').val($(this).data('email'));
-    $('#phone').val($(this).data('phone'));
-    $('#credit-limit').val($(this).data('credit_limit'));
-    $('#sales-rep').val($(this).data('sales_rep_id'));
-    $('#billing-address').val($(this).data('billing_address'));
-
-    $modal.modal('show');
-  });
-
-  $(document).on('click', '.btn-delete', function () {
-    customerId = $(this).data('id');
-    var company_name = $(this).data('company_name');
-    $('#delete-target').text(company_name || 'this customer');
-    $('#modalDelete').modal('show');
-  });
-
-  $('#btn-confirm-delete').on('click', function () {
-    $.ajax({
-      url: routes.destroy.replace(':id', customerId),
-      method: 'DELETE',
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function (res) {
-        if (res.success) {
-          showToast(res.message || 'Customer deleted', 'success');
-          $('#modalDelete').modal('hide');
-          setTimeout(() => location.reload(), 1000);
-        }
-      },
-      error: function (xhr) {
-        showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
-      }
-    });
-  });
-
-  $form.on('submit', function (e) {
+  formCustomer.addEventListener('submit', function(e) {
     e.preventDefault();
-    $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+    const id = document.getElementById('customer-id').value;
 
-    var url = isEdit ? routes.update.replace(':id', customerId) : routes.store;
-    var method = isEdit ? 'PUT' : 'POST';
+    const formData = new FormData(formCustomer);
+    const payload = Object.fromEntries(formData.entries());
 
-    $.ajax({
-      url: url,
-      method: method,
-      data: $form.serialize(),
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function (res) {
-        if (res.success) {
-          showToast(res.message || (isEdit ? 'Customer updated' : 'Customer created'), 'success');
-          $modal.modal('hide');
-          setTimeout(() => location.reload(), 1000);
-        }
-      },
-      error: function (xhr) {
-        var res = xhr.responseJSON;
-        if (res && res.errors) {
-          $.each(res.errors, function (field, messages) {
-            var $input = $form.find('[name="' + field + '"]');
-            $input.addClass('is-invalid');
-            $('#error-' + field).text(messages[0]).show();
-          });
-        } else if (res && res.message) {
-          showToast(res.message, 'error');
-        } else {
-          showToast('An error occurred', 'error');
-        }
-      },
-      complete: function () {
-        $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Save Customer');
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.SALES.CUSTOMERS.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.SALES.CUSTOMERS.STORE, payload);
+    }
+
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalCustomer).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formCustomer, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
       }
     });
   });
 
-  function resetForm() {
-    customerId = null;
-    isEdit = false;
-    $form[0].reset();
-    $form.find('.is-invalid').removeClass('is-invalid');
-    $form.find('.invalid-feedback').hide().text('');
-  }
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
+  });
 
-  function showToast(msg, type) {
-    type = type || 'info';
-    var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
-    var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
-    var $t = $('<div class="erp-toast ' + type + '"></div>')
-      .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
-    $('#toast-container').append($t);
-    setTimeout(function () { $t.css('opacity', 0); }, 2500);
-    setTimeout(function () { $t.remove(); }, 2800);
-  }
+  btnConfirmDelete.addEventListener('click', function() {
+    if (!deleteId) return;
+
+    apiClient.destroy(API_ENDPOINTS.SALES.CUSTOMERS.DESTROY, deleteId)
+    .then(data => {
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
+  });
 });
 </script>
 @endpush

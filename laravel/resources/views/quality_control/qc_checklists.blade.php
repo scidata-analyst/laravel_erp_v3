@@ -11,7 +11,7 @@
   </div>
   <div class="d-flex gap-2">
     <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-    <button class="btn-erp btn-primary" id="btn-add-checklist"><i class="bi bi-plus-lg"></i> New Checklist</button>
+    <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalQC" data-mode="create"><i class="bi bi-plus-lg"></i> New Checklist</button>
   </div>
 </div>
 
@@ -45,16 +45,14 @@
             <td><div class="d-flex gap-1">
               <button class="btn-erp btn-outline btn-xs btn-icon btn-edit" 
                 data-id="{{ $checklist->id }}"
-                data-product_batch_work_order="{{ $checklist->product_batch_work_order }}"
-                data-inspector_id="{{ $checklist->inspector_id }}"
-                data-inspection_type="{{ $checklist->inspection_type }}"
-                data-inspection_date="{{ $checklist->inspection_date }}"
-                data-sample_size="{{ $checklist->sample_size }}"
-                data-notes="{{ $checklist->notes }}"
+                data-mode="edit"
+                data-bs-toggle="modal" data-bs-target="#modalQC"
                 title="Edit"><i class="bi bi-pencil"></i></button>
               <button class="btn-erp btn-danger btn-xs btn-icon btn-delete" 
-                data-id="{{ $checklist->id }}"
-                data-label="Checklist" title="Delete"><i class="bi bi-trash"></i></button>
+                data-delete-id="{{ $checklist->id }}"
+                data-delete-label="Checklist" 
+                data-bs-toggle="modal" data-bs-target="#modalDelete"
+                title="Delete"><i class="bi bi-trash"></i></button>
             </div></td>
           </tr>
         @endforeach
@@ -155,97 +153,96 @@
 
 @push('scripts')
 <script>
-$(function () {
-  var routes = {
-    store: '{{ route("qc_checklists.store") }}',
-    update: '{{ route("qc_checklists.update", ":id") }}',
-    destroy: '{{ route("qc_checklists.destroy", ":id") }}'
-  };
+document.addEventListener('DOMContentLoaded', function() {
+  const modalQC = document.getElementById('modalQC');
+  const formChecklist = document.getElementById('form-checklist');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
 
-  var $modal = $('#modalQC');
-  var $form = $('#form-checklist');
-  var $btnSave = $('#btn-save');
-  var checklistId = null;
-  var isEdit = false;
+  let deleteId = null;
 
-  function resetForm() {
-    $form[0].reset();
-    $('#checklist-id').val('');
-    isEdit = false;
-    checklistId = null;
-  }
+  modalQC.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formChecklist);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = document.getElementById('modal-title');
 
-  $('#btn-add-checklist').on('click', function () {
-    resetForm();
-    $('#modal-title').text('New QC Checklist');
-    $modal.modal('show');
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit QC Checklist';
+
+      apiClient.show(API_ENDPOINTS.QUALITY_CONTROL.QC_CHECKLISTS.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('checklist-id').value = item.id;
+          formChecklist.querySelector('[name="product_batch_work_order"]').value = item.product_batch_work_order || '';
+          formChecklist.querySelector('[name="inspector_id"]').value = item.inspector_id || '';
+          formChecklist.querySelector('[name="inspection_type"]').value = item.inspection_type || '';
+          formChecklist.querySelector('[name="inspection_date"]').value = item.inspection_date ? item.inspection_date.split('T')[0] : '';
+          formChecklist.querySelector('[name="sample_size"]').value = item.sample_size || '';
+          formChecklist.querySelector('[name="notes"]').value = item.notes || '';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
+    } else {
+      modalTitle.textContent = 'New QC Checklist';
+      formChecklist.reset();
+      document.getElementById('checklist-id').value = '';
+    }
   });
 
-  $(document).on('click', '.btn-edit', function () {
-    resetForm();
-    isEdit = true;
-    checklistId = $(this).data('id');
-    $('#modal-title').text('Edit QC Checklist');
-    $('#checklist-id').val(checklistId);
-    $('[name="product_batch_work_order"]').val($(this).data('product_batch_work_order'));
-    $('[name="inspector_id"]').val($(this).data('inspector_id'));
-    $('[name="inspection_type"]').val($(this).data('inspection_type'));
-    $('[name="inspection_date"]').val($(this).data('inspection_date'));
-    $('[name="sample_size"]').val($(this).data('sample_size'));
-    $('[name="notes"]').val($(this).data('notes'));
-    $modal.modal('show');
-  });
+  formChecklist.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const id = document.getElementById('checklist-id').value;
 
-  $(document).on('click', '.btn-delete', function () {
-    checklistId = $(this).data('id');
-    var label = $(this).data('label') || 'record';
-    $('#delete-target').text(label);
-    $('#modalDelete').modal('show');
-  });
+    const formData = new FormData(formChecklist);
+    const payload = Object.fromEntries(formData.entries());
 
-  $('#btn-confirm-delete').on('click', function () {
-    $.ajax({
-      url: routes.destroy.replace(':id', checklistId),
-      method: 'DELETE',
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function (res) {
-        if (res.success) {
-          showToast(res.message || 'Checklist deleted', 'success');
-          $('#modalDelete').modal('hide');
-          setTimeout(() => location.reload(), 1000);
-        }
-      },
-      error: function (xhr) {
-        showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.QUALITY_CONTROL.QC_CHECKLISTS.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.QUALITY_CONTROL.QC_CHECKLISTS.STORE, payload);
+    }
+
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalQC).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formChecklist, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
       }
     });
   });
 
-  $btnSave.on('click', function () {
-    $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
+  });
 
-    var url = isEdit ? routes.update.replace(':id', checklistId) : routes.store;
-    var method = isEdit ? 'PUT' : 'POST';
+  btnConfirmDelete.addEventListener('click', function() {
+    if (!deleteId) return;
 
-    $.ajax({
-      url: url,
-      method: method,
-      data: $form.serialize(),
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function (res) {
-        if (res.success) {
-          showToast(res.message || (isEdit ? 'Checklist updated' : 'Checklist created'), 'success');
-          $modal.modal('hide');
-          setTimeout(() => location.reload(), 1000);
-        }
-      },
-      error: function (xhr) {
-        showToast(xhr.responseJSON?.message || 'Operation failed', 'error');
-      },
-      complete: function () {
-        $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Save Checklist');
+    apiClient.destroy(API_ENDPOINTS.QUALITY_CONTROL.QC_CHECKLISTS.DESTROY, deleteId)
+    .then(data => {
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
       }
-    });
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
   });
 });
 </script>

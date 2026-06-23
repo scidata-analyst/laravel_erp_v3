@@ -11,7 +11,7 @@
     </div>
     <div class="d-flex gap-2">
       <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-      <button class="btn-erp btn-primary" id="btn-add-warehouse"><i class="bi bi-plus-lg"></i> Add Warehouse</button>
+      <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalWarehouse" data-mode="create"><i class="bi bi-plus-lg"></i> Add Warehouse</button>
     </div>
   </div>
 
@@ -61,17 +61,13 @@
                 <div class="d-flex gap-1">
                   <button class="btn-erp btn-outline btn-xs btn-icon btn-edit"
                     data-id="{{ $warehouse->id }}"
-                    data-warehouse_name="{{ $warehouse->warehouse_name }}"
-                    data-warehouse_code="{{ $warehouse->warehouse_code }}"
-                    data-warehouse_type="{{ $warehouse->warehouse_type }}"
-                    data-location_address="{{ $warehouse->location_address }}"
-                    data-manager_id="{{ $warehouse->manager_id }}"
-                    data-capacity_units="{{ $warehouse->capacity_units }}"
-                    data-status="{{ $warehouse->status }}"
+                    data-mode="edit"
+                    data-bs-toggle="modal" data-bs-target="#modalWarehouse"
                     title="Edit"><i class="bi bi-pencil"></i></button>
                   <button class="btn-erp btn-danger btn-xs btn-icon btn-delete"
-                    data-id="{{ $warehouse->id }}"
-                    data-warehouse_name="{{ $warehouse->warehouse_name }}"
+                    data-delete-id="{{ $warehouse->id }}"
+                    data-delete-label="Warehouse"
+                    data-bs-toggle="modal" data-bs-target="#modalDelete"
                     title="Delete"><i class="bi bi-trash"></i></button>
                 </div>
               </td>
@@ -182,126 +178,98 @@
 
 @push('scripts')
 <script>
-$(function() {
-  var routes = {
-    store: '{{ route("warehouses.store") }}',
-    update: '{{ route("warehouses.update", ":id") }}',
-    destroy: '{{ route("warehouses.destroy", ":id") }}'
-  };
+document.addEventListener('DOMContentLoaded', function() {
+  const modalWarehouse = document.getElementById('modalWarehouse');
+  const formWarehouse = document.getElementById('form-warehouse');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
 
-  var $modal = $('#modalWarehouse');
-  var $form = $('#form-warehouse');
-  var $btnSave = $('#btn-save');
-  var warehouseId = null;
-  var isEdit = false;
+  let deleteId = null;
 
-  $('#btn-add-warehouse').on('click', function() {
-    resetForm();
-    isEdit = false;
-    $('#modal-title').text('Add Warehouse');
-    $modal.modal('show');
+  modalWarehouse.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formWarehouse);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = document.getElementById('modal-title');
+
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Warehouse';
+
+      apiClient.show(API_ENDPOINTS.LOGISTICS.WAREHOUSES.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('warehouse-id').value = item.id;
+          formWarehouse.querySelector('[name="warehouse_name"]').value = item.warehouse_name || '';
+          formWarehouse.querySelector('[name="warehouse_code"]').value = item.warehouse_code || '';
+          formWarehouse.querySelector('[name="warehouse_type"]').value = item.warehouse_type || 'Standard';
+          formWarehouse.querySelector('[name="location_address"]').value = item.location_address || '';
+          formWarehouse.querySelector('[name="manager_id"]').value = item.manager_id || '';
+          formWarehouse.querySelector('[name="capacity_units"]').value = item.capacity_units || '';
+          formWarehouse.querySelector('[name="status"]').value = item.status || 'Active';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
+    } else {
+      modalTitle.textContent = 'Add Warehouse';
+      formWarehouse.reset();
+      document.getElementById('warehouse-id').value = '';
+    }
   });
 
-  $(document).on('click', '.btn-edit', function() {
-    resetForm();
-    isEdit = true;
-    warehouseId = $(this).data('id');
-    $('#modal-title').text('Edit Warehouse');
-
-    $('#warehouse-id').val(warehouseId);
-    $('#warehouse-name').val($(this).data('warehouse_name'));
-    $('#warehouse-code').val($(this).data('warehouse_code'));
-    $('#warehouse-type').val($(this).data('warehouse_type') || 'Standard');
-    $('#location-address').val($(this).data('location_address'));
-    $('#manager-id').val($(this).data('manager_id'));
-    $('#capacity-units').val($(this).data('capacity_units'));
-    $('#status').val($(this).data('status') || 'Active');
-
-    $modal.modal('show');
-  });
-
-  $(document).on('click', '.btn-delete', function() {
-    warehouseId = $(this).data('id');
-    var warehouse_name = $(this).data('warehouse_name');
-    $('#delete-target').text(warehouse_name || 'this warehouse');
-    $('#modalDelete').modal('show');
-  });
-
-  $('#btn-confirm-delete').on('click', function() {
-    $.ajax({
-      url: routes.destroy.replace(':id', warehouseId),
-      method: 'DELETE',
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function(res) {
-        if (res.success) {
-          showToast(res.message || 'Warehouse deleted', 'success');
-          $('#modalDelete').modal('hide');
-          setTimeout(() => location.reload(), 1000);
-        }
-      },
-      error: function(xhr) {
-        showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
-      }
-    });
-  });
-
-  $form.on('submit', function(e) {
+  formWarehouse.addEventListener('submit', function(e) {
     e.preventDefault();
-    $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+    const id = document.getElementById('warehouse-id').value;
 
-    var url = isEdit ? routes.update.replace(':id', warehouseId) : routes.store;
-    var method = isEdit ? 'PUT' : 'POST';
+    const formData = new FormData(formWarehouse);
+    const payload = Object.fromEntries(formData.entries());
 
-    $.ajax({
-      url: url,
-      method: method,
-      data: $form.serialize(),
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function(res) {
-        if (res.success) {
-          showToast(res.message || (isEdit ? 'Warehouse updated' : 'Warehouse created'), 'success');
-          $modal.modal('hide');
-          setTimeout(() => location.reload(), 1000);
-        }
-      },
-      error: function(xhr) {
-        var res = xhr.responseJSON;
-        if (res && res.errors) {
-          $.each(res.errors, function(field, messages) {
-            var $input = $form.find('[name="' + field + '"]');
-            $input.addClass('is-invalid');
-            $('#error-' + field).text(messages[0]).show();
-          });
-        } else if (res && res.message) {
-          showToast(res.message, 'error');
-        } else {
-          showToast('An error occurred', 'error');
-        }
-      },
-      complete: function() {
-        $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Save Warehouse');
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.LOGISTICS.WAREHOUSES.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.LOGISTICS.WAREHOUSES.STORE, payload);
+    }
+
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalWarehouse).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formWarehouse, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
       }
     });
   });
 
-  function resetForm() {
-    warehouseId = null;
-    isEdit = false;
-    $form[0].reset();
-    $form.find('.is-invalid').removeClass('is-invalid');
-    $form.find('.invalid-feedback').hide().text('');
-  }
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
+  });
 
-  function showToast(msg, type) {
-    type = type || 'info';
-    var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
-    var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
-    var $t = $('<div class="erp-toast ' + type + '"></div>')
-      .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
-    $('#toast-container').append($t);
-    setTimeout(function() { $t.css('opacity', 0); }, 2500);
-    setTimeout(function() { $t.remove(); }, 2800);
-  }
+  btnConfirmDelete.addEventListener('click', function() {
+    if (!deleteId) return;
+
+    apiClient.destroy(API_ENDPOINTS.LOGISTICS.WAREHOUSES.DESTROY, deleteId)
+    .then(data => {
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
+  });
 });
 </script>
 @endpush

@@ -68,15 +68,14 @@
                 <div class="d-flex gap-1">
                   <button class="btn-erp btn-outline btn-xs btn-icon btn-edit" 
                     data-id="{{ $attendance->id }}"
-                    data-url="{{ route('attendance.show', $attendance->id) }}"
+                    data-mode="edit"
                     data-bs-toggle="modal"
                     data-bs-target="#modalAttendance"
                     title="Edit">
                     <i class="bi bi-pencil"></i>
                   </button>
                   <button class="btn-erp btn-danger btn-xs btn-icon btn-delete" 
-                    data-id="{{ $attendance->id }}"
-                    data-url="{{ route('attendance.destroy', $attendance->id) }}"
+                    data-delete-id="{{ $attendance->id }}"
                     data-bs-toggle="modal"
                     data-bs-target="#modalDelete"
                     data-delete-label="Attendance"
@@ -108,9 +107,7 @@
           <h5 class="modal-title" style="color:var(--text-primary);font-weight:600">Log Attendance</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
-        <form id="form-attendance" method="POST">
-          @csrf
-          <input type="hidden" name="_method" value="POST" id="form-method">
+        <form id="form-attendance">
           <input type="hidden" name="id" id="attendance_id">
           <div class="modal-body">
             <div class="row g-3">
@@ -194,93 +191,97 @@
 
 @push('scripts')
 <script>
-(function() {
-  const ROUTE_STORE = '{{ route("attendance.store") }}';
-  const ROUTE_UPDATE = '{{ route("attendance.update", ["id" => "__ID__"]) }}';
-  const ROUTE_DESTROY = '{{ route("attendance.destroy", ["id" => "__ID__"]) }}';
-  let deleteUrl = null;
+document.addEventListener('DOMContentLoaded', function() {
+  const modalAttendance = document.getElementById('modalAttendance');
+  const formAttendance = document.getElementById('form-attendance');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
 
-  function showToast(message, type = 'success') {
-    const toast = document.createElement('div');
-    toast.className = `toast-notification toast-${type}`;
-    toast.innerHTML = `<i class="bi bi-${type === 'success' ? 'check-circle' : 'x-circle'}"></i> ${message}`;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 3000);
-  }
+  let deleteId = null;
 
-  function resetForm() {
-    $('#form-attendance')[0].reset();
-    $('#form-method').val('POST');
-    $('#attendance_id').val('');
-    $('#modalAttendance .modal-title').text('Log Attendance');
-  }
+  modalAttendance.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formAttendance);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = modalAttendance.querySelector('.modal-title');
 
-  $('#modalAttendance').on('show.bs.modal', function(e) {
-    const btn = e.relatedTarget;
-    if (btn.classList.contains('btn-edit')) {
-      const id = btn.dataset.id;
-      $.ajax({
-        url: btn.dataset.url,
-        method: 'GET',
-        success: function(data) {
-          $('#form-method').val('PUT');
-          $('#attendance_id').val(data.id);
-          $('#modalAttendance .modal-title').text('Edit Attendance');
-          $('#form-attendance select[name="employee_id"]').val(data.employee_id);
-          $('#form-attendance input[name="attendance_date"]').val(data.attendance_date);
-          $('#form-attendance input[name="check_in_time"]').val(data.check_in_time);
-          $('#form-attendance input[name="check_out_time"]').val(data.check_out_time);
-          $('#form-attendance select[name="status"]').val(data.status);
-          $('#form-attendance select[name="leave_type"]').val(data.leave_type || '');
-        }
-      });
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Attendance';
+
+      apiClient.show(API_ENDPOINTS.HR.ATTENDANCE.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('attendance_id').value = item.id;
+          formAttendance.querySelector('[name="employee_id"]').value = item.employee_id || '';
+          formAttendance.querySelector('[name="attendance_date"]').value = item.attendance_date || '';
+          formAttendance.querySelector('[name="check_in_time"]').value = item.check_in_time || '';
+          formAttendance.querySelector('[name="check_out_time"]').value = item.check_out_time || '';
+          formAttendance.querySelector('[name="status"]').value = item.status || 'Present';
+          formAttendance.querySelector('[name="leave_type"]').value = item.leave_type || '';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
     } else {
-      resetForm();
+      modalTitle.textContent = 'Log Attendance';
+      formAttendance.reset();
+      document.getElementById('attendance_id').value = '';
     }
   });
 
-  $('#form-attendance').on('submit', function(e) {
+  formAttendance.addEventListener('submit', function(e) {
     e.preventDefault();
-    const id = $('#attendance_id').val();
-    const url = id ? ROUTE_UPDATE.replace('__ID__', id) : ROUTE_STORE;
-    const method = id ? 'PUT' : 'POST';
+    const id = document.getElementById('attendance_id').value;
 
-    $.ajax({
-      url: url,
-      method: method,
-      data: $(this).serialize(),
-      success: function() {
-        $('#modalAttendance').modal('hide');
-        showToast(id ? 'Attendance updated successfully' : 'Attendance logged successfully');
-        setTimeout(() => location.reload(), 500);
-      },
-      error: function(xhr) {
-        showToast(xhr.responseJSON?.message || 'Operation failed', 'error');
+    const formData = new FormData(formAttendance);
+    const payload = Object.fromEntries(formData.entries());
+
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.HR.ATTENDANCE.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.HR.ATTENDANCE.STORE, payload);
+    }
+
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalAttendance).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formAttendance, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
       }
     });
   });
 
-  $('#modalDelete').on('show.bs.modal', function(e) {
-    const btn = e.relatedTarget;
-    deleteUrl = btn.dataset.url;
-    $('#delete-target').text(btn.dataset.deleteLabel || 'record');
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
   });
 
-  $('#btn-confirm-delete').on('click', function() {
-    $.ajax({
-      url: deleteUrl,
-      method: 'DELETE',
-      data: { _token: '{{ csrf_token() }}' },
-      success: function() {
-        $('#modalDelete').modal('hide');
-        showToast('Record deleted successfully');
-        setTimeout(() => location.reload(), 500);
-      },
-      error: function(xhr) {
-        showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
+  btnConfirmDelete.addEventListener('click', function() {
+    if (!deleteId) return;
+
+    apiClient.destroy(API_ENDPOINTS.HR.ATTENDANCE.DESTROY, deleteId)
+    .then(data => {
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
       }
-    });
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
   });
-})();
+});
 </script>
 @endpush

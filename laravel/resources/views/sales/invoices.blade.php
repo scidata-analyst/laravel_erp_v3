@@ -11,7 +11,7 @@
   </div>
   <div class="d-flex gap-2">
     <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-    <button class="btn-erp btn-primary" id="btn-add-invoice"><i class="bi bi-plus-lg"></i> New Invoice</button>
+    <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalInvoice" data-mode="create"><i class="bi bi-plus-lg"></i> New Invoice</button>
   </div>
 </div>
 
@@ -45,7 +45,7 @@
                 <span class="badge-status badge-inactive">Overdue</span>
               @endif
             </td>
-            <td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" title="Print"><i class="bi bi-printer"></i></button><button class="btn-erp btn-outline btn-xs btn-icon btn-edit" data-id="{{ $invoice->id }}" data-invoice_number="{{ $invoice->invoice_number }}" data-customer_id="{{ $invoice->customer_id }}" data-sales_order_ref="{{ $invoice->sales_order_ref }}" data-invoice_date="{{ $invoice->invoice_date }}" data-due_date="{{ $invoice->due_date }}" data-amount="{{ $invoice->amount }}" data-tax_percent="{{ $invoice->tax_percent }}" data-notes="{{ $invoice->notes }}" data-status="{{ $invoice->status }}" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon btn-delete" data-id="{{ $invoice->id }}" data-invoice_number="{{ $invoice->invoice_number }}" title="Delete"><i class="bi bi-trash"></i></button></div></td>
+            <td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" title="Print"><i class="bi bi-printer"></i></button><button class="btn-erp btn-outline btn-xs btn-icon btn-edit" data-id="{{ $invoice->id }}" data-mode="edit" data-bs-toggle="modal" data-bs-target="#modalInvoice" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon btn-delete" data-delete-id="{{ $invoice->id }}" data-delete-label="{{ $invoice->invoice_number }}" data-bs-toggle="modal" data-bs-target="#modalDelete" title="Delete"><i class="bi bi-trash"></i></button></div></td>
           </tr>
         @endforeach
       </tbody>
@@ -150,126 +150,98 @@
 
 @push('scripts')
 <script>
-$(function () {
-  var routes = {
-    store: '{{ route("invoices.store") }}',
-    update: '{{ route("invoices.update", ":id") }}',
-    destroy: '{{ route("invoices.destroy", ":id") }}'
-  };
+document.addEventListener('DOMContentLoaded', function() {
+  const modalInvoice = document.getElementById('modalInvoice');
+  const formInvoice = document.getElementById('form-invoice');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
 
-  var $modal = $('#modalInvoice');
-  var $form = $('#form-invoice');
-  var $btnSave = $('#btn-save');
-  var invoiceId = null;
-  var isEdit = false;
+  let deleteId = null;
 
-  $('#btn-add-invoice').on('click', function () {
-    resetForm();
-    isEdit = false;
-    $('#modal-title').text('New Invoice');
-    $modal.modal('show');
+  modalInvoice.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formInvoice);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = document.getElementById('modal-title');
+
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Invoice';
+
+      apiClient.show(API_ENDPOINTS.SALES.INVOICES.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('invoice-id').value = item.id;
+          formInvoice.querySelector('[name="customer_id"]').value = item.customer_id || '';
+          formInvoice.querySelector('[name="sales_order_ref"]').value = item.sales_order_ref || '';
+          formInvoice.querySelector('[name="invoice_date"]').value = item.invoice_date ? item.invoice_date.split('T')[0] : '';
+          formInvoice.querySelector('[name="due_date"]').value = item.due_date ? item.due_date.split('T')[0] : '';
+          formInvoice.querySelector('[name="amount"]').value = item.amount || '';
+          formInvoice.querySelector('[name="tax_percent"]').value = item.tax_percent || '';
+          formInvoice.querySelector('[name="notes"]').value = item.notes || '';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
+    } else {
+      modalTitle.textContent = 'New Invoice';
+      formInvoice.reset();
+      document.getElementById('invoice-id').value = '';
+    }
   });
 
-  $(document).on('click', '.btn-edit', function () {
-    resetForm();
-    isEdit = true;
-    invoiceId = $(this).data('id');
-    $('#modal-title').text('Edit Invoice');
-
-    $('#invoice-id').val(invoiceId);
-    $('#customer-id').val($(this).data('customer_id'));
-    $('#sales-order-ref').val($(this).data('sales_order_ref'));
-    $('#invoice-date').val($(this).data('invoice_date'));
-    $('#due-date').val($(this).data('due_date'));
-    $('#amount').val($(this).data('amount'));
-    $('#tax-percent').val($(this).data('tax_percent'));
-    $('#notes').val($(this).data('notes'));
-
-    $modal.modal('show');
-  });
-
-  $(document).on('click', '.btn-delete', function () {
-    invoiceId = $(this).data('id');
-    var invoice_number = $(this).data('invoice_number');
-    $('#delete-target').text(invoice_number || 'this invoice');
-    $('#modalDelete').modal('show');
-  });
-
-  $('#btn-confirm-delete').on('click', function () {
-    $.ajax({
-      url: routes.destroy.replace(':id', invoiceId),
-      method: 'DELETE',
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function (res) {
-        if (res.success) {
-          showToast(res.message || 'Invoice deleted', 'success');
-          $('#modalDelete').modal('hide');
-          setTimeout(() => location.reload(), 1000);
-        }
-      },
-      error: function (xhr) {
-        showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
-      }
-    });
-  });
-
-  $form.on('submit', function (e) {
+  formInvoice.addEventListener('submit', function(e) {
     e.preventDefault();
-    $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+    const id = document.getElementById('invoice-id').value;
 
-    var url = isEdit ? routes.update.replace(':id', invoiceId) : routes.store;
-    var method = isEdit ? 'PUT' : 'POST';
+    const formData = new FormData(formInvoice);
+    const payload = Object.fromEntries(formData.entries());
 
-    $.ajax({
-      url: url,
-      method: method,
-      data: $form.serialize(),
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function (res) {
-        if (res.success) {
-          showToast(res.message || (isEdit ? 'Invoice updated' : 'Invoice created'), 'success');
-          $modal.modal('hide');
-          setTimeout(() => location.reload(), 1000);
-        }
-      },
-      error: function (xhr) {
-        var res = xhr.responseJSON;
-        if (res && res.errors) {
-          $.each(res.errors, function (field, messages) {
-            var $input = $form.find('[name="' + field + '"]');
-            $input.addClass('is-invalid');
-            $('#error-' + field).text(messages[0]).show();
-          });
-        } else if (res && res.message) {
-          showToast(res.message, 'error');
-        } else {
-          showToast('An error occurred', 'error');
-        }
-      },
-      complete: function () {
-        $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Generate Invoice');
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.SALES.INVOICES.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.SALES.INVOICES.STORE, payload);
+    }
+
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalInvoice).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formInvoice, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
       }
     });
   });
 
-  function resetForm() {
-    invoiceId = null;
-    isEdit = false;
-    $form[0].reset();
-    $form.find('.is-invalid').removeClass('is-invalid');
-    $form.find('.invalid-feedback').hide().text('');
-  }
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
+  });
 
-  function showToast(msg, type) {
-    type = type || 'info';
-    var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
-    var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
-    var $t = $('<div class="erp-toast ' + type + '"></div>')
-      .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
-    $('#toast-container').append($t);
-    setTimeout(function () { $t.css('opacity', 0); }, 2500);
-    setTimeout(function () { $t.remove(); }, 2800);
-  }
+  btnConfirmDelete.addEventListener('click', function() {
+    if (!deleteId) return;
+
+    apiClient.destroy(API_ENDPOINTS.SALES.INVOICES.DESTROY, deleteId)
+    .then(data => {
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
+  });
 });
 </script>
 @endpush

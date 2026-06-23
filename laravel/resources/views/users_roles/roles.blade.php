@@ -9,7 +9,7 @@
       <div class="page-title">Roles &amp; Permissions</div>
       <div class="page-subtitle">Assign granular access control per role</div>
     </div>
-    <button class="btn-erp btn-primary" id="btn-add-role" data-bs-toggle="modal" data-bs-target="#modalRole"><i
+    <button class="btn-erp btn-primary" id="btn-add-role" data-bs-toggle="modal" data-bs-target="#modalRole" data-mode="create"><i
         class="bi bi-plus-lg"></i> Add Role</button>
   </div>
   <div class="row g-3">
@@ -17,7 +17,7 @@
       <div class="erp-card">
         <div class="card-header-bar">
           <div class="card-title">Roles</div>
-          <button class="btn-erp btn-primary btn-sm" id="btn-add-role2" data-bs-toggle="modal" data-bs-target="#modalRole"><i class="bi bi-plus-lg"></i> Add</button>
+          <button class="btn-erp btn-primary btn-sm" id="btn-add-role2" data-bs-toggle="modal" data-bs-target="#modalRole" data-mode="create"><i class="bi bi-plus-lg"></i> Add</button>
         </div>
         <div class="table-responsive">
           <table class="table table-dark table-hover" id="rolesTable">
@@ -33,32 +33,32 @@
                 <td><i class="bi bi-shield-fill-check text-accent me-2"></i>Admin</td>
                 <td><span class="badge-status badge-purple">3 users</span></td>
                 <td>
-                  <button class="btn btn-sm btn-outline-info btn-edit" data-id="1" data-name="Admin" data-description="Super Administrator"><i class="bi bi-pencil"></i></button>
-                  <button class="btn btn-sm btn-outline-danger btn-delete" data-id="1" data-name="Admin"><i class="bi bi-trash"></i></button>
+                  <button class="btn btn-sm btn-outline-info btn-edit" data-id="1" data-name="Admin" data-description="Super Administrator" data-mode="edit" data-bs-toggle="modal" data-bs-target="#modalRole"><i class="bi bi-pencil"></i></button>
+                  <button class="btn btn-sm btn-outline-danger btn-delete" data-delete-id="1" data-delete-label="Admin" data-bs-toggle="modal" data-bs-target="#modalDelete"><i class="bi bi-trash"></i></button>
                 </td>
               </tr>
               <tr>
                 <td><i class="bi bi-person-badge me-2"></i>Manager</td>
                 <td><span class="badge-status badge-info">8 users</span></td>
                 <td>
-                  <button class="btn btn-sm btn-outline-info btn-edit" data-id="2" data-name="Manager" data-description="Manager Role"><i class="bi bi-pencil"></i></button>
-                  <button class="btn btn-sm btn-outline-danger btn-delete" data-id="2" data-name="Manager"><i class="bi bi-trash"></i></button>
+                  <button class="btn btn-sm btn-outline-info btn-edit" data-id="2" data-name="Manager" data-description="Manager Role" data-mode="edit" data-bs-toggle="modal" data-bs-target="#modalRole"><i class="bi bi-pencil"></i></button>
+                  <button class="btn btn-sm btn-outline-danger btn-delete" data-delete-id="2" data-delete-label="Manager" data-bs-toggle="modal" data-bs-target="#modalDelete"><i class="bi bi-trash"></i></button>
                 </td>
               </tr>
               <tr>
                 <td><i class="bi bi-person me-2"></i>Staff</td>
                 <td><span class="badge-status badge-pending">24 users</span></td>
                 <td>
-                  <button class="btn btn-sm btn-outline-info btn-edit" data-id="3" data-name="Staff" data-description="Staff Role"><i class="bi bi-pencil"></i></button>
-                  <button class="btn btn-sm btn-outline-danger btn-delete" data-id="3" data-name="Staff"><i class="bi bi-trash"></i></button>
+                  <button class="btn btn-sm btn-outline-info btn-edit" data-id="3" data-name="Staff" data-description="Staff Role" data-mode="edit" data-bs-toggle="modal" data-bs-target="#modalRole"><i class="bi bi-pencil"></i></button>
+                  <button class="btn btn-sm btn-outline-danger btn-delete" data-delete-id="3" data-delete-label="Staff" data-bs-toggle="modal" data-bs-target="#modalDelete"><i class="bi bi-trash"></i></button>
                 </td>
               </tr>
               <tr>
                 <td><i class="bi bi-eye me-2"></i>Viewer</td>
                 <td><span class="badge-status badge-active">12 users</span></td>
                 <td>
-                  <button class="btn btn-sm btn-outline-info btn-edit" data-id="4" data-name="Viewer" data-description="Viewer Role"><i class="bi bi-pencil"></i></button>
-                  <button class="btn btn-sm btn-outline-danger btn-delete" data-id="4" data-name="Viewer"><i class="bi bi-trash"></i></button>
+                  <button class="btn btn-sm btn-outline-info btn-edit" data-id="4" data-name="Viewer" data-description="Viewer Role" data-mode="edit" data-bs-toggle="modal" data-bs-target="#modalRole"><i class="bi bi-pencil"></i></button>
+                  <button class="btn btn-sm btn-outline-danger btn-delete" data-delete-id="4" data-delete-label="Viewer" data-bs-toggle="modal" data-bs-target="#modalDelete"><i class="bi bi-trash"></i></button>
                 </td>
               </tr>
             </tbody>
@@ -231,70 +231,96 @@
 
 @push('scripts')
 <script>
-$(document).ready(function() {
-  $('#btn-add-role, #btn-add-role2').on('click', function() {
-    $('#formRole')[0].reset();
-    $('#role_id').val('');
-    $('#modalRoleTitle').text('Add Role');
-    $('.btn-modal-save').html('<i class="bi bi-check2"></i> Create Role');
-  });
-
-  $(document).on('click', '.btn-edit', function() {
-    const id = $(this).data('id');
-    const name = $(this).data('name');
-    const description = $(this).data('description') || '';
-    
-    $('#role_id').val(id);
-    $('#role_name').val(name);
-    $('#role_description').val(description);
-    $('#modalRoleTitle').text('Edit Role');
-    $('.btn-modal-save').html('<i class="bi bi-check2"></i> Update Role');
-    $('#modalRole').modal('show');
-  });
+document.addEventListener('DOMContentLoaded', function() {
+  const modalRole = document.getElementById('modalRole');
+  const formRole = document.getElementById('formRole');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
 
   let deleteId = null;
 
-  $(document).on('click', '.btn-delete', function() {
-    deleteId = $(this).data('id');
-    const name = $(this).data('name');
-    $('#delete-target').text(name);
-    $('#modalDelete').modal('show');
+  modalRole.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formRole);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = document.getElementById('modalRoleTitle');
+    const btnSave = formRole.querySelector('.btn-modal-save');
+
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Role';
+      btnSave.innerHTML = '<i class="bi bi-check2"></i> Update Role';
+
+      apiClient.show(API_ENDPOINTS.USERS_ROLES.ROLES.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('role_id').value = item.id;
+          formRole.querySelector('[name="name"]').value = item.name || '';
+          formRole.querySelector('[name="description"]').value = item.description || '';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
+    } else {
+      modalTitle.textContent = 'Add Role';
+      btnSave.innerHTML = '<i class="bi bi-check2"></i> Create Role';
+      formRole.reset();
+      document.getElementById('role_id').value = '';
+    }
   });
 
-  $('#btn-confirm-delete').on('click', function() {
-    const btn = $(this);
-    const originalText = btn.html();
-    
-    btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> Deleting...');
-    
-    $.ajax({
-      url: '{{ route("role.destroy", ":id") }}'.replace(':id', deleteId),
-      method: 'DELETE',
-      headers: {
-        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-      },
-      success: function(response) {
-        $('#modalDelete').modal('hide');
-        showToast(response.message || 'Deleted successfully', 'success');
-        setTimeout(() => window.location.reload(), 1500);
-      },
-      error: function(xhr) {
-        const msg = xhr.responseJSON?.message || 'Error deleting role';
-        showToast(msg, 'error');
-        btn.prop('disabled', false).html(originalText);
+  formRole.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const id = document.getElementById('role_id').value;
+
+    const formData = new FormData(formRole);
+    const payload = Object.fromEntries(formData.entries());
+
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.USERS_ROLES.ROLES.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.USERS_ROLES.ROLES.STORE, payload);
+    }
+
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalRole).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formRole, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
       }
     });
   });
 
-  function showToast(message, type) {
-    const bg = type === 'success' ? '#28a745' : '#dc3545';
-    const icon = type === 'success' ? 'bi-check-circle' : 'bi-exclamation-circle';
-    const toast = $(`<div class="toast-notification" style="position:fixed;top:20px;right:20px;background:${bg};color:#fff;padding:12px 20px;border-radius:4px;z-index:9999;display:flex;align-items:center;gap:8px;animation:slideIn 0.3s ease">
-      <i class="bi ${icon}"></i><span>${message}</span>
-    </div>`);
-    $('body').append(toast);
-    setTimeout(() => toast.remove(), 3000);
-  }
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
+  });
+
+  btnConfirmDelete.addEventListener('click', function() {
+    if (!deleteId) return;
+
+    apiClient.destroy(API_ENDPOINTS.USERS_ROLES.ROLES.DESTROY, deleteId)
+    .then(data => {
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
+  });
 });
 </script>
 @endpush

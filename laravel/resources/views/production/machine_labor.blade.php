@@ -11,7 +11,7 @@
     </div>
     <div class="d-flex gap-2">
       <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-      <button class="btn-erp btn-primary" id="btn-add-machine-labor"><i class="bi bi-plus-lg"></i> Log Entry</button>
+      <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalMachineLabor" data-mode="create"><i class="bi bi-plus-lg"></i> Log Entry</button>
     </div>
   </div>
 
@@ -55,15 +55,14 @@
                 <div class="d-flex gap-1">
                   <button class="btn-erp btn-outline btn-xs btn-icon btn-edit" 
                     data-id="{{ $ml->id }}"
-                    data-work_order_id="{{ $ml->work_order_id }}"
-                    data-resource_name="{{ $ml->resource_name }}"
-                    data-resource_type="{{ $ml->resource_type }}"
-                    data-hours_used="{{ $ml->hours_used }}"
-                    data-cost_per_hour="{{ $ml->cost_per_hour }}"
+                    data-mode="edit"
+                    data-bs-toggle="modal" data-bs-target="#modalMachineLabor"
                     title="Edit"><i class="bi bi-pencil"></i></button>
                   <button class="btn-erp btn-danger btn-xs btn-icon btn-delete" 
-                    data-id="{{ $ml->id }}"
-                    data-delete-label="Entry" title="Delete"><i class="bi bi-trash"></i></button>
+                    data-delete-id="{{ $ml->id }}"
+                    data-delete-label="Entry"
+                    data-bs-toggle="modal" data-bs-target="#modalDelete"
+                    title="Delete"><i class="bi bi-trash"></i></button>
                 </div>
               </td>
             </tr>
@@ -159,122 +158,96 @@
 
 @push('scripts')
 <script>
-$(function() {
-  var routes = {
-    store: '{{ route("machine_labor.store") }}',
-    update: '{{ route("machine_labor.update", ":id") }}',
-    destroy: '{{ route("machine_labor.destroy", ":id") }}'
-  };
+document.addEventListener('DOMContentLoaded', function() {
+  const modalMachineLabor = document.getElementById('modalMachineLabor');
+  const formMachineLabor = document.getElementById('form-machine-labor');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
 
-  var $modal = $('#modalMachineLabor');
-  var $form = $('#form-machine-labor');
-  var $btnSave = $('#btn-save');
-  var machineLaborId = null;
-  var isEdit = false;
+  let deleteId = null;
 
-  function resetForm() {
-    $form[0].reset();
-    $form.find('.is-invalid').removeClass('is-invalid');
-    $form.find('.invalid-feedback').hide();
-    $('#machine-labor-id').val('');
-  }
+  modalMachineLabor.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formMachineLabor);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = document.getElementById('modal-title');
 
-  $('#btn-add-machine-labor').on('click', function() {
-    resetForm();
-    isEdit = false;
-    $('#modal-title').text('Log Machine / Labor Entry');
-    $btnSave.html('<i class="bi bi-check2"></i> Log Entry');
-    $modal.modal('show');
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Machine / Labor Entry';
+
+      apiClient.show(API_ENDPOINTS.PRODUCTION.MACHINE_LABOR.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('machine-labor-id').value = item.id;
+          formMachineLabor.querySelector('[name="work_order_id"]').value = item.work_order_id || '';
+          formMachineLabor.querySelector('[name="resource_name"]').value = item.resource_name || '';
+          formMachineLabor.querySelector('[name="resource_type"]').value = item.resource_type || 'Machine';
+          formMachineLabor.querySelector('[name="hours_used"]').value = item.hours_used || '';
+          formMachineLabor.querySelector('[name="cost_per_hour"]').value = item.cost_per_hour || '';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
+    } else {
+      modalTitle.textContent = 'Log Machine / Labor Entry';
+      formMachineLabor.reset();
+      document.getElementById('machine-labor-id').value = '';
+    }
   });
 
-  $(document).on('click', '.btn-edit', function() {
-    resetForm();
-    isEdit = true;
-    machineLaborId = $(this).data('id');
-    $('#modal-title').text('Edit Machine / Labor Entry');
-    
-    $('#machine-labor-id').val(machineLaborId);
-    $('#work-order-id').val($(this).data('work_order_id'));
-    $('#resource-name').val($(this).data('resource_name'));
-    $('#resource-type').val($(this).data('resource_type') || 'Machine');
-    $('#hours-used').val($(this).data('hours_used'));
-    $('#cost-per-hour').val($(this).data('cost_per_hour'));
-    
-    $btnSave.html('<i class="bi bi-check2"></i> Update Entry');
-    $modal.modal('show');
-  });
-
-  $(document).on('click', '.btn-delete', function() {
-    machineLaborId = $(this).data('id');
-    var id_display = $(this).data('delete-label') || 'this entry';
-    $('#delete-target').text(id_display);
-    $('#modalDelete').modal('show');
-  });
-
-  $('#btn-confirm-delete').on('click', function() {
-    $.ajax({
-      url: routes.destroy.replace(':id', machineLaborId),
-      method: 'DELETE',
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function(res) {
-        if (res.success) {
-          showToast(res.message || 'Entry deleted', 'success');
-          $('#modalDelete').modal('hide');
-          setTimeout(() => location.reload(), 1000);
-        }
-      },
-      error: function(xhr) {
-        showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
-      }
-    });
-  });
-
-  $form.on('submit', function(e) {
+  formMachineLabor.addEventListener('submit', function(e) {
     e.preventDefault();
-    $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+    const id = document.getElementById('machine-labor-id').value;
 
-    var url = isEdit ? routes.update.replace(':id', machineLaborId) : routes.store;
-    var method = isEdit ? 'PUT' : 'POST';
+    const formData = new FormData(formMachineLabor);
+    const payload = Object.fromEntries(formData.entries());
 
-    $.ajax({
-      url: url,
-      method: method,
-      data: $form.serialize(),
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function(res) {
-        if (res.success) {
-          showToast(res.message || (isEdit ? 'Entry updated' : 'Entry created'), 'success');
-          $modal.modal('hide');
-          setTimeout(() => location.reload(), 1000);
-        }
-      },
-      error: function(xhr) {
-        var res = xhr.responseJSON;
-        if (res && res.errors) {
-          $.each(res.errors, function(field, messages) {
-            var $input = $form.find('[name="' + field + '"]');
-            $input.addClass('is-invalid');
-            $('<div class="invalid-feedback" style="display:block">' + messages[0] + '</div>').insertAfter($input);
-          });
-        } else if (res && res.message) {
-          showToast(res.message, 'error');
-        } else {
-          showToast('An error occurred', 'error');
-        }
-      },
-      complete: function() {
-        $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Log Entry');
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.PRODUCTION.MACHINE_LABOR.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.PRODUCTION.MACHINE_LABOR.STORE, payload);
+    }
+
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalMachineLabor).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formMachineLabor, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
       }
     });
   });
 
-  function showToast(msg, type) {
-    var $t = $('<div class="erp-toast ' + type + '"></div>')
-      .html('<span class="toast-icon">' + (type === 'success' ? '✓' : '✕') + '</span><span class="toast-message">' + msg + '</span>');
-    $('#toast-container').append($t);
-    setTimeout(function() { $t.addClass('show'); }, 10);
-    setTimeout(function() { $t.remove(); }, 4000);
-  }
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
+  });
+
+  btnConfirmDelete.addEventListener('click', function() {
+    if (!deleteId) return;
+
+    apiClient.destroy(API_ENDPOINTS.PRODUCTION.MACHINE_LABOR.DESTROY, deleteId)
+    .then(data => {
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
+  });
 });
 </script>
 @endpush

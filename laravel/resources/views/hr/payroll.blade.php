@@ -87,20 +87,18 @@
                   @else
                     <button class="btn-erp btn-success btn-xs btn-process-payment"
                       data-id="{{ $payroll->id }}"
-                      data-url="{{ route('payroll.show', $payroll->id) }}"
                       title="Process">Process</button>
                   @endif
                   <button class="btn-erp btn-outline btn-xs btn-icon btn-edit" 
                     data-id="{{ $payroll->id }}"
-                    data-url="{{ route('payroll.show', $payroll->id) }}"
+                    data-mode="edit"
                     data-bs-toggle="modal"
                     data-bs-target="#modalPayroll"
                     title="Edit">
                     <i class="bi bi-pencil"></i>
                   </button>
                   <button class="btn-erp btn-danger btn-xs btn-icon btn-delete" 
-                    data-id="{{ $payroll->id }}"
-                    data-url="{{ route('payroll.destroy', $payroll->id) }}"
+                    data-delete-id="{{ $payroll->id }}"
                     data-bs-toggle="modal"
                     data-bs-target="#modalDelete"
                     data-delete-label="Payroll Record"
@@ -132,9 +130,7 @@
           <h5 class="modal-title" style="color:var(--text-primary);font-weight:600">Edit Payroll</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
-        <form id="form-payroll" method="POST">
-          @csrf
-          <input type="hidden" name="_method" value="POST" id="form-method">
+        <form id="form-payroll">
           <input type="hidden" name="id" id="payroll_id">
           <div class="modal-body">
             <div class="row g-3">
@@ -215,111 +211,114 @@
 
 @push('scripts')
 <script>
-(function() {
-  const ROUTE_STORE = '{{ route("payroll.store") }}';
-  const ROUTE_UPDATE = '{{ route("payroll.update", ["id" => "__ID__"]) }}';
-  const ROUTE_DESTROY = '{{ route("payroll.destroy", ["id" => "__ID__"]) }}';
-  let deleteUrl = null;
+document.addEventListener('DOMContentLoaded', function() {
+  const modalPayroll = document.getElementById('modalPayroll');
+  const formPayroll = document.getElementById('form-payroll');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
 
-  function showToast(message, type = 'success') {
-    const toast = document.createElement('div');
-    toast.className = `toast-notification toast-${type}`;
-    toast.innerHTML = `<i class="bi bi-${type === 'success' ? 'check-circle' : 'x-circle'}"></i> ${message}`;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 3000);
-  }
+  let deleteId = null;
 
-  function resetForm() {
-    $('#form-payroll')[0].reset();
-    $('#form-method').val('POST');
-    $('#payroll_id').val('');
-    $('#modalPayroll .modal-title').text('Add Payroll');
-  }
+  modalPayroll.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formPayroll);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = modalPayroll.querySelector('.modal-title');
 
-  $('#modalPayroll').on('show.bs.modal', function(e) {
-    const btn = e.relatedTarget;
-    if (btn.classList.contains('btn-edit')) {
-      const id = btn.dataset.id;
-      $.ajax({
-        url: btn.dataset.url,
-        method: 'GET',
-        success: function(data) {
-          $('#form-method').val('PUT');
-          $('#payroll_id').val(data.id);
-          $('#modalPayroll .modal-title').text('Edit Payroll');
-          $('#form-payroll select[name="employee_id"]').val(data.employee_id);
-          $('#form-payroll input[name="month"]').val(data.month);
-          $('#form-payroll input[name="basic_salary"]').val(data.basic_salary);
-          $('#form-payroll input[name="allowances"]').val(data.allowances || 0);
-          $('#form-payroll input[name="deductions"]').val(data.deductions || 0);
-          $('#form-payroll input[name="net_pay"]').val(data.net_pay);
-          $('#form-payroll select[name="status"]').val(data.status);
-        }
-      });
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Payroll';
+
+      apiClient.show(API_ENDPOINTS.HR.PAYROLL.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('payroll_id').value = item.id;
+          formPayroll.querySelector('[name="employee_id"]').value = item.employee_id || '';
+          formPayroll.querySelector('[name="month"]').value = item.month || '';
+          formPayroll.querySelector('[name="basic_salary"]').value = item.basic_salary || '';
+          formPayroll.querySelector('[name="allowances"]').value = item.allowances || 0;
+          formPayroll.querySelector('[name="deductions"]').value = item.deductions || 0;
+          formPayroll.querySelector('[name="net_pay"]').value = item.net_pay || '';
+          formPayroll.querySelector('[name="status"]').value = item.status || 'Pending';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
     } else {
-      resetForm();
+      modalTitle.textContent = 'Add Payroll';
+      formPayroll.reset();
+      document.getElementById('payroll_id').value = '';
     }
   });
 
-  $('#form-payroll').on('submit', function(e) {
+  formPayroll.addEventListener('submit', function(e) {
     e.preventDefault();
-    const id = $('#payroll_id').val();
-    const url = id ? ROUTE_UPDATE.replace('__ID__', id) : ROUTE_STORE;
-    const method = id ? 'PUT' : 'POST';
+    const id = document.getElementById('payroll_id').value;
 
-    $.ajax({
-      url: url,
-      method: method,
-      data: $(this).serialize(),
-      success: function() {
-        $('#modalPayroll').modal('hide');
-        showToast(id ? 'Payroll updated successfully' : 'Payroll created successfully');
-        setTimeout(() => location.reload(), 500);
-      },
-      error: function(xhr) {
-        showToast(xhr.responseJSON?.message || 'Operation failed', 'error');
+    const formData = new FormData(formPayroll);
+    const payload = Object.fromEntries(formData.entries());
+
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.HR.PAYROLL.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.HR.PAYROLL.STORE, payload);
+    }
+
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalPayroll).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formPayroll, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
       }
     });
   });
 
-  $('#modalDelete').on('show.bs.modal', function(e) {
-    const btn = e.relatedTarget;
-    deleteUrl = btn.dataset.url;
-    $('#delete-target').text(btn.dataset.deleteLabel || 'record');
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
   });
 
-  $('#btn-confirm-delete').on('click', function() {
-    $.ajax({
-      url: deleteUrl,
-      method: 'DELETE',
-      data: { _token: '{{ csrf_token() }}' },
-      success: function() {
-        $('#modalDelete').modal('hide');
-        showToast('Record deleted successfully');
-        setTimeout(() => location.reload(), 500);
-      },
-      error: function(xhr) {
-        showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
+  btnConfirmDelete.addEventListener('click', function() {
+    if (!deleteId) return;
+
+    apiClient.destroy(API_ENDPOINTS.HR.PAYROLL.DESTROY, deleteId)
+    .then(data => {
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
       }
-    });
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
   });
 
-  $(document).on('click', '.btn-process-payment', function() {
-    const btn = $(this);
-    const id = btn.data('id');
-    $.ajax({
-      url: ROUTE_UPDATE.replace('__ID__', id),
-      method: 'PUT',
-      data: { _token: '{{ csrf_token() }}', status: 'Paid' },
-      success: function() {
-        showToast('Payment processed successfully');
-        setTimeout(() => location.reload(), 500);
-      },
-      error: function(xhr) {
-        showToast(xhr.responseJSON?.message || 'Process failed', 'error');
-      }
+  document.querySelectorAll('.btn-process-payment').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const id = this.dataset.id;
+      apiClient.update(API_ENDPOINTS.HR.PAYROLL.UPDATE, id, { status: 'Paid' })
+      .then(data => {
+        if (data.success || data.id) {
+          showToast('Payment processed successfully', 'success');
+          setTimeout(() => location.reload(), 500);
+        } else {
+          showToast(data.message || 'Process failed', 'error');
+        }
+      })
+      .catch(error => showToast(error.message || 'Process failed', 'error'));
     });
   });
-})();
+});
 </script>
 @endpush

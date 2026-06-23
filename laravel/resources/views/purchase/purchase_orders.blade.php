@@ -11,7 +11,7 @@
   </div>
   <div class="d-flex gap-2">
     <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-    <button class="btn-erp btn-primary" id="btn-add-po"><i class="bi bi-plus-lg"></i> New PO</button>
+    <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalPO" data-mode="create"><i class="bi bi-plus-lg"></i> New PO</button>
   </div>
 </div>
 
@@ -49,20 +49,15 @@
             <td><div class="d-flex gap-1">
                <button class="btn-erp btn-outline btn-xs btn-icon btn-edit"
                  data-id="{{ $po->id }}"
-                 data-po_number="{{ $po->po_number }}"
-                 data-supplier_id="{{ $po->supplier_id }}"
-                 data-order_date="{{ $po->order_date }}"
-                 data-expected_delivery_date="{{ $po->expected_delivery_date }}"
-                 data-warehouse_id="{{ $po->warehouse_id }}"
-                 data-payment_terms="{{ $po->payment_terms }}"
-                 data-total_amount="{{ $po->total_amount }}"
-                 data-status="{{ $po->status }}"
+                 data-mode="edit"
+                 data-bs-toggle="modal" data-bs-target="#modalPO"
                  title="Edit">
                 <i class="bi bi-pencil"></i>
               </button>
               <button class="btn-erp btn-danger btn-xs btn-icon btn-delete"
-                data-id="{{ $po->id }}"
-                data-po_number="{{ $po->po_number }}"
+                data-delete-id="{{ $po->id }}"
+                data-delete-label="{{ $po->po_number }}"
+                data-bs-toggle="modal" data-bs-target="#modalDelete"
                 title="Delete">
                 <i class="bi bi-trash"></i>
               </button>
@@ -203,187 +198,133 @@
 
  @push('scripts')
  <script>
- $(function() {
-   var routes = {
-     store: '{{ route("purchase_orders.store") }}',
-     update: '{{ route("purchase_orders.update", ":id") }}',
-     destroy: '{{ route("purchase_orders.destroy", ":id") }}',
-     suppliersAll: '{{ route("suppliers.all") }}',
-     warehousesAll: '{{ route("warehouses.all") }}'
-   };
+document.addEventListener('DOMContentLoaded', function() {
+  const modalPO = document.getElementById('modalPO');
+  const formPO = document.getElementById('form-po');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
 
-   var $modal = $('#modalPO');
-   var $form = $('#form-po');
-   var $btnSave = $('#btn-save');
-   var poId = null;
-   var isEdit = false;
+  let deleteId = null;
 
-   // Load suppliers dropdown via AJAX
-   function loadSuppliers() {
-     $.ajax({
-       url: routes.suppliersAll,
-       method: 'GET',
-       success: function(res) {
-         if (res.success && res.data) {
-           var $sup = $('#supplier-id');
-           $sup.empty().append('<option value="">Select Supplier</option>');
-           $.each(res.data, function(i, s) {
-             $sup.append('<option value="' + s.id + '">' + s.company_name + '</option>');
-           });
-         }
-       },
-       error: function(xhr) {
-         console.warn('Failed to load suppliers');
-       }
-     });
-   }
+  function loadSuppliers() {
+    fetch('{{ route("suppliers.all") }}')
+      .then(res => res.json())
+      .then(res => {
+        if (res.success && res.data) {
+          const select = document.getElementById('supplier-id');
+          select.innerHTML = '<option value="">Select Supplier</option>';
+          res.data.forEach(s => {
+            select.innerHTML += `<option value="${s.id}">${s.company_name}</option>`;
+          });
+        }
+      })
+      .catch(e => console.warn('Failed to load suppliers'));
+  }
 
-   // Load warehouses dropdown via AJAX
-   function loadWarehouses() {
-     $.ajax({
-       url: routes.warehousesAll,
-       method: 'GET',
-       success: function(res) {
-         if (res.success && res.data) {
-           var $wh = $('#warehouse-id');
-           $wh.empty().append('<option value="">Select Warehouse</option>');
-           $.each(res.data, function(i, w) {
-             $wh.append('<option value="' + w.id + '">' + w.warehouse_name + ' (' + w.warehouse_code + ')</option>');
-           });
-         }
-       },
-       error: function(xhr) {
-         console.warn('Failed to load warehouses');
-       }
-     });
-   }
+  function loadWarehouses() {
+    fetch('{{ route("warehouses.all") }}')
+      .then(res => res.json())
+      .then(res => {
+        if (res.success && res.data) {
+          const select = document.getElementById('warehouse-id');
+          select.innerHTML = '<option value="">Select Warehouse</option>';
+          res.data.forEach(w => {
+            select.innerHTML += `<option value="${w.id}">${w.warehouse_name} (${w.warehouse_code})</option>`;
+          });
+        }
+      })
+      .catch(e => console.warn('Failed to load warehouses'));
+  }
 
-   // Load data on page ready
-   loadSuppliers();
-   loadWarehouses();
+  loadSuppliers();
+  loadWarehouses();
 
-   $('#btn-add-po').on('click', function() {
-     resetForm();
-     isEdit = false;
-     $('#modal-title').text('Create Purchase Order');
-     $modal.modal('show');
-   });
+  modalPO.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formPO);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = document.getElementById('modal-title');
 
-   $(document).on('click', '.btn-edit', function() {
-     resetForm();
-     isEdit = true;
-     poId = $(this).data('id');
-     $('#modal-title').text('Edit Purchase Order');
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Purchase Order';
 
-      $('#po-id').val(poId);
-      $('#po-number').val($(this).data('po_number'));
-      $('#supplier-id').val($(this).data('supplier_id'));
-      $('#order-date').val($(this).data('order_date'));
-      $('#expected-delivery').val($(this).data('expected_delivery_date'));
-      $('#warehouse-id').val($(this).data('warehouse_id'));
-      $('#payment-terms').val($(this).data('payment_terms') || 'Net 30');
-      $('#total-amount').val($(this).data('total_amount'));
-      $('#status').val($(this).data('status') || 'Draft');
+      apiClient.show(API_ENDPOINTS.PURCHASE.PURCHASE_ORDERS.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('po-id').value = item.id;
+          formPO.querySelector('[name="po_number"]').value = item.po_number || '';
+          formPO.querySelector('[name="supplier_id"]').value = item.supplier_id || '';
+          formPO.querySelector('[name="order_date"]').value = item.order_date ? item.order_date.split('T')[0] : '';
+          formPO.querySelector('[name="expected_delivery_date"]').value = item.expected_delivery_date ? item.expected_delivery_date.split('T')[0] : '';
+          formPO.querySelector('[name="warehouse_id"]').value = item.warehouse_id || '';
+          formPO.querySelector('[name="payment_terms"]').value = item.payment_terms || 'Net 30';
+          formPO.querySelector('[name="total_amount"]').value = item.total_amount || '';
+          formPO.querySelector('[name="status"]').value = item.status || 'Draft';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
+    } else {
+      modalTitle.textContent = 'Create Purchase Order';
+      formPO.reset();
+      document.getElementById('po-id').value = '';
+    }
+  });
 
-     $modal.modal('show');
-   });
+  formPO.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const id = document.getElementById('po-id').value;
 
-   $(document).on('click', '.btn-delete', function() {
-     poId = $(this).data('id');
-     var po_number = $(this).data('po_number');
-     $('#delete-target').text(po_number || 'this PO');
-     $('#modalDelete').modal('show');
-   });
+    const formData = new FormData(formPO);
+    const payload = Object.fromEntries(formData.entries());
 
-   $('#btn-confirm-delete').on('click', function() {
-     $.ajax({
-       url: routes.destroy.replace(':id', poId),
-       method: 'DELETE',
-       headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-       success: function(res) {
-         if (res.success) {
-           showToast(res.message || 'Purchase order deleted', 'success');
-           $('#modalDelete').modal('hide');
-           setTimeout(() => location.reload(), 1000);
-         }
-       },
-       error: function(xhr) {
-         showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
-       }
-     });
-   });
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.PURCHASE.PURCHASE_ORDERS.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.PURCHASE.PURCHASE_ORDERS.STORE, payload);
+    }
 
-   $form.on('submit', function(e) {
-     e.preventDefault();
-     $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalPO).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formPO, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
+      }
+    });
+  });
 
-     var url = isEdit ? routes.update.replace(':id', poId) : routes.store;
-     var method = isEdit ? 'PUT' : 'POST';
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'this PO';
+  });
 
-     $.ajax({
-       url: url,
-       method: method,
-       data: $form.serialize(),
-       headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-       success: function(res) {
-         if (res.success) {
-           showToast(res.message || (isEdit ? 'Purchase order updated' : 'Purchase order created'), 'success');
-           $modal.modal('hide');
-           setTimeout(() => location.reload(), 1000);
-         }
-       },
-       error: function(xhr) {
-         var res = xhr.responseJSON;
-         if (res && res.errors) {
-           // Clear previous errors
-           $form.find('.is-invalid').removeClass('is-invalid');
-           $form.find('.invalid-feedback').hide().text('');
-           
-           // Show each field error
-           var firstError = null;
-           $.each(res.errors, function(field, messages) {
-             var $input = $form.find('[name="' + field + '"]');
-             $input.addClass('is-invalid');
-             $('#error-' + field).text(messages[0]).show();
-             if (!firstError) firstError = messages[0];
-           });
-           
-           if (firstError) {
-             showToast(firstError, 'error');
-           } else {
-             showToast('Please correct the errors in the form', 'error');
-           }
-         } else if (res && res.message) {
-           showToast(res.message, 'error');
-         } else {
-           showToast('An error occurred', 'error');
-         }
-       },
-       complete: function() {
-         $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Submit PO');
-       }
-     });
-   });
+  btnConfirmDelete.addEventListener('click', function() {
+    if (!deleteId) return;
 
-   function resetForm() {
-     poId = null;
-     isEdit = false;
-     $form[0].reset();
-     $form.find('.is-invalid').removeClass('is-invalid');
-     $form.find('.invalid-feedback').hide().text('');
-   }
-
-   function showToast(msg, type) {
-     type = type || 'info';
-     var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
-     var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
-     var $t = $('<div class="erp-toast ' + type + '"></div>')
-       .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
-     $('#toast-container').append($t);
-     setTimeout(function() { $t.css('opacity', 0); }, 2500);
-     setTimeout(function() { $t.remove(); }, 2800);
-   }
- });
+    apiClient.destroy(API_ENDPOINTS.PURCHASE.PURCHASE_ORDERS.DESTROY, deleteId)
+    .then(data => {
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
+  });
+});
  </script>
  @endpush
 @endsection

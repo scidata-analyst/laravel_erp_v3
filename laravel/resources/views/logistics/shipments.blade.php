@@ -11,7 +11,7 @@
     </div>
     <div class="d-flex gap-2">
       <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-      <button class="btn-erp btn-primary" id="btn-add-shipment"><i class="bi bi-plus-lg"></i> New Shipment</button>
+      <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalShipment" data-mode="create"><i class="bi bi-plus-lg"></i> New Shipment</button>
     </div>
   </div>
 
@@ -68,16 +68,13 @@
                 <div class="d-flex gap-1">
                   <button class="btn-erp btn-outline btn-xs btn-icon btn-edit"
                     data-id="{{ $shipment->id }}"
-                    data-sales_order_id="{{ $shipment->sales_order_id }}"
-                    data-carrier="{{ $shipment->carrier }}"
-                    data-tracking_number="{{ $shipment->tracking_number }}"
-                    data-estimated_delivery_date="{{ $shipment->estimated_delivery_date }}"
-                    data-shipping_address="{{ $shipment->shipping_address }}"
-                    data-status="{{ $shipment->status }}"
+                    data-mode="edit"
+                    data-bs-toggle="modal" data-bs-target="#modalShipment"
                     title="Edit"><i class="bi bi-pencil"></i></button>
                   <button class="btn-erp btn-danger btn-xs btn-icon btn-delete"
-                    data-id="{{ $shipment->id }}"
-                    data-id_display="SHP-{{ $shipment->id }}"
+                    data-delete-id="{{ $shipment->id }}"
+                    data-delete-label="SHP-{{ $shipment->id }}"
+                    data-bs-toggle="modal" data-bs-target="#modalDelete"
                     title="Delete"><i class="bi bi-trash"></i></button>
                 </div>
               </td>
@@ -187,125 +184,97 @@
 
 @push('scripts')
 <script>
-$(function() {
-  var routes = {
-    store: '{{ route("shipments.store") }}',
-    update: '{{ route("shipments.update", ":id") }}',
-    destroy: '{{ route("shipments.destroy", ":id") }}'
-  };
+document.addEventListener('DOMContentLoaded', function() {
+  const modalShipment = document.getElementById('modalShipment');
+  const formShipment = document.getElementById('form-shipment');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
 
-  var $modal = $('#modalShipment');
-  var $form = $('#form-shipment');
-  var $btnSave = $('#btn-save');
-  var shipmentId = null;
-  var isEdit = false;
+  let deleteId = null;
 
-  $('#btn-add-shipment').on('click', function() {
-    resetForm();
-    isEdit = false;
-    $('#modal-title').text('New Shipment');
-    $modal.modal('show');
+  modalShipment.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formShipment);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = document.getElementById('modal-title');
+
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Shipment';
+
+      apiClient.show(API_ENDPOINTS.LOGISTICS.SHIPMENTS.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('shipment-id').value = item.id;
+          formShipment.querySelector('[name="sales_order_id"]').value = item.sales_order_id || '';
+          formShipment.querySelector('[name="carrier"]').value = item.carrier || 'DHL';
+          formShipment.querySelector('[name="tracking_number"]').value = item.tracking_number || '';
+          formShipment.querySelector('[name="estimated_delivery_date"]').value = item.estimated_delivery_date || '';
+          formShipment.querySelector('[name="shipping_address"]').value = item.shipping_address || '';
+          formShipment.querySelector('[name="status"]').value = item.status || 'Preparing';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
+    } else {
+      modalTitle.textContent = 'New Shipment';
+      formShipment.reset();
+      document.getElementById('shipment-id').value = '';
+    }
   });
 
-  $(document).on('click', '.btn-edit', function() {
-    resetForm();
-    isEdit = true;
-    shipmentId = $(this).data('id');
-    $('#modal-title').text('Edit Shipment');
-
-    $('#shipment-id').val(shipmentId);
-    $('#sales-order-id').val($(this).data('sales_order_id'));
-    $('#carrier').val($(this).data('carrier') || 'DHL');
-    $('#tracking-number').val($(this).data('tracking_number'));
-    $('#estimated-delivery-date').val($(this).data('estimated_delivery_date'));
-    $('#shipping-address').val($(this).data('shipping_address'));
-    $('#status').val($(this).data('status') || 'Preparing');
-
-    $modal.modal('show');
-  });
-
-  $(document).on('click', '.btn-delete', function() {
-    shipmentId = $(this).data('id');
-    var id_display = $(this).data('id_display') || 'this shipment';
-    $('#delete-target').text(id_display);
-    $('#modalDelete').modal('show');
-  });
-
-  $('#btn-confirm-delete').on('click', function() {
-    $.ajax({
-      url: routes.destroy.replace(':id', shipmentId),
-      method: 'DELETE',
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function(res) {
-        if (res.success) {
-          showToast(res.message || 'Shipment deleted', 'success');
-          $('#modalDelete').modal('hide');
-          setTimeout(() => location.reload(), 1000);
-        }
-      },
-      error: function(xhr) {
-        showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
-      }
-    });
-  });
-
-  $form.on('submit', function(e) {
+  formShipment.addEventListener('submit', function(e) {
     e.preventDefault();
-    $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+    const id = document.getElementById('shipment-id').value;
 
-    var url = isEdit ? routes.update.replace(':id', shipmentId) : routes.store;
-    var method = isEdit ? 'PUT' : 'POST';
+    const formData = new FormData(formShipment);
+    const payload = Object.fromEntries(formData.entries());
 
-    $.ajax({
-      url: url,
-      method: method,
-      data: $form.serialize(),
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function(res) {
-        if (res.success) {
-          showToast(res.message || (isEdit ? 'Shipment updated' : 'Shipment created'), 'success');
-          $modal.modal('hide');
-          setTimeout(() => location.reload(), 1000);
-        }
-      },
-      error: function(xhr) {
-        var res = xhr.responseJSON;
-        if (res && res.errors) {
-          $.each(res.errors, function(field, messages) {
-            var $input = $form.find('[name="' + field + '"]');
-            $input.addClass('is-invalid');
-            $('#error-' + field).text(messages[0]).show();
-          });
-        } else if (res && res.message) {
-          showToast(res.message, 'error');
-        } else {
-          showToast('An error occurred', 'error');
-        }
-      },
-      complete: function() {
-        $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Create Shipment');
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.LOGISTICS.SHIPMENTS.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.LOGISTICS.SHIPMENTS.STORE, payload);
+    }
+
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalShipment).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formShipment, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
       }
     });
   });
 
-  function resetForm() {
-    shipmentId = null;
-    isEdit = false;
-    $form[0].reset();
-    $form.find('.is-invalid').removeClass('is-invalid');
-    $form.find('.invalid-feedback').hide().text('');
-  }
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
+  });
 
-  function showToast(msg, type) {
-    type = type || 'info';
-    var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
-    var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
-    var $t = $('<div class="erp-toast ' + type + '"></div>')
-      .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
-    $('#toast-container').append($t);
-    setTimeout(function() { $t.css('opacity', 0); }, 2500);
-    setTimeout(function() { $t.remove(); }, 2800);
-  }
+  btnConfirmDelete.addEventListener('click', function() {
+    if (!deleteId) return;
+
+    apiClient.destroy(API_ENDPOINTS.LOGISTICS.SHIPMENTS.DESTROY, deleteId)
+    .then(data => {
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
+  });
 });
 </script>
 @endpush

@@ -11,7 +11,7 @@
     </div>
     <div class="d-flex gap-2">
       <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-      <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalPerformance"><i
+      <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalPerformance" data-mode="create"><i
           class="bi bi-plus-lg"></i> New Review</button>
     </div>
   </div>
@@ -64,15 +64,14 @@
                 <div class="d-flex gap-1">
                   <button class="btn-erp btn-outline btn-xs btn-icon btn-edit" 
                     data-id="{{ $perf->id }}"
-                    data-url="{{ route('performance.show', $perf->id) }}"
+                    data-mode="edit"
                     data-bs-toggle="modal"
                     data-bs-target="#modalPerformance"
                     title="Edit">
                     <i class="bi bi-pencil"></i>
                   </button>
                   <button class="btn-erp btn-danger btn-xs btn-icon btn-delete" 
-                    data-id="{{ $perf->id }}"
-                    data-url="{{ route('performance.destroy', $perf->id) }}"
+                    data-delete-id="{{ $perf->id }}"
                     data-bs-toggle="modal"
                     data-bs-target="#modalDelete"
                     data-delete-label="Review"
@@ -104,9 +103,7 @@
           <h5 class="modal-title" style="color:var(--text-primary);font-weight:600">New Performance Review</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
-        <form id="form-performance" method="POST">
-          @csrf
-          <input type="hidden" name="_method" value="POST" id="form-method">
+        <form id="form-performance">
           <input type="hidden" name="id" id="performance_id">
           <div class="modal-body">
             <div class="row g-3">
@@ -189,93 +186,97 @@
 
 @push('scripts')
 <script>
-(function() {
-  const ROUTE_STORE = '{{ route("performance.store") }}';
-  const ROUTE_UPDATE = '{{ route("performance.update", ["id" => "__ID__"]) }}';
-  const ROUTE_DESTROY = '{{ route("performance.destroy", ["id" => "__ID__"]) }}';
-  let deleteUrl = null;
+document.addEventListener('DOMContentLoaded', function() {
+  const modalPerformance = document.getElementById('modalPerformance');
+  const formPerformance = document.getElementById('form-performance');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
 
-  function showToast(message, type = 'success') {
-    const toast = document.createElement('div');
-    toast.className = `toast-notification toast-${type}`;
-    toast.innerHTML = `<i class="bi bi-${type === 'success' ? 'check-circle' : 'x-circle'}"></i> ${message}`;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 3000);
-  }
+  let deleteId = null;
 
-  function resetForm() {
-    $('#form-performance')[0].reset();
-    $('#form-method').val('POST');
-    $('#performance_id').val('');
-    $('#modalPerformance .modal-title').text('New Performance Review');
-  }
+  modalPerformance.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formPerformance);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = modalPerformance.querySelector('.modal-title');
 
-  $('#modalPerformance').on('show.bs.modal', function(e) {
-    const btn = e.relatedTarget;
-    if (btn.classList.contains('btn-edit')) {
-      const id = btn.dataset.id;
-      $.ajax({
-        url: btn.dataset.url,
-        method: 'GET',
-        success: function(data) {
-          $('#form-method').val('PUT');
-          $('#performance_id').val(data.id);
-          $('#modalPerformance .modal-title').text('Edit Performance Review');
-          $('#form-performance select[name="employee_id"]').val(data.employee_id);
-          $('#form-performance select[name="review_period"]').val(data.review_period);
-          $('#form-performance input[name="kpi_score"]').val(data.kpi_score);
-          $('#form-performance input[name="goal_achievement"]').val(data.goal_achievement);
-          $('#form-performance select[name="overall_rating"]').val(data.overall_rating);
-          $('#form-performance textarea[name="comments"]').val(data.comments);
-        }
-      });
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Performance Review';
+
+      apiClient.show(API_ENDPOINTS.HR.PERFORMANCE.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('performance_id').value = item.id;
+          formPerformance.querySelector('[name="employee_id"]').value = item.employee_id || '';
+          formPerformance.querySelector('[name="review_period"]').value = item.review_period || '';
+          formPerformance.querySelector('[name="kpi_score"]').value = item.kpi_score || '';
+          formPerformance.querySelector('[name="goal_achievement"]').value = item.goal_achievement || '';
+          formPerformance.querySelector('[name="overall_rating"]').value = item.overall_rating || '';
+          formPerformance.querySelector('[name="comments"]').value = item.comments || '';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
     } else {
-      resetForm();
+      modalTitle.textContent = 'New Performance Review';
+      formPerformance.reset();
+      document.getElementById('performance_id').value = '';
     }
   });
 
-  $('#form-performance').on('submit', function(e) {
+  formPerformance.addEventListener('submit', function(e) {
     e.preventDefault();
-    const id = $('#performance_id').val();
-    const url = id ? ROUTE_UPDATE.replace('__ID__', id) : ROUTE_STORE;
-    const method = id ? 'PUT' : 'POST';
+    const id = document.getElementById('performance_id').value;
 
-    $.ajax({
-      url: url,
-      method: method,
-      data: $(this).serialize(),
-      success: function() {
-        $('#modalPerformance').modal('hide');
-        showToast(id ? 'Review updated successfully' : 'Review created successfully');
-        setTimeout(() => location.reload(), 500);
-      },
-      error: function(xhr) {
-        showToast(xhr.responseJSON?.message || 'Operation failed', 'error');
+    const formData = new FormData(formPerformance);
+    const payload = Object.fromEntries(formData.entries());
+
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.HR.PERFORMANCE.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.HR.PERFORMANCE.STORE, payload);
+    }
+
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalPerformance).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formPerformance, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
       }
     });
   });
 
-  $('#modalDelete').on('show.bs.modal', function(e) {
-    const btn = e.relatedTarget;
-    deleteUrl = btn.dataset.url;
-    $('#delete-target').text(btn.dataset.deleteLabel || 'record');
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
   });
 
-  $('#btn-confirm-delete').on('click', function() {
-    $.ajax({
-      url: deleteUrl,
-      method: 'DELETE',
-      data: { _token: '{{ csrf_token() }}' },
-      success: function() {
-        $('#modalDelete').modal('hide');
-        showToast('Record deleted successfully');
-        setTimeout(() => location.reload(), 500);
-      },
-      error: function(xhr) {
-        showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
+  btnConfirmDelete.addEventListener('click', function() {
+    if (!deleteId) return;
+
+    apiClient.destroy(API_ENDPOINTS.HR.PERFORMANCE.DESTROY, deleteId)
+    .then(data => {
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
       }
-    });
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
   });
-})();
+});
 </script>
 @endpush

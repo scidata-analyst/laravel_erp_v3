@@ -118,25 +118,18 @@
                 <td>
                   <div class="d-flex gap-1">
                     <button class="btn-erp btn-outline btn-xs btn-icon btn-edit" 
+                            data-id="{{ $task->id }}"
+                            data-mode="edit"
                             data-bs-toggle="modal" 
                             data-bs-target="#modalTask" 
-                            data-mode="edit"
-                            data-id="{{ $task->id }}"
-                            data-title="{{ $task->task_title }}"
-                            data-project="{{ $task->project_id }}"
-                            data-assignee="{{ $task->assigned_user_id }}"
-                            data-priority="{{ $task->priority }}"
-                            data-due="{{ $task->due_date }}"
-                            data-status="{{ $task->status }}"
-                            data-description="{{ $task->description ?? '' }}"
                             title="Edit">
                       <i class="bi bi-pencil"></i>
                     </button>
                     <button class="btn-erp btn-danger btn-xs btn-icon btn-delete" 
+                            data-delete-id="{{ $task->id }}"
+                            data-delete-label="Task"
                             data-bs-toggle="modal" 
                             data-bs-target="#modalDelete" 
-                            data-id="{{ $task->id }}"
-                            data-label="Task"
                             title="Delete">
                       <i class="bi bi-trash"></i>
                     </button>
@@ -243,141 +236,98 @@
 
 @push('scripts')
 <script>
-(function() {
-  let currentMode = 'create';
+document.addEventListener('DOMContentLoaded', function() {
+  const modalTask = document.getElementById('modalTask');
+  const formTask = document.getElementById('formTask');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
+
   let deleteId = null;
 
-  function showToast(message, type = 'success') {
-    const toast = document.createElement('div');
-    toast.className = `toast-notification toast-${type}`;
-    toast.innerHTML = `<i class="bi bi-${type === 'success' ? 'check-circle-fill' : 'exclamation-circle-fill'}"></i> ${message}`;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.classList.add('show'), 10);
-    setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
-  }
+  modalTask.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formTask);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = document.getElementById('modalTaskTitle');
 
-  function reloadTable() {
-    fetch('{{ route("tasks.index") }}')
-      .then(res => res.text())
-      .then(html => {
-        const tbody = document.querySelector('#tasks-tbody');
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        const newTbody = doc.querySelector('#tasks-tbody');
-        if (tbody && newTbody) tbody.innerHTML = newTbody.innerHTML;
-      });
-  }
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Task';
 
-  document.querySelectorAll('[data-bs-target="#modalTask"]').forEach(btn => {
-    btn.addEventListener('click', function() {
-      currentMode = this.dataset.mode || 'create';
-      const form = document.getElementById('formTask');
-      form.reset();
+      apiClient.show(API_ENDPOINTS.PROJECTS.TASKS.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('task_id').value = item.id;
+          formTask.querySelector('[name="task_title"]').value = item.task_title || '';
+          formTask.querySelector('[name="project_id"]').value = item.project_id || '';
+          formTask.querySelector('[name="assigned_user_id"]').value = item.assigned_user_id || '';
+          formTask.querySelector('[name="priority"]').value = item.priority || 'Low';
+          formTask.querySelector('[name="due_date"]').value = item.due_date ? item.due_date.split('T')[0] : '';
+          formTask.querySelector('[name="status"]').value = item.status || 'Todo';
+          formTask.querySelector('[name="description"]').value = item.description || '';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
+    } else {
+      modalTitle.textContent = 'Add Task';
+      formTask.reset();
       document.getElementById('task_id').value = '';
-      document.getElementById('modalTaskTitle').textContent = currentMode === 'edit' ? 'Edit Task' : 'Add Task';
+    }
+  });
+
+  formTask.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const id = document.getElementById('task_id').value;
+
+    const formData = new FormData(formTask);
+    const payload = Object.fromEntries(formData.entries());
+
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.PROJECTS.TASKS.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.PROJECTS.TASKS.STORE, payload);
+    }
+
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalTask).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formTask, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
+      }
     });
   });
 
-  document.querySelector('#tbl-tasks').addEventListener('click', function(e) {
-    const btn = e.target.closest('.btn-edit');
-    if (btn) {
-      currentMode = 'edit';
-      document.getElementById('modalTaskTitle').textContent = 'Edit Task';
-      document.getElementById('task_id').value = btn.dataset.id;
-      document.getElementById('task_title').value = btn.dataset.title || '';
-      document.getElementById('task_project_id').value = btn.dataset.project || '';
-      document.getElementById('task_assigned_user_id').value = btn.dataset.assignee || '';
-      document.getElementById('task_priority').value = btn.dataset.priority || 'Low';
-      document.getElementById('task_due_date').value = btn.dataset.due || '';
-      document.getElementById('task_status').value = btn.dataset.status || 'Todo';
-      document.getElementById('task_description').value = btn.dataset.description || '';
-    }
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
   });
 
-  document.querySelector('#tbl-tasks').addEventListener('click', function(e) {
-    const btn = e.target.closest('.btn-delete');
-    if (btn) {
-      deleteId = btn.dataset.id;
-      document.getElementById('delete_id').value = deleteId;
-      document.getElementById('delete-target').textContent = btn.dataset.label || 'record';
-    }
-  });
-
-  document.getElementById('formTask').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const id = document.getElementById('task_id').value;
-    const url = id ? '{{ route("tasks.update", ["id" => ":id"]) }}'.replace(':id', id) : '{{ route("tasks.store") }}';
-    const method = id ? 'PUT' : 'POST';
-
-    const formData = {
-      task_title: document.getElementById('task_title').value,
-      project_id: document.getElementById('task_project_id').value,
-      assigned_user_id: document.getElementById('task_assigned_user_id').value,
-      priority: document.getElementById('task_priority').value,
-      due_date: document.getElementById('task_due_date').value,
-      status: document.getElementById('task_status').value,
-      description: document.getElementById('task_description').value,
-    };
-
-    fetch(url, {
-      method: method,
-      headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      body: JSON.stringify(formData)
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        showToast(id ? 'Task updated successfully' : 'Task created successfully');
-        bootstrap.Modal.getInstance(document.getElementById('modalTask')).hide();
-        reloadTable();
-      } else {
-        showToast(data.message || 'Error saving task', 'error');
-      }
-    })
-    .catch(() => showToast('Error saving task', 'error'));
-  });
-
-  document.getElementById('btn-confirm-delete').addEventListener('click', function() {
+  btnConfirmDelete.addEventListener('click', function() {
     if (!deleteId) return;
-    fetch('{{ route("tasks.destroy", ["id" => ":id"]) }}'.replace(':id', deleteId), {
-      method: 'DELETE',
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
-    })
-    .then(res => res.json())
+
+    apiClient.destroy(API_ENDPOINTS.PROJECTS.TASKS.DESTROY, deleteId)
     .then(data => {
-      if (data.success) {
-        showToast('Task deleted successfully');
-        bootstrap.Modal.getInstance(document.getElementById('modalDelete')).hide();
-        reloadTable();
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
       } else {
-        showToast(data.message || 'Error deleting task', 'error');
+        showToast(data.message || 'Error', 'error');
       }
     })
-    .catch(() => showToast('Error deleting task', 'error'));
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
   });
-})();
+});
 </script>
-<style>
-.toast-notification {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 12px 20px;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--text-primary);
-  font-size: 14px;
-  z-index: 9999;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.toast-notification.show { opacity: 1; transform: translateY(0); }
-.toast-success i { color: var(--accent-2); }
-.toast-error i { color: var(--accent-3); }
-</style>
 @endpush

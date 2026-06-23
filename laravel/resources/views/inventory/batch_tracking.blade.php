@@ -11,7 +11,7 @@
     </div>
     <div class="d-flex gap-2">
       <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-      <button class="btn-erp btn-primary" id="btn-add-batch" data-bs-toggle="modal" data-bs-target="#modalBatch"><i
+      <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalBatch" data-mode="create"><i
           class="bi bi-plus-lg"></i> Add Batch</button>
     </div>
   </div>
@@ -62,14 +62,9 @@
               <td>
                 <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon btn-edit" 
                     data-id="{{ $batch->id }}"
-                    data-product_id="{{ $batch->product_id }}"
-                    data-batch_lot_number="{{ $batch->batch_lot_number }}"
-                    data-serial_number="{{ $batch->serial_number ?? '' }}"
-                    data-quantity="{{ $batch->quantity }}"
-                    data-manufacture_date="{{ $batch->manufacture_date ? \Carbon\Carbon::parse($batch->manufacture_date)->format('Y-m-d') : '' }}"
-                    data-expiry_date="{{ $batch->expiry_date ? \Carbon\Carbon::parse($batch->expiry_date)->format('Y-m-d') : '' }}"
+                    data-mode="edit"
                     data-bs-toggle="modal" data-bs-target="#modalBatch" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon btn-delete" data-id="{{ $batch->id }}" data-batch_lot_number="{{ $batch->batch_lot_number }}" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                    class="btn-erp btn-danger btn-xs btn-icon btn-delete" data-delete-id="{{ $batch->id }}" data-bs-toggle="modal" data-bs-target="#modalDelete"
                     data-delete-label="Batch" title="Delete"><i class="bi bi-trash"></i></button></div>
               </td>
             </tr>
@@ -137,7 +132,7 @@
         </div>
         <div class="modal-footer" style="border-color:var(--border)">
           <button type="button" class="btn-erp btn-outline" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn-erp btn-primary btn-modal-save" id="btn-save">
+          <button type="submit" form="form-batch" class="btn-erp btn-primary btn-modal-save" id="btn-save">
             <i class="bi bi-check2"></i> Save Batch
           </button>
         </div>
@@ -173,165 +168,110 @@
 
    @push('scripts')
      <script>
-       $(function () {
-         var routes = {
-           store: '{{ route("batch_tracking.store") }}',
-           update: '{{ route("batch_tracking.update", ":id") }}',
-           destroy: '{{ route("batch_tracking.destroy", ":id") }}',
-           productsAll: '{{ route("product_catalog.all") }}'
-         };
+document.addEventListener('DOMContentLoaded', function() {
+  const modalBatch = document.getElementById('modalBatch');
+  const formBatch = document.getElementById('form-batch');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
+  const productSelect = document.getElementById('product_id');
 
-         var $modal = $('#modalBatch');
-         var $form = $('#form-batch');
-         var $btnSave = $('#btn-save');
-         var batchId = null;
-         var isEdit = false;
+  let deleteId = null;
 
-         // Load products dropdown via AJAX
-         function loadProducts() {
-           $.ajax({
-             url: routes.productsAll,
-             method: 'GET',
-             success: function(res) {
-               if (res.success && res.data) {
-                 var $prod = $('#product_id');
-                 $prod.empty().append('<option value="">Select Product</option>');
-                 $.each(res.data, function(i, p) {
-                   $prod.append('<option value="' + p.id + '">' + p.product_name + ' (' + p.sku + ')</option>');
-                 });
-               }
-             },
-             error: function(xhr) {
-               console.warn('Failed to load products');
-             }
-           });
-         }
+  apiClient.get(API_ENDPOINTS.INVENTORY.PRODUCT_CATALOG.ALL)
+    .then(data => {
+      if (data.success && data.data) {
+        productSelect.innerHTML = '<option value="">Select Product</option>';
+        data.data.forEach(p => {
+          productSelect.innerHTML += `<option value="${p.id}">${p.product_name} (${p.sku})</option>`;
+        });
+      }
+    })
+    .catch(() => console.warn('Failed to load products'));
 
-         // Load products on page ready
-         loadProducts();
+  modalBatch.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formBatch);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = document.getElementById('modal-title');
 
-         $('#btn-add-batch').on('click', function () {
-           resetForm();
-           isEdit = false;
-           $('#modal-title').text('Add Batch / Serial');
-         });
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Batch / Serial';
 
-         $modal.on('shown.bs.modal', function () {
-           if (!isEdit) {
-             resetForm();
-             $('#modal-title').text('Add Batch / Serial');
-           }
-         });
+      apiClient.show(API_ENDPOINTS.INVENTORY.BATCH_TRACKING.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('batch-id').value = item.id;
+          formBatch.querySelector('[name="product_id"]').value = item.product_id || '';
+          formBatch.querySelector('[name="batch_lot_number"]').value = item.batch_lot_number || '';
+          formBatch.querySelector('[name="serial_number"]').value = item.serial_number || '';
+          formBatch.querySelector('[name="quantity"]').value = item.quantity || '';
+          formBatch.querySelector('[name="manufacture_date"]').value = item.manufacture_date ? item.manufacture_date.substring(0, 10) : '';
+          formBatch.querySelector('[name="expiry_date"]').value = item.expiry_date ? item.expiry_date.substring(0, 10) : '';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
+    } else {
+      modalTitle.textContent = 'Add Batch / Serial';
+      formBatch.reset();
+      document.getElementById('batch-id').value = '';
+    }
+  });
 
-         $(document).on('click', '.btn-edit', function () {
-           resetForm();
-           isEdit = true;
-           batchId = $(this).data('id');
-           $('#modal-title').text('Edit Batch / Serial');
+  formBatch.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const id = document.getElementById('batch-id').value;
 
-           $('#batch-id').val(batchId);
-           $('#product_id').val($(this).data('product_id'));
-           $('#batch_lot_number').val($(this).data('batch_lot_number'));
-           $('#serial_number').val($(this).data('serial_number'));
-           $('#quantity').val($(this).data('quantity'));
-           $('#manufacture_date').val($(this).data('manufacture_date'));
-           $('#expiry_date').val($(this).data('expiry_date'));
-         });
+    const formData = new FormData(formBatch);
+    const payload = Object.fromEntries(formData.entries());
 
-         $(document).on('click', '.btn-delete', function () {
-           batchId = $(this).data('id');
-           var batch_lot_number = $(this).data('batch_lot_number');
-           $('#delete-target').text(batch_lot_number || 'this batch');
-         });
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.INVENTORY.BATCH_TRACKING.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.INVENTORY.BATCH_TRACKING.STORE, payload);
+    }
 
-         $('#btn-confirm-delete').on('click', function () {
-           $.ajax({
-             url: routes.destroy.replace(':id', batchId),
-             method: 'DELETE',
-             headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-             success: function (res) {
-               if (res.success) {
-                 showToast(res.message || 'Batch deleted', 'success');
-                 $('#modalDelete').modal('hide');
-                 setTimeout(() => location.reload(), 1000);
-               }
-             },
-             error: function (xhr) {
-               showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
-             }
-           });
-         });
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalBatch).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formBatch, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
+      }
+    });
+  });
 
-         $btnSave.on('click', function () {
-           $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
+  });
 
-           var url = isEdit ? routes.update.replace(':id', batchId) : routes.store;
-           var method = isEdit ? 'PUT' : 'POST';
+  btnConfirmDelete.addEventListener('click', function() {
+    if (!deleteId) return;
 
-           $.ajax({
-             url: url,
-             method: method,
-             data: $form.serialize(),
-             headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-             success: function (res) {
-               if (res.success) {
-                 showToast(res.message || (isEdit ? 'Batch updated' : 'Batch created'), 'success');
-                 $modal.modal('hide');
-                 setTimeout(() => location.reload(), 1000);
-               }
-             },
-             error: function (xhr) {
-               var res = xhr.responseJSON;
-               if (res && res.errors) {
-                 // Clear previous errors
-                 $form.find('.is-invalid').removeClass('is-invalid');
-                 $form.find('.invalid-feedback').hide().text('');
-                 
-                 // Show each field error
-                 var firstError = null;
-                 $.each(res.errors, function (field, messages) {
-                   var $input = $form.find('[name="' + field + '"]');
-                   $input.addClass('is-invalid');
-                   $('#error-' + field).text(messages[0]).show();
-                   if (!firstError) firstError = messages[0];
-                 });
-                 
-                 if (firstError) {
-                   showToast(firstError, 'error');
-                 } else {
-                   showToast('Please correct the errors in the form', 'error');
-                 }
-               } else if (res && res.message) {
-                 showToast(res.message, 'error');
-               } else {
-                 showToast('An error occurred', 'error');
-               }
-             },
-             complete: function () {
-               $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Save Batch');
-             }
-           });
-         });
-
-         function resetForm() {
-           batchId = null;
-           isEdit = false;
-           $form[0].reset();
-           $form.find('.is-invalid').removeClass('is-invalid');
-           $form.find('.invalid-feedback').hide().text('');
-         }
-
-         function showToast(msg, type) {
-           type = type || 'info';
-           var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
-           var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
-           var $t = $('<div class="erp-toast ' + type + '"></div>')
-             .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
-           $('#toast-container').append($t);
-           setTimeout(function () { $t.css('opacity', 0); }, 2500);
-           setTimeout(function () { $t.remove(); }, 2800);
-         }
-       });
+    apiClient.destroy(API_ENDPOINTS.INVENTORY.BATCH_TRACKING.DESTROY, deleteId)
+    .then(data => {
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
+  });
+});
      </script>
    @endpush
 @endsection

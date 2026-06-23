@@ -11,7 +11,7 @@
     </div>
     <div class="d-flex gap-2">
       <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-      <button class="btn-erp btn-primary" id="btn-add-bom"><i class="bi bi-plus-lg"></i> New BOM</button>
+      <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalBOM" data-mode="create"><i class="bi bi-plus-lg"></i> New BOM</button>
     </div>
   </div>
 
@@ -64,14 +64,14 @@
                 <div class="d-flex gap-1">
                   <button class="btn-erp btn-outline btn-xs btn-icon btn-edit" 
                     data-id="{{ $bom->id }}"
-                    data-finished_product_name="{{ $bom->finished_product_name }}"
-                    data-version="{{ $bom->version ?? 'v1.0' }}"
-                    data-lead_time_days="{{ $bom->lead_time_days ?? 0 }}"
-                    data-status="{{ $bom->status ?? 'Draft' }}"
+                    data-mode="edit"
+                    data-bs-toggle="modal" data-bs-target="#modalBOM"
                     title="Edit"><i class="bi bi-pencil"></i></button>
                   <button class="btn-erp btn-danger btn-xs btn-icon btn-delete" 
-                    data-id="{{ $bom->id }}"
-                    data-delete-label="BOM-{{ $bom->id }}" title="Delete"><i class="bi bi-trash"></i></button>
+                    data-delete-id="{{ $bom->id }}"
+                    data-delete-label="BOM-{{ $bom->id }}"
+                    data-bs-toggle="modal" data-bs-target="#modalDelete"
+                    title="Delete"><i class="bi bi-trash"></i></button>
                 </div>
               </td>
             </tr>
@@ -164,121 +164,95 @@
 
 @push('scripts')
 <script>
-$(function() {
-  var routes = {
-    store: '{{ route("bom.store") }}',
-    update: '{{ route("bom.update", ":id") }}',
-    destroy: '{{ route("bom.destroy", ":id") }}'
-  };
+document.addEventListener('DOMContentLoaded', function() {
+  const modalBOM = document.getElementById('modalBOM');
+  const formBOM = document.getElementById('form-bom');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
 
-  var $modal = $('#modalBOM');
-  var $form = $('#form-bom');
-  var $btnSave = $('#btn-save');
-  var bomId = null;
-  var isEdit = false;
+  let deleteId = null;
 
-  function resetForm() {
-    $form[0].reset();
-    $form.find('.is-invalid').removeClass('is-invalid');
-    $form.find('.invalid-feedback').hide();
-    $('#bom-id').val('');
-  }
+  modalBOM.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formBOM);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = document.getElementById('modal-title');
 
-  $('#btn-add-bom').on('click', function() {
-    resetForm();
-    isEdit = false;
-    $('#modal-title').text('New Bill of Materials');
-    $btnSave.html('<i class="bi bi-check2"></i> Save BOM');
-    $modal.modal('show');
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Bill of Materials';
+
+      apiClient.show(API_ENDPOINTS.PRODUCTION.BOM.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('bom-id').value = item.id;
+          formBOM.querySelector('[name="finished_product_name"]').value = item.finished_product_name || '';
+          formBOM.querySelector('[name="version"]').value = item.version || 'v1.0';
+          formBOM.querySelector('[name="lead_time_days"]').value = item.lead_time_days || '';
+          formBOM.querySelector('[name="status"]').value = item.status || 'Draft';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
+    } else {
+      modalTitle.textContent = 'New Bill of Materials';
+      formBOM.reset();
+      document.getElementById('bom-id').value = '';
+    }
   });
 
-  $(document).on('click', '.btn-edit', function() {
-    resetForm();
-    isEdit = true;
-    bomId = $(this).data('id');
-    $('#modal-title').text('Edit Bill of Materials');
-    
-    $('#bom-id').val(bomId);
-    $('#finished_product_name').val($(this).data('finished_product_name'));
-    $('#bom-version').val($(this).data('version'));
-    $('#lead_time_days').val($(this).data('lead_time_days'));
-    $('#bom-status').val($(this).data('status') || 'Draft');
-    
-    $btnSave.html('<i class="bi bi-check2"></i> Update BOM');
-    $modal.modal('show');
-  });
-
-  $(document).on('click', '.btn-delete', function() {
-    bomId = $(this).data('id');
-    var id_display = $(this).data('delete-label') || 'this BOM';
-    $('#delete-target').text(id_display);
-    $('#modalDelete').modal('show');
-  });
-
-  $('#btn-confirm-delete').on('click', function() {
-    $.ajax({
-      url: routes.destroy.replace(':id', bomId),
-      method: 'DELETE',
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function(res) {
-        if (res.success) {
-          showToast(res.message || 'BOM deleted', 'success');
-          $('#modalDelete').modal('hide');
-          setTimeout(() => location.reload(), 1000);
-        }
-      },
-      error: function(xhr) {
-        showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
-      }
-    });
-  });
-
-  $form.on('submit', function(e) {
+  formBOM.addEventListener('submit', function(e) {
     e.preventDefault();
-    $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+    const id = document.getElementById('bom-id').value;
 
-    var url = isEdit ? routes.update.replace(':id', bomId) : routes.store;
-    var method = isEdit ? 'PUT' : 'POST';
+    const formData = new FormData(formBOM);
+    const payload = Object.fromEntries(formData.entries());
 
-    $.ajax({
-      url: url,
-      method: method,
-      data: $form.serialize(),
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function(res) {
-        if (res.success) {
-          showToast(res.message || (isEdit ? 'BOM updated' : 'BOM created'), 'success');
-          $modal.modal('hide');
-          setTimeout(() => location.reload(), 1000);
-        }
-      },
-      error: function(xhr) {
-        var res = xhr.responseJSON;
-        if (res && res.errors) {
-          $.each(res.errors, function(field, messages) {
-            var $input = $form.find('[name="' + field + '"]');
-            $input.addClass('is-invalid');
-            $('<div class="invalid-feedback" style="display:block">' + messages[0] + '</div>').insertAfter($input);
-          });
-        } else if (res && res.message) {
-          showToast(res.message, 'error');
-        } else {
-          showToast('An error occurred', 'error');
-        }
-      },
-      complete: function() {
-        $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Save BOM');
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.PRODUCTION.BOM.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.PRODUCTION.BOM.STORE, payload);
+    }
+
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalBOM).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formBOM, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
       }
     });
   });
 
-  function showToast(msg, type) {
-    var $t = $('<div class="erp-toast ' + type + '"></div>')
-      .html('<span class="toast-icon">' + (type === 'success' ? '✓' : '✕') + '</span><span class="toast-message">' + msg + '</span>');
-    $('#toast-container').append($t);
-    setTimeout(function() { $t.addClass('show'); }, 10);
-    setTimeout(function() { $t.remove(); }, 4000);
-  }
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
+  });
+
+  btnConfirmDelete.addEventListener('click', function() {
+    if (!deleteId) return;
+
+    apiClient.destroy(API_ENDPOINTS.PRODUCTION.BOM.DESTROY, deleteId)
+    .then(data => {
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
+  });
 });
 </script>
 @endpush

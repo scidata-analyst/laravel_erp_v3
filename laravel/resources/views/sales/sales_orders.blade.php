@@ -11,7 +11,7 @@
   </div>
   <div class="d-flex gap-2">
     <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-    <button class="btn-erp btn-primary" id="btn-add-salesorder"><i class="bi bi-plus-lg"></i> New Order</button>
+    <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalSO" data-mode="create"><i class="bi bi-plus-lg"></i> New Order</button>
   </div>
 </div>
 
@@ -46,7 +46,7 @@
                 <span class="badge-status badge-inactive">{{ $order->status }}</span>
               @endif
             </td>
-            <td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon btn-edit" data-id="{{ $order->id }}" data-order_number="{{ $order->order_number }}" data-customer_id="{{ $order->customer_id }}" data-order_date="{{ $order->order_date }}" data-delivery_date="{{ $order->delivery_date }}" data-payment_terms="{{ $order->payment_terms }}" data-discount_percent="{{ $order->discount_percent }}" data-status="{{ $order->status }}" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon btn-delete" data-id="{{ $order->id }}" data-order_number="{{ $order->order_number }}" title="Delete"><i class="bi bi-trash"></i></button></div></td>
+            <td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon btn-edit" data-id="{{ $order->id }}" data-mode="edit" data-bs-toggle="modal" data-bs-target="#modalSO" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon btn-delete" data-delete-id="{{ $order->id }}" data-delete-label="{{ $order->order_number }}" data-bs-toggle="modal" data-bs-target="#modalDelete" title="Delete"><i class="bi bi-trash"></i></button></div></td>
           </tr>
         @endforeach
       </tbody>
@@ -153,124 +153,96 @@
 
 @push('scripts')
 <script>
-$(function () {
-  var routes = {
-    store: '{{ route("sales_orders.store") }}',
-    update: '{{ route("sales_orders.update", ":id") }}',
-    destroy: '{{ route("sales_orders.destroy", ":id") }}'
-  };
+document.addEventListener('DOMContentLoaded', function() {
+  const modalSO = document.getElementById('modalSO');
+  const formSalesOrder = document.getElementById('form-salesorder');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
 
-  var $modal = $('#modalSO');
-  var $form = $('#form-salesorder');
-  var $btnSave = $('#btn-save');
-  var salesorderId = null;
-  var isEdit = false;
+  let deleteId = null;
 
-  $('#btn-add-salesorder').on('click', function () {
-    resetForm();
-    isEdit = false;
-    $('#modal-title').text('New Sales Order');
-    $modal.modal('show');
+  modalSO.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formSalesOrder);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = document.getElementById('modal-title');
+
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Sales Order';
+
+      apiClient.show(API_ENDPOINTS.SALES.SALES_ORDERS.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('salesorder-id').value = item.id;
+          formSalesOrder.querySelector('[name="customer_id"]').value = item.customer_id || '';
+          formSalesOrder.querySelector('[name="order_date"]').value = item.order_date ? item.order_date.split('T')[0] : '';
+          formSalesOrder.querySelector('[name="delivery_date"]').value = item.delivery_date ? item.delivery_date.split('T')[0] : '';
+          formSalesOrder.querySelector('[name="payment_terms"]').value = item.payment_terms || '';
+          formSalesOrder.querySelector('[name="discount_percent"]').value = item.discount_percent || '';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
+    } else {
+      modalTitle.textContent = 'New Sales Order';
+      formSalesOrder.reset();
+      document.getElementById('salesorder-id').value = '';
+    }
   });
 
-  $(document).on('click', '.btn-edit', function () {
-    resetForm();
-    isEdit = true;
-    salesorderId = $(this).data('id');
-    $('#modal-title').text('Edit Sales Order');
-
-    $('#salesorder-id').val(salesorderId);
-    $('#customer-id').val($(this).data('customer_id'));
-    $('#order-date').val($(this).data('order_date'));
-    $('#delivery-date').val($(this).data('delivery_date'));
-    $('#payment-terms').val($(this).data('payment_terms'));
-    $('#discount-percent').val($(this).data('discount_percent'));
-
-    $modal.modal('show');
-  });
-
-  $(document).on('click', '.btn-delete', function () {
-    salesorderId = $(this).data('id');
-    var order_number = $(this).data('order_number');
-    $('#delete-target').text(order_number || 'this order');
-    $('#modalDelete').modal('show');
-  });
-
-  $('#btn-confirm-delete').on('click', function () {
-    $.ajax({
-      url: routes.destroy.replace(':id', salesorderId),
-      method: 'DELETE',
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function (res) {
-        if (res.success) {
-          showToast(res.message || 'Order deleted', 'success');
-          $('#modalDelete').modal('hide');
-          setTimeout(() => location.reload(), 1000);
-        }
-      },
-      error: function (xhr) {
-        showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
-      }
-    });
-  });
-
-  $form.on('submit', function (e) {
+  formSalesOrder.addEventListener('submit', function(e) {
     e.preventDefault();
-    $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+    const id = document.getElementById('salesorder-id').value;
 
-    var url = isEdit ? routes.update.replace(':id', salesorderId) : routes.store;
-    var method = isEdit ? 'PUT' : 'POST';
+    const formData = new FormData(formSalesOrder);
+    const payload = Object.fromEntries(formData.entries());
 
-    $.ajax({
-      url: url,
-      method: method,
-      data: $form.serialize(),
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function (res) {
-        if (res.success) {
-          showToast(res.message || (isEdit ? 'Order updated' : 'Order created'), 'success');
-          $modal.modal('hide');
-          setTimeout(() => location.reload(), 1000);
-        }
-      },
-      error: function (xhr) {
-        var res = xhr.responseJSON;
-        if (res && res.errors) {
-          $.each(res.errors, function (field, messages) {
-            var $input = $form.find('[name="' + field + '"]');
-            $input.addClass('is-invalid');
-            $('#error-' + field).text(messages[0]).show();
-          });
-        } else if (res && res.message) {
-          showToast(res.message, 'error');
-        } else {
-          showToast('An error occurred', 'error');
-        }
-      },
-      complete: function () {
-        $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Confirm Order');
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.SALES.SALES_ORDERS.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.SALES.SALES_ORDERS.STORE, payload);
+    }
+
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalSO).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formSalesOrder, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
       }
     });
   });
 
-  function resetForm() {
-    salesorderId = null;
-    isEdit = false;
-    $form[0].reset();
-    $form.find('.is-invalid').removeClass('is-invalid');
-    $form.find('.invalid-feedback').hide().text('');
-  }
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
+  });
 
-  function showToast(msg, type) {
-    type = type || 'info';
-    var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
-    var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
-    var $t = $('<div class="erp-toast ' + type + '"></div>')
-      .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
-    $('#toast-container').append($t);
-    setTimeout(function () { $t.css('opacity', 0); }, 2500);
-    setTimeout(function () { $t.remove(); }, 2800);
-  }
+  btnConfirmDelete.addEventListener('click', function() {
+    if (!deleteId) return;
+
+    apiClient.destroy(API_ENDPOINTS.SALES.SALES_ORDERS.DESTROY, deleteId)
+    .then(data => {
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
+  });
 });
 </script>
 @endpush

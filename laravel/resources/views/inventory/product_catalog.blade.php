@@ -11,7 +11,7 @@
     </div>
     <div class="d-flex gap-2">
       <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-      <button class="btn-erp btn-primary" id="btn-add-product" data-bs-toggle="modal" data-bs-target="#modalProduct"><i
+      <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalProduct" data-mode="create"><i
           class="bi bi-plus-lg"></i> Add Product</button>
     </div>
   </div>
@@ -63,18 +63,9 @@
               <td>
                 <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon btn-edit" 
                     data-id="{{ $product->id }}"
-                    data-product_name="{{ $product->product_name }}"
-                    data-sku="{{ $product->sku }}"
-                    data-category="{{ $product->category }}"
-                    data-unit_price="{{ $product->unit_price }}"
-                    data-cost_price="{{ $product->cost_price ?? '' }}"
-                    data-warehouse_id="{{ $product->warehouse_id ?? '' }}"
-                    data-reorder_level="{{ $product->reorder_level ?? '' }}"
-                    data-valuation_method="{{ $product->valuation_method ?? 'FIFO' }}"
-                    data-description="{{ $product->description ?? '' }}"
-                    data-status="{{ $product->status }}"
+                    data-mode="edit"
                     data-bs-toggle="modal" data-bs-target="#modalProduct" title="Edit"><i class="bi bi-pencil"></i></button><button
-                    class="btn-erp btn-danger btn-xs btn-icon btn-delete" data-id="{{ $product->id }}" data-product_name="{{ $product->product_name }}" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                    class="btn-erp btn-danger btn-xs btn-icon btn-delete" data-delete-id="{{ $product->id }}" data-bs-toggle="modal" data-bs-target="#modalDelete"
                     data-delete-label="Product" title="Delete"><i class="bi bi-trash"></i></button></div>
               </td>
             </tr>
@@ -178,7 +169,7 @@
       </div>
       <div class="modal-footer" style="border-color:var(--border)">
         <button type="button" class="btn-erp btn-outline" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn-erp btn-primary btn-modal-save" id="btn-save">
+        <button type="submit" form="form-product" class="btn-erp btn-primary btn-modal-save" id="btn-save">
           <i class="bi bi-check2"></i> Save Product
         </button>
       </div>
@@ -213,171 +204,115 @@
   </div>
 
   @push('scripts')
-    <script>
-      $(function () {
-        var routes = {
-          store: '{{ route("product_catalog.store") }}',
-          update: '{{ route("product_catalog.update", ":id") }}',
-          destroy: '{{ route("product_catalog.destroy", ":id") }}',
-          warehousesAll: '{{ route("warehouses.all") }}'
-        };
+     <script>
+document.addEventListener('DOMContentLoaded', function() {
+  const modalProduct = document.getElementById('modalProduct');
+  const formProduct = document.getElementById('form-product');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
+  const warehouseSelect = document.getElementById('warehouse_id');
 
-        var $modal = $('#modalProduct');
-        var $form = $('#form-product');
-        var $btnSave = $('#btn-save');
-        var productId = null;
-        var isEdit = false;
+  let deleteId = null;
 
-        // Load warehouses dropdown via AJAX
-        function loadWarehouses() {
-          $.ajax({
-            url: routes.warehousesAll,
-            method: 'GET',
-            success: function(res) {
-              if (res.success && res.data) {
-                var $wh = $('#warehouse_id');
-                $wh.empty().append('<option value="">Select Warehouse</option>');
-                $.each(res.data, function(i, w) {
-                  $wh.append('<option value="' + w.id + '">' + w.warehouse_name + ' (' + w.warehouse_code + ')</option>');
-                });
-              }
-            },
-            error: function(xhr) {
-              console.warn('Failed to load warehouses');
-            }
-          });
-        }
-
-        // Load warehouses on page ready
-        loadWarehouses();
-
-        $('#btn-add-product').on('click', function () {
-          resetForm();
-          isEdit = false;
-          $('#modal-title').text('Add Product');
+  apiClient.get('{{ route("warehouses.all") }}')
+    .then(data => {
+      if (data.success && data.data) {
+        warehouseSelect.innerHTML = '<option value="">Select Warehouse</option>';
+        data.data.forEach(w => {
+          warehouseSelect.innerHTML += `<option value="${w.id}">${w.warehouse_name} (${w.warehouse_code})</option>`;
         });
+      }
+    })
+    .catch(() => console.warn('Failed to load warehouses'));
 
-        $modal.on('shown.bs.modal', function () {
-          if (!isEdit) {
-            resetForm();
-            $('#modal-title').text('Add Product');
-          }
-        });
+  modalProduct.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formProduct);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = document.getElementById('modal-title');
 
-        $(document).on('click', '.btn-edit', function () {
-          resetForm();
-          isEdit = true;
-          productId = $(this).data('id');
-          $('#modal-title').text('Edit Product');
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Product';
 
-          $('#product-id').val(productId);
-          $('#product_name').val($(this).data('product_name'));
-          $('#sku').val($(this).data('sku'));
-          $('#category').val($(this).data('category'));
-          $('#unit_price').val($(this).data('unit_price'));
-          $('#cost_price').val($(this).data('cost_price'));
-          $('#warehouse_id').val($(this).data('warehouse_id'));
-          $('#reorder_level').val($(this).data('reorder_level'));
-          $('#valuation_method').val($(this).data('valuation_method'));
-          $('#description').val($(this).data('description'));
-          $('#status').val($(this).data('status'));
-        });
+      apiClient.show(API_ENDPOINTS.INVENTORY.PRODUCT_CATALOG.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('product-id').value = item.id;
+          formProduct.querySelector('[name="product_name"]').value = item.product_name || '';
+          formProduct.querySelector('[name="sku"]').value = item.sku || '';
+          formProduct.querySelector('[name="category"]').value = item.category || '';
+          formProduct.querySelector('[name="unit_price"]').value = item.unit_price || '';
+          formProduct.querySelector('[name="cost_price"]').value = item.cost_price || '';
+          formProduct.querySelector('[name="warehouse_id"]').value = item.warehouse_id || '';
+          formProduct.querySelector('[name="reorder_level"]').value = item.reorder_level || '';
+          formProduct.querySelector('[name="valuation_method"]').value = item.valuation_method || 'FIFO';
+          formProduct.querySelector('[name="status"]').value = item.status || 'Active';
+          formProduct.querySelector('[name="description"]').value = item.description || '';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
+    } else {
+      modalTitle.textContent = 'Add Product';
+      formProduct.reset();
+      document.getElementById('product-id').value = '';
+    }
+  });
 
-        $(document).on('click', '.btn-delete', function () {
-          productId = $(this).data('id');
-          var product_name = $(this).data('product_name');
-          $('#delete-target').text(product_name || 'this product');
-        });
+  formProduct.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const id = document.getElementById('product-id').value;
 
-        $('#btn-confirm-delete').on('click', function () {
-          $.ajax({
-            url: routes.destroy.replace(':id', productId),
-            method: 'DELETE',
-            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-            success: function (res) {
-              if (res.success) {
-                showToast(res.message || 'Product deleted', 'success');
-                $('#modalDelete').modal('hide');
-                setTimeout(() => location.reload(), 1000);
-              }
-            },
-            error: function (xhr) {
-              showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
-            }
-          });
-        });
+    const formData = new FormData(formProduct);
+    const payload = Object.fromEntries(formData.entries());
 
-         $btnSave.on('click', function () {
-           $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.INVENTORY.PRODUCT_CATALOG.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.INVENTORY.PRODUCT_CATALOG.STORE, payload);
+    }
 
-           var url = isEdit ? routes.update.replace(':id', productId) : routes.store;
-           var method = isEdit ? 'PUT' : 'POST';
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalProduct).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formProduct, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
+      }
+    });
+  });
 
-           $.ajax({
-             url: url,
-             method: method,
-             data: $form.serialize(),
-             headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-             success: function (res) {
-               if (res.success) {
-                 showToast(res.message || (isEdit ? 'Product updated' : 'Product created'), 'success');
-                 $modal.modal('hide');
-                 setTimeout(() => location.reload(), 1000);
-               }
-             },
-             error: function (xhr) {
-               var res = xhr.responseJSON;
-               if (res && res.errors) {
-                 // Clear previous errors
-                 $form.find('.is-invalid').removeClass('is-invalid');
-                 $form.find('.invalid-feedback').hide().text('');
-                 
-                 // Show each field error
-                 var firstError = null;
-                 $.each(res.errors, function (field, messages) {
-                   var $input = $form.find('[name="' + field + '"]');
-                   $input.addClass('is-invalid');
-                   $('#error-' + field).text(messages[0]).show();
-                   if (!firstError) firstError = messages[0];
-                 });
-                 
-                 // Show toast with first error
-                 if (firstError) {
-                   showToast(firstError, 'error');
-                 } else {
-                   showToast('Please correct the errors in the form', 'error');
-                 }
-               } else if (res && res.message) {
-                 showToast(res.message, 'error');
-               } else {
-                 showToast('An error occurred', 'error');
-               }
-             },
-             complete: function () {
-               $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Save Product');
-             }
-           });
-         });
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
+  });
 
-        function resetForm() {
-          productId = null;
-          isEdit = false;
-          $form[0].reset();
-          $form.find('.is-invalid').removeClass('is-invalid');
-          $form.find('.invalid-feedback').hide().text('');
-        }
+  btnConfirmDelete.addEventListener('click', function() {
+    if (!deleteId) return;
 
-        function showToast(msg, type) {
-          type = type || 'info';
-          var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
-          var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
-          var $t = $('<div class="erp-toast ' + type + '"></div>')
-            .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
-          $('#toast-container').append($t);
-          setTimeout(function () { $t.css('opacity', 0); }, 2500);
-          setTimeout(function () { $t.remove(); }, 2800);
-        }
-      });
-    </script>
+    apiClient.destroy(API_ENDPOINTS.INVENTORY.PRODUCT_CATALOG.DESTROY, deleteId)
+    .then(data => {
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
+  });
+});
+     </script>
   @endpush
 @endsection

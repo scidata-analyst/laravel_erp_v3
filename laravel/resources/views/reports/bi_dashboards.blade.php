@@ -49,23 +49,16 @@
           <td>
             <div class="d-flex gap-1">
               <button class="btn-erp btn-outline btn-xs btn-icon btn-edit"
-                      data-bs-toggle="modal"
-                      data-bs-target="#modalBI"
-                      data-mode="edit"
                       data-id="{{ $widget->id }}"
-                      data-name="{{ $widget->widget_name }}"
-                      data-type="{{ $widget->chart_type }}"
-                      data-source="{{ $widget->data_source_module }}"
-                      data-refresh="{{ $widget->refresh_rate }}"
-                      data-dashboard="{{ $widget->dashboard_name }}"
+                      data-mode="edit"
+                      data-bs-toggle="modal" data-bs-target="#modalBI"
                       title="Edit">
                 <i class="bi bi-pencil"></i>
               </button>
               <button class="btn-erp btn-danger btn-xs btn-icon btn-delete"
-                      data-bs-toggle="modal"
-                      data-bs-target="#modalDelete"
-                      data-id="{{ $widget->id }}"
-                      data-label="Widget"
+                      data-delete-id="{{ $widget->id }}"
+                      data-delete-label="Widget"
+                      data-bs-toggle="modal" data-bs-target="#modalDelete"
                       title="Delete">
                 <i class="bi bi-trash"></i>
               </button>
@@ -180,135 +173,96 @@
 
 @push('scripts')
 <script>
-(function() {
+document.addEventListener('DOMContentLoaded', function() {
+  const modalBI = document.getElementById('modalBI');
+  const formBI = document.getElementById('formBI');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
+
   let deleteId = null;
 
-  function showToast(message, type = 'success') {
-    const toast = document.createElement('div');
-    toast.className = `toast-notification toast-${type}`;
-    toast.innerHTML = `<i class="bi bi-${type === 'success' ? 'check-circle-fill' : 'exclamation-circle-fill'}"></i> ${message}`;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.classList.add('show'), 10);
-    setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
-  }
+  modalBI.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formBI);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = document.getElementById('modalBITitle');
 
-  function reloadTable() {
-    fetch('{{ route("bi_dashboards.index") }}')
-      .then(res => res.text())
-      .then(html => {
-        const tbody = document.querySelector('#bi-dashboards-tbody');
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        const newTbody = doc.querySelector('#bi-dashboards-tbody');
-        if (tbody && newTbody) tbody.innerHTML = newTbody.innerHTML;
-      });
-  }
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit BI Widget';
 
-  document.querySelectorAll('[data-bs-target="#modalBI"]').forEach(btn => {
-    btn.addEventListener('click', function() {
-      const mode = this.dataset.mode || 'create';
-      const form = document.getElementById('formBI');
-      form.reset();
+      apiClient.show(API_ENDPOINTS.REPORTS.BI_DASHBOARDS.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('bi_widget_id').value = item.id;
+          formBI.querySelector('[name="widget_name"]').value = item.widget_name || '';
+          formBI.querySelector('[name="chart_type"]').value = item.chart_type || '';
+          formBI.querySelector('[name="data_source_module"]').value = item.data_source_module || '';
+          formBI.querySelector('[name="refresh_rate"]').value = item.refresh_rate || '';
+          formBI.querySelector('[name="dashboard_name"]').value = item.dashboard_name || '';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
+    } else {
+      modalTitle.textContent = 'Add BI Widget';
+      formBI.reset();
       document.getElementById('bi_widget_id').value = '';
-      document.getElementById('modalBITitle').textContent = mode === 'edit' ? 'Edit BI Widget' : 'Add BI Widget';
+    }
+  });
+
+  formBI.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const id = document.getElementById('bi_widget_id').value;
+
+    const formData = new FormData(formBI);
+    const payload = Object.fromEntries(formData.entries());
+
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.REPORTS.BI_DASHBOARDS.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.REPORTS.BI_DASHBOARDS.STORE, payload);
+    }
+
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalBI).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formBI, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
+      }
     });
   });
 
-  document.querySelector('#tbl-bi-dashboards').addEventListener('click', function(e) {
-    const btn = e.target.closest('.btn-edit');
-    if (btn) {
-      document.getElementById('modalBITitle').textContent = 'Edit BI Widget';
-      document.getElementById('bi_widget_id').value = btn.dataset.id;
-      document.getElementById('bi_widget_name').value = btn.dataset.name || '';
-      document.getElementById('bi_chart_type').value = btn.dataset.type || '';
-      document.getElementById('bi_data_source').value = btn.dataset.source || '';
-      document.getElementById('bi_refresh_rate').value = btn.dataset.refresh || '';
-      document.getElementById('bi_dashboard_name').value = btn.dataset.dashboard || '';
-    }
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
   });
 
-  document.querySelector('#tbl-bi-dashboards').addEventListener('click', function(e) {
-    const btn = e.target.closest('.btn-delete');
-    if (btn) {
-      deleteId = btn.dataset.id;
-      document.getElementById('delete_id').value = deleteId;
-      document.getElementById('delete-target').textContent = btn.dataset.label || 'record';
-    }
-  });
-
-  document.getElementById('formBI').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const id = document.getElementById('bi_widget_id').value;
-    const url = id ? '{{ route("bi_dashboards.update", ["id" => ":id"]) }}'.replace(':id', id) : '{{ route("bi_dashboards.store") }}';
-    const method = id ? 'PUT' : 'POST';
-
-    const formData = {
-      widget_name: document.getElementById('bi_widget_name').value,
-      chart_type: document.getElementById('bi_chart_type').value,
-      data_source_module: document.getElementById('bi_data_source').value,
-      refresh_rate: document.getElementById('bi_refresh_rate').value,
-      dashboard_name: document.getElementById('bi_dashboard_name').value,
-    };
-
-    fetch(url, {
-      method: method,
-      headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      body: JSON.stringify(formData)
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        showToast(id ? 'BI widget updated successfully' : 'BI widget added successfully');
-        bootstrap.Modal.getInstance(document.getElementById('modalBI')).hide();
-        reloadTable();
-      } else {
-        showToast(data.message || 'Error saving BI widget', 'error');
-      }
-    })
-    .catch(() => showToast('Error saving BI widget', 'error'));
-  });
-
-  document.getElementById('btn-confirm-delete').addEventListener('click', function() {
+  btnConfirmDelete.addEventListener('click', function() {
     if (!deleteId) return;
-    fetch('{{ route("bi_dashboards.destroy", ["id" => ":id"]) }}'.replace(':id', deleteId), {
-      method: 'DELETE',
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
-    })
-    .then(res => res.json())
+
+    apiClient.destroy(API_ENDPOINTS.REPORTS.BI_DASHBOARDS.DESTROY, deleteId)
     .then(data => {
-      if (data.success) {
-        showToast('BI widget deleted successfully');
-        bootstrap.Modal.getInstance(document.getElementById('modalDelete')).hide();
-        reloadTable();
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
       } else {
-        showToast(data.message || 'Error deleting BI widget', 'error');
+        showToast(data.message || 'Error', 'error');
       }
     })
-    .catch(() => showToast('Error deleting BI widget', 'error'));
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
   });
-})();
+});
 </script>
-<style>
-.toast-notification {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 12px 20px;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--text-primary);
-  font-size: 14px;
-  z-index: 9999;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.toast-notification.show { opacity: 1; transform: translateY(0); }
-.toast-success i { color: var(--accent-2); }
-.toast-error i { color: var(--accent-3); }
-</style>
 @endpush

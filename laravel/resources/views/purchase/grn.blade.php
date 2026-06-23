@@ -11,7 +11,7 @@
   </div>
   <div class="d-flex gap-2">
     <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-    <button class="btn-erp btn-primary" id="btn-add-grn"><i class="bi bi-plus-lg"></i> New GRN</button>
+    <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalGRN" data-mode="create"><i class="bi bi-plus-lg"></i> New GRN</button>
   </div>
 </div>
 
@@ -47,19 +47,15 @@
             <td><div class="d-flex gap-1">
               <button class="btn-erp btn-outline btn-xs btn-icon btn-edit"
                 data-id="{{ $grn->id }}"
-                data-grn_number="{{ $grn->grn_number }}"
-                data-purchase_order_id="{{ $grn->purchase_order_id }}"
-                data-supplier_name="{{ $grn->supplier_name }}"
-                data-receipt_date="{{ $grn->receipt_date }}"
-                 data-warehouse_id="{{ $grn->warehouse_id }}"
-                data-notes="{{ $grn->notes }}"
-                data-status="{{ $grn->status }}"
+                data-mode="edit"
+                data-bs-toggle="modal" data-bs-target="#modalGRN"
                 title="Edit">
                 <i class="bi bi-pencil"></i>
               </button>
               <button class="btn-erp btn-danger btn-xs btn-icon btn-delete"
-                data-id="{{ $grn->id }}"
-                data-grn_number="{{ $grn->grn_number }}"
+                data-delete-id="{{ $grn->id }}"
+                data-delete-label="{{ $grn->grn_number }}"
+                data-bs-toggle="modal" data-bs-target="#modalDelete"
                 title="Delete">
                 <i class="bi bi-trash"></i>
               </button>
@@ -176,186 +172,132 @@
 
  @push('scripts')
  <script>
- $(function() {
-   var routes = {
-     store: '{{ route("grn.store") }}',
-     update: '{{ route("grn.update", ":id") }}',
-     destroy: '{{ route("grn.destroy", ":id") }}',
-     purchaseOrdersAll: '{{ route("purchase_orders.all") }}',
-     warehousesAll: '{{ route("warehouses.all") }}'
-   };
+document.addEventListener('DOMContentLoaded', function() {
+  const modalGRN = document.getElementById('modalGRN');
+  const formGRN = document.getElementById('form-grn');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
 
-   var $modal = $('#modalGRN');
-   var $form = $('#form-grn');
-   var $btnSave = $('#btn-save');
-   var grnId = null;
-   var isEdit = false;
+  let deleteId = null;
 
-   // Load purchase orders dropdown via AJAX
-   function loadPurchaseOrders() {
-     $.ajax({
-       url: routes.purchaseOrdersAll,
-       method: 'GET',
-       success: function(res) {
-         if (res.success && res.data) {
-           var $po = $('#purchase-order-id');
-           $po.empty().append('<option value="">Select PO</option>');
-           $.each(res.data, function(i, po) {
-             $po.append('<option value="' + po.id + '">' + po.po_number + '</option>');
-           });
-         }
-       },
-       error: function(xhr) {
-         console.warn('Failed to load purchase orders');
-       }
-     });
-   }
+  function loadPurchaseOrders() {
+    fetch('{{ route("purchase_orders.all") }}')
+      .then(res => res.json())
+      .then(res => {
+        if (res.success && res.data) {
+          const select = document.getElementById('purchase-order-id');
+          select.innerHTML = '<option value="">Select PO</option>';
+          res.data.forEach(po => {
+            select.innerHTML += `<option value="${po.id}">${po.po_number}</option>`;
+          });
+        }
+      })
+      .catch(e => console.warn('Failed to load purchase orders'));
+  }
 
-   // Load warehouses dropdown via AJAX
-   function loadWarehouses() {
-     $.ajax({
-       url: routes.warehousesAll,
-       method: 'GET',
-       success: function(res) {
-         if (res.success && res.data) {
-           var $wh = $('#warehouse-id');
-           $wh.empty().append('<option value="">Select Warehouse</option>');
-           $.each(res.data, function(i, w) {
-             $wh.append('<option value="' + w.id + '">' + w.warehouse_name + ' (' + w.warehouse_code + ')</option>');
-           });
-         }
-       },
-       error: function(xhr) {
-         console.warn('Failed to load warehouses');
-       }
-     });
-   }
+  function loadWarehouses() {
+    fetch('{{ route("warehouses.all") }}')
+      .then(res => res.json())
+      .then(res => {
+        if (res.success && res.data) {
+          const select = document.getElementById('warehouse-id');
+          select.innerHTML = '<option value="">Select Warehouse</option>';
+          res.data.forEach(w => {
+            select.innerHTML += `<option value="${w.id}">${w.warehouse_name} (${w.warehouse_code})</option>`;
+          });
+        }
+      })
+      .catch(e => console.warn('Failed to load warehouses'));
+  }
 
-   // Load data on page ready
-   loadPurchaseOrders();
-   loadWarehouses();
+  loadPurchaseOrders();
+  loadWarehouses();
 
-   $('#btn-add-grn').on('click', function() {
-     resetForm();
-     isEdit = false;
-     $('#modal-title').text('New Goods Receipt Note');
-     $modal.modal('show');
-   });
+  modalGRN.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formGRN);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = document.getElementById('modal-title');
 
-   $(document).on('click', '.btn-edit', function() {
-     resetForm();
-     isEdit = true;
-     grnId = $(this).data('id');
-     $('#modal-title').text('Edit Goods Receipt Note');
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Goods Receipt Note';
 
-      $('#grn-id').val(grnId);
-      $('#grn-number').val($(this).data('grn_number'));
-      $('#purchase-order-id').val($(this).data('purchase_order_id'));
-      $('#supplier-name').val($(this).data('supplier_name'));
-      $('#receipt-date').val($(this).data('receipt_date'));
-      $('#warehouse-id').val($(this).data('warehouse_id'));
-      $('#notes').val($(this).data('notes'));
-      $('#status').val($(this).data('status') || 'Draft');
+      apiClient.show(API_ENDPOINTS.PURCHASE.GRN.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('grn-id').value = item.id;
+          formGRN.querySelector('[name="purchase_order_id"]').value = item.purchase_order_id || '';
+          formGRN.querySelector('[name="supplier_name"]').value = item.supplier_name || '';
+          formGRN.querySelector('[name="grn_number"]').value = item.grn_number || '';
+          formGRN.querySelector('[name="receipt_date"]').value = item.receipt_date ? item.receipt_date.split('T')[0] : '';
+          formGRN.querySelector('[name="warehouse_id"]').value = item.warehouse_id || '';
+          formGRN.querySelector('[name="notes"]').value = item.notes || '';
+          formGRN.querySelector('[name="status"]').value = item.status || 'Draft';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
+    } else {
+      modalTitle.textContent = 'New Goods Receipt Note';
+      formGRN.reset();
+      document.getElementById('grn-id').value = '';
+    }
+  });
 
-     $modal.modal('show');
-   });
+  formGRN.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const id = document.getElementById('grn-id').value;
 
-   $(document).on('click', '.btn-delete', function() {
-     grnId = $(this).data('id');
-     var grn_number = $(this).data('grn_number');
-     $('#delete-target').text(grn_number || 'this GRN');
-     $('#modalDelete').modal('show');
-   });
+    const formData = new FormData(formGRN);
+    const payload = Object.fromEntries(formData.entries());
 
-   $('#btn-confirm-delete').on('click', function() {
-     $.ajax({
-       url: routes.destroy.replace(':id', grnId),
-       method: 'DELETE',
-       headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-       success: function(res) {
-         if (res.success) {
-           showToast(res.message || 'GRN deleted', 'success');
-           $('#modalDelete').modal('hide');
-           setTimeout(() => location.reload(), 1000);
-         }
-       },
-       error: function(xhr) {
-         showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
-       }
-     });
-   });
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.PURCHASE.GRN.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.PURCHASE.GRN.STORE, payload);
+    }
 
-   $form.on('submit', function(e) {
-     e.preventDefault();
-     $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalGRN).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formGRN, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
+      }
+    });
+  });
 
-     var url = isEdit ? routes.update.replace(':id', grnId) : routes.store;
-     var method = isEdit ? 'PUT' : 'POST';
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'this GRN';
+  });
 
-     $.ajax({
-       url: url,
-       method: method,
-       data: $form.serialize(),
-       headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-       success: function(res) {
-         if (res.success) {
-           showToast(res.message || (isEdit ? 'GRN updated' : 'GRN created'), 'success');
-           $modal.modal('hide');
-           setTimeout(() => location.reload(), 1000);
-         }
-       },
-       error: function(xhr) {
-         var res = xhr.responseJSON;
-         if (res && res.errors) {
-           // Clear previous errors
-           $form.find('.is-invalid').removeClass('is-invalid');
-           $form.find('.invalid-feedback').hide().text('');
-           
-           // Show each field error
-           var firstError = null;
-           $.each(res.errors, function(field, messages) {
-             var $input = $form.find('[name="' + field + '"]');
-             $input.addClass('is-invalid');
-             $('#error-' + field).text(messages[0]).show();
-             if (!firstError) firstError = messages[0];
-           });
-           
-           if (firstError) {
-             showToast(firstError, 'error');
-           } else {
-             showToast('Please correct the errors in the form', 'error');
-           }
-         } else if (res && res.message) {
-           showToast(res.message, 'error');
-         } else {
-           showToast('An error occurred', 'error');
-         }
-       },
-       complete: function() {
-         $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Save GRN');
-       }
-     });
-   });
+  btnConfirmDelete.addEventListener('click', function() {
+    if (!deleteId) return;
 
-   function resetForm() {
-     grnId = null;
-     isEdit = false;
-     $form[0].reset();
-     $form.find('.is-invalid').removeClass('is-invalid');
-     $form.find('.invalid-feedback').hide().text('');
-   }
-
-   function showToast(msg, type) {
-     type = type || 'info';
-     var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
-     var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
-     var $t = $('<div class="erp-toast ' + type + '"></div>')
-       .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
-     $('#toast-container').append($t);
-     setTimeout(function() { $t.css('opacity', 0); }, 2500);
-     setTimeout(function() { $t.remove(); }, 2800);
-   }
- });
+    apiClient.destroy(API_ENDPOINTS.PURCHASE.GRN.DESTROY, deleteId)
+    .then(data => {
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
+  });
+});
  </script>
  @endpush
 @endsection

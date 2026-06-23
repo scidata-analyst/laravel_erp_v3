@@ -11,7 +11,7 @@
   </div>
   <div class="d-flex gap-2">
     <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-    <button class="btn-erp btn-primary" id="btn-add-payment"><i class="bi bi-plus-lg"></i> New Payment</button>
+    <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalSupplierPay" data-mode="create"><i class="bi bi-plus-lg"></i> New Payment</button>
   </div>
 </div>
 
@@ -47,19 +47,15 @@
             <td><div class="d-flex gap-1">
               <button class="btn-erp btn-outline btn-xs btn-icon btn-edit"
                 data-id="{{ $payment->id }}"
-                data-payment_number="{{ $payment->payment_number }}"
-                data-supplier_id="{{ $payment->supplier_id }}"
-                data-invoice_reference="{{ $payment->invoice_reference }}"
-                data-amount="{{ $payment->amount }}"
-                data-payment_date="{{ $payment->payment_date }}"
-                data-payment_method="{{ $payment->payment_method }}"
-                data-status="{{ $payment->status }}"
+                data-mode="edit"
+                data-bs-toggle="modal" data-bs-target="#modalSupplierPay"
                 title="Edit">
                 <i class="bi bi-pencil"></i>
               </button>
               <button class="btn-erp btn-danger btn-xs btn-icon btn-delete"
-                data-id="{{ $payment->id }}"
-                data-payment_number="{{ $payment->payment_number }}"
+                data-delete-id="{{ $payment->id }}"
+                data-delete-label="{{ $payment->payment_number }}"
+                data-bs-toggle="modal" data-bs-target="#modalDelete"
                 title="Delete">
                 <i class="bi bi-trash"></i>
               </button>
@@ -180,169 +176,115 @@
 
 @push('scripts')
 <script>
-$(function() {
-  var routes = {
-    store: '{{ route("supplier_payments.store") }}',
-    update: '{{ route("supplier_payments.update", ":id") }}',
-    destroy: '{{ route("supplier_payments.destroy", ":id") }}',
-    suppliersAll: '{{ route("suppliers.all") }}'
-  };
+document.addEventListener('DOMContentLoaded', function() {
+  const modalSupplierPay = document.getElementById('modalSupplierPay');
+  const formPayment = document.getElementById('form-payment');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
 
-  var $modal = $('#modalSupplierPay');
-  var $form = $('#form-payment');
-  var $btnSave = $('#btn-save');
-  var paymentId = null;
-  var isEdit = false;
+  let deleteId = null;
 
-  // Load suppliers dropdown via AJAX
-  function loadSuppliers(selectedId = null) {
-    $.ajax({
-      url: routes.suppliersAll,
-      method: 'GET',
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function(res) {
-        var $supplierSelect = $('#supplier-id');
-        $supplierSelect.find('option:not(:first)').remove();
+  function loadSuppliers() {
+    fetch('{{ route("suppliers.all") }}')
+      .then(res => res.json())
+      .then(res => {
         if (res.success && res.data) {
-          $.each(res.data, function(index, supplier) {
-            var option = $('<option>').val(supplier.id).text(supplier.company_name);
-            $supplierSelect.append(option);
+          const select = document.getElementById('supplier-id');
+          select.innerHTML = '<option value="">Select Supplier</option>';
+          res.data.forEach(s => {
+            select.innerHTML += `<option value="${s.id}">${s.company_name}</option>`;
           });
-          if (selectedId) {
-            $supplierSelect.val(selectedId);
-          }
         }
-      },
-      error: function() {
-        showToast('Failed to load suppliers', 'error');
-      }
-    });
+      })
+      .catch(e => console.warn('Failed to load suppliers'));
   }
 
-  // Load suppliers when modal opens
-  $modal.on('show.bs.modal', function() {
-    loadSuppliers();
+  loadSuppliers();
+
+  modalSupplierPay.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formPayment);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = document.getElementById('modal-title');
+
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Supplier Payment';
+
+      apiClient.show(API_ENDPOINTS.PURCHASE.SUPPLIER_PAYMENTS.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('payment-id').value = item.id;
+          formPayment.querySelector('[name="payment_number"]').value = item.payment_number || '';
+          formPayment.querySelector('[name="supplier_id"]').value = item.supplier_id || '';
+          formPayment.querySelector('[name="invoice_reference"]').value = item.invoice_reference || '';
+          formPayment.querySelector('[name="amount"]').value = item.amount || '';
+          formPayment.querySelector('[name="payment_date"]').value = item.payment_date ? item.payment_date.split('T')[0] : '';
+          formPayment.querySelector('[name="payment_method"]').value = item.payment_method || '';
+          formPayment.querySelector('[name="status"]').value = item.status || '';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
+    } else {
+      modalTitle.textContent = 'New Supplier Payment';
+      formPayment.reset();
+      document.getElementById('payment-id').value = '';
+    }
   });
 
-  $('#btn-add-payment').on('click', function() {
-    resetForm();
-    isEdit = false;
-    $('#modal-title').text('New Supplier Payment');
-    loadSuppliers();
-    $modal.modal('show');
-  });
-
-  $(document).on('click', '.btn-edit', function() {
-    resetForm();
-    isEdit = true;
-    paymentId = $(this).data('id');
-    $('#modal-title').text('Edit Supplier Payment');
-
-    $('#payment-id').val(paymentId);
-    $('#payment-number').val($(this).data('payment_number'));
-    loadSuppliers($(this).data('supplier_id'));
-    $('#invoice-reference').val($(this).data('invoice_reference'));
-    $('#amount').val($(this).data('amount'));
-    $('#payment-date').val($(this).data('payment_date'));
-    $('#payment-method').val($(this).data('payment_method') || '');
-    $('#status').val($(this).data('status') || '');
-
-    $modal.modal('show');
-  });
-
-  $(document).on('click', '.btn-delete', function() {
-    paymentId = $(this).data('id');
-    var payment_number = $(this).data('payment_number');
-    $('#delete-target').text(payment_number || 'this payment');
-    $('#modalDelete').modal('show');
-  });
-
-  $('#btn-confirm-delete').on('click', function() {
-    $.ajax({
-      url: routes.destroy.replace(':id', paymentId),
-      method: 'DELETE',
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function(res) {
-        if (res.success) {
-          showToast(res.message || 'Payment deleted', 'success');
-          $('#modalDelete').modal('hide');
-          setTimeout(() => location.reload(), 1000);
-        }
-      },
-      error: function(xhr) {
-        showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
-      }
-    });
-  });
-
-  $form.on('submit', function(e) {
+  formPayment.addEventListener('submit', function(e) {
     e.preventDefault();
-    $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+    const id = document.getElementById('payment-id').value;
 
-    // Clear previous inline errors
-    $form.find('.is-invalid').removeClass('is-invalid');
-    $form.find('.invalid-feedback').text('');
+    const formData = new FormData(formPayment);
+    const payload = Object.fromEntries(formData.entries());
 
-    var url = isEdit ? routes.update.replace(':id', paymentId) : routes.store;
-    var method = isEdit ? 'PUT' : 'POST';
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.PURCHASE.SUPPLIER_PAYMENTS.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.PURCHASE.SUPPLIER_PAYMENTS.STORE, payload);
+    }
 
-    $.ajax({
-      url: url,
-      method: method,
-      data: $form.serialize(),
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function(res) {
-        if (res.success) {
-          showToast(res.message || (isEdit ? 'Payment updated' : 'Payment created'), 'success');
-          $modal.modal('hide');
-          setTimeout(() => location.reload(), 1000);
-        }
-      },
-      error: function(xhr) {
-        var res = xhr.responseJSON;
-        if (res && res.errors) {
-          // Show inline errors for each field
-          $.each(res.errors, function(field, messages) {
-            var $input = $form.find('[name="' + field + '"]');
-            $input.addClass('is-invalid');
-            var $feedback = $('#error-' + field);
-            if ($feedback.length) {
-              $feedback.text(messages[0]);
-            }
-          });
-          // Show first error in toast
-          var firstField = Object.keys(res.errors)[0];
-          showToast(res.errors[firstField][0], 'error');
-        } else if (res && res.message) {
-          showToast(res.message, 'error');
-        } else {
-          showToast('An error occurred', 'error');
-        }
-      },
-      complete: function() {
-        $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Record Payment');
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalSupplierPay).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formPayment, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
       }
     });
   });
 
-  function resetForm() {
-    paymentId = null;
-    isEdit = false;
-    $form[0].reset();
-    $form.find('.is-invalid').removeClass('is-invalid');
-    $form.find('.invalid-feedback').text('');
-  }
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'this payment';
+  });
 
-  function showToast(msg, type) {
-    type = type || 'info';
-    var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
-    var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
-    var $t = $('<div class="erp-toast ' + type + '"></div>')
-      .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
-    $('#toast-container').append($t);
-    setTimeout(function() { $t.css('opacity', 0); }, 2500);
-    setTimeout(function() { $t.remove(); }, 2800);
-  }
+  btnConfirmDelete.addEventListener('click', function() {
+    if (!deleteId) return;
+
+    apiClient.destroy(API_ENDPOINTS.PURCHASE.SUPPLIER_PAYMENTS.DESTROY, deleteId)
+    .then(data => {
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
+  });
 });
 </script>
 @endpush

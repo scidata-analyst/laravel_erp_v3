@@ -11,7 +11,7 @@
     </div>
     <div class="d-flex gap-2">
       <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-      <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalChannel" data-mode="create" data-route="{{ route('online_channels.store') }}"><i
+      <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalChannel" data-mode="create"><i
           class="bi bi-plus-lg"></i> Add Channel</button>
     </div>
   </div>
@@ -68,9 +68,9 @@
               </td>
               <td>
                 <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalChannel" data-mode="edit" data-route="{{ route('online_channels.update', $channel->id) }}" data-channel='{{ json_encode($channel) }}' title="Edit"><i class="bi bi-pencil"></i></button><button
+                    data-bs-target="#modalChannel" data-mode="edit" data-id="{{ $channel->id }}" title="Edit"><i class="bi bi-pencil"></i></button><button
                     class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                    data-route="{{ route('online_channels.destroy', $channel->id) }}" data-label="Channel" title="Delete"><i class="bi bi-trash"></i></button></div>
+                    data-delete-id="{{ $channel->id }}" data-delete-label="Channel" title="Delete"><i class="bi bi-trash"></i></button></div>
               </td>
             </tr>
           @endforeach
@@ -95,9 +95,9 @@
           <h5 class="modal-title" style="color:var(--text-primary);font-weight:600">Add Sales Channel</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
-        <form id="form-channel" method="POST">
-          @csrf
+        <form id="form-channel">
           <div class="modal-body">
+            <input type="hidden" name="id" id="channel_id">
             <div class="row g-3">
               <div class="col-md-6"><label class="erp-form-label">Channel Name</label><input class="erp-form-control"
                   type="text" name="channel_name" placeholder="" /></div>
@@ -158,129 +158,97 @@
 
 @push('scripts')
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const modalChannel = document.getElementById('modalChannel');
-    const modalDelete = document.getElementById('modalDelete');
-    const formChannel = document.getElementById('form-channel');
-    let deleteUrl = null;
+document.addEventListener('DOMContentLoaded', function() {
+  const modalChannel = document.getElementById('modalChannel');
+  const formChannel = document.getElementById('form-channel');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
 
-    modalChannel.addEventListener('show.bs.modal', function(e) {
-      const btn = e.relatedTarget;
-      const mode = btn?.dataset.mode || 'create';
-      const route = btn?.dataset.route || '{{ route("online_channels.store") }}';
-      
-      formChannel.action = route;
-      formChannel.method = mode === 'create' ? 'POST' : 'PUT';
-      
-      const title = modalChannel.querySelector('.modal-title');
-      const submitBtn = modalChannel.querySelector('.btn-modal-save');
-      
-      if (mode === 'edit') {
-        title.textContent = 'Edit Sales Channel';
-        submitBtn.innerHTML = '<i class="bi bi-check2"></i> Update Channel';
-        
-        const channel = JSON.parse(btn.dataset.channel);
-        formChannel.querySelector('[name="channel_name"]').value = channel.channel_name || '';
-        formChannel.querySelector('[name="platform"]').value = channel.platform || '';
-        formChannel.querySelector('[name="api_url"]').value = channel.api_url || '';
-        formChannel.querySelector('[name="api_key"]').value = '';
-        formChannel.querySelector('[name="sync_frequency"]').value = channel.sync_frequency || '15';
-      } else {
-        title.textContent = 'Add Sales Channel';
-        submitBtn.innerHTML = '<i class="bi bi-check2"></i> Connect Channel';
-        formChannel.reset();
-      }
-    });
+  let deleteId = null;
 
-    formChannel.addEventListener('submit', async function(e) {
-      e.preventDefault();
-      const submitBtn = formChannel.querySelector('button[type="submit"]');
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Saving...';
+  modalChannel.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formChannel);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = modalChannel.querySelector('.modal-title');
 
-      try {
-        const formData = new FormData(formChannel);
-        const method = formChannel.method;
-        const url = formChannel.action;
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Sales Channel';
 
-        const response = await fetch(url, {
-          method: method,
-          headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Accept': 'application/json'
-          },
-          body: method === 'PUT' ? new URLSearchParams(formData) : formData
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-          bootstrap.Modal.getInstance(modalChannel)?.hide();
-          showToast(result.message || 'Channel saved successfully', 'success');
-          setTimeout(() => window.location.reload(), 1000);
-        } else {
-          showToast(result.message || 'Failed to save channel', 'error');
-        }
-      } catch (error) {
-        showToast('An error occurred while saving', 'error');
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="bi bi-check2"></i> Connect Channel';
-      }
-    });
-
-    modalDelete.addEventListener('show.bs.modal', function(e) {
-      const btn = e.relatedTarget;
-      deleteUrl = btn?.dataset.route;
-      const label = btn?.dataset.label || 'record';
-      document.getElementById('delete-target').textContent = label;
-    });
-
-    document.getElementById('btn-confirm-delete').addEventListener('click', async function() {
-      if (!deleteUrl) return;
-      
-      this.disabled = true;
-      this.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Deleting...';
-
-      try {
-        const response = await fetch(deleteUrl, {
-          method: 'DELETE',
-          headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Accept': 'application/json'
-          }
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-          bootstrap.Modal.getInstance(modalDelete)?.hide();
-          showToast(result.message || 'Deleted successfully', 'success');
-          setTimeout(() => window.location.reload(), 1000);
-        } else {
-          showToast(result.message || 'Failed to delete', 'error');
-        }
-      } catch (error) {
-        showToast('An error occurred while deleting', 'error');
-      } finally {
-        this.disabled = false;
-        this.innerHTML = '<i class="bi bi-trash"></i> Delete';
-      }
-    });
-
-    function showToast(message, type = 'success') {
-      const toast = document.createElement('div');
-      toast.className = `toast-notification toast-${type}`;
-      toast.innerHTML = `
-        <div class="toast-content">
-          <i class="bi bi-${type === 'success' ? 'check-circle-fill' : 'exclamation-circle-fill'}"></i>
-          <span>${message}</span>
-        </div>
-      `;
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 3000);
+      apiClient.show(API_ENDPOINTS.ECOMMERCE.ONLINE_CHANNELS.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('channel_id').value = item.id;
+          formChannel.querySelector('[name="channel_name"]').value = item.channel_name || '';
+          formChannel.querySelector('[name="platform"]').value = item.platform || '';
+          formChannel.querySelector('[name="api_url"]').value = item.api_url || '';
+          formChannel.querySelector('[name="api_key"]').value = '';
+          formChannel.querySelector('[name="sync_frequency"]').value = item.sync_frequency || '15';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
+    } else {
+      modalTitle.textContent = 'Add Sales Channel';
+      formChannel.reset();
+      document.getElementById('channel_id').value = '';
     }
   });
+
+  formChannel.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const id = document.getElementById('channel_id').value;
+
+    const formData = new FormData(formChannel);
+    const payload = Object.fromEntries(formData.entries());
+
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.ECOMMERCE.ONLINE_CHANNELS.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.ECOMMERCE.ONLINE_CHANNELS.STORE, payload);
+    }
+
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalChannel).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formChannel, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
+      }
+    });
+  });
+
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
+  });
+
+  btnConfirmDelete.addEventListener('click', function() {
+    if (!deleteId) return;
+
+    apiClient.destroy(API_ENDPOINTS.ECOMMERCE.ONLINE_CHANNELS.DESTROY, deleteId)
+    .then(data => {
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
+  });
+});
 </script>
 <style>
   .toast-notification {

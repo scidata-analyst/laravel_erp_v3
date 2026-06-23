@@ -11,7 +11,7 @@
   </div>
   <div class="d-flex gap-2">
     <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-    <button class="btn-erp btn-primary" id="btn-add-promotion"><i class="bi bi-plus-lg"></i> New Promotion</button>
+    <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalPromo" data-mode="create"><i class="bi bi-plus-lg"></i> New Promotion</button>
   </div>
 </div>
 
@@ -50,7 +50,7 @@
                 <span class="badge-status badge-inactive">Expired</span>
               @endif
             </td>
-            <td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon btn-edit" data-id="{{ $promo->id }}" data-promo_code="{{ $promo->promo_code }}" data-description="{{ $promo->description }}" data-discount_value="{{ $promo->discount_value }}" data-discount_type="{{ $promo->discount_type }}" data-min_order="{{ $promo->min_order }}" data-valid_from="{{ $promo->valid_from }}" data-valid_to="{{ $promo->valid_to }}" data-applicable_products="{{ $promo->applicable_products }}" data-status="{{ $promo->status }}" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon btn-delete" data-id="{{ $promo->id }}" data-promo_code="{{ $promo->promo_code }}" title="Delete"><i class="bi bi-trash"></i></button></div></td>
+            <td><div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon btn-edit" data-id="{{ $promo->id }}" data-mode="edit" data-bs-toggle="modal" data-bs-target="#modalPromo" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-erp btn-danger btn-xs btn-icon btn-delete" data-delete-id="{{ $promo->id }}" data-delete-label="{{ $promo->promo_code }}" data-bs-toggle="modal" data-bs-target="#modalDelete" title="Delete"><i class="bi bi-trash"></i></button></div></td>
           </tr>
         @endforeach
       </tbody>
@@ -160,127 +160,99 @@
 
 @push('scripts')
 <script>
-$(function () {
-  var routes = {
-    store: '{{ route("promotions.store") }}',
-    update: '{{ route("promotions.update", ":id") }}',
-    destroy: '{{ route("promotions.destroy", ":id") }}'
-  };
+document.addEventListener('DOMContentLoaded', function() {
+  const modalPromo = document.getElementById('modalPromo');
+  const formPromotion = document.getElementById('form-promotion');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
 
-  var $modal = $('#modalPromo');
-  var $form = $('#form-promotion');
-  var $btnSave = $('#btn-save');
-  var promotionId = null;
-  var isEdit = false;
+  let deleteId = null;
 
-  $('#btn-add-promotion').on('click', function () {
-    resetForm();
-    isEdit = false;
-    $('#modal-title').text('New Promotion');
-    $modal.modal('show');
+  modalPromo.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formPromotion);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = document.getElementById('modal-title');
+
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Promotion';
+
+      apiClient.show(API_ENDPOINTS.SALES.PROMOTIONS.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('promotion-id').value = item.id;
+          formPromotion.querySelector('[name="promo_code"]').value = item.promo_code || '';
+          formPromotion.querySelector('[name="description"]').value = item.description || '';
+          formPromotion.querySelector('[name="discount_value"]').value = item.discount_value || '';
+          formPromotion.querySelector('[name="discount_type"]').value = item.discount_type || '';
+          formPromotion.querySelector('[name="min_order"]').value = item.min_order || '';
+          formPromotion.querySelector('[name="valid_from"]').value = item.valid_from ? item.valid_from.split('T')[0] : '';
+          formPromotion.querySelector('[name="valid_to"]').value = item.valid_to ? item.valid_to.split('T')[0] : '';
+          formPromotion.querySelector('[name="applicable_products"]').value = item.applicable_products || '';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
+    } else {
+      modalTitle.textContent = 'New Promotion';
+      formPromotion.reset();
+      document.getElementById('promotion-id').value = '';
+    }
   });
 
-  $(document).on('click', '.btn-edit', function () {
-    resetForm();
-    isEdit = true;
-    promotionId = $(this).data('id');
-    $('#modal-title').text('Edit Promotion');
-
-    $('#promotion-id').val(promotionId);
-    $('#promo-code').val($(this).data('promo_code'));
-    $('#description').val($(this).data('description'));
-    $('#discount-value').val($(this).data('discount_value'));
-    $('#discount-type').val($(this).data('discount_type'));
-    $('#min-order').val($(this).data('min_order'));
-    $('#valid-from').val($(this).data('valid_from'));
-    $('#valid-to').val($(this).data('valid_to'));
-    $('#applicable-products').val($(this).data('applicable_products'));
-
-    $modal.modal('show');
-  });
-
-  $(document).on('click', '.btn-delete', function () {
-    promotionId = $(this).data('id');
-    var promo_code = $(this).data('promo_code');
-    $('#delete-target').text(promo_code || 'this promotion');
-    $('#modalDelete').modal('show');
-  });
-
-  $('#btn-confirm-delete').on('click', function () {
-    $.ajax({
-      url: routes.destroy.replace(':id', promotionId),
-      method: 'DELETE',
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function (res) {
-        if (res.success) {
-          showToast(res.message || 'Promotion deleted', 'success');
-          $('#modalDelete').modal('hide');
-          setTimeout(() => location.reload(), 1000);
-        }
-      },
-      error: function (xhr) {
-        showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
-      }
-    });
-  });
-
-  $form.on('submit', function (e) {
+  formPromotion.addEventListener('submit', function(e) {
     e.preventDefault();
-    $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+    const id = document.getElementById('promotion-id').value;
 
-    var url = isEdit ? routes.update.replace(':id', promotionId) : routes.store;
-    var method = isEdit ? 'PUT' : 'POST';
+    const formData = new FormData(formPromotion);
+    const payload = Object.fromEntries(formData.entries());
 
-    $.ajax({
-      url: url,
-      method: method,
-      data: $form.serialize(),
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function (res) {
-        if (res.success) {
-          showToast(res.message || (isEdit ? 'Promotion updated' : 'Promotion created'), 'success');
-          $modal.modal('hide');
-          setTimeout(() => location.reload(), 1000);
-        }
-      },
-      error: function (xhr) {
-        var res = xhr.responseJSON;
-        if (res && res.errors) {
-          $.each(res.errors, function (field, messages) {
-            var $input = $form.find('[name="' + field + '"]');
-            $input.addClass('is-invalid');
-            $('#error-' + field).text(messages[0]).show();
-          });
-        } else if (res && res.message) {
-          showToast(res.message, 'error');
-        } else {
-          showToast('An error occurred', 'error');
-        }
-      },
-      complete: function () {
-        $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Save Promotion');
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.SALES.PROMOTIONS.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.SALES.PROMOTIONS.STORE, payload);
+    }
+
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalPromo).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formPromotion, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
       }
     });
   });
 
-  function resetForm() {
-    promotionId = null;
-    isEdit = false;
-    $form[0].reset();
-    $form.find('.is-invalid').removeClass('is-invalid');
-    $form.find('.invalid-feedback').hide().text('');
-  }
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
+  });
 
-  function showToast(msg, type) {
-    type = type || 'info';
-    var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
-    var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
-    var $t = $('<div class="erp-toast ' + type + '"></div>')
-      .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
-    $('#toast-container').append($t);
-    setTimeout(function () { $t.css('opacity', 0); }, 2500);
-    setTimeout(function () { $t.remove(); }, 2800);
-  }
+  btnConfirmDelete.addEventListener('click', function() {
+    if (!deleteId) return;
+
+    apiClient.destroy(API_ENDPOINTS.SALES.PROMOTIONS.DESTROY, deleteId)
+    .then(data => {
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
+  });
 });
 </script>
 @endpush

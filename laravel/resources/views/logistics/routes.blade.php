@@ -11,7 +11,7 @@
     </div>
     <div class="d-flex gap-2">
       <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-      <button class="btn-erp btn-primary" id="btn-add-route"><i class="bi bi-plus-lg"></i> New Route</button>
+      <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalRoute" data-mode="create"><i class="bi bi-plus-lg"></i> New Route</button>
     </div>
   </div>
 
@@ -61,17 +61,13 @@
                 <div class="d-flex gap-1">
                   <button class="btn-erp btn-outline btn-xs btn-icon btn-edit"
                     data-id="{{ $route->id }}"
-                    data-route_name="{{ $route->route_name }}"
-                    data-zone_area="{{ $route->zone_area }}"
-                    data-driver_name="{{ $route->driver_name }}"
-                    data-vehicle_id="{{ $route->vehicle_id }}"
-                    data-number_of_stops="{{ $route->number_of_stops }}"
-                    data-route_description="{{ $route->route_description }}"
-                    data-status="{{ $route->status }}"
+                    data-mode="edit"
+                    data-bs-toggle="modal" data-bs-target="#modalRoute"
                     title="Edit"><i class="bi bi-pencil"></i></button>
                   <button class="btn-erp btn-danger btn-xs btn-icon btn-delete"
-                    data-id="{{ $route->id }}"
-                    data-route_name="{{ $route->route_name }}"
+                    data-delete-id="{{ $route->id }}"
+                    data-delete-label="Route"
+                    data-bs-toggle="modal" data-bs-target="#modalDelete"
                     title="Delete"><i class="bi bi-trash"></i></button>
                 </div>
               </td>
@@ -178,126 +174,98 @@
 
 @push('scripts')
 <script>
-$(function() {
-  var routes = {
-    store: '{{ route("routes.store") }}',
-    update: '{{ route("routes.update", ":id") }}',
-    destroy: '{{ route("routes.destroy", ":id") }}'
-  };
+document.addEventListener('DOMContentLoaded', function() {
+  const modalRoute = document.getElementById('modalRoute');
+  const formRoute = document.getElementById('form-route');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
 
-  var $modal = $('#modalRoute');
-  var $form = $('#form-route');
-  var $btnSave = $('#btn-save');
-  var routeId = null;
-  var isEdit = false;
+  let deleteId = null;
 
-  $('#btn-add-route').on('click', function() {
-    resetForm();
-    isEdit = false;
-    $('#modal-title').text('New Delivery Route');
-    $modal.modal('show');
+  modalRoute.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formRoute);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = document.getElementById('modal-title');
+
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Delivery Route';
+
+      apiClient.show(API_ENDPOINTS.LOGISTICS.ROUTES.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('route-id').value = item.id;
+          formRoute.querySelector('[name="route_name"]').value = item.route_name || '';
+          formRoute.querySelector('[name="zone_area"]').value = item.zone_area || '';
+          formRoute.querySelector('[name="driver_name"]').value = item.driver_name || '';
+          formRoute.querySelector('[name="vehicle_id"]').value = item.vehicle_id || '';
+          formRoute.querySelector('[name="number_of_stops"]').value = item.number_of_stops || '';
+          formRoute.querySelector('[name="route_description"]').value = item.route_description || '';
+          formRoute.querySelector('[name="status"]').value = item.status || 'Active';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
+    } else {
+      modalTitle.textContent = 'New Delivery Route';
+      formRoute.reset();
+      document.getElementById('route-id').value = '';
+    }
   });
 
-  $(document).on('click', '.btn-edit', function() {
-    resetForm();
-    isEdit = true;
-    routeId = $(this).data('id');
-    $('#modal-title').text('Edit Delivery Route');
-
-    $('#route-id').val(routeId);
-    $('#route-name').val($(this).data('route_name'));
-    $('#zone-area').val($(this).data('zone_area'));
-    $('#driver-name').val($(this).data('driver_name'));
-    $('#vehicle-id').val($(this).data('vehicle_id'));
-    $('#number-of-stops').val($(this).data('number_of_stops'));
-    $('#route-description').val($(this).data('route_description'));
-    $('#status').val($(this).data('status') || 'Active');
-
-    $modal.modal('show');
-  });
-
-  $(document).on('click', '.btn-delete', function() {
-    routeId = $(this).data('id');
-    var route_name = $(this).data('route_name');
-    $('#delete-target').text(route_name || 'this route');
-    $('#modalDelete').modal('show');
-  });
-
-  $('#btn-confirm-delete').on('click', function() {
-    $.ajax({
-      url: routes.destroy.replace(':id', routeId),
-      method: 'DELETE',
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function(res) {
-        if (res.success) {
-          showToast(res.message || 'Route deleted', 'success');
-          $('#modalDelete').modal('hide');
-          setTimeout(() => location.reload(), 1000);
-        }
-      },
-      error: function(xhr) {
-        showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
-      }
-    });
-  });
-
-  $form.on('submit', function(e) {
+  formRoute.addEventListener('submit', function(e) {
     e.preventDefault();
-    $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+    const id = document.getElementById('route-id').value;
 
-    var url = isEdit ? routes.update.replace(':id', routeId) : routes.store;
-    var method = isEdit ? 'PUT' : 'POST';
+    const formData = new FormData(formRoute);
+    const payload = Object.fromEntries(formData.entries());
 
-    $.ajax({
-      url: url,
-      method: method,
-      data: $form.serialize(),
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function(res) {
-        if (res.success) {
-          showToast(res.message || (isEdit ? 'Route updated' : 'Route created'), 'success');
-          $modal.modal('hide');
-          setTimeout(() => location.reload(), 1000);
-        }
-      },
-      error: function(xhr) {
-        var res = xhr.responseJSON;
-        if (res && res.errors) {
-          $.each(res.errors, function(field, messages) {
-            var $input = $form.find('[name="' + field + '"]');
-            $input.addClass('is-invalid');
-            $('#error-' + field).text(messages[0]).show();
-          });
-        } else if (res && res.message) {
-          showToast(res.message, 'error');
-        } else {
-          showToast('An error occurred', 'error');
-        }
-      },
-      complete: function() {
-        $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Save Route');
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.LOGISTICS.ROUTES.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.LOGISTICS.ROUTES.STORE, payload);
+    }
+
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalRoute).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formRoute, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
       }
     });
   });
 
-  function resetForm() {
-    routeId = null;
-    isEdit = false;
-    $form[0].reset();
-    $form.find('.is-invalid').removeClass('is-invalid');
-    $form.find('.invalid-feedback').hide().text('');
-  }
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
+  });
 
-  function showToast(msg, type) {
-    type = type || 'info';
-    var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
-    var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
-    var $t = $('<div class="erp-toast ' + type + '"></div>')
-      .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
-    $('#toast-container').append($t);
-    setTimeout(function() { $t.css('opacity', 0); }, 2500);
-    setTimeout(function() { $t.remove(); }, 2800);
-  }
+  btnConfirmDelete.addEventListener('click', function() {
+    if (!deleteId) return;
+
+    apiClient.destroy(API_ENDPOINTS.LOGISTICS.ROUTES.DESTROY, deleteId)
+    .then(data => {
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
+  });
 });
 </script>
 @endpush

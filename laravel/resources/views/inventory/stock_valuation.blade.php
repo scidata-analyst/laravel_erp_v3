@@ -16,7 +16,7 @@
       <option>Average Cost</option>
     </select>
     <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-    <button class="btn-erp btn-primary" id="btn-add-valuation" data-bs-toggle="modal" data-bs-target="#modalStockValuation"><i class="bi bi-plus-lg"></i> Add Valuation</button>
+    <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalStockValuation" data-mode="create"><i class="bi bi-plus-lg"></i> Add Valuation</button>
   </div>
 </div>
 <div class="row g-3 mb-3">
@@ -70,13 +70,9 @@
           <td>
             <div class="d-flex gap-1"><button class="btn-erp btn-outline btn-xs btn-icon btn-edit" 
               data-id="{{ $valuation->id }}"
-              data-product_id="{{ $valuation->product_id }}"
-              data-quantity_on_hand="{{ $valuation->quantity_on_hand }}"
-              data-valuation_method="{{ $valuation->valuation_method ?? 'FIFO' }}"
-              data-unit_cost="{{ $valuation->unit_cost }}"
-              data-total_value="{{ $valuation->total_value }}"
+              data-mode="edit"
               data-bs-toggle="modal" data-bs-target="#modalStockValuation" title="Edit"><i class="bi bi-pencil"></i></button><button
-              class="btn-erp btn-danger btn-xs btn-icon btn-delete" data-id="{{ $valuation->id }}" data-product_id="{{ $valuation->product_id }}" data-bs-toggle="modal" data-bs-target="#modalDelete"
+              class="btn-erp btn-danger btn-xs btn-icon btn-delete" data-delete-id="{{ $valuation->id }}" data-bs-toggle="modal" data-bs-target="#modalDelete"
               data-delete-label="Valuation" title="Delete"><i class="bi bi-trash"></i></button></div>
           </td>
         </tr>
@@ -131,7 +127,7 @@
         </div>
       <div class="modal-footer" style="border-color:var(--border)">
         <button type="button" class="btn-erp btn-outline" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn-erp btn-primary" id="btn-save">
+        <button type="submit" form="form-stock-valuation" class="btn-erp btn-primary" id="btn-save">
           <i class="bi bi-check2"></i> Save Valuation
         </button>
       </div>
@@ -165,163 +161,108 @@
 
  @push('scripts')
    <script>
-     $(function () {
-       var routes = {
-         store: '{{ route("stock_valuation.store") }}',
-         update: '{{ route("stock_valuation.update", ":id") }}',
-         destroy: '{{ route("stock_valuation.destroy", ":id") }}',
-         productsAll: '{{ route("product_catalog.all") }}'
-       };
+document.addEventListener('DOMContentLoaded', function() {
+  const modalStockValuation = document.getElementById('modalStockValuation');
+  const formStockValuation = document.getElementById('form-stock-valuation');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
+  const productSelect = document.getElementById('product_id');
 
-       var $modal = $('#modalStockValuation');
-       var $form = $('#form-stock-valuation');
-       var $btnSave = $('#btn-save');
-       var valuationId = null;
-       var isEdit = false;
+  let deleteId = null;
 
-       // Load products dropdown via AJAX
-       function loadProducts() {
-         $.ajax({
-           url: routes.productsAll,
-           method: 'GET',
-           success: function(res) {
-             if (res.success && res.data) {
-               var $prod = $('#product_id');
-               $prod.empty().append('<option value="">Select Product</option>');
-               $.each(res.data, function(i, p) {
-                 $prod.append('<option value="' + p.id + '">' + p.product_name + ' (' + p.sku + ')</option>');
-               });
-             }
-           },
-           error: function(xhr) {
-             console.warn('Failed to load products');
-           }
-         });
-       }
+  apiClient.get(API_ENDPOINTS.INVENTORY.PRODUCT_CATALOG.ALL)
+    .then(data => {
+      if (data.success && data.data) {
+        productSelect.innerHTML = '<option value="">Select Product</option>';
+        data.data.forEach(p => {
+          productSelect.innerHTML += `<option value="${p.id}">${p.product_name} (${p.sku})</option>`;
+        });
+      }
+    })
+    .catch(() => console.warn('Failed to load products'));
 
-       // Load products on page ready
-       loadProducts();
+  modalStockValuation.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formStockValuation);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = document.getElementById('modal-title');
 
-       $('#btn-add-valuation').on('click', function () {
-         resetForm();
-         isEdit = false;
-         $('#modal-title').text('Add Stock Valuation');
-       });
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Stock Valuation';
 
-       $modal.on('shown.bs.modal', function () {
-         if (!isEdit) {
-           resetForm();
-           $('#modal-title').text('Add Stock Valuation');
-         }
-       });
+      apiClient.show(API_ENDPOINTS.INVENTORY.STOCK_VALUATION.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('valuation-id').value = item.id;
+          formStockValuation.querySelector('[name="product_id"]').value = item.product_id || '';
+          formStockValuation.querySelector('[name="quantity_on_hand"]').value = item.quantity_on_hand || '';
+          formStockValuation.querySelector('[name="valuation_method"]').value = item.valuation_method || 'FIFO';
+          formStockValuation.querySelector('[name="unit_cost"]').value = item.unit_cost || '';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
+    } else {
+      modalTitle.textContent = 'Add Stock Valuation';
+      formStockValuation.reset();
+      document.getElementById('valuation-id').value = '';
+    }
+  });
 
-       $(document).on('click', '.btn-edit', function () {
-         resetForm();
-         isEdit = true;
-         valuationId = $(this).data('id');
-         $('#modal-title').text('Edit Stock Valuation');
+  formStockValuation.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const id = document.getElementById('valuation-id').value;
 
-         $('#valuation-id').val(valuationId);
-         $('#product_id').val($(this).data('product_id'));
-         $('#quantity_on_hand').val($(this).data('quantity_on_hand'));
-         $('#valuation_method').val($(this).data('valuation_method'));
-         $('#unit_cost').val($(this).data('unit_cost'));
-       });
+    const formData = new FormData(formStockValuation);
+    const payload = Object.fromEntries(formData.entries());
 
-       $(document).on('click', '.btn-delete', function () {
-         valuationId = $(this).data('id');
-         var product_id = $(this).data('product_id');
-         $('#delete-target').text(product_id || 'this valuation');
-       });
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.INVENTORY.STOCK_VALUATION.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.INVENTORY.STOCK_VALUATION.STORE, payload);
+    }
 
-       $('#btn-confirm-delete').on('click', function () {
-         $.ajax({
-           url: routes.destroy.replace(':id', valuationId),
-           method: 'DELETE',
-           headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-           success: function (res) {
-             if (res.success) {
-               showToast(res.message || 'Valuation deleted', 'success');
-               $('#modalDelete').modal('hide');
-               setTimeout(() => location.reload(), 1000);
-             }
-           },
-           error: function (xhr) {
-             showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
-           }
-         });
-       });
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalStockValuation).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formStockValuation, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
+      }
+    });
+  });
 
-       $btnSave.on('click', function () {
-         $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
+  });
 
-         var url = isEdit ? routes.update.replace(':id', valuationId) : routes.store;
-         var method = isEdit ? 'PUT' : 'POST';
+  btnConfirmDelete.addEventListener('click', function() {
+    if (!deleteId) return;
 
-         $.ajax({
-           url: url,
-           method: method,
-           data: $form.serialize(),
-           headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-           success: function (res) {
-             if (res.success) {
-               showToast(res.message || (isEdit ? 'Valuation updated' : 'Valuation created'), 'success');
-               $modal.modal('hide');
-               setTimeout(() => location.reload(), 1000);
-             }
-           },
-           error: function (xhr) {
-             var res = xhr.responseJSON;
-             if (res && res.errors) {
-               // Clear previous errors
-               $form.find('.is-invalid').removeClass('is-invalid');
-               $form.find('.invalid-feedback').hide().text('');
-               
-               // Show each field error
-               var firstError = null;
-               $.each(res.errors, function (field, messages) {
-                 var $input = $form.find('[name="' + field + '"]');
-                 $input.addClass('is-invalid');
-                 $('#error-' + field).text(messages[0]).show();
-                 if (!firstError) firstError = messages[0];
-               });
-               
-               if (firstError) {
-                 showToast(firstError, 'error');
-               } else {
-                 showToast('Please correct the errors in the form', 'error');
-               }
-             } else if (res && res.message) {
-               showToast(res.message, 'error');
-             } else {
-               showToast('An error occurred', 'error');
-             }
-           },
-           complete: function () {
-             $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Save Valuation');
-           }
-         });
-       });
-
-       function resetForm() {
-         valuationId = null;
-         isEdit = false;
-         $form[0].reset();
-         $form.find('.is-invalid').removeClass('is-invalid');
-         $form.find('.invalid-feedback').hide().text('');
-       }
-
-       function showToast(msg, type) {
-         type = type || 'info';
-         var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
-         var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
-         var $t = $('<div class="erp-toast ' + type + '"></div>')
-           .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
-         $('#toast-container').append($t);
-         setTimeout(function () { $t.css('opacity', 0); }, 2500);
-         setTimeout(function () { $t.remove(); }, 2800);
-       }
-     });
+    apiClient.destroy(API_ENDPOINTS.INVENTORY.STOCK_VALUATION.DESTROY, deleteId)
+    .then(data => {
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
+  });
+});
    </script>
  @endpush
 @endsection

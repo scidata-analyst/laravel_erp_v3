@@ -11,8 +11,7 @@
     </div>
     <div class="d-flex gap-2">
       <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-      <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalSupport"
-        data-route="{{ route('support.store') }}" data-mode="create"><i
+      <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalSupport" data-mode="create"><i
           class="bi bi-plus-lg"></i> New Ticket</button>
     </div>
   </div>
@@ -76,14 +75,11 @@
               <td>
                 <div class="d-flex gap-1">
                   <button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalSupport" title="Edit"
-                    data-route="{{ route('support.update', $ticket->id) }}"
-                    data-mode="edit"
-                    data-ticket='@json($ticket)'><i class="bi bi-pencil"></i></button>
+                    data-bs-target="#modalSupport" data-mode="edit" data-id="{{ $ticket->id }}"
+                    title="Edit"><i class="bi bi-pencil"></i></button>
                   <button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalDelete" title="Delete"
-                    data-route="{{ route('support.destroy', $ticket->id) }}"
-                    data-label="Ticket"><i class="bi bi-trash"></i></button>
+                    data-bs-target="#modalDelete" data-delete-id="{{ $ticket->id }}"
+                    data-delete-label="Ticket" title="Delete"><i class="bi bi-trash"></i></button>
                 </div>
               </td>
             </tr>
@@ -111,6 +107,7 @@
         </div>
         <form id="form-support">
           <div class="modal-body">
+            <input type="hidden" name="id" id="ticket_id">
             <div class="row g-3">
               <div class="col-md-6">
                 <label class="erp-form-label">Customer</label>
@@ -197,130 +194,98 @@
 
 @push('scripts')
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const modalSupport = document.getElementById('modalSupport');
-    const modalDelete = document.getElementById('modalDelete');
-    const formSupport = document.getElementById('form-support');
-    let deleteUrl = null;
+document.addEventListener('DOMContentLoaded', function() {
+  const modalSupport = document.getElementById('modalSupport');
+  const formSupport = document.getElementById('form-support');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
 
-    modalSupport.addEventListener('show.bs.modal', function(e) {
-      const btn = e.relatedTarget;
-      const mode = btn?.dataset.mode || 'create';
-      const route = btn?.dataset.route || '{{ route("support.store") }}';
-      
-      formSupport.action = route;
-      formSupport.method = mode === 'create' ? 'POST' : 'PUT';
-      
-      const title = modalSupport.querySelector('.modal-title');
-      const submitBtn = modalSupport.querySelector('.btn-modal-save');
-      
-      if (mode === 'edit') {
-        title.textContent = 'Edit Support Ticket';
-        submitBtn.innerHTML = '<i class="bi bi-check2"></i> Update Ticket';
-        
-        const ticket = JSON.parse(btn.dataset.ticket);
-        formSupport.querySelector('[name="customer_id"]').value = ticket.customer_id || '';
-        formSupport.querySelector('[name="subject"]').value = ticket.subject || '';
-        formSupport.querySelector('[name="priority"]').value = ticket.priority || 'Low';
-        formSupport.querySelector('[name="assigned_user_id"]').value = ticket.assigned_user_id || '';
-        formSupport.querySelector('[name="category"]').value = ticket.category || 'Other';
-        formSupport.querySelector('[name="description"]').value = ticket.description || '';
-      } else {
-        title.textContent = 'New Support Ticket';
-        submitBtn.innerHTML = '<i class="bi bi-check2"></i> Create Ticket';
-        formSupport.reset();
-      }
-    });
+  let deleteId = null;
 
-    formSupport.addEventListener('submit', async function(e) {
-      e.preventDefault();
-      const submitBtn = formSupport.querySelector('button[type="submit"]');
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Saving...';
+  modalSupport.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formSupport);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = modalSupport.querySelector('.modal-title');
 
-      try {
-        const formData = new FormData(formSupport);
-        const method = formSupport.method;
-        const url = formSupport.action;
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Support Ticket';
 
-        const response = await fetch(url, {
-          method: method,
-          headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Accept': 'application/json'
-          },
-          body: method === 'PUT' ? new URLSearchParams(formData) : formData
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-          bootstrap.Modal.getInstance(modalSupport)?.hide();
-          showToast(result.message || 'Ticket created successfully', 'success');
-          setTimeout(() => window.location.reload(), 1000);
-        } else {
-          showToast(result.message || 'Failed to create ticket', 'error');
-        }
-      } catch (error) {
-        showToast('An error occurred while saving', 'error');
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="bi bi-check2"></i> Create Ticket';
-      }
-    });
-
-    modalDelete.addEventListener('show.bs.modal', function(e) {
-      const btn = e.relatedTarget;
-      deleteUrl = btn?.dataset.route;
-      const label = btn?.dataset.label || 'record';
-      document.getElementById('delete-target').textContent = label;
-    });
-
-    document.getElementById('btn-confirm-delete').addEventListener('click', async function() {
-      if (!deleteUrl) return;
-      
-      this.disabled = true;
-      this.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Deleting...';
-
-      try {
-        const response = await fetch(deleteUrl, {
-          method: 'DELETE',
-          headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Accept': 'application/json'
-          }
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-          bootstrap.Modal.getInstance(modalDelete)?.hide();
-          showToast(result.message || 'Deleted successfully', 'success');
-          setTimeout(() => window.location.reload(), 1000);
-        } else {
-          showToast(result.message || 'Failed to delete', 'error');
-        }
-      } catch (error) {
-        showToast('An error occurred while deleting', 'error');
-      } finally {
-        this.disabled = false;
-        this.innerHTML = '<i class="bi bi-trash"></i> Delete';
-      }
-    });
-
-    function showToast(message, type = 'success') {
-      const toast = document.createElement('div');
-      toast.className = `toast-notification toast-${type}`;
-      toast.innerHTML = `
-        <div class="toast-content">
-          <i class="bi bi-${type === 'success' ? 'check-circle-fill' : 'exclamation-circle-fill'}"></i>
-          <span>${message}</span>
-        </div>
-      `;
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 3000);
+      apiClient.show(API_ENDPOINTS.CRM.SUPPORT.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('ticket_id').value = item.id;
+          formSupport.querySelector('[name="customer_id"]').value = item.customer_id || '';
+          formSupport.querySelector('[name="subject"]').value = item.subject || '';
+          formSupport.querySelector('[name="priority"]').value = item.priority || 'Low';
+          formSupport.querySelector('[name="assigned_user_id"]').value = item.assigned_user_id || '';
+          formSupport.querySelector('[name="category"]').value = item.category || 'Other';
+          formSupport.querySelector('[name="description"]').value = item.description || '';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
+    } else {
+      modalTitle.textContent = 'New Support Ticket';
+      formSupport.reset();
+      document.getElementById('ticket_id').value = '';
     }
   });
+
+  formSupport.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const id = document.getElementById('ticket_id').value;
+
+    const formData = new FormData(formSupport);
+    const payload = Object.fromEntries(formData.entries());
+
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.CRM.SUPPORT.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.CRM.SUPPORT.STORE, payload);
+    }
+
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalSupport).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formSupport, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
+      }
+    });
+  });
+
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
+  });
+
+  btnConfirmDelete.addEventListener('click', function() {
+    if (!deleteId) return;
+
+    apiClient.destroy(API_ENDPOINTS.CRM.SUPPORT.DESTROY, deleteId)
+    .then(data => {
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
+  });
+});
 </script>
 <style>
   .toast-notification {

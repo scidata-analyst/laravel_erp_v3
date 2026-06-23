@@ -63,24 +63,18 @@
               <td>
                 <div class="d-flex gap-1">
                   <button class="btn-erp btn-outline btn-xs btn-icon btn-edit"
+                          data-id="{{ $cost->id }}"
+                          data-mode="edit"
                           data-bs-toggle="modal"
                           data-bs-target="#modalProjectCost"
-                          data-mode="edit"
-                          data-id="{{ $cost->id }}"
-                          data-project="{{ $cost->project_id }}"
-                          data-category="{{ $cost->category }}"
-                          data-amount="{{ $cost->amount }}"
-                          data-date="{{ $cost->incurred_date }}"
-                          data-approved="{{ $cost->approved_by }}"
-                          data-description="{{ $cost->description ?? '' }}"
                           title="Edit">
                     <i class="bi bi-pencil"></i>
                   </button>
                   <button class="btn-erp btn-danger btn-xs btn-icon btn-delete"
+                          data-delete-id="{{ $cost->id }}"
+                          data-delete-label="Cost Entry"
                           data-bs-toggle="modal"
                           data-bs-target="#modalDelete"
-                          data-id="{{ $cost->id }}"
-                          data-label="Cost Entry"
                           title="Delete">
                     <i class="bi bi-trash"></i>
                   </button>
@@ -187,137 +181,97 @@
 
 @push('scripts')
 <script>
-(function() {
+document.addEventListener('DOMContentLoaded', function() {
+  const modalProjectCost = document.getElementById('modalProjectCost');
+  const formProjectCost = document.getElementById('formProjectCost');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
+
   let deleteId = null;
 
-  function showToast(message, type = 'success') {
-    const toast = document.createElement('div');
-    toast.className = `toast-notification toast-${type}`;
-    toast.innerHTML = `<i class="bi bi-${type === 'success' ? 'check-circle-fill' : 'exclamation-circle-fill'}"></i> ${message}`;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.classList.add('show'), 10);
-    setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
-  }
+  modalProjectCost.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formProjectCost);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = document.getElementById('modalProjectCostTitle');
 
-  function reloadTable() {
-    fetch('{{ route("project_cost.index") }}')
-      .then(res => res.text())
-      .then(html => {
-        const tbody = document.querySelector('#cost-tbody');
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        const newTbody = doc.querySelector('#cost-tbody');
-        if (tbody && newTbody) tbody.innerHTML = newTbody.innerHTML;
-      });
-  }
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Cost';
 
-  document.querySelectorAll('[data-bs-target="#modalProjectCost"]').forEach(btn => {
-    btn.addEventListener('click', function() {
-      const mode = this.dataset.mode || 'create';
-      const form = document.getElementById('formProjectCost');
-      form.reset();
+      apiClient.show(API_ENDPOINTS.PROJECTS.PROJECT_COST.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('cost_id').value = item.id;
+          formProjectCost.querySelector('[name="project_id"]').value = item.project_id || '';
+          formProjectCost.querySelector('[name="category"]').value = item.category || '';
+          formProjectCost.querySelector('[name="amount"]').value = item.amount || '';
+          formProjectCost.querySelector('[name="incurred_date"]').value = item.incurred_date || '';
+          formProjectCost.querySelector('[name="approved_by"]').value = item.approved_by || '';
+          formProjectCost.querySelector('[name="description"]').value = item.description || '';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
+    } else {
+      modalTitle.textContent = 'Log Project Cost';
+      formProjectCost.reset();
       document.getElementById('cost_id').value = '';
-      document.getElementById('modalProjectCostTitle').textContent = mode === 'edit' ? 'Edit Cost' : 'Log Project Cost';
+    }
+  });
+
+  formProjectCost.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const id = document.getElementById('cost_id').value;
+
+    const formData = new FormData(formProjectCost);
+    const payload = Object.fromEntries(formData.entries());
+
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.PROJECTS.PROJECT_COST.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.PROJECTS.PROJECT_COST.STORE, payload);
+    }
+
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalProjectCost).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formProjectCost, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
+      }
     });
   });
 
-  document.querySelector('#tbl-cost').addEventListener('click', function(e) {
-    const btn = e.target.closest('.btn-edit');
-    if (btn) {
-      document.getElementById('modalProjectCostTitle').textContent = 'Edit Cost';
-      document.getElementById('cost_id').value = btn.dataset.id;
-      document.getElementById('cost_project_id').value = btn.dataset.project || '';
-      document.getElementById('cost_category').value = btn.dataset.category || '';
-      document.getElementById('cost_amount').value = btn.dataset.amount || '';
-      document.getElementById('cost_incurred_date').value = btn.dataset.date || '';
-      document.getElementById('cost_approved_by').value = btn.dataset.approved || '';
-      document.getElementById('cost_description').value = btn.dataset.description || '';
-    }
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
   });
 
-  document.querySelector('#tbl-cost').addEventListener('click', function(e) {
-    const btn = e.target.closest('.btn-delete');
-    if (btn) {
-      deleteId = btn.dataset.id;
-      document.getElementById('delete_id').value = deleteId;
-      document.getElementById('delete-target').textContent = btn.dataset.label || 'record';
-    }
-  });
-
-  document.getElementById('formProjectCost').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const id = document.getElementById('cost_id').value;
-    const url = id ? '{{ route("project_cost.update", ["id" => ":id"]) }}'.replace(':id', id) : '{{ route("project_cost.store") }}';
-    const method = id ? 'PUT' : 'POST';
-
-    const formData = {
-      project_id: document.getElementById('cost_project_id').value,
-      category: document.getElementById('cost_category').value,
-      amount: document.getElementById('cost_amount').value,
-      incurred_date: document.getElementById('cost_incurred_date').value,
-      approved_by: document.getElementById('cost_approved_by').value,
-      description: document.getElementById('cost_description').value,
-    };
-
-    fetch(url, {
-      method: method,
-      headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      body: JSON.stringify(formData)
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        showToast(id ? 'Cost updated successfully' : 'Cost logged successfully');
-        bootstrap.Modal.getInstance(document.getElementById('modalProjectCost')).hide();
-        reloadTable();
-      } else {
-        showToast(data.message || 'Error saving cost', 'error');
-      }
-    })
-    .catch(() => showToast('Error saving cost', 'error'));
-  });
-
-  document.getElementById('btn-confirm-delete').addEventListener('click', function() {
+  btnConfirmDelete.addEventListener('click', function() {
     if (!deleteId) return;
-    fetch('{{ route("project_cost.destroy", ["id" => ":id"]) }}'.replace(':id', deleteId), {
-      method: 'DELETE',
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
-    })
-    .then(res => res.json())
+
+    apiClient.destroy(API_ENDPOINTS.PROJECTS.PROJECT_COST.DESTROY, deleteId)
     .then(data => {
-      if (data.success) {
-        showToast('Cost deleted successfully');
-        bootstrap.Modal.getInstance(document.getElementById('modalDelete')).hide();
-        reloadTable();
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
       } else {
-        showToast(data.message || 'Error deleting cost', 'error');
+        showToast(data.message || 'Error', 'error');
       }
     })
-    .catch(() => showToast('Error deleting cost', 'error'));
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
   });
-})();
+});
 </script>
-<style>
-.toast-notification {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 12px 20px;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--text-primary);
-  font-size: 14px;
-  z-index: 9999;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.toast-notification.show { opacity: 1; transform: translateY(0); }
-.toast-success i { color: var(--accent-2); }
-.toast-error i { color: var(--accent-3); }
-</style>
 @endpush

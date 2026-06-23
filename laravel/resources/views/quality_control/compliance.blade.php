@@ -11,7 +11,7 @@
   </div>
   <div class="d-flex gap-2">
     <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-    <button class="btn-erp btn-primary" id="btn-add-compliance"><i class="bi bi-plus-lg"></i> New Report</button>
+    <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalCompliance" data-mode="create"><i class="bi bi-plus-lg"></i> New Report</button>
   </div>
 </div>
 
@@ -50,16 +50,14 @@
             <div class="d-flex gap-1">
               <button class="btn-erp btn-outline btn-xs btn-icon btn-edit" 
                 data-id="{{ $compliance->id }}"
-                data-standard_regulation="{{ $compliance->standard_regulation }}"
-                data-scope="{{ $compliance->scope }}"
-                data-audit_date="{{ $compliance->audit_date }}"
-                data-next_audit_date="{{ $compliance->next_audit_date }}"
-                data-auditor="{{ $compliance->auditor }}"
-                data-findings_notes="{{ $compliance->findings_notes }}"
+                data-mode="edit"
+                data-bs-toggle="modal" data-bs-target="#modalCompliance"
                 title="Edit"><i class="bi bi-pencil"></i></button>
               <button class="btn-erp btn-danger btn-xs btn-icon btn-delete" 
-                data-id="{{ $compliance->id }}"
-                data-label="Report" title="Delete"><i class="bi bi-trash"></i></button>
+                data-delete-id="{{ $compliance->id }}"
+                data-delete-label="Report" 
+                data-bs-toggle="modal" data-bs-target="#modalDelete"
+                title="Delete"><i class="bi bi-trash"></i></button>
             </div>
           </td>
         </tr>
@@ -154,97 +152,96 @@
 
 @push('scripts')
 <script>
-$(function () {
-  var routes = {
-    store: '{{ route("compliance.store") }}',
-    update: '{{ route("compliance.update", ":id") }}',
-    destroy: '{{ route("compliance.destroy", ":id") }}'
-  };
+document.addEventListener('DOMContentLoaded', function() {
+  const modalCompliance = document.getElementById('modalCompliance');
+  const formCompliance = document.getElementById('form-compliance');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
 
-  var $modal = $('#modalCompliance');
-  var $form = $('#form-compliance');
-  var $btnSave = $('#btn-save');
-  var complianceId = null;
-  var isEdit = false;
+  let deleteId = null;
 
-  function resetForm() {
-    $form[0].reset();
-    $('#compliance-id').val('');
-    isEdit = false;
-    complianceId = null;
-  }
+  modalCompliance.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formCompliance);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = document.getElementById('modal-title');
 
-  $('#btn-add-compliance').on('click', function () {
-    resetForm();
-    $('#modal-title').text('New Compliance Report');
-    $modal.modal('show');
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Compliance Report';
+
+      apiClient.show(API_ENDPOINTS.QUALITY_CONTROL.COMPLIANCE.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('compliance-id').value = item.id;
+          formCompliance.querySelector('[name="standard_regulation"]').value = item.standard_regulation || '';
+          formCompliance.querySelector('[name="scope"]').value = item.scope || '';
+          formCompliance.querySelector('[name="audit_date"]').value = item.audit_date ? item.audit_date.split('T')[0] : '';
+          formCompliance.querySelector('[name="next_audit_date"]').value = item.next_audit_date ? item.next_audit_date.split('T')[0] : '';
+          formCompliance.querySelector('[name="auditor"]').value = item.auditor || '';
+          formCompliance.querySelector('[name="findings_notes"]').value = item.findings_notes || '';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
+    } else {
+      modalTitle.textContent = 'New Compliance Report';
+      formCompliance.reset();
+      document.getElementById('compliance-id').value = '';
+    }
   });
 
-  $(document).on('click', '.btn-edit', function () {
-    resetForm();
-    isEdit = true;
-    complianceId = $(this).data('id');
-    $('#modal-title').text('Edit Compliance Report');
-    $('#compliance-id').val(complianceId);
-    $('[name="standard_regulation"]').val($(this).data('standard_regulation'));
-    $('[name="scope"]').val($(this).data('scope'));
-    $('[name="audit_date"]').val($(this).data('audit_date'));
-    $('[name="next_audit_date"]').val($(this).data('next_audit_date'));
-    $('[name="auditor"]').val($(this).data('auditor'));
-    $('[name="findings_notes"]').val($(this).data('findings_notes'));
-    $modal.modal('show');
-  });
+  formCompliance.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const id = document.getElementById('compliance-id').value;
 
-  $(document).on('click', '.btn-delete', function () {
-    complianceId = $(this).data('id');
-    var label = $(this).data('label') || 'record';
-    $('#delete-target').text(label);
-    $('#modalDelete').modal('show');
-  });
+    const formData = new FormData(formCompliance);
+    const payload = Object.fromEntries(formData.entries());
 
-  $('#btn-confirm-delete').on('click', function () {
-    $.ajax({
-      url: routes.destroy.replace(':id', complianceId),
-      method: 'DELETE',
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function (res) {
-        if (res.success) {
-          showToast(res.message || 'Report deleted', 'success');
-          $('#modalDelete').modal('hide');
-          setTimeout(() => location.reload(), 1000);
-        }
-      },
-      error: function (xhr) {
-        showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.QUALITY_CONTROL.COMPLIANCE.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.QUALITY_CONTROL.COMPLIANCE.STORE, payload);
+    }
+
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalCompliance).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formCompliance, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
       }
     });
   });
 
-  $btnSave.on('click', function () {
-    $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
+  });
 
-    var url = isEdit ? routes.update.replace(':id', complianceId) : routes.store;
-    var method = isEdit ? 'PUT' : 'POST';
+  btnConfirmDelete.addEventListener('click', function() {
+    if (!deleteId) return;
 
-    $.ajax({
-      url: url,
-      method: method,
-      data: $form.serialize(),
-      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      success: function (res) {
-        if (res.success) {
-          showToast(res.message || (isEdit ? 'Report updated' : 'Report created'), 'success');
-          $modal.modal('hide');
-          setTimeout(() => location.reload(), 1000);
-        }
-      },
-      error: function (xhr) {
-        showToast(xhr.responseJSON?.message || 'Operation failed', 'error');
-      },
-      complete: function () {
-        $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Save');
+    apiClient.destroy(API_ENDPOINTS.QUALITY_CONTROL.COMPLIANCE.DESTROY, deleteId)
+    .then(data => {
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
       }
-    });
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
   });
 });
 </script>

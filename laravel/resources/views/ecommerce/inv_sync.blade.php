@@ -48,7 +48,7 @@
             <td style="{{ $sync->sync_errors > 0 ? 'color:var(--accent-4)' : '' }}">{{ \Carbon\Carbon::parse($sync->last_sync_time)->format('Y-m-d H:i') }}{{ $sync->sync_errors > 0 ? ' ⚠' : '' }}</td>
             <td>
               <button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal" data-bs-target="#modalDelete"
-                data-route="{{ route('inv_sync.destroy', $sync->id) }}" data-label="Sync Record" title="Delete"><i class="bi bi-trash"></i></button>
+                data-delete-id="{{ $sync->id }}" data-delete-label="Sync Record" title="Delete"><i class="bi bi-trash"></i></button>
             </td>
           </tr>
         @empty
@@ -86,92 +86,56 @@
 
 @push('scripts')
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const modalDelete = document.getElementById('modalDelete');
-    let deleteUrl = null;
+document.addEventListener('DOMContentLoaded', function() {
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
 
-    document.querySelector('.btn-force-sync').addEventListener('click', async function() {
-      const btn = this;
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Syncing...';
+  let deleteId = null;
 
-      try {
-        const response = await fetch(btn.dataset.route, {
-          method: 'POST',
-          headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Accept': 'application/json'
-          }
-        });
+  document.querySelector('.btn-force-sync').addEventListener('click', function() {
+    const btn = this;
+    const originalHtml = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Syncing...';
 
-        const result = await response.json();
-
-        if (result.success) {
-          showToast(result.message || 'Sync started successfully', 'success');
-          setTimeout(() => window.location.reload(), 1500);
-        } else {
-          showToast(result.message || 'Failed to start sync', 'error');
-        }
-      } catch (error) {
-        showToast('An error occurred while syncing', 'error');
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="bi bi-arrow-repeat"></i> Force Sync';
+    apiClient._request('POST', '{{ route("inv_sync.forceSync") }}')
+    .then(data => {
+      if (data.success || !data.error) {
+        showToast(data.message || 'Sync started successfully', 'success');
+        setTimeout(() => location.reload(), 1500);
+      } else {
+        showToast(data.message || 'Error', 'error');
       }
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'))
+    .finally(() => {
+      btn.disabled = false;
+      btn.innerHTML = originalHtml;
     });
-
-    modalDelete.addEventListener('show.bs.modal', function(e) {
-      const btn = e.relatedTarget;
-      deleteUrl = btn?.dataset.route;
-      const label = btn?.dataset.label || 'record';
-      document.getElementById('delete-target').textContent = label;
-    });
-
-    document.getElementById('btn-confirm-delete').addEventListener('click', async function() {
-      if (!deleteUrl) return;
-      
-      this.disabled = true;
-      this.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Deleting...';
-
-      try {
-        const response = await fetch(deleteUrl, {
-          method: 'DELETE',
-          headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Accept': 'application/json'
-          }
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-          bootstrap.Modal.getInstance(modalDelete)?.hide();
-          showToast(result.message || 'Deleted successfully', 'success');
-          setTimeout(() => window.location.reload(), 1000);
-        } else {
-          showToast(result.message || 'Failed to delete', 'error');
-        }
-      } catch (error) {
-        showToast('An error occurred while deleting', 'error');
-      } finally {
-        this.disabled = false;
-        this.innerHTML = '<i class="bi bi-trash"></i> Delete';
-      }
-    });
-
-    function showToast(message, type = 'success') {
-      const toast = document.createElement('div');
-      toast.className = `toast-notification toast-${type}`;
-      toast.innerHTML = `
-        <div class="toast-content">
-          <i class="bi bi-${type === 'success' ? 'check-circle-fill' : 'exclamation-circle-fill'}"></i>
-          <span>${message}</span>
-        </div>
-      `;
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 3000);
-    }
   });
+
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
+  });
+
+  btnConfirmDelete.addEventListener('click', function() {
+    if (!deleteId) return;
+
+    apiClient.destroy(API_ENDPOINTS.ECOMMERCE.INV_SYNC.DESTROY, deleteId)
+    .then(data => {
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
+  });
+});
 </script>
 <style>
   .toast-notification {

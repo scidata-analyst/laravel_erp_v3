@@ -9,7 +9,7 @@
       <div class="page-title">User Management</div>
       <div class="page-subtitle">Create, manage and deactivate system users</div>
     </div>
-    <button class="btn-erp btn-primary" id="btn-add-user"><i class="bi bi-plus-lg"></i> Add User</button>
+    <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalUser" data-mode="create"><i class="bi bi-plus-lg"></i> Add User</button>
   </div>
 
   <div class="erp-card">
@@ -71,14 +71,12 @@
               <td>
                 <div class="d-flex gap-1">
                    <button class="btn-erp btn-outline btn-xs btn-icon btn-edit" data-id="{{ $user->id }}"
-                     data-user_name="{{ $user->user_name ?? $user->name ?? '' }}" data-email="{{ $user->email }}"
-                     data-role_id="{{ $user->role_id ?? '' }}" data-department="{{ $user->department ?? '' }}"
-                     data-is_active="{{ ($user->is_active ?? $user->status) == 'Active' || ($user->is_active ?? 1) == 1 ? 'Active' : 'Inactive' }}"
+                     data-mode="edit" data-bs-toggle="modal" data-bs-target="#modalUser"
                      title="Edit">
                     <i class="bi bi-pencil"></i>
                   </button>
-                  <button class="btn-erp btn-danger btn-xs btn-icon btn-delete" data-id="{{ $user->id }}"
-                    data-user_name="{{ $user->user_name ?? $user->name ?? '' }}" title="Delete">
+                  <button class="btn-erp btn-danger btn-xs btn-icon btn-delete" data-delete-id="{{ $user->id }}"
+                    data-delete-label="{{ $user->user_name ?? $user->name ?? '' }}" data-bs-toggle="modal" data-bs-target="#modalDelete" title="Delete">
                     <i class="bi bi-trash"></i>
                   </button>
                 </div>
@@ -198,168 +196,126 @@
 
   @push('scripts')
     <script>
-      $(function () {
-        var routes = {
-          store: '{{ route("user.store") }}',
-          update: '{{ route("user.update", ":id") }}',
-          destroy: '{{ route("user.destroy", ":id") }}',
-          rolesAll: '{{ route("roles.all") }}'
-        };
+    document.addEventListener('DOMContentLoaded', function() {
+      const modalUser = document.getElementById('modalUser');
+      const formUser = document.getElementById('form-user');
+      const modalDelete = document.getElementById('modalDelete');
+      const btnConfirmDelete = document.getElementById('btn-confirm-delete');
+      const passwordField = document.getElementById('password-field');
 
-        var $modal = $('#modalUser');
-        var $form = $('#form-user');
-        var $btnSave = $('#btn-save');
-        var userId = null;
-        var isEdit = false;
+      let deleteId = null;
 
-        // Load roles dropdown via AJAX
-        function loadRoles(selectedId = null) {
-          $.ajax({
-            url: routes.rolesAll,
-            method: 'GET',
-            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-            success: function(res) {
-              var $roleSelect = $('#user-role');
-              $roleSelect.find('option:not(:first)').remove();
-              if (res.success && res.data) {
-                $.each(res.data, function(index, role) {
-                  var option = $('<option>').val(role.id).text(role.role_name);
-                  $roleSelect.append(option);
-                });
-                if (selectedId) {
-                  $roleSelect.val(selectedId);
-                }
-              }
-            },
-            error: function() {
-              showToast('Failed to load roles', 'error');
+      // Load roles dropdown via API
+      function loadRoles(selectedId = null) {
+        const roleSelect = formUser.querySelector('[name="role_id"]');
+        // Remove all options except the first placeholder
+        while (roleSelect.options.length > 1) roleSelect.remove(1);
+
+        fetch(API_ENDPOINTS.USERS_ROLES.ROLES.ALL)
+          .then(res => res.json())
+          .then(res => {
+            const roles = res.data || res;
+            if (Array.isArray(roles)) {
+              roles.forEach(role => {
+                const opt = document.createElement('option');
+                opt.value = role.id;
+                opt.textContent = role.role_name || role.name;
+                roleSelect.appendChild(opt);
+              });
             }
-          });
-        }
+            if (selectedId) roleSelect.value = selectedId;
+          })
+          .catch(() => showToast('Failed to load roles', 'error'));
+      }
 
-        // Open modal for new user
-        $('#btn-add-user').on('click', function () {
-          resetForm();
-          isEdit = false;
-          $('#modal-title').text('Add User');
-          $('#password-field').show();
-          $form.find('[name="password"]').prop('required', true);
+      modalUser.addEventListener('show.bs.modal', function(e) {
+        clearFormErrors(formUser);
+        const button = e.relatedTarget;
+        const mode = button?.dataset.mode || 'create';
+        const modalTitle = document.getElementById('modal-title');
+
+        if (mode === 'edit') {
+          const id = button.dataset.id;
+          modalTitle.textContent = 'Edit User';
+          passwordField.style.display = 'none';
+          formUser.querySelector('[name="password"]').required = false;
+
+          apiClient.show(API_ENDPOINTS.USERS_ROLES.USER.SHOW, id)
+            .then(data => {
+              const item = data.data || data;
+              document.getElementById('user-id').value = item.id;
+              formUser.querySelector('[name="user_name"]').value = item.user_name || item.name || '';
+              formUser.querySelector('[name="email"]').value = item.email || '';
+              formUser.querySelector('[name="department"]').value = item.department || '';
+              formUser.querySelector('[name="is_active"]').value = (item.is_active == 1 || item.is_active == 'Active') ? 'Active' : 'Inactive';
+              loadRoles(item.role_id);
+            })
+            .catch(error => showToast(error.message || 'Failed to load data', 'error'));
+        } else {
+          modalTitle.textContent = 'Add User';
+          passwordField.style.display = '';
+          formUser.querySelector('[name="password"]').required = true;
+          formUser.reset();
+          document.getElementById('user-id').value = '';
           loadRoles();
-          $modal.modal('show');
-        });
-
-        // Edit user
-        $(document).on('click', '.btn-edit', function () {
-          resetForm();
-          isEdit = true;
-          userId = $(this).data('id');
-          $('#modal-title').text('Edit User');
-          $('#password-field').hide();
-          $form.find('[name="password"]').prop('required', false);
-
-          $('#user-id').val(userId);
-          $('#user-name').val($(this).data('user_name'));
-          $('#user-email').val($(this).data('email'));
-          loadRoles($(this).data('role_id'));
-          $('#user-is_active').val($(this).data('is_active'));
-          $('#user-department').val($(this).data('department'));
-
-          $modal.modal('show');
-        });
-
-        // Delete confirmation
-        $(document).on('click', '.btn-delete', function () {
-          userId = $(this).data('id');
-          var user_name = $(this).data('user_name');
-          $('#delete-target').text(user_name || 'this user');
-          $('#modalDelete').modal('show');
-        });
-
-        // Confirm delete
-        $('#btn-confirm-delete').on('click', function () {
-          $.ajax({
-            url: routes.destroy.replace(':id', userId),
-            method: 'DELETE',
-            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-            success: function (res) {
-              if (res.success) {
-                showToast(res.message || 'User deleted', 'success');
-                $('#modalDelete').modal('hide');
-                setTimeout(() => location.reload(), 1000);
-              }
-            },
-            error: function (xhr) {
-              showToast(xhr.responseJSON?.message || 'Delete failed', 'error');
-            }
-          });
-        });
-
-         // Form submit
-         $form.on('submit', function (e) {
-           e.preventDefault();
-           $btnSave.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
-
-           // Clear previous inline errors
-           $form.find('.is-invalid').removeClass('is-invalid');
-           $form.find('.invalid-feedback').text('');
-
-           var url = isEdit ? routes.update.replace(':id', userId) : routes.store;
-           var method = isEdit ? 'PUT' : 'POST';
-
-           $.ajax({
-             url: url,
-             method: method,
-             data: $form.serialize(),
-             headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-             success: function (res) {
-               if (res.success) {
-                 showToast(res.message || (isEdit ? 'User updated' : 'User created'), 'success');
-                 $modal.modal('hide');
-                 setTimeout(() => location.reload(), 1000);
-               }
-             },
-             error: function (xhr) {
-               var res = xhr.responseJSON;
-               if (res && res.errors) {
-                 $.each(res.errors, function (field, messages) {
-                   var $input = $form.find('[name="' + field + '"]');
-                   $input.addClass('is-invalid');
-                   $('#error-' + field).text(messages[0]);
-                 });
-                 // Show first error in toast
-                 var firstField = Object.keys(res.errors)[0];
-                 showToast(res.errors[firstField][0], 'error');
-               } else if (res && res.message) {
-                 showToast(res.message, 'error');
-               } else {
-                 showToast('An error occurred', 'error');
-               }
-             },
-             complete: function () {
-               $btnSave.prop('disabled', false).html('<i class="bi bi-check2"></i> Save User');
-             }
-           });
-         });
-
-         function resetForm() {
-           userId = null;
-           isEdit = false;
-           $form[0].reset();
-           $form.find('.is-invalid').removeClass('is-invalid');
-           $form.find('.invalid-feedback').text('');
-         }
-
-        function showToast(msg, type) {
-          type = type || 'info';
-          var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
-          var color = type === 'success' ? 'var(--accent-2)' : type === 'error' ? 'var(--accent-3)' : 'var(--accent)';
-          var $t = $('<div class="erp-toast ' + type + '"></div>')
-            .html('<span style="font-weight:700;color:' + color + '">' + icon + '</span> ' + msg);
-          $('#toast-container').append($t);
-          setTimeout(function () { $t.css('opacity', 0); }, 2500);
-          setTimeout(function () { $t.remove(); }, 2800);
         }
       });
+
+      formUser.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const id = document.getElementById('user-id').value;
+
+        const formData = new FormData(formUser);
+        const payload = Object.fromEntries(formData.entries());
+
+        let request;
+        if (id) {
+          request = apiClient.update(API_ENDPOINTS.USERS_ROLES.USER.UPDATE, id, payload);
+        } else {
+          request = apiClient.store(API_ENDPOINTS.USERS_ROLES.USER.STORE, payload);
+        }
+
+        request
+        .then(data => {
+          if (data.success || data.id) {
+            bootstrap.Modal.getInstance(modalUser).hide();
+            showToast(data.message || 'Success', 'success');
+            setTimeout(() => location.reload(), 1000);
+          } else {
+            showToast(data.message || 'Error', 'error');
+          }
+        })
+        .catch(error => {
+          if (error.errors) {
+            handleFormErrors(formUser, error.errors);
+          } else {
+            showToast(error.message || 'An error occurred', 'error');
+          }
+        });
+      });
+
+      modalDelete.addEventListener('show.bs.modal', function(e) {
+        const button = e.relatedTarget;
+        deleteId = button.dataset.deleteId;
+        document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'this user';
+      });
+
+      btnConfirmDelete.addEventListener('click', function() {
+        if (!deleteId) return;
+
+        apiClient.destroy(API_ENDPOINTS.USERS_ROLES.USER.DESTROY, deleteId)
+        .then(data => {
+          if (data.success || !data.error) {
+            bootstrap.Modal.getInstance(modalDelete).hide();
+            showToast(data.message || 'Deleted successfully', 'success');
+            setTimeout(() => location.reload(), 1000);
+          } else {
+            showToast(data.message || 'Error', 'error');
+          }
+        })
+        .catch(error => showToast(error.message || 'An error occurred', 'error'));
+      });
+    });
     </script>
   @endpush
 @endsection

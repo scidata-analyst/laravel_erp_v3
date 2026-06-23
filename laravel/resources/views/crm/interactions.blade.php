@@ -11,8 +11,7 @@
     </div>
     <div class="d-flex gap-2">
       <button class="btn-erp btn-outline btn-export"><i class="bi bi-download"></i> Export</button>
-      <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalInteraction"
-        data-route="{{ route('interactions.store') }}" data-mode="create"><i
+      <button class="btn-erp btn-primary" data-bs-toggle="modal" data-bs-target="#modalInteraction" data-mode="create"><i
           class="bi bi-plus-lg"></i> Log Interaction</button>
     </div>
   </div>
@@ -58,14 +57,11 @@
               <td>
                 <div class="d-flex gap-1">
                   <button class="btn-erp btn-outline btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalInteraction" title="Edit"
-                    data-route="{{ route('interactions.update', $interaction->id) }}"
-                    data-mode="edit"
-                    data-interaction='@json($interaction)'><i class="bi bi-pencil"></i></button>
+                    data-bs-target="#modalInteraction" data-mode="edit" data-id="{{ $interaction->id }}"
+                    title="Edit"><i class="bi bi-pencil"></i></button>
                   <button class="btn-erp btn-danger btn-xs btn-icon" data-bs-toggle="modal"
-                    data-bs-target="#modalDelete" title="Delete"
-                    data-route="{{ route('interactions.destroy', $interaction->id) }}"
-                    data-label="Interaction"><i class="bi bi-trash"></i></button>
+                    data-bs-target="#modalDelete" data-delete-id="{{ $interaction->id }}"
+                    data-delete-label="Interaction" title="Delete"><i class="bi bi-trash"></i></button>
                 </div>
               </td>
             </tr>
@@ -93,6 +89,7 @@
         </div>
         <form id="form-interaction">
           <div class="modal-body">
+            <input type="hidden" name="id" id="interaction_id">
             <div class="row g-3">
               <div class="col-md-6">
                 <label class="erp-form-label">Customer</label>
@@ -173,149 +170,117 @@
 
 @push('scripts')
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const modalInteraction = document.getElementById('modalInteraction');
-    const modalDelete = document.getElementById('modalDelete');
-    const formInteraction = document.getElementById('form-interaction');
-    let deleteUrl = null;
+document.addEventListener('DOMContentLoaded', function() {
+  const modalInteraction = document.getElementById('modalInteraction');
+  const formInteraction = document.getElementById('form-interaction');
+  const modalDelete = document.getElementById('modalDelete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
 
-    modalInteraction.addEventListener('show.bs.modal', function(e) {
-      const btn = e.relatedTarget;
-      const mode = btn?.dataset.mode || 'create';
-      const route = btn?.dataset.route || '{{ route("interactions.store") }}';
-      
-      formInteraction.action = route;
-      formInteraction.method = mode === 'create' ? 'POST' : 'PUT';
-      
-      const title = modalInteraction.querySelector('.modal-title');
-      const submitBtn = modalInteraction.querySelector('.btn-modal-save');
-      
-      if (mode === 'edit') {
-        title.textContent = 'Edit Interaction';
-        submitBtn.innerHTML = '<i class="bi bi-check2"></i> Update';
-        
-        const interaction = JSON.parse(btn.dataset.interaction);
-        formInteraction.querySelector('[name="customer_id"]').value = interaction.customer_id || '';
-        formInteraction.querySelector('[name="contact_person"]').value = interaction.contact_person || '';
-        formInteraction.querySelector('[name="interaction_type"]').value = interaction.interaction_type || 'Call';
-        formInteraction.querySelector('[name="interaction_date"]').value = interaction.interaction_date || '';
-        formInteraction.querySelector('[name="duration"]').value = interaction.duration || '';
-        formInteraction.querySelector('[name="summary"]').value = interaction.summary || '';
-        formInteraction.querySelector('[name="next_action"]').value = interaction.next_action || '';
-      } else {
-        title.textContent = 'Log Interaction';
-        submitBtn.innerHTML = '<i class="bi bi-check2"></i> Save';
-        formInteraction.reset();
-      }
-    });
+  let deleteId = null;
 
-    formInteraction.addEventListener('submit', async function(e) {
-      e.preventDefault();
-      const submitBtn = formInteraction.querySelector('button[type="submit"]');
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Saving...';
+  /**
+   * Handle show event for the Interaction Modal
+   * Initializes the modal for either creating a new interaction or editing an existing one
+   * @param {Event} e - The bootstrap modal show event
+   */
+  modalInteraction.addEventListener('show.bs.modal', function(e) {
+    clearFormErrors(formInteraction);
+    const button = e.relatedTarget;
+    const mode = button?.dataset.mode || 'create';
+    const modalTitle = modalInteraction.querySelector('.modal-title');
 
-      try {
-        const formData = new FormData(formInteraction);
-        const method = formInteraction.method;
-        const url = formInteraction.action;
+    if (mode === 'edit') {
+      const id = button.dataset.id;
+      modalTitle.textContent = 'Edit Interaction';
 
-        const response = await fetch(url, {
-          method: method,
-          headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Accept': 'application/json'
-          },
-          body: method === 'PUT' ? new URLSearchParams(formData) : formData
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-          bootstrap.Modal.getInstance(modalInteraction)?.hide();
-          showToast(result.message || 'Interaction saved successfully', 'success');
-          setTimeout(() => window.location.reload(), 1000);
-        } else {
-          showToast(result.message || 'Failed to save interaction', 'error');
-        }
-      } catch (error) {
-        showToast('An error occurred while saving', 'error');
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="bi bi-check2"></i> Save';
-      }
-    });
-
-    modalDelete.addEventListener('show.bs.modal', function(e) {
-      const btn = e.relatedTarget;
-      deleteUrl = btn?.dataset.route;
-      const label = btn?.dataset.label || 'record';
-      document.getElementById('delete-target').textContent = label;
-    });
-
-    document.getElementById('btn-confirm-delete').addEventListener('click', async function() {
-      if (!deleteUrl) return;
-      
-      this.disabled = true;
-      this.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Deleting...';
-
-      try {
-        const response = await fetch(deleteUrl, {
-          method: 'DELETE',
-          headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Accept': 'application/json'
-          }
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-          bootstrap.Modal.getInstance(modalDelete)?.hide();
-          showToast(result.message || 'Deleted successfully', 'success');
-          setTimeout(() => window.location.reload(), 1000);
-        } else {
-          showToast(result.message || 'Failed to delete', 'error');
-        }
-      } catch (error) {
-        showToast('An error occurred while deleting', 'error');
-      } finally {
-        this.disabled = false;
-        this.innerHTML = '<i class="bi bi-trash"></i> Delete';
-      }
-    });
-
-    function showToast(message, type = 'success') {
-      const toast = document.createElement('div');
-      toast.className = `toast-notification toast-${type}`;
-      toast.innerHTML = `
-        <div class="toast-content">
-          <i class="bi bi-${type === 'success' ? 'check-circle-fill' : 'exclamation-circle-fill'}"></i>
-          <span>${message}</span>
-        </div>
-      `;
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 3000);
+      apiClient.show(API_ENDPOINTS.CRM.INTERACTIONS.SHOW, id)
+        .then(data => {
+          const item = data.data || data;
+          document.getElementById('interaction_id').value = item.id;
+          formInteraction.querySelector('[name="customer_id"]').value = item.customer_id || '';
+          formInteraction.querySelector('[name="contact_person"]').value = item.contact_person || '';
+          formInteraction.querySelector('[name="interaction_type"]').value = item.interaction_type || 'Call';
+          formInteraction.querySelector('[name="interaction_date"]').value = item.interaction_date || '';
+          formInteraction.querySelector('[name="duration"]').value = item.duration || '';
+          formInteraction.querySelector('[name="summary"]').value = item.summary || '';
+          formInteraction.querySelector('[name="next_action"]').value = item.next_action || '';
+        })
+        .catch(error => showToast(error.message || 'Failed to load data', 'error'));
+    } else {
+      modalTitle.textContent = 'Log Interaction';
+      formInteraction.reset();
+      document.getElementById('interaction_id').value = '';
     }
   });
+
+  /**
+   * Handle submission of the Interaction Form
+   * Validates and saves the form data via APIClient
+   * @param {Event} e - The form submit event
+   */
+  formInteraction.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const id = document.getElementById('interaction_id').value;
+
+    const formData = new FormData(formInteraction);
+    const payload = Object.fromEntries(formData.entries());
+
+    let request;
+    if (id) {
+      request = apiClient.update(API_ENDPOINTS.CRM.INTERACTIONS.UPDATE, id, payload);
+    } else {
+      request = apiClient.store(API_ENDPOINTS.CRM.INTERACTIONS.STORE, payload);
+    }
+
+    request
+    .then(data => {
+      if (data.success || data.id) {
+        bootstrap.Modal.getInstance(modalInteraction).hide();
+        showToast(data.message || 'Success', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => {
+      if (error.errors) {
+        handleFormErrors(formInteraction, error.errors);
+      } else {
+        showToast(error.message || 'An error occurred', 'error');
+      }
+    });
+  });
+
+  /**
+   * Handle the Delete Modal show event
+   * Sets up the record ID to be deleted
+   * @param {Event} e - The bootstrap modal show event
+   */
+  modalDelete.addEventListener('show.bs.modal', function(e) {
+    const button = e.relatedTarget;
+    deleteId = button.dataset.deleteId;
+    document.getElementById('delete-target').textContent = button.dataset.deleteLabel || 'record';
+  });
+
+  /**
+   * Handle confirmation of record deletion
+   * Deletes the record via APIClient and reloads the page
+   */
+  btnConfirmDelete.addEventListener('click', function() {
+    if (!deleteId) return;
+
+    apiClient.destroy(API_ENDPOINTS.CRM.INTERACTIONS.DESTROY, deleteId)
+    .then(data => {
+      if (data.success || !data.error) {
+        bootstrap.Modal.getInstance(modalDelete).hide();
+        showToast(data.message || 'Deleted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(data.message || 'Error', 'error');
+      }
+    })
+    .catch(error => showToast(error.message || 'An error occurred', 'error'));
+  });
+});
 </script>
-<style>
-  .toast-notification {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 9999;
-    padding: 12px 20px;
-    border-radius: 6px;
-    color: white;
-    animation: slideIn 0.3s ease;
-  }
-  .toast-success { background: #28a745; }
-  .toast-error { background: #dc3545; }
-  .toast-content { display: flex; align-items: center; gap: 10px; }
-  @keyframes slideIn {
-    from { transform: translateX(100%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-  }
-</style>
 @endpush
